@@ -4,8 +4,10 @@
 namespace Iwanna {
 	namespace Sound {
 
-		const String MAIN{ U"sndHibana" };
-		const FilePath Path_MAIN{ U"Sound/Bgm/sndHibana.mp3" };
+		const String MAIN_LOW{ U"main_low" };
+		const FilePath Path_MAIN_LOW{ U"Sound/Bgm/main_low.mp3" };
+		const String MAIN_NORMAL{ U"main_normal" };
+		const FilePath Path_MAIN_NORMAL{ U"Sound/Bgm/main_normal.mp3" };
 
 		//SEの名前とパスの定数
 		static const String SE_PATH = U"Sound/Se/";
