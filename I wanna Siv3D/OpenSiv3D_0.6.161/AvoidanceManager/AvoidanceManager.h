@@ -18,6 +18,8 @@ namespace Iwanna {
 		std::shared_ptr<Miku> miku;
 	};
 
+	// アイワナの耐久作品作成用のクラス
+	// 今回のみんげ～ではメインで使用はしないが、一部パターン作成の際に利用する可能性あり
 	class AvoidanceManager {
 	private:
 		StockNearGameObjects stockNearGameObjects;

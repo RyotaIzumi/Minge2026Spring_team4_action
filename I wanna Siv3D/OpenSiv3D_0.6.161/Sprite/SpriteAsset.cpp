@@ -26,9 +26,9 @@ namespace Iwanna {
 
 		//ブロックテクスチャ登録
 		static const FilePath BlockPath = U"Texture/Block/";
-		registerTexture(U"sprBlock", BlockPath + U"sprBlock.png");
-		registerTexture(U"sprFloor", BlockPath + U"sprFloor.png");
-		registerTexture(U"sprWall", BlockPath + U"sprWall.png");
+		registerTexture(U"sprBlock_low1", BlockPath + U"sprBlock_low1.png");
+		registerTexture(U"sprBlock_low2", BlockPath + U"sprBlock_low2.png");
+		registerTexture(U"sprBlock_low3", BlockPath + U"sprBlock_low3.png");
 
 		//mikuテクスチャ登録
 		static const FilePath MikuPath = U"Texture/Miku/";
@@ -36,10 +36,10 @@ namespace Iwanna {
 
 		//針テクスチャ登録
 		static const FilePath SpikePath = U"Texture/Spike/";
-		registerTexture(U"sprSpikeUp", SpikePath + U"sprSpikeUp.png");
-		registerTexture(U"sprSpikeLeft", SpikePath + U"sprSpikeLeft.png");
-		registerTexture(U"sprSpikeDown", SpikePath + U"sprSpikeDown.png");
-		registerTexture(U"sprSpikeRight", SpikePath + U"sprSpikeRight.png");
+		registerTexture(U"sprSpikeUp_low", SpikePath + U"sprSpikeUp_low.png");
+		registerTexture(U"sprSpikeLeft_low", SpikePath + U"sprSpikeLeft_low.png");
+		registerTexture(U"sprSpikeDown_low", SpikePath + U"sprSpikeDown_low.png");
+		registerTexture(U"sprSpikeRight_low", SpikePath + U"sprSpikeRight_low.png");
 	}
 
 	void registerTexturesSync() {

@@ -14,7 +14,8 @@ namespace Iwanna {
 
 		//BGMを登録する
 		void registerBGMs() {
-			registerAudio(MAIN, Path_MAIN, Loop::No);
+			registerAudio(MAIN_LOW, Path_MAIN_LOW, Loop::Yes);
+			registerAudio(MAIN_NORMAL, Path_MAIN_NORMAL, Loop::Yes);
 		}
 		
 		//SEを登録する

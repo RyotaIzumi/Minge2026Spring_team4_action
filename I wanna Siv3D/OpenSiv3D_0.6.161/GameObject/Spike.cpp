@@ -19,10 +19,10 @@ namespace Iwanna {
 
 	void Spike::draw() const {
 		switch (spriteDirection) {
-		case 0:TextureAsset(U"sprSpikeUp").draw(pos); break;
-		case 1:TextureAsset(U"sprSpikeLeft").draw(pos); break;
-		case 2:TextureAsset(U"sprSpikeDown").draw(pos); break;
-		case 3:TextureAsset(U"sprSpikeRight").draw(pos); break;
+		case 0:TextureAsset(U"sprSpikeUp_low").draw(pos); break;
+		case 1:TextureAsset(U"sprSpikeLeft_low").draw(pos); break;
+		case 2:TextureAsset(U"sprSpikeDown_low").draw(pos); break;
+		case 3:TextureAsset(U"sprSpikeRight_low").draw(pos); break;
 		}
 		
 		//hitBox->draw(ColorF(Palette::Blue,0.7));

@@ -32,7 +32,7 @@ namespace Iwanna {
 	void MainGame::playBgm(int32 chapter) {
 		stopBgm();
 		
-		audio = AudioAsset{ U"sndHibana"};
+		audio = AudioAsset{ U"main_normal"};
 		/*
 		SecondsF startTime = 0.0s;
 		int32 startStep = 0;

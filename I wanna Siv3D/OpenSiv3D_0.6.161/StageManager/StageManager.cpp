@@ -45,9 +45,9 @@ namespace Iwanna {
 
 				// value に応じて配置
 				switch (value) {
-				case 1: gameObjects.blocks << std::make_shared<Block>(U"sprBlock", pos); break;
-				case 6: gameObjects.blocks << std::make_shared<Block>(U"sprFloor", pos); break;
-				case 7: gameObjects.blocks << std::make_shared<Block>(U"sprWall", pos); break;
+				case 1: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_low1", pos); break;
+				case 6: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_low2", pos); break;
+				case 7: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_low3", pos); break;
 				case 21: gameObjects.spikes << std::make_shared<Spike>(pos, 0); break;
 				case 22: gameObjects.spikes << std::make_shared<Spike>(pos, 1); break;
 				case 23: gameObjects.spikes << std::make_shared<Spike>(pos, 2); break;
