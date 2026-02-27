@@ -11,8 +11,8 @@ namespace Iwanna {
 		data.updateGame();
 
 		if (Global::inputRestart.down()) {
-			data.stopBgm();
-			changeScene(SceneType::START_MENU, 0.0s);
+			data.startGame();
+			changeScene(SceneType::IN_GAME, 0.0s);
 		}
 
 		debug();

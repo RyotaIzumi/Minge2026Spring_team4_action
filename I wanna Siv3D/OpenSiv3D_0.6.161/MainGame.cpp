@@ -7,7 +7,12 @@ namespace Iwanna {
 	void MainGame::startGame() {
 		int32 chapter = 1;
 		stageManager.setUpObjects(chapter);
-		playBgm(chapter);
+
+		//BGM再生関連
+		if (!audio.isPlaying()) {
+			if (audio.isPaused())audio.play();
+			else playBgm(chapter);
+		}
 	}
 
 	void MainGame::updateGame() {

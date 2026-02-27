@@ -18,7 +18,7 @@ namespace Iwanna{
 		isDead = false;//死亡状態かどうか
 
 		//GameObject.hの値初期化
-		pos = Vec2(200, 500);
+		pos = Vec2(-100, -100);
 		hitBox = std::make_shared<RectHitBox>(pos, hitBoxSize);
 		type = ObjectType::Player;
 		canPlayerKill = false;

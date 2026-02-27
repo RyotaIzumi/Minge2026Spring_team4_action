@@ -7,6 +7,7 @@
 #include "../GameObject/Block.h"
 #include "../GameObject/Spike.h"
 #include "../GameObject/Trigger.h"
+#include "../GameObject/SavePoint.h"
 #include "../Global.h"
 
 namespace Iwanna {
@@ -18,7 +19,7 @@ namespace Iwanna {
 		Array<std::shared_ptr<Block>> blocks;
 		Array<std::shared_ptr<Spike>> spikes;
 		Array<std::shared_ptr<Trigger>> triggers;
-
+		Array<std::shared_ptr<SavePoint>> savePoints;
 	};
 
 	class StageManager {
@@ -45,6 +46,7 @@ namespace Iwanna {
 		void debug();
 		void draw() const;
 		void setStep(int32 newStep);
+		void saveGame();
 
 		std::shared_ptr<Player> getPlayer();
 		Array<std::shared_ptr<Cherry>> getCherries();

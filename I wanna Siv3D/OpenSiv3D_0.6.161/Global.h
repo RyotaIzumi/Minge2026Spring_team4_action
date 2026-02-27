@@ -26,6 +26,13 @@ namespace Global {
 	inline Input inputDebugStart = Key2;
 	inline Input inputDebugMuteki = KeyControl;
 
+	// --- save関連 ---
+
+	// ゲームが開始しているかどうか
+	inline bool isExistSaveData = false;
+	// セーブされたプレイヤーの開始座標
+	inline Vec2 savedStartPlayerPos = Vec2(-100, -100);
+
 	 // ======================
 	// 定数
 	// ======================

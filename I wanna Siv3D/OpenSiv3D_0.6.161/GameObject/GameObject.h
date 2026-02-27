@@ -11,6 +11,7 @@ namespace Iwanna {
 		Bullet,
 		Spike,
 		Trigger,
+		SavePoint,
 		Miku
 	};
 
