@@ -53,8 +53,8 @@ namespace Iwanna {
 	//画面外判定
 	void Bullet::checkOutOfScreen() {
 		const int32 excess = hitBoxSize * 2;//画面端からの余白
-		if (pos.x < -1 * excess || pos.x > Global::windowWidth + excess ||
-			pos.y < -1 * excess || pos.y > Global::windowHeight + excess) {
+		if (pos.x < -1 * excess || pos.x > Global::stageWidth + excess ||
+			pos.y < -1 * excess || pos.y > Global::stageHeight + excess) {
 			isOutOfScreen = true;
 		}
 		else {

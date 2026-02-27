@@ -33,6 +33,10 @@ namespace Global {
 	// セーブされたプレイヤーの開始座標
 	inline Vec2 savedStartPlayerPos = Vec2(-100, -100);
 
+	// --- room関連 ---
+	inline int32 stageWidth = 800;
+	inline int32 stageHeight = 608;
+
 	 // ======================
 	// 定数
 	// ======================
@@ -42,7 +46,7 @@ namespace Global {
 
 	// ゲームウィンドウサイズ
 	constexpr int32 windowWidth = 800;
-	constexpr int32 windowHeight = 600;
+	constexpr int32 windowHeight = 608;
 
 	// 各チャプター開始ステップ
 	constexpr int32 startStep_Chapter1 = 0;

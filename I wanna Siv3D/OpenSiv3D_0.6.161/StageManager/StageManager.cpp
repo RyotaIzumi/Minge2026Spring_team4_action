@@ -58,6 +58,10 @@ namespace Iwanna {
 			}
 		}
 
+		//ステージサイズを更新
+		Global::stageWidth = csv.columns(0) * oneTileSize;
+		Global::stageHeight = csv.rows() * oneTileSize;
+
 		// 次に同名のJsonファイルからギミックデータを読み込む
 
 		const String jsonPath = U"MapData/" + fileName + U".json";
@@ -102,10 +106,6 @@ namespace Iwanna {
 					if (gimmikName == U"罠トリガー") gameObjects.triggers << std::make_shared<Trigger>(gimmikPos, static_cast<int32>(gimmikValue1), 1.0, 1.0);
 				}
 			}
-			// 敵の情報がない場合のエラーハンドリング
-			else {
-				throw Error{ U"ギミックの情報がありません" };
-			}
 		}
 	}
 
@@ -115,93 +115,100 @@ namespace Iwanna {
 
 	void StageManager::update() {
 
-		// ----- update関連 -----
-		auto& player = gameObjects.player;
-		auto& bullets = gameObjects.bullets;
-		auto& cherries = gameObjects.cherries;
-		auto& blocks = gameObjects.blocks;
-		auto& spikes = gameObjects.spikes;
-		auto& triggers = gameObjects.triggers;
-		auto& savePoints = gameObjects.savePoints;
+		camera.setTargetCenter(executeCameraPos());
+		camera.update(); {
+			const auto t = camera.createTransformer();
 
-		player->update();
+			// ----- update関連 -----
+			auto& player = gameObjects.player;
+			auto& bullets = gameObjects.bullets;
+			auto& cherries = gameObjects.cherries;
+			auto& blocks = gameObjects.blocks;
+			auto& spikes = gameObjects.spikes;
+			auto& triggers = gameObjects.triggers;
+			auto& savePoints = gameObjects.savePoints;
 
-		// 弾丸の生成
-		if (player->getIsGenerateBullet()) {
-			if (bullets.size() < bulletMaxNum) {
-				bullets << std::make_shared<Bullet>(player->pos, player->getDirection() == Global::Direction::RIGHT ? bulletSpeed : -bulletSpeed);
-				AudioAsset(Sound::SHOOT).playOneShot();
+			player->update();
+
+			// 弾丸の生成
+			if (player->getIsGenerateBullet()) {
+				if (bullets.size() < bulletMaxNum) {
+					bullets << std::make_shared<Bullet>(player->pos, player->getDirection() == Global::Direction::RIGHT ? bulletSpeed : -bulletSpeed);
+					AudioAsset(Sound::SHOOT).playOneShot();
+				}
+				player->setIsGenerateBullet(false);
 			}
-			player->setIsGenerateBullet(false);
-		}
 
-		//毎フレームGameObjectをspatialGridに登録
-		stockNearGameObjects.clear();
-		stockBulletsNearGameObjects.clear();
+			//毎フレームGameObjectをspatialGridに登録
+			stockNearGameObjects.clear();
+			stockBulletsNearGameObjects.clear();
 
-		stockNearGameObjects.add(player.get());
-		for (auto& b : blocks) {
-			stockNearGameObjects.add(b.get());
-			stockBulletsNearGameObjects.add(b.get());
-		}
-
-		// トリガーの更新と、最新の起動トリガーIDの取得
-		int32 latestActivatedTriggerID = -1;
-		for (auto& t : triggers) {
-			if (t->getIsActivated()) {
-				latestActivatedTriggerID = t->getTrapID();
+			stockNearGameObjects.add(player.get());
+			for (auto& b : blocks) {
+				stockNearGameObjects.add(b.get());
+				stockBulletsNearGameObjects.add(b.get());
 			}
-			stockNearGameObjects.add(t.get());
-		}
-		// 針の更新と、起動しているトリガーIDの反映
-		for (auto& s : spikes) {
-			s->trapUpdate(latestActivatedTriggerID);
-			stockNearGameObjects.add(s.get());
-		}
-		
-		for (auto& b : bullets) {
-			b->update();
-		}
-		for (auto& c : cherries) {
-			c->update();
-			stockNearGameObjects.add(c.get());
-		}
-		for (auto& s : savePoints) {
-			s->update();
-			s->onSavedCallback = [this]() {
-				saveGame();
-			};
-			stockBulletsNearGameObjects.add(s.get());
-		}
 
-		//画面外のりんごを削除
-		cherries.remove_if([](auto&& cherry) {
-			return cherry->isOutOfScreen;
-		});
-
-		//playerの近くのオブジェクトのみを取得して当たり判定確認
-		auto near = stockNearGameObjects.query(player->getBroadRect());
-		for (auto* obj : near) {
-			if (obj == player.get()) continue;
-			player->onCollision(*obj);
-		}
-		player->updateLate();
-
-
-		//各弾丸とブロック,セーブポイントとの衝突
-		for (auto& b : bullets) {
-			auto nearObjs = stockBulletsNearGameObjects.query(b->getBroadRect());
-			for (auto* obj : nearObjs) {
-				b->onCollision(*obj);
+			// トリガーの更新と、最新の起動トリガーIDの取得
+			int32 latestActivatedTriggerID = -1;
+			for (auto& t : triggers) {
+				if (t->getIsActivated()) {
+					latestActivatedTriggerID = t->getTrapID();
+				}
+				stockNearGameObjects.add(t.get());
 			}
+			// 針の更新と、起動しているトリガーIDの反映
+			for (auto& s : spikes) {
+				s->trapUpdate(latestActivatedTriggerID);
+				stockNearGameObjects.add(s.get());
+			}
+
+			for (auto& b : bullets) {
+				b->update();
+			}
+			for (auto& c : cherries) {
+				c->update();
+				stockNearGameObjects.add(c.get());
+			}
+			for (auto& s : savePoints) {
+				s->update();
+				s->onSavedCallback = [this]() {
+					saveGame();
+					};
+				stockBulletsNearGameObjects.add(s.get());
+			}
+
+			//画面外のりんごを削除
+			cherries.remove_if([](auto&& cherry) {
+				return cherry->isOutOfScreen;
+			});
+
+			//画面外の針を削除
+			spikes.remove_if([](auto&& spike) {
+				return spike->isOutOfScreen;
+			});
+
+			//playerの近くのオブジェクトのみを取得して当たり判定確認
+			auto near = stockNearGameObjects.query(player->getBroadRect());
+			for (auto* obj : near) {
+				if (obj == player.get()) continue;
+				player->onCollision(*obj);
+			}
+			player->updateLate();
+
+			//各弾丸とブロック,セーブポイントとの衝突
+			for (auto& b : bullets) {
+				auto nearObjs = stockBulletsNearGameObjects.query(b->getBroadRect());
+				for (auto* obj : nearObjs) {
+					b->onCollision(*obj);
+				}
+			}
+
+			//弾丸削除
+			bullets.remove_if([](auto&& bullet) {
+				return bullet->isOutOfScreen || bullet->isDelete;
+			});
 		}
-
-		//弾丸削除
-		bullets.remove_if([](auto&& bullet) {
-			return bullet->isOutOfScreen || bullet->isDelete;
-		});
-
-		
 	}
 
 	void StageManager::debug() {
@@ -213,38 +220,35 @@ namespace Iwanna {
 
 		ClearPrint();
 		Print << U" Stage Step : " << step;
-		Print << U" Cherries Num : " << gameObjects.cherries.size();
 		Print << U" Player Pos : " << player->pos;
 		Print << U" Player Muteki : " << player->getIsMuteki();
+		Print << U" Camera Pos : " << executeCameraPos();
+		Print << U" Cherries Num : " << gameObjects.cherries.size();
 		Print << U" Bullets Num : " << gameObjects.bullets.size();
+		Print << U" Spikes Num : " << gameObjects.spikes.size();
 	}
 
-	void StageManager::draw() const {
+	void StageManager::draw() {
 		//背景描画
 		Rect(0, 0, 800, 600).draw(ColorF(0.8, 1.0));
-		//ブロック描画
-		for (auto b : gameObjects.blocks) {
-			b->draw();
-		}
-		//針描画
-		for (auto s : gameObjects.spikes) {
-			s->draw();
-		}
-		//トリガー描画
-		for (auto t : gameObjects.triggers) {
-			t->draw();
-		}
-		//セーブポイント描画
-		for (auto s : gameObjects.savePoints) s->draw();
-		//kid君描画
-		gameObjects.player->draw();
-		//弾丸描画
-		for (auto b : gameObjects.bullets) {
-			b->draw();
-		}
-		//りんご描画
-		for (auto c : gameObjects.cherries) {
-			c->draw();
+
+		camera.update(); {
+			const auto t = camera.createTransformer();
+
+			//ブロック描画
+			for (auto b : gameObjects.blocks) b->draw();
+			//針描画
+			for (auto s : gameObjects.spikes) s->draw();
+			//トリガー描画
+			for (auto t : gameObjects.triggers) t->draw();
+			//セーブポイント描画
+			for (auto s : gameObjects.savePoints) s->draw();
+			//kid君描画
+			gameObjects.player->draw();
+			//弾丸描画
+			for (auto b : gameObjects.bullets) b->draw();
+			//りんご描画
+			for (auto c : gameObjects.cherries) c->draw();
 		}
 	}
 
@@ -257,6 +261,16 @@ namespace Iwanna {
 		//プレイヤーの位置を保存
 		Global::savedStartPlayerPos = gameObjects.player->pos;
 		Global::isExistSaveData = true;
+	}
+
+	// カメラの位置をプレイヤーのいるエリアの中心に設定
+	Vec2 StageManager::executeCameraPos() {
+		Vec2 nextPos;
+		int32 playerAreaX = static_cast<int32>(gameObjects.player->pos.x) / Global::windowWidth;
+		int32 playerAreaY = static_cast<int32>(gameObjects.player->pos.y) / Global::windowHeight;
+		nextPos.x = playerAreaX * Global::windowWidth + Global::windowWidth / 2;
+		nextPos.y = playerAreaY * Global::windowHeight + Global::windowHeight / 2;
+		return nextPos;
 	}
 
 	std::shared_ptr<Player> StageManager::getPlayer() {

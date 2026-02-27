@@ -28,6 +28,10 @@ namespace Iwanna {
 		StockNearGameObjects stockBulletsNearGameObjects;
 		StageGameObjects gameObjects;
 
+		//カメラ関連
+		Vec2 cameraBasePos{ 400, 304 };
+		Camera2D camera{ cameraBasePos, 1.0 };
+
 		//弾丸関連
 		double bulletSpeed = 8;
 		int32 bulletMaxNum = 5;
@@ -44,9 +48,11 @@ namespace Iwanna {
 
 		void update();
 		void debug();
-		void draw() const;
+		void draw()
+			;
 		void setStep(int32 newStep);
 		void saveGame();
+		Vec2 executeCameraPos();
 
 		std::shared_ptr<Player> getPlayer();
 		Array<std::shared_ptr<Cherry>> getCherries();
