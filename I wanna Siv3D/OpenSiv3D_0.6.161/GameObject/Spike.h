@@ -13,10 +13,13 @@ namespace Iwanna {
 	public:
 		Spike(Vec2 startPos, int32 dir);
 
+		bool isOutOfScreen = false;
+
 		void update() override;
 		virtual void trapUpdate(int32 id);
 		void draw() const override;
 		void onCollision(GameObject& other) override;
+		void checkOutOfScreen();
 	};
 
 	class SpikeTrap : public Spike {

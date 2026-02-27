@@ -31,6 +31,18 @@ namespace Iwanna {
 	void Spike::onCollision(GameObject& other) {
 	}
 
+	//画面外判定
+	void Spike::checkOutOfScreen() {
+		const int32 excess = side;//画面端からの余白
+		if (pos.x < -1 * excess || pos.x > Global::stageWidth + excess ||
+			pos.y < -1 * excess || pos.y > Global::stageHeight + excess) {
+			isOutOfScreen = true;
+		}
+		else {
+			isOutOfScreen = false;
+		}
+	}
+
 	// ----- 以下罠用針 ----- //
 
 	SpikeTrap::SpikeTrap(Vec2 startPos, int32 dir, int32 id, double direction, double speed) : Spike({ startPos.x, startPos.y }, dir), trapID(id), direction(direction), speed(speed) {
@@ -39,6 +51,7 @@ namespace Iwanna {
 	}
 
 	void SpikeTrap::trapUpdate(int32 id) {
+		checkOutOfScreen();
 		if (trapID == id) {
 			calculateSpeed();
 			pos.x += hspeed;
