@@ -1,5 +1,6 @@
 ﻿#include "Bullet.h"
 #include "../Audio/AudioAsset.h"
+#include "../GameObject/SavePoint.h"
 
 namespace Iwanna {
 	Bullet::Bullet(Vec2& genePos, double hs){
@@ -40,6 +41,12 @@ namespace Iwanna {
 		// ミク衝突
 		if (this->intersects(other) && other.type == ObjectType::Miku) {
 			isDelete = true;
+		}
+
+		// セーブポイント衝突
+		if (this->intersects(other) && other.type == ObjectType::SavePoint) {
+			auto* savePoint = dynamic_cast<SavePoint*>(&other);
+			savePoint->saved();
 		}
 	}
 

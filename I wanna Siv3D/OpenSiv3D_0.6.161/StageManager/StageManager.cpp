@@ -15,6 +15,7 @@ namespace Iwanna {
 		gameObjects.blocks.clear();
 		gameObjects.spikes.clear();
 		gameObjects.triggers.clear();
+		gameObjects.savePoints.clear();
 
 		loadGameObjects(U"test");
 	}
@@ -52,6 +53,7 @@ namespace Iwanna {
 				case 22: gameObjects.spikes << std::make_shared<Spike>(pos, 1); break;
 				case 23: gameObjects.spikes << std::make_shared<Spike>(pos, 2); break;
 				case 24: gameObjects.spikes << std::make_shared<Spike>(pos, 3); break;
+				case 25: gameObjects.savePoints << std::make_shared<SavePoint>(pos); break;
 				}
 			}
 		}
@@ -71,7 +73,13 @@ namespace Iwanna {
 			// プレイヤーの初期位置を取得し反映
 			Vec2 startPlayerPos = parsePos(stage[U"startPlayerPos"]);
 			startPlayerPos *= oneTileSize;
-			gameObjects.player->pos = startPlayerPos;
+			// セーブデータが無い場合、初期位置をCSVの値から設定
+			if (!Global::isExistSaveData) {
+				gameObjects.player->pos = startPlayerPos;
+			}
+			else {
+				gameObjects.player->pos = Global::savedStartPlayerPos;
+			}
 
 			String gimmikName;
 			Vec2 gimmikPos;
@@ -114,6 +122,7 @@ namespace Iwanna {
 		auto& blocks = gameObjects.blocks;
 		auto& spikes = gameObjects.spikes;
 		auto& triggers = gameObjects.triggers;
+		auto& savePoints = gameObjects.savePoints;
 
 		player->update();
 
@@ -157,6 +166,13 @@ namespace Iwanna {
 			c->update();
 			stockNearGameObjects.add(c.get());
 		}
+		for (auto& s : savePoints) {
+			s->update();
+			s->onSavedCallback = [this]() {
+				saveGame();
+			};
+			stockBulletsNearGameObjects.add(s.get());
+		}
 
 		//画面外のりんごを削除
 		cherries.remove_if([](auto&& cherry) {
@@ -172,7 +188,7 @@ namespace Iwanna {
 		player->updateLate();
 
 
-		//各弾丸とブロックとの衝突
+		//各弾丸とブロック,セーブポイントとの衝突
 		for (auto& b : bullets) {
 			auto nearObjs = stockBulletsNearGameObjects.query(b->getBroadRect());
 			for (auto* obj : nearObjs) {
@@ -184,6 +200,8 @@ namespace Iwanna {
 		bullets.remove_if([](auto&& bullet) {
 			return bullet->isOutOfScreen || bullet->isDelete;
 		});
+
+		
 	}
 
 	void StageManager::debug() {
@@ -216,6 +234,8 @@ namespace Iwanna {
 		for (auto t : gameObjects.triggers) {
 			t->draw();
 		}
+		//セーブポイント描画
+		for (auto s : gameObjects.savePoints) s->draw();
 		//kid君描画
 		gameObjects.player->draw();
 		//弾丸描画
@@ -230,6 +250,13 @@ namespace Iwanna {
 
 	void StageManager::setStep(int32 newStep) {
 		step = newStep;
+	}
+
+	// セーブ処理
+	void StageManager::saveGame() {
+		//プレイヤーの位置を保存
+		Global::savedStartPlayerPos = gameObjects.player->pos;
+		Global::isExistSaveData = true;
 	}
 
 	std::shared_ptr<Player> StageManager::getPlayer() {

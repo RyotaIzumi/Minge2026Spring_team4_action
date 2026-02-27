@@ -40,6 +40,10 @@ namespace Iwanna {
 		registerTexture(U"sprSpikeLeft_low", SpikePath + U"sprSpikeLeft_low.png");
 		registerTexture(U"sprSpikeDown_low", SpikePath + U"sprSpikeDown_low.png");
 		registerTexture(U"sprSpikeRight_low", SpikePath + U"sprSpikeRight_low.png");
+
+		//その他テクスチャ登録
+		static const FilePath OtherPath = U"Texture/Other/";
+		registerTexture(U"sprSave", OtherPath + U"sprSave.png");
 	}
 
 	void registerTexturesSync() {
