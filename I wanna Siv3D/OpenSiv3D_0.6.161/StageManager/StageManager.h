@@ -26,6 +26,7 @@ namespace Iwanna {
 	private:
 		StockNearGameObjects stockNearGameObjects;
 		StockNearGameObjects stockBulletsNearGameObjects;
+		StockNearGameObjects stockLargeNearGameObjects;//大きいオブジェクトなど、通常のストッククラスでは処理できないものを入れる用
 		StageGameObjects gameObjects;
 
 		//カメラ関連

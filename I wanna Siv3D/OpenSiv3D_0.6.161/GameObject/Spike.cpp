@@ -53,6 +53,10 @@ namespace Iwanna {
 	void SpikeTrap::trapUpdate(int32 id) {
 		checkOutOfScreen();
 		if (trapID == id) {
+			isTrapActived = true;
+		}
+
+		if (isTrapActived) {
 			calculateSpeed();
 			pos.x += hspeed;
 			pos.y += vspeed;

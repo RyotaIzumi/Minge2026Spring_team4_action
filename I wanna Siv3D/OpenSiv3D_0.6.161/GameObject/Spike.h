@@ -27,6 +27,7 @@ namespace Iwanna {
 		int32 trapID = 0;
 		double direction = 0;
 		double speed = 0;
+		bool isTrapActived = false;
 	public:
 		SpikeTrap(Vec2 startPos, int32 dir, int32 id, double direction, double speed);
 		void trapUpdate(int32 id) override;

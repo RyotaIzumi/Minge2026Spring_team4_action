@@ -5,6 +5,7 @@ namespace Iwanna {
 	StageManager::StageManager() {
 		stockNearGameObjects.cellSize = 64;
 		stockBulletsNearGameObjects.cellSize = 32;
+		stockLargeNearGameObjects.cellSize = 320;
 	}
 
 	void StageManager::setUpObjects(int32 chapter) {
@@ -95,15 +96,15 @@ namespace Iwanna {
 				for (const auto& gimmik : stage[U"Gimmiks"].arrayView()) {
 					gimmikName = gimmik[U"gimmikName"].getString();
 					gimmikPos = parsePos(gimmik[U"gimmikPos"]);
-					gimmikValue1 = gimmik[U"id"].get<double>();
-					gimmikValue2 = gimmik[U"direction"].get<double>();
-					gimmikValue3 = gimmik[U"speed"].get<double>();
+					gimmikValue1 = gimmik[U"value1"].get<double>();
+					gimmikValue2 = gimmik[U"value2"].get<double>();
+					gimmikValue3 = gimmik[U"value3"].get<double>();
 
 					if (gimmikName == U"罠針_上") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikPos, 0, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
 					if (gimmikName == U"罠針_左") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikPos, 1, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
 					if (gimmikName == U"罠針_下") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikPos, 2, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
 					if (gimmikName == U"罠針_右") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikPos, 3, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
-					if (gimmikName == U"罠トリガー") gameObjects.triggers << std::make_shared<Trigger>(gimmikPos, static_cast<int32>(gimmikValue1), 1.0, 1.0);
+					if (gimmikName == U"罠トリガー") gameObjects.triggers << std::make_shared<Trigger>(gimmikPos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
 				}
 			}
 		}
@@ -142,8 +143,11 @@ namespace Iwanna {
 			//毎フレームGameObjectをspatialGridに登録
 			stockNearGameObjects.clear();
 			stockBulletsNearGameObjects.clear();
+			stockLargeNearGameObjects.clear();
 
 			stockNearGameObjects.add(player.get());
+			stockLargeNearGameObjects.add(player.get());
+
 			for (auto& b : blocks) {
 				stockNearGameObjects.add(b.get());
 				stockBulletsNearGameObjects.add(b.get());
@@ -155,7 +159,7 @@ namespace Iwanna {
 				if (t->getIsActivated()) {
 					latestActivatedTriggerID = t->getTrapID();
 				}
-				stockNearGameObjects.add(t.get());
+				stockLargeNearGameObjects.add(t.get());
 			}
 			// 針の更新と、起動しているトリガーIDの反映
 			for (auto& s : spikes) {
@@ -194,6 +198,13 @@ namespace Iwanna {
 				if (obj == player.get()) continue;
 				player->onCollision(*obj);
 			}
+			//トリガーなど広範囲で衝突を確認する必要のあるオブジェクトに当たり判定確認
+			near = stockLargeNearGameObjects.query(player->getBroadRect());
+			for (auto* obj : near) {
+				if (obj == player.get()) continue;
+				player->onCollision(*obj);
+			}
+
 			player->updateLate();
 
 			//各弾丸とブロック,セーブポイントとの衝突
