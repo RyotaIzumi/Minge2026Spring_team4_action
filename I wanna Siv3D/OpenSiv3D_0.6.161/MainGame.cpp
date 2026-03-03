@@ -16,12 +16,21 @@ namespace Iwanna {
 	}
 
 	void MainGame::updateGame() {
-		//int32 newStep = static_cast<int32>(audio.posSec() * Global::FPS);
-		//avoidanceManager.setStep(newStep);
-		stageManager.update();
+		
+		if (!Global::warningTrapPaused) {
+			stageManager.update();
+		}
+		else {
+			stageManager.getWarningWindowTrap()->trapUpdate();
+		}
 
 		//playerが死亡していたらBGM一時停止
-		if (stageManager.getPlayer()->getIsDead()) pauseBgm();
+		if (stageManager.getPlayer()->getIsDead()) {
+			pauseBgm();
+			return;
+		}
+
+		stageManager.getPlayer()->setStopOrPlayAnimation(!Global::warningTrapPaused);
 	}
 
 	void MainGame::debugGame() {

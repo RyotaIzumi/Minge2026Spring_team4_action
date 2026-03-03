@@ -1,6 +1,7 @@
 ﻿#include "Player.h"
 #include "../Audio/AudioAsset.h"
 #include "../GameObject/Trigger.h"
+#include "../GameObject/Block.h"
 
 namespace Iwanna{
 	Player::Player() {
@@ -87,8 +88,7 @@ namespace Iwanna{
 	}
 
 	void Player::draw() const {
-		hitBox->draw(Palette::Red);
-		
+		//hitBox->draw(Palette::Red);
 		TextureRegion texture = spriteSystem.getTextureRegion(direction);
 		if(!isDead)texture.drawAt(pos.x,pos.y - 6);
 		else texture.drawAt(pos.x, pos.y - 6, ColorF(0.8,0,0, 0.8));
@@ -136,7 +136,7 @@ namespace Iwanna{
 		isDead = true;
 		hspeed = 0;
 		vspeed = 0;
-		spriteSystem.stopAnimation();
+		spriteSystem.stopOrPlayAnimation(false);
 		AudioAsset(Sound::DEATH).playOneShot();
 	}
 
@@ -197,6 +197,17 @@ namespace Iwanna{
 				hspeed = 0;
 			}
 
+			// ブロックが他タイプだった場合
+			auto* block = dynamic_cast<Block*>(&other);
+			if (this->intersects(other)) {
+				if (block->blockType == BlockType::Hide) {
+					auto* hideBlock = dynamic_cast<HideBlock*>(&other);
+					if (hideBlock->getIsHidden()) {
+						hideBlock->setIsHidden(false);
+						AudioAsset(Sound::BLOCKCHANGE).playOneShot();
+					}
+				}
+			}
 		}
 
 		// PlayerKill属性を持つオブジェクトとの衝突
@@ -248,5 +259,11 @@ namespace Iwanna{
 	// 無敵状態かどうかを取得
 	bool Player::getIsMuteki() const {
 		return isMuteki;
+	}
+
+	// アニメーションの再生と停止を切り替える
+	// true の場合は再生、false の場合は停止
+	void Player::setStopOrPlayAnimation(bool isPlay) {
+		spriteSystem.stopOrPlayAnimation(isPlay);
 	}
 }

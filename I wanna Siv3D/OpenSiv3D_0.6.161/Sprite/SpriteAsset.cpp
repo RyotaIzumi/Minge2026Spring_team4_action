@@ -44,6 +44,7 @@ namespace Iwanna {
 		//その他テクスチャ登録
 		static const FilePath OtherPath = U"Texture/Other/";
 		registerTexture(U"sprSave", OtherPath + U"sprSave.png");
+		registerTexture(U"warningTrap", OtherPath + U"warningTrap.png");
 	}
 
 	void registerTexturesSync() {

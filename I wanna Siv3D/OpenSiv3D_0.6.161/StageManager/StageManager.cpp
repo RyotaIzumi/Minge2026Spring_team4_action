@@ -5,7 +5,7 @@ namespace Iwanna {
 	StageManager::StageManager() {
 		stockNearGameObjects.cellSize = 64;
 		stockBulletsNearGameObjects.cellSize = 32;
-		stockLargeNearGameObjects.cellSize = 320;
+		stockLargeNearGameObjects.cellSize = 800;
 	}
 
 	void StageManager::setUpObjects(int32 chapter) {
@@ -17,8 +17,9 @@ namespace Iwanna {
 		gameObjects.spikes.clear();
 		gameObjects.triggers.clear();
 		gameObjects.savePoints.clear();
+		gameObjects.specialTraps.clear();
 
-		loadGameObjects(U"test");
+		loadGameObjects(U"trap1");
 	}
 
 	void StageManager::loadGameObjects(String fileName) {
@@ -55,6 +56,7 @@ namespace Iwanna {
 				case 23: gameObjects.spikes << std::make_shared<Spike>(pos, 2); break;
 				case 24: gameObjects.spikes << std::make_shared<Spike>(pos, 3); break;
 				case 25: gameObjects.savePoints << std::make_shared<SavePoint>(pos); break;
+				case 26: gameObjects.blocks << std::make_shared<HideBlock>(U"sprBlock_low1", pos); break;
 				}
 			}
 		}
@@ -100,6 +102,26 @@ namespace Iwanna {
 					gimmikValue2 = gimmik[U"value2"].get<double>();
 					gimmikValue3 = gimmik[U"value3"].get<double>();
 
+					//特定マップの特定idのトラップ用
+					if (fileName == U"trap1") {
+						if(gimmikValue1 == 3 && gimmikName == U"罠針_下"){
+							gameObjects.spikes << std::make_shared<SpikePathTrap>(gimmikPos, 2, static_cast<int32>(gimmikValue1), Vec2{0,4},2.0);
+							continue;
+						}
+						if (gimmikValue1 == 5 && gimmikName == U"罠針_左") {
+							gameObjects.spikes << std::make_shared<SpikePathTrap>(gimmikPos, 1, static_cast<int32>(gimmikValue1), Vec2{ -7,0 }, 0.7);
+							continue;
+						}
+						if (gimmikValue1 == 7 && gimmikName == U"罠針_左") {
+							gameObjects.spikes << std::make_shared<SpikePathTrap>(gimmikPos, 1, static_cast<int32>(gimmikValue1), Vec2{ -13,0 }, 0.7);
+							continue;
+						}
+						if (gimmikValue1 == 11 && gimmikName == U"罠トリガー") {
+							gameObjects.specialTraps << std::make_shared<WarningWindowTrap>(Vec2{ 400,304 }, static_cast<int32>(gimmikValue1));
+						}
+					}
+
+					// ギミックの種類に応じてオブジェクトを生成
 					if (gimmikName == U"罠針_上") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikPos, 0, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
 					if (gimmikName == U"罠針_左") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikPos, 1, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
 					if (gimmikName == U"罠針_下") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikPos, 2, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
@@ -128,6 +150,7 @@ namespace Iwanna {
 			auto& spikes = gameObjects.spikes;
 			auto& triggers = gameObjects.triggers;
 			auto& savePoints = gameObjects.savePoints;
+			auto& specialTraps = gameObjects.specialTraps;
 
 			player->update();
 
@@ -165,6 +188,13 @@ namespace Iwanna {
 			for (auto& s : spikes) {
 				s->trapUpdate(latestActivatedTriggerID);
 				stockNearGameObjects.add(s.get());
+			}
+
+			// 特殊罠の更新と、起動しているトリガーIDの反映
+			for (auto& st : specialTraps) {
+				st->update();
+				st->setNowTrapID(latestActivatedTriggerID);
+				stockLargeNearGameObjects.add(st.get());
 			}
 
 			for (auto& b : bullets) {
@@ -237,6 +267,7 @@ namespace Iwanna {
 		Print << U" Cherries Num : " << gameObjects.cherries.size();
 		Print << U" Bullets Num : " << gameObjects.bullets.size();
 		Print << U" Spikes Num : " << gameObjects.spikes.size();
+		Print << U" Special Num : " << gameObjects.specialTraps[0]->pos;
 	}
 
 	void StageManager::draw() {
@@ -260,6 +291,8 @@ namespace Iwanna {
 			for (auto b : gameObjects.bullets) b->draw();
 			//りんご描画
 			for (auto c : gameObjects.cherries) c->draw();
+			//特殊罠描画
+			for (auto st : gameObjects.specialTraps) st->draw();
 		}
 	}
 
@@ -294,6 +327,16 @@ namespace Iwanna {
 
 	Array<std::shared_ptr<Block>> StageManager::getBlocks() {
 		return gameObjects.blocks;
+	}
+
+	//ある罠用に取得用
+	std::shared_ptr<SpecialTrap> StageManager::getWarningWindowTrap() {
+		for (auto& st : gameObjects.specialTraps) {
+			if (auto trap = std::dynamic_pointer_cast<WarningWindowTrap>(st)) {
+				return trap;
+			}
+		}
+		return nullptr;
 	}
 
 	//りんご生成と管理配列への追加

@@ -60,5 +60,6 @@ namespace Iwanna {
 		Global::Direction getDirection() const;
 		void setIsMuteki(bool value);
 		bool getIsMuteki() const;
+		void setStopOrPlayAnimation(bool isPlay);
 	};
 }

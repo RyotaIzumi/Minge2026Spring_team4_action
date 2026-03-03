@@ -119,6 +119,7 @@ void Main()
 		AutoTile{ Image{ objectPath + U"sprSpikeDown.png" }, 23 },
 		AutoTile{ Image{ objectPath + U"sprSpikeRight.png" }, 24 },
 		AutoTile{ Image{ objectPath + U"sprSave.png" }, 25 },
+		AutoTile{ Image{ objectPath + U"sprBlockHide.png" }, 26 },
 	};
 	size_t autoTileIndex = 0;
 
@@ -433,7 +434,7 @@ void Main()
 							e.pos.y = g[U"gimmikPos"][1].get<double>();
 
 							e.value1 = g[U"value1"].get<int32>();
-							e.value2 = g[U"value2"].get<int32>();
+							e.value2 = g[U"value2"].get<double>();
 							e.value3 = g[U"value3"].get<double>();
 
 							placedGimmiks << e;

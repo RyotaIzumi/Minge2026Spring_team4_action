@@ -35,4 +35,20 @@ namespace Iwanna {
 
 		int32 getTrapID() const;
 	};
+
+	class SpikePathTrap : public Spike {
+	private:
+		int32 trapID = 0;
+		double speed = 0;
+		Vec2 nextGoalPos;
+		bool isTrapActived = false;
+		bool isTrapFinished = false;
+
+		double moveTime = 2.0;      // 到達秒数
+		double elapsedTime = 0.0;   // 経過時間
+		Vec2 velocity;              // 移動ベクトル
+	public:
+		SpikePathTrap(Vec2 startPos, int32 dir, int32 id, Vec2 next, double time);
+		void trapUpdate(int32 id) override;
+	};
 }

@@ -8,6 +8,7 @@
 #include "../GameObject/Spike.h"
 #include "../GameObject/Trigger.h"
 #include "../GameObject/SavePoint.h"
+#include "../GameObject/SpecialTrap.h"
 #include "../Global.h"
 
 namespace Iwanna {
@@ -20,6 +21,7 @@ namespace Iwanna {
 		Array<std::shared_ptr<Spike>> spikes;
 		Array<std::shared_ptr<Trigger>> triggers;
 		Array<std::shared_ptr<SavePoint>> savePoints;
+		Array<std::shared_ptr<SpecialTrap>> specialTraps;
 	};
 
 	class StageManager {
@@ -58,6 +60,9 @@ namespace Iwanna {
 		std::shared_ptr<Player> getPlayer();
 		Array<std::shared_ptr<Cherry>> getCherries();
 		Array<std::shared_ptr<Block>> getBlocks();
+
+		//ある罠用に取得用
+		std::shared_ptr<SpecialTrap> getWarningWindowTrap();
 
 		void createCherry(std::shared_ptr<Cherry> cherry);
 

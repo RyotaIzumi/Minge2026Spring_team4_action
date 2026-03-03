@@ -128,6 +128,7 @@
     <ClCompile Include="GameObject\HitBox.cpp" />
     <ClCompile Include="GameObject\Miku.cpp" />
     <ClCompile Include="GameObject\SavePoint.cpp" />
+    <ClCompile Include="GameObject\SpecialTrap.cpp" />
     <ClCompile Include="GameObject\Spike.cpp" />
     <ClCompile Include="GameObject\Trigger.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -371,6 +372,7 @@
     <ClInclude Include="GameObject\GameObject.h" />
     <ClInclude Include="GameObject\Miku.h" />
     <ClInclude Include="GameObject\SavePoint.h" />
+    <ClInclude Include="GameObject\SpecialTrap.h" />
     <ClInclude Include="GameObject\Spike.h" />
     <ClInclude Include="GameObject\StockNearGameObjects.h" />
     <ClInclude Include="GameObject\Trigger.h" />

@@ -77,4 +77,36 @@ namespace Iwanna {
 	int32 SpikeTrap::getTrapID() const {
 		return trapID;
 	}
+
+	//特定の箇所へ移動する針トラップ
+	SpikePathTrap::SpikePathTrap(Vec2 startPos, int32 dir, int32 id, Vec2 next, double time) : Spike({ startPos.x, startPos.y }, dir), trapID(id) {
+		hspeed = 0;
+		vspeed = 0;
+		nextGoalPos = { (startPos.x + next.x) * side, (startPos.y + next.y) * side };
+		moveTime = time;
+		velocity = (nextGoalPos - pos) / moveTime;
+	}
+
+	void SpikePathTrap::trapUpdate(int32 id) {
+		checkOutOfScreen();
+
+		if (trapID == id && !isTrapActived) {
+			isTrapActived = true;
+
+			elapsedTime = 0.0;
+		}
+
+		if (isTrapActived && !isTrapFinished) {
+			double dt = Scene::DeltaTime();  // Siv3Dのフレーム時間
+
+			pos += velocity * dt;
+			elapsedTime += dt;
+
+			if (elapsedTime >= moveTime) {
+				pos = nextGoalPos;      // 誤差補正
+				isTrapFinished = true;  // 必要なら停止
+			}
+		}
+		hitBox->setPos(pos);
+	}
 }

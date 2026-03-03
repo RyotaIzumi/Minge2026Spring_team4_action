@@ -6,15 +6,32 @@
 #include "GameObject.h"
 
 namespace Iwanna {
+	enum class BlockType {
+		Normal,
+		Hide
+	};
+
 	class Block : public GameObject {
-	private:
+	protected:
 		int32 side = 32;
 		String textureName = U"sprBlock";
 	public:
 		Block(String name, Vec2 startPos);
+		BlockType blockType = BlockType::Normal;
 
 		void update() override;
 		void draw() const override;
 		void onCollision(GameObject& other) override;
+	};
+
+	class HideBlock : public Block {
+	private:
+		bool isHidden = true;
+	public:
+		HideBlock(String name, Vec2 startPos);
+		void draw() const override;
+		void onCollision(GameObject& other) override;
+		bool getIsHidden() const;
+		void setIsHidden(bool hidden);
 	};
 }

@@ -20,6 +20,16 @@ namespace Iwanna {
 		static const String DJUMP_PATH = SE_PATH + DJUMP + U".wav";
 		static const String SHOOT = U"sndShoot";
 		static const String SHOOT_PATH = SE_PATH + SHOOT + U".wav";
+		static const String CHERRYFALL = U"sndCherry";
+		static const String CHERRYFALL_PATH = SE_PATH + CHERRYFALL + U".wav";
+		static const String BLOCKCHANGE = U"sndBlockChange";
+		static const String BLOCKCHANGE_PATH = SE_PATH + BLOCKCHANGE + U".wav";
+		static const String BLOCKBREAK = U"sndBreak";
+		static const String BLOCKBREAK_PATH = SE_PATH + BLOCKBREAK + U".wav";
+		static const String SPIKETRAP = U"sndSpikeTrap";
+		static const String SPIKETRAP_PATH = SE_PATH + SPIKETRAP + U".wav";
+		static const String ERROR = U"sndWindowsError";
+		static const String ERROR_PATH = SE_PATH + ERROR + U".wav";
 		
 		void registerBGMs();
 		void registerSEs();

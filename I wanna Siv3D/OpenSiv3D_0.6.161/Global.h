@@ -37,6 +37,9 @@ namespace Global {
 	inline int32 stageWidth = 800;
 	inline int32 stageHeight = 608;
 
+	// 特殊罠関連
+	inline bool warningTrapPaused = false;
+
 	 // ======================
 	// 定数
 	// ======================
