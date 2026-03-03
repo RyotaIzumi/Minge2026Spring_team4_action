@@ -39,6 +39,9 @@ namespace Iwanna {
 		double bulletSpeed = 8;
 		int32 bulletMaxNum = 5;
 
+		//血しぶき数
+		int32 bloodNum = 20;
+
 		int32 oneTileSize = 32;
 
 		int32 step = 0;

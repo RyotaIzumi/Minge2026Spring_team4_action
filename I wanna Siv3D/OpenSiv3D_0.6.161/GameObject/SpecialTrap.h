@@ -43,4 +43,15 @@ namespace Iwanna {
 		void trapUpdate() override;
 		void draw() const override;
 	};
+
+	class SteamTrap : public SpecialTrap {
+	private:
+		Timer moveTimer{ 0.7s };
+		double moveRange = 96;
+		Vec2 basePos;
+	public:
+		SteamTrap(Vec2 startPos, int32 id);
+		void trapUpdate() override;
+		void draw() const override;
+	};
 }

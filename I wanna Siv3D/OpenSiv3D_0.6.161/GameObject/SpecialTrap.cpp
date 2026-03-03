@@ -106,4 +106,62 @@ namespace Iwanna {
 		TextureAsset(textureName).scaled(textureScale).drawAt(pos.x,pos.y, ColorF(1.0, canPlayerKill ? textureAlpha : 0.0));
 		//hitBox->draw(Palette::Pink);
 	}
+
+	// ----- 偽Steamトラップ -----
+	SteamTrap::SteamTrap(Vec2 startPos, int32 id) : SpecialTrap(startPos, id) {
+		textureName = U"steamTrap";
+		textureScale = 1.0;
+		textureAlpha = 1.0;
+		textureSize = Vec2{ 160,64 };
+		hitBox = std::make_shared<RectHitBox>(pos, SizeF{ textureSize });
+		hitBox->setPos(pos);//当たり判定の位置をテクスチャの中心に調整
+		canPlayerKill = false;
+		trapStep = 0;
+		basePos = pos;
+	}
+
+	void SteamTrap::trapUpdate() {
+		switch (trapStep) {
+		case 0:
+			if (trapID == nowTrapID) {
+				canPlayerKill = true;
+				isActivated = true;
+				moveTimer.restart();
+				trapStep++;
+			}
+			break;
+		case 1://上昇
+			pos.y = basePos.y - moveRange * moveTimer.progress0_1();
+			if (moveTimer.reachedZero()) {
+				basePos = pos;
+				trapStopwatch.restart();
+				trapStep++;
+			}
+			break;
+		case 2://待機
+			if (reachedTrapTime(3.0)) {
+				moveTimer.restart();
+				trapStep++;
+			}
+			break;
+		case 3://下降
+			pos.y = basePos.y + moveRange * moveTimer.progress0_1();
+			if (moveTimer.reachedZero()) {
+				basePos = pos;
+				trapStep++;
+			}
+			break;
+		case 4://終了
+			pos.y = -10000;
+			canPlayerKill = false;
+			break;
+		}
+
+		hitBox->setPos(pos);
+	}
+
+	void SteamTrap::draw() const {
+		TextureAsset(textureName).scaled(textureScale).drawAt(pos);
+		hitBox->draw(Palette::Pink);
+	}
 }

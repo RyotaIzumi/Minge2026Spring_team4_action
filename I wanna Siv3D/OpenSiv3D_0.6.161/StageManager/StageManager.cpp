@@ -119,6 +119,19 @@ namespace Iwanna {
 						if (gimmikValue1 == 11 && gimmikName == U"罠トリガー") {
 							gameObjects.specialTraps << std::make_shared<WarningWindowTrap>(Vec2{ 400,304 }, static_cast<int32>(gimmikValue1));
 						}
+						if (gimmikValue1 == 12) {
+							if (gimmikName == U"罠針_上") {
+								gameObjects.spikes << std::make_shared<SpikePathTrap>(gimmikPos, 0, static_cast<int32>(gimmikValue1), Vec2{ 0,-3 }, 0.5);
+								continue;
+							}
+							else if (gimmikName == U"罠針_右") {
+								gameObjects.spikes << std::make_shared<SpikePathTrap>(gimmikPos, 3, static_cast<int32>(gimmikValue1), Vec2{ 0,-3 }, 0.5);
+								continue;
+							}
+						}
+						if (gimmikValue1 == 13 && gimmikName == U"罠トリガー") {
+							gameObjects.specialTraps << std::make_shared<SteamTrap>(Vec2{ 700,650 }, static_cast<int32>(gimmikValue1));
+						}
 					}
 
 					// ギミックの種類に応じてオブジェクトを生成
@@ -162,6 +175,9 @@ namespace Iwanna {
 				}
 				player->setIsGenerateBullet(false);
 			}
+
+			// 血しぶきの生成
+
 
 			//毎フレームGameObjectをspatialGridに登録
 			stockNearGameObjects.clear();
