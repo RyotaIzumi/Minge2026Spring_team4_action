@@ -130,7 +130,7 @@ namespace Iwanna {
 							}
 						}
 						if (gimmikValue1 == 13 && gimmikName == U"罠トリガー") {
-							gameObjects.specialTraps << std::make_shared<SteamTrap>(Vec2{ 700,650 }, static_cast<int32>(gimmikValue1));
+							gameObjects.specialTraps << std::make_shared<SteamTrap>(Vec2{ 688,670 }, static_cast<int32>(gimmikValue1));
 						}
 					}
 
@@ -275,6 +275,7 @@ namespace Iwanna {
 			player->setIsMuteki(!player->getIsMuteki());
 		}
 
+		/*
 		ClearPrint();
 		Print << U" Stage Step : " << step;
 		Print << U" Player Pos : " << player->pos;
@@ -284,6 +285,7 @@ namespace Iwanna {
 		Print << U" Bullets Num : " << gameObjects.bullets.size();
 		Print << U" Spikes Num : " << gameObjects.spikes.size();
 		Print << U" Special Num : " << gameObjects.specialTraps[0]->pos;
+		*/
 	}
 
 	void StageManager::draw() {
@@ -309,6 +311,9 @@ namespace Iwanna {
 			for (auto c : gameObjects.cherries) c->draw();
 			//特殊罠描画
 			for (auto st : gameObjects.specialTraps) st->draw();
+
+			//GAMEOVER描画
+			if(gameObjects.player->getIsDead())TextureAsset(U"sprGAMEOVER").drawAt(executeCameraPos());
 		}
 	}
 

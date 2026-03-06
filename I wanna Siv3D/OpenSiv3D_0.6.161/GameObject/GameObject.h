@@ -13,6 +13,7 @@ namespace Iwanna {
 		Trigger,
 		SpecialTrap,
 		SavePoint,
+		Blood,
 		Miku
 	};
 

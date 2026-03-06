@@ -112,7 +112,7 @@ namespace Iwanna {
 		textureName = U"steamTrap";
 		textureScale = 1.0;
 		textureAlpha = 1.0;
-		textureSize = Vec2{ 160,64 };
+		textureSize = Vec2{ 224,77 };
 		hitBox = std::make_shared<RectHitBox>(pos, SizeF{ textureSize });
 		hitBox->setPos(pos);//当たり判定の位置をテクスチャの中心に調整
 		canPlayerKill = false;
@@ -162,6 +162,6 @@ namespace Iwanna {
 
 	void SteamTrap::draw() const {
 		TextureAsset(textureName).scaled(textureScale).drawAt(pos);
-		hitBox->draw(Palette::Pink);
+		//hitBox->draw(Palette::Pink);
 	}
 }
