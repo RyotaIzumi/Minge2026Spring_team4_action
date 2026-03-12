@@ -184,9 +184,12 @@ namespace Iwanna {
 
 			// 血しぶきの生成
 			if (player->getIsDead() && !isGenerateBloods) {
+				double circleNum = 2;
 				double deltaD = 360 / bloodNum;
-				for (int32 i = 0; i < bloodNum; i++) {
-					bloods << std::make_shared<Blood>(player->pos, i * deltaD);
+				for (int32 count = 0; count < circleNum; count++) {
+					for (int32 i = 0; i < bloodNum / circleNum; i++) {
+						bloods << std::make_shared<Blood>(player->pos, i * deltaD);
+					}
 				}
 				isGenerateBloods = true;
 			}
@@ -245,21 +248,6 @@ namespace Iwanna {
 				stockBulletsNearGameObjects.add(s.get());
 			}
 
-			//画面外のりんごを削除
-			cherries.remove_if([](auto&& cherry) {
-				return cherry->isOutOfScreen;
-			});
-
-			//画面外の針を削除
-			spikes.remove_if([](auto&& spike) {
-				return spike->isOutOfScreen;
-			});
-
-			//画面外の血を削除
-			bloods.remove_if([](auto&& blood) {
-				return blood->isOutOfScreen;
-			});
-
 			//playerの近くのオブジェクトのみを取得して当たり判定確認
 			auto near = stockNearGameObjects.query(player->getBroadRect());
 			for (auto* obj : near) {
@@ -291,6 +279,23 @@ namespace Iwanna {
 					b->onCollision(*obj);
 				}
 			}
+
+			// ----- 以下削除処理 -----
+
+			//画面外のりんごを削除
+			cherries.remove_if([](auto&& cherry) {
+				return cherry->isOutOfScreen;
+			});
+
+			//画面外の針を削除
+			spikes.remove_if([](auto&& spike) {
+				return spike->isOutOfScreen;
+			});
+
+			//画面外の血を削除
+			bloods.remove_if([](auto&& blood) {
+				return blood->isOutOfScreen;
+			});
 
 			//弾丸削除
 			bullets.remove_if([](auto&& bullet) {

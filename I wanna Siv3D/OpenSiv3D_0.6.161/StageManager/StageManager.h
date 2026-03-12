@@ -42,7 +42,7 @@ namespace Iwanna {
 		int32 bulletMaxNum = 5;
 
 		//血しぶき数
-		int32 bloodNum = 20;
+		int32 bloodNum = 80;
 		//血を生成したかどうか
 		bool isGenerateBloods = false;
 

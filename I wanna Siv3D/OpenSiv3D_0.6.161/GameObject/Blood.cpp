@@ -12,6 +12,7 @@ namespace Iwanna {
 		canPlayerKill = false;
 		isStop = false;
 		isOutOfScreen = false;
+		speed = Random(5, 12);
 
 		setDirection(dir);
 	}
