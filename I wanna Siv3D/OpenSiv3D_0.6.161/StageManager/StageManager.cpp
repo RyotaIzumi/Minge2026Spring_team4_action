@@ -12,12 +12,17 @@ namespace Iwanna {
 		gameObjects.player = std::make_shared<Player>();
 
 		// 既存のオブジェクトを抹消して初期化
+		gameObjects.bullets.clear();
 		gameObjects.cherries.clear();
 		gameObjects.blocks.clear();
 		gameObjects.spikes.clear();
 		gameObjects.triggers.clear();
 		gameObjects.savePoints.clear();
 		gameObjects.specialTraps.clear();
+		gameObjects.bloods.clear();
+
+		// 一部変数の初期化
+		isGenerateBloods = false;
 
 		loadGameObjects(U"trap1");
 	}
@@ -164,6 +169,7 @@ namespace Iwanna {
 			auto& triggers = gameObjects.triggers;
 			auto& savePoints = gameObjects.savePoints;
 			auto& specialTraps = gameObjects.specialTraps;
+			auto& bloods = gameObjects.bloods;
 
 			player->update();
 
@@ -177,7 +183,18 @@ namespace Iwanna {
 			}
 
 			// 血しぶきの生成
+			if (player->getIsDead() && !isGenerateBloods) {
+				double deltaD = 360 / bloodNum;
+				for (int32 i = 0; i < bloodNum; i++) {
+					bloods << std::make_shared<Blood>(player->pos, i * deltaD);
+				}
+				isGenerateBloods = true;
+			}
 
+			for (auto& b : bloods) {
+				stockNearGameObjects.add(b.get());
+				b->update();
+			}
 
 			//毎フレームGameObjectをspatialGridに登録
 			stockNearGameObjects.clear();
@@ -238,11 +255,25 @@ namespace Iwanna {
 				return spike->isOutOfScreen;
 			});
 
+			//画面外の血を削除
+			bloods.remove_if([](auto&& blood) {
+				return blood->isOutOfScreen;
+			});
+
 			//playerの近くのオブジェクトのみを取得して当たり判定確認
 			auto near = stockNearGameObjects.query(player->getBroadRect());
 			for (auto* obj : near) {
 				if (obj == player.get()) continue;
 				player->onCollision(*obj);
+			}
+			//血のブロックに対する衝突
+			if (!bloods.isEmpty()) {
+				for (auto& b : bloods) {
+					auto nearObjs = stockNearGameObjects.query(b->getBroadRect());
+					for (auto* obj : nearObjs) {
+						b->onCollision(*obj);
+					}
+				}
 			}
 			//トリガーなど広範囲で衝突を確認する必要のあるオブジェクトに当たり判定確認
 			near = stockLargeNearGameObjects.query(player->getBroadRect());
@@ -305,6 +336,8 @@ namespace Iwanna {
 			for (auto s : gameObjects.savePoints) s->draw();
 			//kid君描画
 			gameObjects.player->draw();
+			//血の描画
+			for (auto b : gameObjects.bloods) b->draw();
 			//弾丸描画
 			for (auto b : gameObjects.bullets) b->draw();
 			//りんご描画

@@ -3,22 +3,25 @@
 #include "../GameObject/SavePoint.h"
 
 namespace Iwanna {
-	Blood::Blood(Vec2& genePos, double hs) {
+	Blood::Blood(Vec2& genePos, double dir) {
 
 		//GameObject.hの値初期化
 		pos = genePos;
 		hitBox = std::make_shared<CircleHitBox>(pos, hitBoxSize);
 		type = ObjectType::Blood;
 		canPlayerKill = false;
-		isDelete = false;
+		isStop = false;
 		isOutOfScreen = false;
 
-		hspeed = hs;
-		vspeed = 0;
+		setDirection(dir);
 	}
 
 	void Blood::update() {
 		checkOutOfScreen();
+
+		if (isStop)return;
+
+		vspeed += gravity;
 		// 位置更新
 		pos.x += hspeed;
 		pos.y += vspeed;
@@ -33,9 +36,9 @@ namespace Iwanna {
 	}
 
 	void Blood::onCollision(GameObject& other) {
-		// ブロック、ミク衝突
-		if (other.type == ObjectType::Block) {
-			isDelete = true;
+		// ブロック衝突
+		if (this->intersects(other) && other.type == ObjectType::Block) {
+			isStop = true;
 		}
 	}
 
@@ -49,5 +52,20 @@ namespace Iwanna {
 		else {
 			isOutOfScreen = false;
 		}
+	}
+
+	//speedとdirからhspeedとvspeedを計算
+	void Blood::calculateSpeed() {
+		//ラジアンに変換
+		double rad = Math::ToRadians(direction);
+
+		hspeed = speed * Math::Cos(rad);
+		vspeed = -speed * Math::Sin(rad);
+	}
+
+	//飛んでいく方角を設定
+	void Blood::setDirection(double dir) {
+		direction = dir;
+		calculateSpeed();
 	}
 }

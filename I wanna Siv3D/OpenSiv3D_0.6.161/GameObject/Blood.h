@@ -10,17 +10,22 @@ namespace Iwanna {
 	private:
 		//当たり判定サイズ(半径)
 		int32 hitBoxSize = 2;
+		double gravity = 0.4;
+		double speed = 5;
+		double direction = 0;
 
 	public:
-		bool isDelete = false;//消去用フラグ
+		bool isStop = false;//消去用フラグ
 		bool isOutOfScreen = false;//画面外判定用フラグ
 
-		Blood(Vec2& pos, double speed);
+		Blood(Vec2& pos, double dir);
 
 		void update() override;
 		void draw() const override;
 
 		void onCollision(GameObject& other) override;
 		void checkOutOfScreen();
+		void calculateSpeed();
+		void setDirection(double dir);
 	};
 }

@@ -9,6 +9,7 @@
 #include "../GameObject/Trigger.h"
 #include "../GameObject/SavePoint.h"
 #include "../GameObject/SpecialTrap.h"
+#include "../GameObject/Blood.h"
 #include "../Global.h"
 
 namespace Iwanna {
@@ -22,6 +23,7 @@ namespace Iwanna {
 		Array<std::shared_ptr<Trigger>> triggers;
 		Array<std::shared_ptr<SavePoint>> savePoints;
 		Array<std::shared_ptr<SpecialTrap>> specialTraps;
+		Array<std::shared_ptr<Blood>> bloods;
 	};
 
 	class StageManager {
@@ -41,6 +43,8 @@ namespace Iwanna {
 
 		//血しぶき数
 		int32 bloodNum = 20;
+		//血を生成したかどうか
+		bool isGenerateBloods = false;
 
 		int32 oneTileSize = 32;
 
