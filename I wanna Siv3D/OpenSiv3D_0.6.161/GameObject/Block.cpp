@@ -45,4 +45,23 @@ namespace Iwanna {
 	void HideBlock::setIsHidden(bool hidden) {
 		isHidden = hidden;
 	}
+
+	// ----- 弾のみ通過ブロック ----- //
+	ShootTroughBlock::ShootTroughBlock(String name, Vec2 startPos) : Block(name, startPos) {
+		textureName = name;
+		//GameObject.hの値初期化
+		pos = { startPos.x * side, startPos.y * side };
+		hitBox = std::make_shared<RectHitBox>(pos, SizeF{ side,side });
+		type = ObjectType::Block;
+		blockType = BlockType::ShootThrough;
+		canPlayerKill = false;
+	}
+
+	void ShootTroughBlock::draw() const {
+		//hitBox->draw(Palette::Gray);
+		TextureAsset(textureName).draw(pos);
+	}
+
+	void ShootTroughBlock::onCollision(GameObject& other) {
+	}
 }

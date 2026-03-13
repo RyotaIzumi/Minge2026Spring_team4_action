@@ -63,6 +63,7 @@ namespace Iwanna {
 				case 24: gameObjects.spikes << std::make_shared<Spike>(pos, 3); break;
 				case 25: gameObjects.savePoints << std::make_shared<SavePoint>(pos); break;
 				case 26: gameObjects.blocks << std::make_shared<HideBlock>(U"sprBlock_low1", pos); break;
+				case 27: gameObjects.blocks << std::make_shared<ShootTroughBlock>(U"sprBlockShootTrough", pos); break;
 				}
 			}
 		}

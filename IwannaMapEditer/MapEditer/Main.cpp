@@ -124,6 +124,7 @@ void Main()
 		AutoTile{ Image{ objectPath + U"sprSpikeRight.png" }, 24 },
 		AutoTile{ Image{ objectPath + U"sprSave.png" }, 25 },
 		AutoTile{ Image{ objectPath + U"sprBlockHide.png" }, 26 },
+		AutoTile{ Image{ objectPath + U"sprBlockShootTrough.png" }, 27 },
 	};
 	size_t autoTileIndex = 0;
 
