@@ -9,6 +9,7 @@ namespace Iwanna {
 	enum class BlockType {
 		Normal,
 		Hide,
+		Fake,
 		ShootThrough
 	};
 
@@ -30,6 +31,17 @@ namespace Iwanna {
 		bool isHidden = true;
 	public:
 		HideBlock(String name, Vec2 startPos);
+		void draw() const override;
+		void onCollision(GameObject& other) override;
+		bool getIsHidden() const;
+		void setIsHidden(bool hidden);
+	};
+
+	class FakeBlock : public Block {
+	private:
+		bool isHidden = true;
+	public:
+		FakeBlock(String name, Vec2 startPos);
 		void draw() const override;
 		void onCollision(GameObject& other) override;
 		bool getIsHidden() const;

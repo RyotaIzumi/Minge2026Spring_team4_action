@@ -151,6 +151,29 @@ namespace Iwanna{
 	void Player::onCollision(GameObject& other) {
 		// ブロック衝突
 		if (other.type == ObjectType::Block) {
+
+			// ブロックが他タイプだった場合
+			auto* block = dynamic_cast<Block*>(&other);
+			if (this->intersects(other)) {
+				if (block->blockType == BlockType::Hide) {
+					auto* hideBlock = dynamic_cast<HideBlock*>(&other);
+					if (hideBlock->getIsHidden()) {
+						hideBlock->setIsHidden(false);
+						AudioAsset(Sound::BLOCKCHANGE).playOneShot();
+					}
+				}
+				else if (block->blockType == BlockType::Fake) {
+					auto* fakeBlock = dynamic_cast<FakeBlock*>(&other);
+					if (!fakeBlock->getIsHidden()) {
+						fakeBlock->setIsHidden(true);
+						AudioAsset(Sound::BLOCKCHANGE).playOneShot();
+					}
+					return;
+				}
+			}
+
+			// --- 以下通常のブロックとの衝突判定 ---
+
 			Vec2 modifiedPos = snappedPos(pos);
 
 			// --- 横方向 予測衝突 ---
@@ -195,18 +218,6 @@ namespace Iwanna{
 			RectF nextHitBox = RectF(Arg::center(modifiedPos.x + hspeed, modifiedPos.y + vspeed + 2), hitBoxSize.x - 2, hitBoxSize.y - 9);
 			if (nextHitBox.intersects(*other.hitBox->getRect())) {
 				hspeed = 0;
-			}
-
-			// ブロックが他タイプだった場合
-			auto* block = dynamic_cast<Block*>(&other);
-			if (this->intersects(other)) {
-				if (block->blockType == BlockType::Hide) {
-					auto* hideBlock = dynamic_cast<HideBlock*>(&other);
-					if (hideBlock->getIsHidden()) {
-						hideBlock->setIsHidden(false);
-						AudioAsset(Sound::BLOCKCHANGE).playOneShot();
-					}
-				}
 			}
 		}
 

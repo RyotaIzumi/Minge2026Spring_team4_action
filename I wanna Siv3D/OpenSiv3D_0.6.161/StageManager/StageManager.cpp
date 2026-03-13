@@ -64,6 +64,7 @@ namespace Iwanna {
 				case 25: gameObjects.savePoints << std::make_shared<SavePoint>(pos); break;
 				case 26: gameObjects.blocks << std::make_shared<HideBlock>(U"sprBlock_low1", pos); break;
 				case 27: gameObjects.blocks << std::make_shared<ShootTroughBlock>(U"sprBlockShootTrough", pos); break;
+				case 28: gameObjects.blocks << std::make_shared<FakeBlock>(U"sprBlock_low2", pos); break;
 				}
 			}
 		}
@@ -349,7 +350,7 @@ namespace Iwanna {
 
 	void StageManager::draw() {
 		//背景描画
-		Rect(0, 0, 800, 600).draw(ColorF(0.8, 1.0));
+		Rect(0, 0, 800, 608).draw(ColorF(0.8, 1.0));
 
 		camera.update(); {
 			const auto t = camera.createTransformer();

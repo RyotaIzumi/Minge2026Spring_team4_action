@@ -46,6 +46,34 @@ namespace Iwanna {
 		isHidden = hidden;
 	}
 
+	// ----- 偽ブロック ----- //
+	FakeBlock::FakeBlock(String name, Vec2 startPos) : Block(name, startPos) {
+		textureName = name;
+		//GameObject.hの値初期化
+		pos = { startPos.x * side, startPos.y * side };
+		hitBox = std::make_shared<RectHitBox>(pos, SizeF{ side,side });
+		type = ObjectType::Block;
+		blockType = BlockType::Fake;
+		isHidden = false;
+		canPlayerKill = false;
+	}
+
+	void FakeBlock::draw() const {
+		//hitBox->draw(Palette::Gray);
+		TextureAsset(textureName).draw(pos, ColorF(1.0, isHidden ? 0.0 : 1.0));
+	}
+
+	void FakeBlock::onCollision(GameObject& other) {
+	}
+
+	bool FakeBlock::getIsHidden() const {
+		return isHidden;
+	}
+
+	void FakeBlock::setIsHidden(bool hidden) {
+		isHidden = hidden;
+	}
+
 	// ----- 弾のみ通過ブロック ----- //
 	ShootTroughBlock::ShootTroughBlock(String name, Vec2 startPos) : Block(name, startPos) {
 		textureName = name;
