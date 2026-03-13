@@ -38,7 +38,7 @@ namespace Iwanna {
 		double speed = 0;
 		bool isTrapActived = false;
 	public:
-		CherryTrap(Vec2 startPos, int32 dir, int32 id, double direction, double speed);
+		CherryTrap(Vec2 startPos, int32 id, double direction, double speed);
 		void trapUpdate(int32 id) override;
 		void calculateSpeed();
 

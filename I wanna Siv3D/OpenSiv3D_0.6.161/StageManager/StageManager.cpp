@@ -95,7 +95,8 @@ namespace Iwanna {
 			}
 
 			String gimmikName;
-			Vec2 gimmikPos;
+			Vec2 gimmikParsePos;
+			Vec2 gimmikIntactPos;
 			double gimmikValue1;
 			double gimmikValue2;
 			double gimmikValue3;
@@ -103,7 +104,8 @@ namespace Iwanna {
 			if (stage.contains(U"Gimmiks")) {
 				for (const auto& gimmik : stage[U"Gimmiks"].arrayView()) {
 					gimmikName = gimmik[U"gimmikName"].getString();
-					gimmikPos = parsePos(gimmik[U"gimmikPos"]);
+					gimmikParsePos = parsePos(gimmik[U"gimmikPos"]);
+					gimmikIntactPos = parseIntactPos(gimmik[U"gimmikPos"]);
 					gimmikValue1 = gimmik[U"value1"].get<double>();
 					gimmikValue2 = gimmik[U"value2"].get<double>();
 					gimmikValue3 = gimmik[U"value3"].get<double>();
@@ -111,15 +113,15 @@ namespace Iwanna {
 					//特定マップの特定idのトラップ用
 					if (fileName == U"trap1") {
 						if(gimmikValue1 == 3 && gimmikName == U"罠針_下"){
-							gameObjects.spikes << std::make_shared<SpikePathTrap>(gimmikPos, 2, static_cast<int32>(gimmikValue1), Vec2{0,4},2.0);
+							gameObjects.spikes << std::make_shared<SpikePathTrap>(gimmikParsePos, 2, static_cast<int32>(gimmikValue1), Vec2{0,4},2.0);
 							continue;
 						}
 						if (gimmikValue1 == 5 && gimmikName == U"罠針_左") {
-							gameObjects.spikes << std::make_shared<SpikePathTrap>(gimmikPos, 1, static_cast<int32>(gimmikValue1), Vec2{ -7,0 }, 0.7);
+							gameObjects.spikes << std::make_shared<SpikePathTrap>(gimmikParsePos, 1, static_cast<int32>(gimmikValue1), Vec2{ -7,0 }, 0.7);
 							continue;
 						}
 						if (gimmikValue1 == 7 && gimmikName == U"罠針_左") {
-							gameObjects.spikes << std::make_shared<SpikePathTrap>(gimmikPos, 1, static_cast<int32>(gimmikValue1), Vec2{ -13,0 }, 0.7);
+							gameObjects.spikes << std::make_shared<SpikePathTrap>(gimmikParsePos, 1, static_cast<int32>(gimmikValue1), Vec2{ -13,0 }, 0.7);
 							continue;
 						}
 						if (gimmikValue1 == 11 && gimmikName == U"罠トリガー") {
@@ -127,11 +129,11 @@ namespace Iwanna {
 						}
 						if (gimmikValue1 == 12) {
 							if (gimmikName == U"罠針_上") {
-								gameObjects.spikes << std::make_shared<SpikePathTrap>(gimmikPos, 0, static_cast<int32>(gimmikValue1), Vec2{ 0,-3 }, 0.5);
+								gameObjects.spikes << std::make_shared<SpikePathTrap>(gimmikParsePos, 0, static_cast<int32>(gimmikValue1), Vec2{ 0,-3 }, 0.5);
 								continue;
 							}
 							else if (gimmikName == U"罠針_右") {
-								gameObjects.spikes << std::make_shared<SpikePathTrap>(gimmikPos, 3, static_cast<int32>(gimmikValue1), Vec2{ 0,-3 }, 0.5);
+								gameObjects.spikes << std::make_shared<SpikePathTrap>(gimmikParsePos, 3, static_cast<int32>(gimmikValue1), Vec2{ 0,-3 }, 0.5);
 								continue;
 							}
 						}
@@ -148,11 +150,12 @@ namespace Iwanna {
 					}
 
 					// ギミックの種類に応じてオブジェクトを生成
-					if (gimmikName == U"罠針_上") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikPos, 0, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
-					if (gimmikName == U"罠針_左") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikPos, 1, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
-					if (gimmikName == U"罠針_下") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikPos, 2, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
-					if (gimmikName == U"罠針_右") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikPos, 3, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
-					if (gimmikName == U"罠トリガー") gameObjects.triggers << std::make_shared<Trigger>(gimmikPos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
+					if (gimmikName == U"罠針_上") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikParsePos, 0, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
+					if (gimmikName == U"罠針_左") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikParsePos, 1, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
+					if (gimmikName == U"罠針_下") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikParsePos, 2, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
+					if (gimmikName == U"罠針_右") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikParsePos, 3, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
+					if (gimmikName == U"罠トリガー") gameObjects.triggers << std::make_shared<Trigger>(gimmikParsePos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
+					if (gimmikName == U"罠りんご") gameObjects.cherries << std::make_shared<CherryTrap>(gimmikIntactPos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
 				}
 			}
 		}
@@ -160,6 +163,10 @@ namespace Iwanna {
 
 	Vec2 StageManager::parsePos(const JSON& json) {
 		return Vec2{ json[0].get<int32>() / oneTileSize, json[1].get<int32>() / oneTileSize };
+	}
+
+	Vec2 StageManager::parseIntactPos(const JSON& json) {
+		return Vec2{ json[0].get<int32>(), json[1].get<int32>()};
 	}
 
 	void StageManager::update() {

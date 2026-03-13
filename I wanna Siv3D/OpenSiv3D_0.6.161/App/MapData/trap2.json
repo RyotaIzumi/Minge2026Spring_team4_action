@@ -10,6 +10,36 @@
         "value1": 1,
         "value2": 1.0,
         "value3": 4.0
+      },
+      {
+        "gimmikName": "罠りんご",
+        "gimmikPos": [
+          410.0,
+          32.0
+        ],
+        "value1": 2,
+        "value2": 270.0,
+        "value3": 12.0
+      },
+      {
+        "gimmikName": "罠りんご",
+        "gimmikPos": [
+          384.0,
+          64.0
+        ],
+        "value1": 3,
+        "value2": 270.0,
+        "value3": 11.0
+      },
+      {
+        "gimmikName": "罠トリガー",
+        "gimmikPos": [
+          384.0,
+          64.0
+        ],
+        "value1": 3,
+        "value2": 0.5,
+        "value3": 3.0
       }
     ],
     "startPlayerPos": [

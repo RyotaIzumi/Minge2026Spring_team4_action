@@ -56,6 +56,7 @@ namespace Iwanna {
 		void setUpObjects(int32 chapter);
 		void loadGameObjects(String);
 		Vec2 parsePos(const JSON& json);
+		Vec2 parseIntactPos(const JSON& json);
 
 		void update();
 		void debug();

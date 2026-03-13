@@ -35,7 +35,7 @@ namespace Iwanna {
 	}
 
 	void Cherry::draw() const {
-		TextureAsset(U"sprCherry").drawAt(pos.x,pos.y-1);
+		TextureAsset(U"sprCherryLow").drawAt(pos.x,pos.y-1);
 		//hitBox->draw(Palette::Blue);//判定の可視化
 	}
 
@@ -63,9 +63,8 @@ namespace Iwanna {
 	void Cherry::onCollision(GameObject& other) {
 	}
 
-	CherryTrap::CherryTrap(Vec2 startPos, int32 dir, int32 id, double direction, double speed) : trapID(id), direction(direction), speed(speed) {
+	CherryTrap::CherryTrap(Vec2 startPos, int32 id, double direction, double speed) : trapID(id), direction(direction), speed(speed) {
 		pos = startPos;
-		this->dir = dir;
 		hspeed = 0;
 		vspeed = 0;
 		isTrap = true;

@@ -18,9 +18,13 @@ void DrawTileCursor()
 }
 
 /// @brief オブジェクト上でカーソルを描きます。(ギミックモード時)
-void DrawGimmikCursor(Vec2 pos, Texture gimmikTexture)
+/// @param pos 基本座標
+/// @param gimmikTexture 対象のテクスチャ
+/// @param isFitFrame 格子状に納めるか否か
+void DrawGimmikCursor(Vec2 pos, Texture gimmikTexture,bool isFitFrame)
 {
-	gimmikTexture(0,0,32,32).drawAt(pos.x + 16,pos.y + 16);
+	if(isFitFrame)gimmikTexture(0,0,32,32).drawAt(pos.x + 16,pos.y + 16);
+	else          gimmikTexture(0,0,32,32).drawAt(pos.x,pos.y);
 }
 
 /// @brief マウスカーソルがあるタイルのインデックスを返します。
@@ -124,7 +128,7 @@ void Main()
 	size_t autoTileIndex = 0;
 
 	// 敵の名前配列（ListBox と一致させる）
-	const Array<String> gimmikNames = { U"罠針_上", U"罠針_左", U"罠針_下",U"罠針_右", U"罠トリガー"};
+	const Array<String> gimmikNames = { U"罠針_上", U"罠針_左", U"罠針_下",U"罠針_右", U"罠トリガー", U"罠りんご"};
 
 	//敵の準備
 	ListBoxState listBoxGimmiks{
@@ -137,7 +141,7 @@ void Main()
 	ListBoxState listBoxPlacedGimmiks;
 	listBoxPlacedGimmiks.selectedItemIndex = 0;
 
-	const FilePath gimmikPath = U"texture/enemy/";
+	const FilePath gimmikPath = U"texture/gimmik/";
 	const Array<Texture> gimmikTextures =
 	{
 		Texture{ gimmikPath + U"spikeTrapUp.png" },
@@ -145,6 +149,7 @@ void Main()
 		Texture{ gimmikPath + U"spikeTrapDown.png" },
 		Texture{ gimmikPath + U"spikeTrapRight.png" },
 		Texture{ gimmikPath + U"trapTrigger.png" },
+		Texture{ gimmikPath + U"trapCherry.png" },
 	};
 
 	// --- 敵情報構造体 ---
@@ -588,6 +593,10 @@ void Main()
 						gimmikTextures[idx](0, 0, 32, 32).scaled({e.value2,e.value3}).draw(drawgimmikPos.x, drawgimmikPos.y).drawFrame(
 							1.0, placedgimmikCount == listBoxPlacedGimmiks.selectedItemIndex ? ColorF(1.0, 0.0, 0.0, 1.0) : ColorF(0.0, 0.0));
 					}
+					else if (e.name == U"罠りんご") {// 格子状の交点に描画させたいテクスチャ
+						gimmikTextures[idx](0, 0, 32, 32).drawAt(drawgimmikPos.x, drawgimmikPos.y).drawFrame(
+							1.0, placedgimmikCount == listBoxPlacedGimmiks.selectedItemIndex ? ColorF(1.0, 0.0, 0.0, 1.0) : ColorF(0.0, 0.0));
+					}
 					else {//針など32*32の範囲に収まるテクスチャ
 						gimmikTextures[idx](0, 0, 32, 32).draw(drawgimmikPos.x, drawgimmikPos.y).drawFrame(
 							1.0, placedgimmikCount == listBoxPlacedGimmiks.selectedItemIndex ? ColorF(1.0, 0.0, 0.0, 1.0) : ColorF(0.0, 0.0));
@@ -619,7 +628,7 @@ void Main()
 					DrawTileCursor();
 					break;
 				case 1: // ギミックモードのときはそれ自体を描画
-					DrawGimmikCursor(highlightPos, gimmikTextures[*listBoxGimmiks.selectedItemIndex]);
+					DrawGimmikCursor(highlightPos, gimmikTextures[*listBoxGimmiks.selectedItemIndex], gimmikNames[*listBoxGimmiks.selectedItemIndex] != U"罠りんご");
 					break;
 			}
 		}
@@ -685,7 +694,7 @@ void Main()
 				}
 
 				// === id入力GUI ===
-				if (placedGimmiks[idx].name == U"罠針_上" || placedGimmiks[idx].name == U"罠針_左" || placedGimmiks[idx].name == U"罠針_下" || placedGimmiks[idx].name == U"罠針_右") {
+				if (placedGimmiks[idx].name == U"罠針_上" || placedGimmiks[idx].name == U"罠針_左" || placedGimmiks[idx].name == U"罠針_下" || placedGimmiks[idx].name == U"罠針_右" || placedGimmiks[idx].name == U"罠りんご") {
 					FontAsset(U"Font")(U"id : ").draw(baseJsonValueUIPos.x, 390);
 					FontAsset(U"Font")(U"角度 : ").draw(baseJsonValueUIPos.x, 430);
 					FontAsset(U"Font")(U"速度 : ").draw(baseJsonValueUIPos.x, 470);

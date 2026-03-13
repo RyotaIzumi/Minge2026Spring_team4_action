@@ -208,6 +208,6 @@ namespace Iwanna {
 
 	void TreeTrap::draw() const {
 		TextureAsset(textureName).scaled(textureScale).drawAt(pos);
-		hitBox->draw(Palette::Pink);
+		//hitBox->draw(Palette::Pink);
 	}
 }
