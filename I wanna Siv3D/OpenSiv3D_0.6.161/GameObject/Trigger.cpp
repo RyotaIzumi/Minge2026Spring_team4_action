@@ -12,7 +12,7 @@ namespace Iwanna {
 	void Trigger::update() {
 	}
 	void Trigger::draw() const {
-		//hitBox->draw(Palette::Pink);
+		hitBox->draw(Palette::Pink);
 	}
 	void Trigger::onCollision(GameObject& other) {
 	}

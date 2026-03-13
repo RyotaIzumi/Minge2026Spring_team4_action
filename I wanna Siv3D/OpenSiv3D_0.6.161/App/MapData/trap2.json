@@ -1,8 +1,20 @@
 ﻿[
   {
+    "Gimmiks": [
+      {
+        "gimmikName": "罠トリガー",
+        "gimmikPos": [
+          416.0,
+          192.0
+        ],
+        "value1": 1,
+        "value2": 1.0,
+        "value3": 4.0
+      }
+    ],
     "startPlayerPos": [
-      80.0,
-      80.0
+      544.0,
+      16.0
     ]
   }
 ]

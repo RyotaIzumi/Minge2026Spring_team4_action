@@ -23,6 +23,7 @@ namespace Iwanna {
 		Array<std::shared_ptr<Trigger>> triggers;
 		Array<std::shared_ptr<SavePoint>> savePoints;
 		Array<std::shared_ptr<SpecialTrap>> specialTraps;
+		Array<std::shared_ptr<SpecialTrap>> specialBackTraps;//↑と違い、背景側のレイヤー配置用
 		Array<std::shared_ptr<Blood>> bloods;
 	};
 

@@ -164,4 +164,50 @@ namespace Iwanna {
 		TextureAsset(textureName).scaled(textureScale).drawAt(pos);
 		//hitBox->draw(Palette::Pink);
 	}
+
+	// ----- ツリートラップ -----
+	TreeTrap::TreeTrap(Vec2 startPos, int32 id) : SpecialTrap(startPos, id) {
+		textureName = U"treeTrap";
+		textureScale = 1.0;
+		textureAlpha = 1.0;
+		
+		hitboxPos = {pos.x,pos.y - 32};
+		hitBox = std::make_shared<CircleHitBox>(hitboxPos, 50);
+		hitBox->setPos(hitboxPos);//当たり判定の位置をテクスチャの中心に調整
+		canPlayerKill = false;
+		trapStep = 0;
+		basePos = pos;
+	}
+
+	void TreeTrap::trapUpdate() {
+		switch (trapStep) {
+		case 0:
+			if (trapID == nowTrapID) {
+				canPlayerKill = true;
+				isActivated = true;
+				moveTimer.restart();
+				trapStep++;
+			}
+			break;
+		case 1://下降
+			pos.y = basePos.y + moveRange * moveTimer.progress0_1();
+			if (moveTimer.reachedZero()) {
+				basePos = pos;
+				trapStep++;
+			}
+			break;
+		case 2://終了
+			pos.y = -10000;
+			canPlayerKill = false;
+			break;
+		}
+
+		hitboxPos = { pos.x,pos.y - 32 };
+		hitBox->setPos(hitboxPos);
+	}
+
+	void TreeTrap::draw() const {
+		TextureAsset(textureName).scaled(textureScale).drawAt(pos);
+		hitBox->draw(Palette::Pink);
+	}
 }

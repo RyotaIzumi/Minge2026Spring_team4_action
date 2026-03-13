@@ -19,12 +19,13 @@ namespace Iwanna {
 		gameObjects.triggers.clear();
 		gameObjects.savePoints.clear();
 		gameObjects.specialTraps.clear();
+		gameObjects.specialBackTraps.clear();
 		gameObjects.bloods.clear();
 
 		// 一部変数の初期化
 		isGenerateBloods = false;
 
-		loadGameObjects(U"trap1");
+		loadGameObjects(U"trap2");
 	}
 
 	void StageManager::loadGameObjects(String fileName) {
@@ -135,7 +136,14 @@ namespace Iwanna {
 							}
 						}
 						if (gimmikValue1 == 13 && gimmikName == U"罠トリガー") {
-							gameObjects.specialTraps << std::make_shared<SteamTrap>(Vec2{ 688,670 }, static_cast<int32>(gimmikValue1));
+							gameObjects.specialTraps << std::make_shared<WarningWindowTrap>(Vec2{ 688,670 }, static_cast<int32>(gimmikValue1));
+						}
+					}
+
+					//罠マップ2マップ目
+					if (fileName == U"trap2") {
+						if (gimmikValue1 == 1 && gimmikName == U"罠トリガー") {
+							gameObjects.specialBackTraps << std::make_shared<TreeTrap>(Vec2{ 400,80 }, static_cast<int32>(gimmikValue1));
 						}
 					}
 
@@ -169,6 +177,7 @@ namespace Iwanna {
 			auto& triggers = gameObjects.triggers;
 			auto& savePoints = gameObjects.savePoints;
 			auto& specialTraps = gameObjects.specialTraps;
+			auto& specialBackTraps = gameObjects.specialBackTraps;
 			auto& bloods = gameObjects.bloods;
 
 			player->update();
@@ -232,12 +241,18 @@ namespace Iwanna {
 				st->setNowTrapID(latestActivatedTriggerID);
 				stockLargeNearGameObjects.add(st.get());
 			}
+			for (auto& st : specialBackTraps) {
+				st->update();
+				st->setNowTrapID(latestActivatedTriggerID);
+				stockLargeNearGameObjects.add(st.get());
+			}
 
 			for (auto& b : bullets) {
 				b->update();
 			}
 			for (auto& c : cherries) {
 				c->update();
+				if (c->isTrap)c->trapUpdate(latestActivatedTriggerID);
 				stockNearGameObjects.add(c.get());
 			}
 			for (auto& s : savePoints) {
@@ -331,6 +346,8 @@ namespace Iwanna {
 		camera.update(); {
 			const auto t = camera.createTransformer();
 
+			//特殊罠描画
+			for (auto st : gameObjects.specialBackTraps) st->draw();
 			//ブロック描画
 			for (auto b : gameObjects.blocks) b->draw();
 			//針描画

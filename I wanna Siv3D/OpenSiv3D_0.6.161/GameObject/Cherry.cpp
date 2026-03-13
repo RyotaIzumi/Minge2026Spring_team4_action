@@ -11,6 +11,7 @@ namespace Iwanna {
 		canPlayerKill = true;
 		isDelete = false;
 		isOutOfScreen = false;
+		isTrap = false;
 
 		speed = 0;
 		dir = 0;
@@ -28,6 +29,9 @@ namespace Iwanna {
 		}
 		// 当たり判定位置更新
 		hitBox->setPos(pos);
+	}
+
+	void Cherry::trapUpdate(int32 id) {
 	}
 
 	void Cherry::draw() const {
@@ -57,5 +61,41 @@ namespace Iwanna {
 	}
 
 	void Cherry::onCollision(GameObject& other) {
+	}
+
+	CherryTrap::CherryTrap(Vec2 startPos, int32 dir, int32 id, double direction, double speed) : trapID(id), direction(direction), speed(speed) {
+		pos = startPos;
+		this->dir = dir;
+		hspeed = 0;
+		vspeed = 0;
+		isTrap = true;
+	}
+
+	void CherryTrap::trapUpdate(int32 id) {
+		checkOutOfScreen();
+		if (trapID == id) {
+			isTrapActived = true;
+		}
+
+		if (isTrapActived) {
+			calculateSpeed();
+			pos.x += hspeed;
+			pos.y += vspeed;
+			hitBox->setPos(pos);
+		}
+	}
+
+	//speedとdirからhspeedとvspeedを計算
+	void CherryTrap::calculateSpeed() {
+		//ラジアンに変換
+		double rad = Math::ToRadians(direction);
+
+		hspeed = speed * Math::Cos(rad);
+		vspeed = -speed * Math::Sin(rad);
+	}
+
+	//罠のIDを取得
+	int32 CherryTrap::getTrapID() const {
+		return trapID;
 	}
 }

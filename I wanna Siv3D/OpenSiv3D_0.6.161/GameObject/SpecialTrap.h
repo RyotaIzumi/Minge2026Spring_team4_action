@@ -54,4 +54,16 @@ namespace Iwanna {
 		void trapUpdate() override;
 		void draw() const override;
 	};
+
+	class TreeTrap : public SpecialTrap {
+	private:
+		Timer moveTimer{ 2s };
+		double moveRange = 1000;
+		Vec2 basePos;
+		Vec2 hitboxPos;
+	public:
+		TreeTrap(Vec2 startPos, int32 id);
+		void trapUpdate() override;
+		void draw() const override;
+	};
 }
