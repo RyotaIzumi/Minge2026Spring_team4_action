@@ -10,7 +10,8 @@ namespace Iwanna {
 		Normal,
 		Hide,
 		Fake,
-		ShootThrough
+		ShootThrough,
+		Break
 	};
 
 	class Block : public GameObject {
@@ -54,5 +55,20 @@ namespace Iwanna {
 		ShootTroughBlock(String name, Vec2 startPos);
 		void draw() const override;
 		void onCollision(GameObject& other) override;
+	};
+
+	class BreakBlock : public Block {
+	private:
+		bool isBreak;
+		double blockAlpha = 1.0;
+		int32 triggerID = 0;
+	public:
+		BreakBlock(String name, Vec2 startPos, int32 id);
+		void update() override;
+		void draw() const override;
+		void onCollision(GameObject& other) override;
+		bool getIsBreak() const;
+		void setIsBreak(bool hidden);
+		int32 getID();
 	};
 }

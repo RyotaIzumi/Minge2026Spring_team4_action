@@ -149,6 +149,9 @@ namespace Iwanna {
 						if (gimmikValue1 == 1 && gimmikName == U"罠トリガー") {
 							gameObjects.specialBackTraps << std::make_shared<TreeTrap>(Vec2{ 400,80 }, static_cast<int32>(gimmikValue1));
 						}
+						if (gimmikValue1 == 50 && gimmikName == U"罠ブロック") {
+							gameObjects.blocks << std::make_shared<BreakBlock>(U"sprBlock_low3",gimmikParsePos, static_cast<int32>(gimmikValue1));
+						}
 					}
 
 					// ギミックの種類に応じてオブジェクトを生成

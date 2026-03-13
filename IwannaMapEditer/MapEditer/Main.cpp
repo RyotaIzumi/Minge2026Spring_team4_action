@@ -130,7 +130,7 @@ void Main()
 	size_t autoTileIndex = 0;
 
 	// 敵の名前配列（ListBox と一致させる）
-	const Array<String> gimmikNames = { U"罠針_上", U"罠針_左", U"罠針_下",U"罠針_右", U"罠トリガー", U"罠りんご"};
+	const Array<String> gimmikNames = { U"罠針_上", U"罠針_左", U"罠針_下",U"罠針_右", U"罠トリガー", U"罠りんご",U"罠ブロック"};
 
 	//敵の準備
 	ListBoxState listBoxGimmiks{
@@ -152,6 +152,7 @@ void Main()
 		Texture{ gimmikPath + U"spikeTrapRight.png" },
 		Texture{ gimmikPath + U"trapTrigger.png" },
 		Texture{ gimmikPath + U"trapCherry.png" },
+		Texture{ gimmikPath + U"trapBlock.png" },
 	};
 
 	// --- 敵情報構造体 ---
@@ -705,6 +706,11 @@ void Main()
 					FontAsset(U"Font")(U"id : ").draw(baseJsonValueUIPos.x, 390);
 					FontAsset(U"Font")(U"x scale : ").draw(baseJsonValueUIPos.x, 430);
 					FontAsset(U"Font")(U"y scale : ").draw(baseJsonValueUIPos.x, 470);
+				}
+				else if (placedGimmiks[idx].name == U"罠ブロック") {
+					FontAsset(U"Font")(U"id : ").draw(baseJsonValueUIPos.x, 390);
+					FontAsset(U"Font")(U"").draw(baseJsonValueUIPos.x, 430);
+					FontAsset(U"Font")(U"").draw(baseJsonValueUIPos.x, 470);
 				}
 
 				static Optional<size_t> prevIdx = none;

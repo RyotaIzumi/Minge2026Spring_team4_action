@@ -92,4 +92,43 @@ namespace Iwanna {
 
 	void ShootTroughBlock::onCollision(GameObject& other) {
 	}
+
+	// ----- ギミックなどにより壊れるブロック ----- //
+	BreakBlock::BreakBlock(String name, Vec2 startPos, int32 id) : Block(name, startPos) {
+		textureName = name;
+		triggerID = id;
+		//GameObject.hの値初期化
+		pos = { startPos.x * side, startPos.y * side };
+		hitBox = std::make_shared<RectHitBox>(pos, SizeF{ side,side });
+		type = ObjectType::Block;
+		blockType = BlockType::Break;
+		isBreak = false;
+		canPlayerKill = false;
+	}
+
+	void BreakBlock::update() {
+		if (isBreak) {
+			blockAlpha = 0.0;
+		}
+	}
+
+	void BreakBlock::draw() const {
+		//hitBox->draw(Palette::Gray);
+		TextureAsset(textureName).draw(pos, ColorF(1.0, blockAlpha));
+	}
+
+	void BreakBlock::onCollision(GameObject& other) {
+	}
+
+	bool BreakBlock::getIsBreak() const {
+		return isBreak;
+	}
+
+	void BreakBlock::setIsBreak(bool hidden) {
+		isBreak = hidden;
+	}
+
+	int32 BreakBlock::getID() {
+		return triggerID;
+	}
 }
