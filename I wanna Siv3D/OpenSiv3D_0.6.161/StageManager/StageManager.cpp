@@ -146,7 +146,7 @@ namespace Iwanna {
 
 					//罠マップ2マップ目
 					if (fileName == U"trap2") {
-						if (gimmikValue1 == 1 && gimmikName == U"罠トリガー") {
+						if (gimmikValue1 == 40 && gimmikName == U"罠トリガー") {
 							gameObjects.specialBackTraps << std::make_shared<TreeTrap>(Vec2{ 400,80 }, static_cast<int32>(gimmikValue1));
 						}
 						if (gimmikValue1 == 50 && gimmikName == U"罠ブロック") {
@@ -228,11 +228,6 @@ namespace Iwanna {
 			stockNearGameObjects.add(player.get());
 			stockLargeNearGameObjects.add(player.get());
 
-			for (auto& b : blocks) {
-				stockNearGameObjects.add(b.get());
-				stockBulletsNearGameObjects.add(b.get());
-			}
-
 			// トリガーの更新と、最新の起動トリガーIDの取得
 			int32 latestActivatedTriggerID = -1;
 			for (auto& t : triggers) {
@@ -241,6 +236,14 @@ namespace Iwanna {
 				}
 				stockLargeNearGameObjects.add(t.get());
 			}
+
+			// 対ブロック
+			for (auto& b : blocks) {
+				stockNearGameObjects.add(b.get());
+				stockBulletsNearGameObjects.add(b.get());
+				if (b->isTrap)b->trapUpdate(latestActivatedTriggerID);
+			}
+
 			// 針の更新と、起動しているトリガーIDの反映
 			for (auto& s : spikes) {
 				s->trapUpdate(latestActivatedTriggerID);

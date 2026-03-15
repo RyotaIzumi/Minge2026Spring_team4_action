@@ -22,7 +22,10 @@ namespace Iwanna {
 		Block(String name, Vec2 startPos);
 		BlockType blockType = BlockType::Normal;
 
+		bool isTrap = false;//罠用かどうか
+
 		void update() override;
+		virtual void trapUpdate(int32 id);
 		void draw() const override;
 		void onCollision(GameObject& other) override;
 	};
@@ -65,6 +68,7 @@ namespace Iwanna {
 	public:
 		BreakBlock(String name, Vec2 startPos, int32 id);
 		void update() override;
+		void trapUpdate(int32 id) override;
 		void draw() const override;
 		void onCollision(GameObject& other) override;
 		bool getIsBreak() const;

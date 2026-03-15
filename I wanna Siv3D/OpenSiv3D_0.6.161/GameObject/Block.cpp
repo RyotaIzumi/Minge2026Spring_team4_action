@@ -12,6 +12,8 @@ namespace Iwanna {
 	}
 	void Block::update() {
 	}
+	void Block::trapUpdate(int32 id) {
+	}
 	void Block::draw() const {
 		//hitBox->draw(Palette::Gray);
 		TextureAsset(textureName).draw(pos);
@@ -103,10 +105,18 @@ namespace Iwanna {
 		type = ObjectType::Block;
 		blockType = BlockType::Break;
 		isBreak = false;
+		isTrap = true;
 		canPlayerKill = false;
 	}
 
 	void BreakBlock::update() {
+	}
+
+	void BreakBlock::trapUpdate(int32 id) {
+		if (triggerID == id) {
+			isBreak = true;
+		}
+
 		if (isBreak) {
 			blockAlpha = 0.0;
 		}
