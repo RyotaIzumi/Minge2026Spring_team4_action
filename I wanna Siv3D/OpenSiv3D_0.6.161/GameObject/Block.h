@@ -22,7 +22,7 @@ namespace Iwanna {
 		Block(String name, Vec2 startPos);
 		BlockType blockType = BlockType::Normal;
 
-		bool isTrap = false;//罠用かどうか
+		bool isTriggerTrap = false;//トリガーによる罠用かどうか
 
 		void update() override;
 		virtual void trapUpdate(int32 id);

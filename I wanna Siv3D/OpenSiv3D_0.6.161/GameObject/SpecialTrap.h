@@ -66,4 +66,38 @@ namespace Iwanna {
 		void trapUpdate() override;
 		void draw() const override;
 	};
+
+	class TitleTrap : public SpecialTrap {
+	private:
+		Timer moveTimer{ 3s };
+		double moveRange = 1500;
+		Vec2 basePos;
+	public:
+		TitleTrap(Vec2 startPos, int32 id);
+		void trapUpdate() override;
+		void draw() const override;
+	};
+
+	class TitleTrap2 : public SpecialTrap {
+	private:
+		Timer moveTimer{ 7.5s };
+		double moveRange = 1500;
+		Vec2 basePos;
+	public:
+		TitleTrap2(Vec2 startPos, int32 id);
+		void trapUpdate() override;
+		void draw() const override;
+	};
+
+	class AdWindowTrap : public SpecialTrap {
+	private:
+		Timer scaleTimer{ 0.15s };
+		Vec2 deleteButtonPos;
+		bool isShowHideLine = false;
+		String holeText;
+	public:
+		AdWindowTrap(Vec2 startPos, int32 id);
+		void trapUpdate() override;
+		void draw() const override;
+	};
 }

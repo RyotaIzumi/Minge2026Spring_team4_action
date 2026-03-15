@@ -146,7 +146,20 @@ namespace Iwanna {
 
 					//罠マップ2マップ目
 					if (fileName == U"trap2") {
-						if (gimmikValue1 == 40 && gimmikName == U"罠トリガー") {
+						if (gimmikValue1 == 2 && gimmikName == U"罠トリガー") {
+							gameObjects.specialTraps << std::make_shared<TitleTrap>(Vec2{ 145,-32 }, static_cast<int32>(gimmikValue1));
+						}
+						if (gimmikValue1 == 3 && gimmikName == U"罠トリガー") {
+							gameObjects.specialTraps << std::make_shared<TitleTrap2>(Vec2{ 70,-32 }, static_cast<int32>(gimmikValue1));
+						}
+						if (gimmikValue1 == 4 && gimmikName == U"罠針_上") {
+							gameObjects.spikes << std::make_shared<SpikePathTrap>(gimmikParsePos, 0, static_cast<int32>(gimmikValue1), Vec2{ 0,-1 }, 0.1);
+							continue;
+						}
+						if (gimmikValue1 == 11 && gimmikName == U"罠トリガー") {
+							gameObjects.specialTraps << std::make_shared<AdWindowTrap>(Vec2{ 480,448 }, static_cast<int32>(gimmikValue1));
+						}
+						if (gimmikValue1 == 23 && gimmikName == U"罠トリガー") {
 							gameObjects.specialBackTraps << std::make_shared<TreeTrap>(Vec2{ 400,80 }, static_cast<int32>(gimmikValue1));
 						}
 						if (gimmikValue1 == 50 && gimmikName == U"罠ブロック") {
@@ -241,7 +254,7 @@ namespace Iwanna {
 			for (auto& b : blocks) {
 				stockNearGameObjects.add(b.get());
 				stockBulletsNearGameObjects.add(b.get());
-				if (b->isTrap)b->trapUpdate(latestActivatedTriggerID);
+				if (b->isTriggerTrap)b->trapUpdate(latestActivatedTriggerID);
 			}
 
 			// 針の更新と、起動しているトリガーIDの反映
@@ -363,10 +376,10 @@ namespace Iwanna {
 
 			//特殊罠描画
 			for (auto st : gameObjects.specialBackTraps) st->draw();
-			//ブロック描画
-			for (auto b : gameObjects.blocks) b->draw();
 			//針描画
 			for (auto s : gameObjects.spikes) s->draw();
+			//ブロック描画
+			for (auto b : gameObjects.blocks) b->draw();
 			//トリガー描画
 			for (auto t : gameObjects.triggers) t->draw();
 			//セーブポイント描画

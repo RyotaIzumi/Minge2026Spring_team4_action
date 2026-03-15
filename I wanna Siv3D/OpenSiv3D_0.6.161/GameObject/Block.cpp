@@ -105,7 +105,7 @@ namespace Iwanna {
 		type = ObjectType::Block;
 		blockType = BlockType::Break;
 		isBreak = false;
-		isTrap = true;
+		isTriggerTrap = true;
 		canPlayerKill = false;
 	}
 

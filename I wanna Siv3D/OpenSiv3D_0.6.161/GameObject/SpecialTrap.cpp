@@ -210,4 +210,172 @@ namespace Iwanna {
 		TextureAsset(textureName).scaled(textureScale).drawAt(pos);
 		//hitBox->draw(Palette::Pink);
 	}
+
+	// ----- タイトルトラップ -----
+	TitleTrap::TitleTrap(Vec2 startPos, int32 id) : SpecialTrap(startPos, id) {
+		textureName = U"";
+		textureScale = 1.0;
+		textureAlpha = 1.0;
+		textureSize = Vec2{ 70,16 };
+
+		hitBox = std::make_shared<RectHitBox>(pos, textureSize);
+		hitBox->setPos(pos);//当たり判定の位置をテクスチャの中心に調整
+		canPlayerKill = false;
+		trapStep = 0;
+		basePos = pos;
+	}
+
+	void TitleTrap::trapUpdate() {
+		switch (trapStep) {
+		case 0:
+			if (trapID == nowTrapID) {
+				Window::SetTitle(U"I wanna Siv3D                       ");
+
+				canPlayerKill = true;
+				isActivated = true;
+				moveTimer.restart();
+				trapStep++;
+			}
+			break;
+		case 1://下降
+			pos.y = basePos.y + moveRange * moveTimer.progress0_1();
+			if (moveTimer.reachedZero()) {
+				basePos = pos;
+				trapStep++;
+			}
+			break;
+		case 2://終了
+			pos.y = -10000;
+			canPlayerKill = false;
+			break;
+		}
+
+		hitBox->setPos(pos);
+	}
+
+	void TitleTrap::draw() const {
+		FontAsset(U"TitleTrap")(U"(Debug Build)").drawAt(pos,ColorF(Palette::Black));
+		//hitBox->draw(Palette::Pink);
+	}
+
+	// ----- タイトルトラップ その2 -----
+	TitleTrap2::TitleTrap2(Vec2 startPos, int32 id) : SpecialTrap(startPos, id) {
+		textureName = U"";
+		textureScale = 1.0;
+		textureAlpha = 1.0;
+		textureSize = Vec2{ 70,16 };
+
+		hitBox = std::make_shared<RectHitBox>(pos, textureSize);
+		hitBox->setPos(pos);//当たり判定の位置をテクスチャの中心に調整
+		canPlayerKill = false;
+		trapStep = 0;
+		basePos = pos;
+	}
+
+	void TitleTrap2::trapUpdate() {
+		switch (trapStep) {
+		case 0:
+			if (trapID == nowTrapID) {
+				Window::SetTitle(U"☻                                          ");
+
+				canPlayerKill = true;
+				isActivated = true;
+				moveTimer.restart();
+				trapStep++;
+			}
+			break;
+		case 1://下降
+			pos.y = basePos.y + moveRange * moveTimer.progress0_1();
+			if (moveTimer.reachedZero()) {
+				basePos = pos;
+				trapStep++;
+			}
+			break;
+		case 2://終了
+			pos.y = -10000;
+			canPlayerKill = false;
+			break;
+		}
+
+		hitBox->setPos(pos);
+	}
+
+	void TitleTrap2::draw() const {
+		FontAsset(U"TitleTrap")(U"I wanna Siv3D").drawAt(pos, ColorF(Palette::Black));
+		//hitBox->draw(Palette::Pink);
+	}
+
+	// ----- 広告ウィンドウトラップ -----
+	AdWindowTrap::AdWindowTrap(Vec2 startPos, int32 id) : SpecialTrap(startPos, id) {
+		textureName = U"adTrap";
+		textureScale = 0.0;
+		textureAlpha = 0.0;
+		textureSize = Vec2{ 256,320 };
+		hitBox = std::make_shared<RectHitBox>(pos, SizeF{ textureSize });
+		hitBox->setPos(pos);//当たり判定の位置をテクスチャの中心に調整
+		canPlayerKill = false;
+	}
+
+	void AdWindowTrap::trapUpdate() {
+		switch (trapStep) {
+		case 0:
+			if (trapID == nowTrapID) {
+				isActivated = true;
+				scaleTimer.restart();
+				trapStep++;
+			}
+			break;
+		case 1://テクスチャ出現演出
+			textureScale = 0.7 + 0.3 * scaleTimer.progress0_1();
+			textureAlpha = scaleTimer.progress0_1();
+			if (scaleTimer.reachedZero()) {
+				//4つの地点からランダムで座標を決定
+				Array<Vec2>randomPos = { {16,16},{784,16}, {16,592},{784,592} };
+				deleteButtonPos = randomPos.choice();
+
+				trapStep++;
+			}
+			break;
+		case 2://xを押すまで出現
+			if (SimpleGUI::ButtonAt(U"x",deleteButtonPos,20,true)) {
+				scaleTimer.restart();
+				deleteButtonPos = {-1000,-1000};
+				isShowHideLine = true;
+				trapStep++;
+			}
+			break;
+		case 3://windowを消す
+			textureScale = 1.0 - 0.3 * scaleTimer.progress0_1();
+			textureAlpha = scaleTimer.progress1_0();
+			if (scaleTimer.reachedZero()) {
+				trapStep++;
+			}
+			break;
+		case 4:
+
+			break;
+		case 5://終了
+			canPlayerKill = false;
+			isActivated = false;
+			textureScale = 0.0;
+			textureAlpha = 0.0;
+			pos.y = -10000;
+		}
+
+		holeText = isShowHideLine ? U"忘れてて草" : U"wwwwwwwww";
+
+		hitBox->setPos(pos);
+	}
+
+	void AdWindowTrap::draw() const {
+		//床隠し
+		if (isShowHideLine) TextureAsset(U"hideLine").draw(352,576);
+
+		TextureAsset(textureName).scaled(textureScale).drawAt(pos, ColorF(1.0, isActivated ? textureAlpha : 0.0));
+		//hitBox->draw(Palette::Pink);
+
+		FontAsset(U"Big")(holeText).drawAt({400,1100},ColorF(Palette::Black));
+
+		SimpleGUI::ButtonAt(U"x", deleteButtonPos,20,false);
+	}
 }
