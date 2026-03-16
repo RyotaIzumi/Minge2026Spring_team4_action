@@ -6,18 +6,41 @@
 #include "GameObject.h"
 
 namespace Iwanna {
+	enum class SaveType {
+		Normal,
+		MoveTrap
+	};
+
 	class SavePoint : public GameObject {
-	private:
+	protected:
 		int32 side = 32;
 		bool isSaving = false;
 		Timer saveIntervalTimer{ SecondsF{ 1.0 }, StartImmediately::No };
+		//罠関連
+		bool isTrap = false;
+		int32 trapID = 0;
 	public:
 		SavePoint(Vec2 startPos);
 
+		SaveType saveType;
+
 		void update() override;
+		virtual void trapUpdate(int32 id);
 		void draw() const override;
 		void saved();
 		std::function<void()> onSavedCallback;
 		void onCollision(GameObject& other) override;
+		bool getIsTrap() const;
+		int32 getTrapID() const;
+	};
+
+	class SaveMoveTrap : public SavePoint {
+	private:
+		bool isStartTrap;
+	public:
+		SaveMoveTrap(Vec2 startPos, int32 id);
+
+		void trapUpdate(int32 id) override;
+		bool getIsStartTrap() const;
 	};
 }

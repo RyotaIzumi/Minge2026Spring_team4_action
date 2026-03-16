@@ -50,6 +50,7 @@ namespace Iwanna {
 		registerTexture(U"steamTrap", OtherPath + U"steamTrap.png");
 		registerTexture(U"adTrap", OtherPath + U"adTrap.png");
 		registerTexture(U"treeTrap", OtherPath + U"tree.png");
+		registerTexture(U"transParentTreeTrap", OtherPath + U"transParentTree.png");
 		registerTexture(U"sprGAMEOVER", OtherPath + U"sprGAMEOVER.png");
 		registerTexture(U"hideLine", OtherPath + U"hideLine.png");
 	}

@@ -50,7 +50,15 @@ namespace Iwanna {
 		// セーブポイント衝突
 		if (this->intersects(other) && other.type == ObjectType::SavePoint) {
 			auto* savePoint = dynamic_cast<SavePoint*>(&other);
-			savePoint->saved();
+			switch (savePoint->saveType) {
+			case SaveType::Normal:
+				savePoint->saved();
+				break;
+			case SaveType::MoveTrap:
+				auto* s = dynamic_cast<SaveMoveTrap*>(&other);
+				if (!s->getIsStartTrap())s->saved();
+				break;
+			}
 		}
 	}
 

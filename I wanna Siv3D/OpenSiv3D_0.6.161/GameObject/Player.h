@@ -22,6 +22,8 @@ namespace Iwanna {
 		bool isDead = false; //死亡状態かどうか
 		bool isGenerateBullet = false; //弾生成フラグ
 
+		int32 nowTrapID = 0;
+
 		//player当たり判定サイズ
 		SizeF hitBoxSize{ 11,21 };
 
@@ -61,5 +63,7 @@ namespace Iwanna {
 		void setIsMuteki(bool value);
 		bool getIsMuteki() const;
 		void setStopOrPlayAnimation(bool isPlay);
+
+		void setNowTrapID(int32 id);
 	};
 }

@@ -4,16 +4,6 @@
       {
         "gimmikName": "罠りんご",
         "gimmikPos": [
-          410.0,
-          32.0
-        ],
-        "value1": 22,
-        "value2": 270.0,
-        "value3": 12.0
-      },
-      {
-        "gimmikName": "罠りんご",
-        "gimmikPos": [
           384.0,
           64.0
         ],
@@ -159,7 +149,7 @@
         ],
         "value1": 21,
         "value2": 90.0,
-        "value3": 12.0
+        "value3": 10.0
       },
       {
         "gimmikName": "罠トリガー",
@@ -168,8 +158,18 @@
           192.0
         ],
         "value1": 22,
-        "value2": 0.1,
+        "value2": 0.2,
         "value3": 4.0
+      },
+      {
+        "gimmikName": "罠りんご",
+        "gimmikPos": [
+          400.0,
+          32.0
+        ],
+        "value1": 22,
+        "value2": 270.0,
+        "value3": 26.0
       },
       {
         "gimmikName": "前トリガー",
@@ -190,11 +190,51 @@
         "value1": 24,
         "value2": 0.5,
         "value3": 3.0
+      },
+      {
+        "gimmikName": "前トリガー",
+        "gimmikPos": [
+          448.0,
+          319.9
+        ],
+        "value1": 25,
+        "value2": 3.0,
+        "value3": 0.1
+      },
+      {
+        "gimmikName": "前トリガー",
+        "gimmikPos": [
+          416.0,
+          224.0
+        ],
+        "value1": 26,
+        "value2": 0.5,
+        "value3": 3.0
+      },
+      {
+        "gimmikName": "前トリガー",
+        "gimmikPos": [
+          448.0,
+          319.9
+        ],
+        "value1": 27,
+        "value2": 3.0,
+        "value3": 0.1
+      },
+      {
+        "gimmikName": "前トリガー",
+        "gimmikPos": [
+          384.0,
+          224.0
+        ],
+        "value1": 28,
+        "value2": 1.0,
+        "value3": 3.0
       }
     ],
     "startPlayerPos": [
-      144.0,
-      516.0
+      544.0,
+      316.0
     ]
   }
 ]

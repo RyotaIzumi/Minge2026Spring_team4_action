@@ -24,8 +24,11 @@ namespace Iwanna {
 		ObjectType type;
 		bool canPlayerKill = false;
 
+		//基礎パラメータ
 		double hspeed;
 		double vspeed;
+		double speed;
+		double direction;
 
 		virtual ~GameObject() = default;
 
@@ -40,6 +43,15 @@ namespace Iwanna {
 
 		bool intersects(const GameObject& other) const {
 			return hitBox->intersects(*other.hitBox);
+		}
+
+		//speedとdirectionからhspeedとvspeedを計算
+		void calculateSpeed() {
+			//ラジアンに変換
+			double rad = Math::ToRadians(direction);
+
+			hspeed = speed * Math::Cos(rad);
+			vspeed = -speed * Math::Sin(rad);
 		}
 
 		virtual void onCollision(GameObject& other) = 0;

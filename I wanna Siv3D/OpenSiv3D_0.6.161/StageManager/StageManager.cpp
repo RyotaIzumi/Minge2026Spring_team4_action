@@ -160,7 +160,13 @@ namespace Iwanna {
 							gameObjects.specialTraps << std::make_shared<AdWindowTrap>(Vec2{ 480,448 }, static_cast<int32>(gimmikValue1));
 						}
 						if (gimmikValue1 == 24 && gimmikName == U"前トリガー") {
-							gameObjects.specialBackTraps << std::make_shared<TreeTrap>(Vec2{ 400,80 }, static_cast<int32>(gimmikValue1));
+							gameObjects.specialBackTraps << std::make_shared<TreeTrap>(Vec2{ 400,80 }, static_cast<int32>(gimmikValue1), U"treeTrap");
+						}
+						if (gimmikValue1 == 26 && gimmikName == U"前トリガー") {
+							gameObjects.specialBackTraps << std::make_shared<TreeTrap>(Vec2{ 400,80 }, static_cast<int32>(gimmikValue1), U"transParentTreeTrap");
+						}
+						if (gimmikValue1 == 28 && gimmikName == U"前トリガー") {
+							gameObjects.savePoints << std::make_shared<SaveMoveTrap>(Vec2{ 384,384 }, static_cast<int32>(gimmikValue1));
 						}
 						if (gimmikValue1 == 50 && gimmikName == U"罠ブロック") {
 							gameObjects.blocks << std::make_shared<BreakBlock>(U"sprBlock_low3",gimmikParsePos, static_cast<int32>(gimmikValue1));
@@ -245,18 +251,14 @@ namespace Iwanna {
 			// トリガーの更新と、最新の起動トリガーIDの取得
 			int32 latestActivatedTriggerID = -1;
 			for (auto& t : triggers) {
-				if (!t->getCheckPrevID()) {
-					if (t->getIsActivated()) {
-						latestActivatedTriggerID = t->getTrapID();
-					}
-				}
-				else {// 直前のトリガーの起動有無により起動
-					if (t->getIsActivated() && latestActivatedTriggerID == t->getTrapID() - 1) {
-						latestActivatedTriggerID = t->getTrapID();
-					}
+				if (t->getIsActivated()) {
+					latestActivatedTriggerID = t->getTrapID();
 				}
 				stockLargeNearGameObjects.add(t.get());
 			}
+
+			//playerに現在の罠IDを渡す
+			player->setNowTrapID(latestActivatedTriggerID);
 
 			// 対ブロック
 			for (auto& b : blocks) {
@@ -293,9 +295,13 @@ namespace Iwanna {
 			}
 			for (auto& s : savePoints) {
 				s->update();
+				if (s->getIsTrap()) {
+					s->trapUpdate(latestActivatedTriggerID);
+					stockNearGameObjects.add(s.get());
+				}
 				s->onSavedCallback = [this]() {
 					saveGame();
-					};
+				};
 				stockBulletsNearGameObjects.add(s.get());
 			}
 
@@ -382,8 +388,10 @@ namespace Iwanna {
 		camera.update(); {
 			const auto t = camera.createTransformer();
 
-			//特殊罠描画
-			for (auto st : gameObjects.specialBackTraps) st->draw();
+			//特殊罠描画(後ろ側)
+			for (auto it = gameObjects.specialBackTraps.rbegin(); it != gameObjects.specialBackTraps.rend(); ++it) {
+				(*it)->draw();
+			}
 			//針描画
 			for (auto s : gameObjects.spikes) s->draw();
 			//ブロック描画

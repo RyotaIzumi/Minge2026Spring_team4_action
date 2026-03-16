@@ -14,7 +14,7 @@ namespace Iwanna {
 		isTrap = false;
 
 		speed = 0;
-		dir = 0;
+		direction = 0;
 	}
 
 	void Cherry::update() {
@@ -39,15 +39,6 @@ namespace Iwanna {
 		//hitBox->draw(Palette::Blue);//判定の可視化
 	}
 
-	//speedとdirからhspeedとvspeedを計算
-	void Cherry::calculateSpeed() {
-		//ラジアンに変換
-		double rad = Math::ToRadians(dir);
-
-		hspeed = speed * Math::Cos(rad);
-		vspeed = -speed * Math::Sin(rad);
-	}
-
 	//画面外判定
 	void Cherry::checkOutOfScreen() {
 		const int32 excess = hitBoxSize * 2;//画面端からの余白
@@ -63,10 +54,14 @@ namespace Iwanna {
 	void Cherry::onCollision(GameObject& other) {
 	}
 
-	CherryTrap::CherryTrap(Vec2 startPos, int32 id, double direction, double speed) : trapID(id), direction(direction), speed(speed) {
+	CherryTrap::CherryTrap(Vec2 startPos, int32 id, double dir, double spd) : trapID(id) {
 		pos = startPos;
+		direction = dir;
+		trapSpeed = spd;
+		speed = 0;
 		hspeed = 0;
 		vspeed = 0;
+
 		isTrap = true;
 	}
 
@@ -77,20 +72,8 @@ namespace Iwanna {
 		}
 
 		if (isTrapActived) {
-			calculateSpeed();
-			pos.x += hspeed;
-			pos.y += vspeed;
-			hitBox->setPos(pos);
+			speed = trapSpeed;
 		}
-	}
-
-	//speedとdirからhspeedとvspeedを計算
-	void CherryTrap::calculateSpeed() {
-		//ラジアンに変換
-		double rad = Math::ToRadians(direction);
-
-		hspeed = speed * Math::Cos(rad);
-		vspeed = -speed * Math::Sin(rad);
 	}
 
 	//罠のIDを取得

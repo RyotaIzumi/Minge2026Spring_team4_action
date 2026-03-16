@@ -232,7 +232,10 @@ namespace Iwanna{
 		if (other.type == ObjectType::Trigger) {
 			if (this->intersects(other)) {
 				auto* trigger = dynamic_cast<Trigger*>(&other);
-				trigger->triggerActivate();
+				if(!trigger->getCheckPrevID())trigger->triggerActivate();
+				else {
+					if(trigger->getTrapID() - 1 == nowTrapID)trigger->triggerActivate();
+				}
 			}
 		}
 	}
@@ -276,5 +279,10 @@ namespace Iwanna{
 	// true の場合は再生、false の場合は停止
 	void Player::setStopOrPlayAnimation(bool isPlay) {
 		spriteSystem.stopOrPlayAnimation(isPlay);
+	}
+
+	//ステージ上での現在の罠IDを取得する
+	void Player::setNowTrapID(int32 id) {
+		nowTrapID = id;
 	}
 }

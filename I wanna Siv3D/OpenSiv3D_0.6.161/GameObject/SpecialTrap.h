@@ -62,7 +62,7 @@ namespace Iwanna {
 		Vec2 basePos;
 		Vec2 hitboxPos;
 	public:
-		TreeTrap(Vec2 startPos, int32 id);
+		TreeTrap(Vec2 startPos, int32 id,String name);
 		void trapUpdate() override;
 		void draw() const override;
 	};

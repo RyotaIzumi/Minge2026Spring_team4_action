@@ -166,8 +166,8 @@ namespace Iwanna {
 	}
 
 	// ----- ツリートラップ -----
-	TreeTrap::TreeTrap(Vec2 startPos, int32 id) : SpecialTrap(startPos, id) {
-		textureName = U"treeTrap";
+	TreeTrap::TreeTrap(Vec2 startPos, int32 id, String name) : SpecialTrap(startPos, id) {
+		textureName = name;
 		textureScale = 1.0;
 		textureAlpha = 1.0;
 		
