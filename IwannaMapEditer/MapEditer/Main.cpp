@@ -130,7 +130,7 @@ void Main()
 	size_t autoTileIndex = 0;
 
 	// 敵の名前配列（ListBox と一致させる）
-	const Array<String> gimmikNames = { U"罠針_上", U"罠針_左", U"罠針_下",U"罠針_右", U"罠トリガー", U"罠りんご",U"罠ブロック"};
+	const Array<String> gimmikNames = { U"罠針_上", U"罠針_左", U"罠針_下",U"罠針_右", U"罠トリガー", U"罠りんご",U"罠ブロック",U"前トリガー"};
 
 	//敵の準備
 	ListBoxState listBoxGimmiks{
@@ -153,6 +153,7 @@ void Main()
 		Texture{ gimmikPath + U"trapTrigger.png" },
 		Texture{ gimmikPath + U"trapCherry.png" },
 		Texture{ gimmikPath + U"trapBlock.png" },
+		Texture{ gimmikPath + U"trapTriggerPrev.png" },
 	};
 
 	// --- 敵情報構造体 ---
@@ -523,7 +524,7 @@ void Main()
 					GimmikInfo e;
 					e.name = gimmikNames[*listBoxGimmiks.selectedItemIndex]; // listBox の選択と同期
 					e.pos = Vec2{ worldPos };
-					if (e.name == U"罠トリガー") {
+					if (e.name == U"罠トリガー" || e.name == U"前トリガー") {
 						e.value1 = 0;
 						e.value2 = 1.0;
 						e.value3 = 1.0;
@@ -592,7 +593,7 @@ void Main()
 					(e.pos.y - (scrollY * tileSize)) + LayerOffset.y
 				};
 				if (0 <= drawgimmikPos.x && drawgimmikPos.x < 800) {
-					if (e.name == U"罠トリガー") {
+					if (e.name == U"罠トリガー" || e.name == U"前トリガー") {
 						gimmikTextures[idx](0, 0, 32, 32).scaled({e.value2,e.value3}).draw(drawgimmikPos.x, drawgimmikPos.y).drawFrame(
 							1.0, placedgimmikCount == listBoxPlacedGimmiks.selectedItemIndex ? ColorF(1.0, 0.0, 0.0, 1.0) : ColorF(0.0, 0.0));
 					}
@@ -702,7 +703,7 @@ void Main()
 					FontAsset(U"Font")(U"角度 : ").draw(baseJsonValueUIPos.x, 430);
 					FontAsset(U"Font")(U"速度 : ").draw(baseJsonValueUIPos.x, 470);
 				}
-				else if (placedGimmiks[idx].name == U"罠トリガー") {
+				else if (placedGimmiks[idx].name == U"罠トリガー" || placedGimmiks[idx].name == U"前トリガー") {
 					FontAsset(U"Font")(U"id : ").draw(baseJsonValueUIPos.x, 390);
 					FontAsset(U"Font")(U"x scale : ").draw(baseJsonValueUIPos.x, 430);
 					FontAsset(U"Font")(U"y scale : ").draw(baseJsonValueUIPos.x, 470);

@@ -159,7 +159,7 @@ namespace Iwanna {
 						if (gimmikValue1 == 11 && gimmikName == U"罠トリガー") {
 							gameObjects.specialTraps << std::make_shared<AdWindowTrap>(Vec2{ 480,448 }, static_cast<int32>(gimmikValue1));
 						}
-						if (gimmikValue1 == 23 && gimmikName == U"罠トリガー") {
+						if (gimmikValue1 == 24 && gimmikName == U"前トリガー") {
 							gameObjects.specialBackTraps << std::make_shared<TreeTrap>(Vec2{ 400,80 }, static_cast<int32>(gimmikValue1));
 						}
 						if (gimmikValue1 == 50 && gimmikName == U"罠ブロック") {
@@ -172,7 +172,8 @@ namespace Iwanna {
 					if (gimmikName == U"罠針_左") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikParsePos, 1, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
 					if (gimmikName == U"罠針_下") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikParsePos, 2, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
 					if (gimmikName == U"罠針_右") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikParsePos, 3, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
-					if (gimmikName == U"罠トリガー") gameObjects.triggers << std::make_shared<Trigger>(gimmikParsePos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
+					if (gimmikName == U"罠トリガー") gameObjects.triggers << std::make_shared<Trigger>(gimmikParsePos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3, false);
+					if (gimmikName == U"前トリガー") gameObjects.triggers << std::make_shared<Trigger>(gimmikParsePos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3, true);
 					if (gimmikName == U"罠りんご") gameObjects.cherries << std::make_shared<CherryTrap>(gimmikIntactPos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
 				}
 			}
@@ -244,8 +245,15 @@ namespace Iwanna {
 			// トリガーの更新と、最新の起動トリガーIDの取得
 			int32 latestActivatedTriggerID = -1;
 			for (auto& t : triggers) {
-				if (t->getIsActivated()) {
-					latestActivatedTriggerID = t->getTrapID();
+				if (!t->getCheckPrevID()) {
+					if (t->getIsActivated()) {
+						latestActivatedTriggerID = t->getTrapID();
+					}
+				}
+				else {// 直前のトリガーの起動有無により起動
+					if (t->getIsActivated() && latestActivatedTriggerID == t->getTrapID() - 1) {
+						latestActivatedTriggerID = t->getTrapID();
+					}
 				}
 				stockLargeNearGameObjects.add(t.get());
 			}

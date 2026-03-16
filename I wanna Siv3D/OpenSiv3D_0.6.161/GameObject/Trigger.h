@@ -10,8 +10,9 @@ namespace Iwanna {
 		int32 side = 32;
 		int32 trapID = 0;
 		bool isActivated = false;//トリガーが作動しているかどうか
+		bool checkPrevID = false;//ひとつ前のトリガーIDが起動している場合のみ自身を起動させる
 	public:
-		Trigger(Vec2 startPos, int32 id, double sizeX, double sizeY);
+		Trigger(Vec2 startPos, int32 id, double sizeX, double sizeY, bool checkPrevId);
 
 		void update() override;
 		void draw() const override;
@@ -20,6 +21,7 @@ namespace Iwanna {
 		// トリガーを作動させる
 		void triggerActivate();
 		bool getIsActivated() const;
+		bool getCheckPrevID() const;
 		int32 getTrapID() const;
 	};
 }
