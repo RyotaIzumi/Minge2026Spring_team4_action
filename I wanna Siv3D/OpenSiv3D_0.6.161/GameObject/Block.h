@@ -9,6 +9,7 @@ namespace Iwanna {
 	enum class BlockType {
 		Normal,
 		Hide,
+		ConditionalHide,
 		Fake,
 		ShootThrough,
 		Break
@@ -18,6 +19,7 @@ namespace Iwanna {
 	protected:
 		int32 side = 32;
 		String textureName = U"sprBlock";
+		bool hasCollide = true;
 	public:
 		Block(String name, Vec2 startPos);
 		BlockType blockType = BlockType::Normal;
@@ -28,6 +30,9 @@ namespace Iwanna {
 		virtual void trapUpdate(int32 id);
 		void draw() const override;
 		void onCollision(GameObject& other) override;
+
+		void setHasCollide(bool b);
+		bool getHasCollide() const;
 	};
 
 	class HideBlock : public Block {
@@ -39,6 +44,14 @@ namespace Iwanna {
 		void onCollision(GameObject& other) override;
 		bool getIsHidden() const;
 		void setIsHidden(bool hidden);
+	};
+
+	class ConditionalHideBlock : public HideBlock {
+	private:
+		int32 triggerID = 0;
+	public:
+		ConditionalHideBlock(String name, Vec2 startPos, int32 id);
+		void trapUpdate(int32 id) override;
 	};
 
 	class FakeBlock : public Block {

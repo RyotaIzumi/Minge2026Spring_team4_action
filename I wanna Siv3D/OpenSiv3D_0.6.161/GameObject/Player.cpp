@@ -3,7 +3,7 @@
 #include "../GameObject/Trigger.h"
 #include "../GameObject/Block.h"
 
-namespace Iwanna{
+namespace Iwanna {
 	Player::Player() {
 		frozen = false; //操作を受け付けるかどうか
 		frozen2 = false; //↑の予備
@@ -162,15 +162,23 @@ namespace Iwanna{
 						AudioAsset(Sound::BLOCKCHANGE).playOneShot();
 					}
 				}
+				else if (block->blockType == BlockType::ConditionalHide) {
+					auto* chBlock = dynamic_cast<ConditionalHideBlock*>(&other);
+					if (chBlock->getIsHidden() && chBlock->getHasCollide()) {
+						chBlock->setIsHidden(false);
+						AudioAsset(Sound::BLOCKCHANGE).playOneShot();
+					}
+				}
 				else if (block->blockType == BlockType::Fake) {
 					auto* fakeBlock = dynamic_cast<FakeBlock*>(&other);
 					if (!fakeBlock->getIsHidden()) {
 						fakeBlock->setIsHidden(true);
 						AudioAsset(Sound::BLOCKCHANGE).playOneShot();
 					}
-					return;
 				}
 			}
+
+			if (!block->getHasCollide())return;
 
 			// --- 以下通常のブロックとの衝突判定 ---
 

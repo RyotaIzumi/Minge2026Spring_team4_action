@@ -37,7 +37,7 @@ namespace Iwanna {
 		// ブロック、ミク衝突
 		if (other.type == ObjectType::Block) {
 			auto* block = dynamic_cast<Block*>(&other);
-			if (block->blockType != BlockType::ShootThrough) {
+			if (block->blockType != BlockType::ShootThrough && block->getHasCollide()) {
 				isDelete = true;
 			}
 		}

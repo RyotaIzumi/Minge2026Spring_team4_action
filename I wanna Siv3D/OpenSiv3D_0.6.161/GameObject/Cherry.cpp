@@ -63,6 +63,7 @@ namespace Iwanna {
 		vspeed = 0;
 
 		isTrap = true;
+		soundPlayOne = false;
 	}
 
 	void CherryTrap::trapUpdate(int32 id) {
@@ -73,6 +74,10 @@ namespace Iwanna {
 
 		if (isTrapActived) {
 			speed = trapSpeed;
+		}
+
+		if (!soundPlayOne) {
+			AudioAsset(U"")
 		}
 	}
 

@@ -34,6 +34,7 @@ namespace Iwanna {
 		int32 trapID = 0;
 		int32 trapSpeed;
 		bool isTrapActived = false;
+		bool soundPlayOne = false;
 	public:
 		CherryTrap(Vec2 startPos, int32 id, double direction, double speed);
 		void trapUpdate(int32 id) override;

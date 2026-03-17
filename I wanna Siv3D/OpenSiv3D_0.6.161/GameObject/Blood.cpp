@@ -1,6 +1,7 @@
 ﻿#include "Blood.h"
 #include "../Audio/AudioAsset.h"
 #include "../GameObject/SavePoint.h"
+#include "../GameObject/Block.h"
 
 namespace Iwanna {
 	Blood::Blood(Vec2& genePos, double dir) {
@@ -38,8 +39,9 @@ namespace Iwanna {
 
 	void Blood::onCollision(GameObject& other) {
 		// ブロック衝突
-		if (this->intersects(other) && other.type == ObjectType::Block) {
-			isStop = true;
+		if (this->intersects(other) && other.type == ObjectType::Block && !isStop) {
+			auto* block = dynamic_cast<Block*>(&other);
+			if(block->getHasCollide())isStop = true;
 		}
 	}
 

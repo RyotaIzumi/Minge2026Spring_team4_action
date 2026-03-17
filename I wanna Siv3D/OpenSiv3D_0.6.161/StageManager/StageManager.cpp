@@ -168,6 +168,9 @@ namespace Iwanna {
 						if (gimmikValue1 == 28 && gimmikName == U"前トリガー") {
 							gameObjects.savePoints << std::make_shared<SaveMoveTrap>(Vec2{ 384,384 }, static_cast<int32>(gimmikValue1));
 						}
+						if (gimmikValue1 == 29 && gimmikName == U"前トリガー") {
+							gameObjects.blocks << std::make_shared<ConditionalHideBlock>(U"sprBlock_low1", Vec2{ 416,224 }, static_cast<int32>(gimmikValue1));
+						}
 						if (gimmikValue1 == 50 && gimmikName == U"罠ブロック") {
 							gameObjects.blocks << std::make_shared<BreakBlock>(U"sprBlock_low3",gimmikParsePos, static_cast<int32>(gimmikValue1));
 						}

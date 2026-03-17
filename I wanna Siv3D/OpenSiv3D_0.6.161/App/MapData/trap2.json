@@ -230,6 +230,16 @@
         "value1": 28,
         "value2": 1.0,
         "value3": 3.0
+      },
+      {
+        "gimmikName": "前トリガー",
+        "gimmikPos": [
+          448.0,
+          319.9
+        ],
+        "value1": 29,
+        "value2": 3.0,
+        "value3": 0.1
       }
     ],
     "startPlayerPos": [
