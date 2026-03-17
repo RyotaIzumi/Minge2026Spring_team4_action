@@ -76,8 +76,11 @@ namespace Iwanna {
 	class BreakBlock : public Block {
 	private:
 		bool isBreak;
-		double blockAlpha = 1.0;
 		int32 triggerID = 0;
+
+		double blockAlpha = 1.0;
+		double blockDir = 0;
+		double blockGravity = 0.9;
 	public:
 		BreakBlock(String name, Vec2 startPos, int32 id);
 		void update() override;

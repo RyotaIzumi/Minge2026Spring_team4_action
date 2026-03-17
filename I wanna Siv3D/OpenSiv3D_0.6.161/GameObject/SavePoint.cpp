@@ -80,4 +80,36 @@ namespace Iwanna {
 	bool SaveMoveTrap::getIsStartTrap() const {
 		return isStartTrap;
 	}
+
+	//(偽セーブトラップ)
+	SaveFakeTrap::SaveFakeTrap(Vec2 startPos) : SavePoint(startPos) {
+		pos = startPos;
+
+		hitBox = std::make_shared<RectHitBox>(Vec2{ pos.x,pos.y + 8 }, SizeF{ side,24 });
+		type = ObjectType::SavePoint;
+		saveType = SaveType::FakeTrap;
+
+		isTrap = true;
+		canPlayerKill = false;
+		isStartTrap = false;
+	}
+
+	void SaveFakeTrap::trapUpdate(int32 id) {
+		//idは使わない
+		if (isStartTrap) {
+
+		}
+	}
+
+	void SaveFakeTrap::setIsStartTrap(bool b) {
+		isStartTrap = b;
+	}
+
+	bool SaveFakeTrap::getIsStartTrap() const {
+		return isStartTrap;
+	}
+
+	void SaveFakeTrap::draw() const {
+		TextureAsset(U"sprFakeSave")(0, 0, side, side).draw(pos);
+	}
 }

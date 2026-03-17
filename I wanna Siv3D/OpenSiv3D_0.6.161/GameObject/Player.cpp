@@ -159,7 +159,7 @@ namespace Iwanna {
 					auto* hideBlock = dynamic_cast<HideBlock*>(&other);
 					if (hideBlock->getIsHidden()) {
 						hideBlock->setIsHidden(false);
-						AudioAsset(Sound::BLOCKCHANGE).playOneShot();
+						AudioAsset(Sound::BLOCKCHANGE).play();
 					}
 				}
 				else if (block->blockType == BlockType::ConditionalHide) {
@@ -173,7 +173,7 @@ namespace Iwanna {
 					auto* fakeBlock = dynamic_cast<FakeBlock*>(&other);
 					if (!fakeBlock->getIsHidden()) {
 						fakeBlock->setIsHidden(true);
-						AudioAsset(Sound::BLOCKCHANGE).playOneShot();
+						AudioAsset(Sound::BLOCKCHANGE).play();
 					}
 				}
 			}

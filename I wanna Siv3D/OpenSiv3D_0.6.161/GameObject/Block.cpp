@@ -1,4 +1,5 @@
 ﻿#include "Block.h"
+#include "../Audio/AudioAsset.h"
 
 namespace Iwanna {
 	Block::Block(String name, Vec2 startPos) {
@@ -149,18 +150,33 @@ namespace Iwanna {
 		isTriggerTrap = true;
 		canPlayerKill = false;
 		hasCollide = true;
+
+		//壊れる際の挙動の乱数決定
+		direction = Random(360);
+		speed = 1 + Random(5);
+		calculateSpeed();
 	}
 
 	void BreakBlock::update() {
 	}
 
 	void BreakBlock::trapUpdate(int32 id) {
-		if (triggerID == id) {
+		if (triggerID == id && !isBreak) {
+			AudioAsset(Sound::BLOCKBREAK).play();
 			isBreak = true;
 		}
 
 		if (isBreak) {
-			blockAlpha = 0.0;
+			hasCollide = false;
+
+			vspeed += blockGravity;
+			pos.x += hspeed;
+			pos.y += vspeed;
+
+			blockAlpha -= 0.1;
+			if (blockAlpha < 0) {
+				isDelete = true;
+			}
 		}
 	}
 

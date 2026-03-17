@@ -39,7 +39,7 @@ namespace Iwanna {
 		Camera2D camera{ cameraBasePos, 1.0 };
 
 		//弾丸関連
-		double bulletSpeed = 8;
+		double bulletSpeed = 12;
 		int32 bulletMaxNum = 5;
 
 		//血しぶき数

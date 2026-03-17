@@ -3,8 +3,8 @@
 
 namespace Iwanna {
 	StageManager::StageManager() {
-		stockNearGameObjects.cellSize = 64;
-		stockBulletsNearGameObjects.cellSize = 32;
+		stockNearGameObjects.cellSize = 96;
+		stockBulletsNearGameObjects.cellSize = 96;
 		stockLargeNearGameObjects.cellSize = 800;
 	}
 
@@ -159,6 +159,12 @@ namespace Iwanna {
 						if (gimmikValue1 == 11 && gimmikName == U"罠トリガー") {
 							gameObjects.specialTraps << std::make_shared<AdWindowTrap>(Vec2{ 480,448 }, static_cast<int32>(gimmikValue1));
 						}
+						if (gimmikValue1 == 12 && gimmikName == U"罠トリガー") {
+							gameObjects.blocks << std::make_shared<ConditionalHideBlock>(U"sprBlock_low1", Vec2{ 512,576 }, static_cast<int32>(gimmikValue1));
+							gameObjects.blocks << std::make_shared<ConditionalHideBlock>(U"sprBlock_low1", Vec2{ 544,576 }, static_cast<int32>(gimmikValue1));
+							gameObjects.specialTraps << std::make_shared<DiscordTrap>(Vec2{912, 534}, static_cast<int32>(gimmikValue1));
+							gameObjects.specialTraps << std::make_shared<DiscordCherryTrap>(Vec2{825, 544}, static_cast<int32>(gimmikValue1));
+						}
 						if (gimmikValue1 == 24 && gimmikName == U"前トリガー") {
 							gameObjects.specialBackTraps << std::make_shared<TreeTrap>(Vec2{ 400,80 }, static_cast<int32>(gimmikValue1), U"treeTrap");
 						}
@@ -169,9 +175,9 @@ namespace Iwanna {
 							gameObjects.savePoints << std::make_shared<SaveMoveTrap>(Vec2{ 384,384 }, static_cast<int32>(gimmikValue1));
 						}
 						if (gimmikValue1 == 29 && gimmikName == U"前トリガー") {
-							gameObjects.blocks << std::make_shared<ConditionalHideBlock>(U"sprBlock_low1", Vec2{ 416,224 }, static_cast<int32>(gimmikValue1));
+							gameObjects.blocks << std::make_shared<ConditionalHideBlock>(U"sprBlock_low1", Vec2{ 424,240 }, static_cast<int32>(gimmikValue1));
 						}
-						if (gimmikValue1 == 50 && gimmikName == U"罠ブロック") {
+						if (gimmikValue1 == 30 && gimmikName == U"罠ブロック") {
 							gameObjects.blocks << std::make_shared<BreakBlock>(U"sprBlock_low3",gimmikParsePos, static_cast<int32>(gimmikValue1));
 						}
 					}
@@ -185,6 +191,11 @@ namespace Iwanna {
 					if (gimmikName == U"前トリガー") gameObjects.triggers << std::make_shared<Trigger>(gimmikParsePos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3, true);
 					if (gimmikName == U"罠りんご") gameObjects.cherries << std::make_shared<CherryTrap>(gimmikIntactPos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
 				}
+			}
+
+			// トリガー不必要の特殊配置物
+			if (fileName == U"trap2") {
+				gameObjects.savePoints << std::make_shared<SaveFakeTrap>(Vec2{ 928,320 });
 			}
 		}
 	}
@@ -280,6 +291,7 @@ namespace Iwanna {
 			for (auto& st : specialTraps) {
 				st->update();
 				st->setNowTrapID(latestActivatedTriggerID);
+				st->setIsPlayerDied(player->getIsDead());
 				stockLargeNearGameObjects.add(st.get());
 			}
 			for (auto& st : specialBackTraps) {
@@ -355,6 +367,19 @@ namespace Iwanna {
 			//画面外の血を削除
 			bloods.remove_if([](auto&& blood) {
 				return blood->isOutOfScreen;
+			});
+
+			//ブロック削除
+			blocks.remove_if([](auto&& block) {
+				return block->isDelete;
+			});
+
+			//役目を終えた特殊罠削除
+			specialTraps.remove_if([](auto&& s) {
+				return s->isDelete;
+			});
+			specialBackTraps.remove_if([](auto&& s) {
+				return s->isDelete;
 			});
 
 			//弾丸削除

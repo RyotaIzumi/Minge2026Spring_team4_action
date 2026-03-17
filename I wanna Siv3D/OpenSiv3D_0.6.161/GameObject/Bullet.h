@@ -11,8 +11,9 @@ namespace Iwanna {
 		//当たり判定サイズ(半径)
 		int32 hitBoxSize = 2;
 
+		//弾の速度とマップ内最大生成数はStageManagerにて設定
+
 	public:
-		bool isDelete = false;//消去用フラグ
 		bool isOutOfScreen = false;//画面外判定用フラグ
 
 		Bullet(Vec2& pos,double speed);

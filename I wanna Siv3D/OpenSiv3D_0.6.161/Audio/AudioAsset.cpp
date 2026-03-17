@@ -29,6 +29,7 @@ namespace Iwanna {
 			registerAudio(BLOCKBREAK, BLOCKBREAK_PATH);
 			registerAudio(SPIKETRAP, SPIKETRAP_PATH);
 			registerAudio(ERROR,ERROR_PATH);
+			registerAudio(DISCORD,DISCORD_PATH);
 		}
 
 		/**

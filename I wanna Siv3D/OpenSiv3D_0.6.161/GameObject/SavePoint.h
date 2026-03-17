@@ -8,7 +8,8 @@
 namespace Iwanna {
 	enum class SaveType {
 		Normal,
-		MoveTrap
+		MoveTrap,
+		FakeTrap
 	};
 
 	class SavePoint : public GameObject {
@@ -42,5 +43,17 @@ namespace Iwanna {
 
 		void trapUpdate(int32 id) override;
 		bool getIsStartTrap() const;
+	};
+
+	class SaveFakeTrap : public SavePoint {
+	private:
+		bool isStartTrap;
+	public:
+		SaveFakeTrap(Vec2 startPos);
+
+		void trapUpdate(int32 id) override;
+		void setIsStartTrap(bool);
+		bool getIsStartTrap() const;
+		void draw() const override;
 	};
 }

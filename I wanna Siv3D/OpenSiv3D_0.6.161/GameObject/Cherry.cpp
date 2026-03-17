@@ -74,10 +74,12 @@ namespace Iwanna {
 
 		if (isTrapActived) {
 			speed = trapSpeed;
-		}
 
-		if (!soundPlayOne) {
-			AudioAsset(U"")
+			//効果音再生
+			if (!soundPlayOne) {
+				AudioAsset(Sound::CHERRYFALL).playOneShot();
+				soundPlayOne = true;
+			}
 		}
 	}
 

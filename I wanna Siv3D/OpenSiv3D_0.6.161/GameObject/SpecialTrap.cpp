@@ -38,6 +38,11 @@ namespace Iwanna {
 		nowTrapID = id;
 	}
 
+	// playerの死亡状態を設定
+	void SpecialTrap::setIsPlayerDied(bool dead) {
+		isPlayerDied = dead;
+	}
+
 	// トラップの作動時間が指定時間に達したかどうかを取得
 	bool SpecialTrap::reachedTrapTime(double time) {
 		return trapStopwatch.s() >= time;
@@ -185,6 +190,8 @@ namespace Iwanna {
 			if (trapID == nowTrapID) {
 				canPlayerKill = true;
 				isActivated = true;
+				AudioAsset(Sound::SPIKETRAP).playOneShot();
+
 				moveTimer.restart();
 				trapStep++;
 			}
@@ -233,6 +240,8 @@ namespace Iwanna {
 
 				canPlayerKill = true;
 				isActivated = true;
+				AudioAsset(Sound::SPIKETRAP).playOneShot();
+
 				moveTimer.restart();
 				trapStep++;
 			}
@@ -280,6 +289,8 @@ namespace Iwanna {
 
 				canPlayerKill = true;
 				isActivated = true;
+				AudioAsset(Sound::SPIKETRAP).playOneShot();
+
 				moveTimer.restart();
 				trapStep++;
 			}
@@ -352,7 +363,9 @@ namespace Iwanna {
 			}
 			break;
 		case 4:
-
+			if (nowTrapID == 12) {
+				isShowHideLine = false;
+			}
 			break;
 		case 5://終了
 			canPlayerKill = false;
@@ -377,5 +390,123 @@ namespace Iwanna {
 		FontAsset(U"Big")(holeText).drawAt({400,1100},ColorF(Palette::Black));
 
 		SimpleGUI::ButtonAt(U"x", deleteButtonPos,20,false);
+	}
+
+	// ----- 偽Discordトラップ -----
+	DiscordTrap::DiscordTrap(Vec2 startPos, int32 id) : SpecialTrap(startPos, id) {
+		textureName = U"discordTrap";
+		textureScale = 1.0;
+		textureAlpha = 1.0;
+		textureSize = Vec2{ 224,67 };
+		hitBox = std::make_shared<RectHitBox>(pos, SizeF{ textureSize });
+		hitBox->setPos(pos);//当たり判定の位置をテクスチャの中心に調整
+		canPlayerKill = true;
+		isActivated = false;
+		trapStep = 0;
+		basePos = pos;
+	}
+
+	void DiscordTrap::trapUpdate() {
+		switch (trapStep) {
+		case 0:
+			if (trapID == nowTrapID) {
+				moveTimer.restart();
+				isActivated = true;
+				AudioAsset(Sound::DISCORD).playOneShot();
+				trapStep++;
+			}
+			break;
+		case 1://横移動
+			pos.x = basePos.x - moveRange * EaseOutQuad(moveTimer.progress0_1());
+			if (moveTimer.reachedZero()) {
+				basePos = pos;
+				trapStopwatch.restart();
+				trapStep++;
+			}
+			break;
+		case 2://待機
+			if (reachedTrapTime(2.0) && !isPlayerDied) {
+				moveTimer.restart();
+				trapStep++;
+			}
+			break;
+		case 3://もどる
+			pos.x = basePos.x + moveRange * EaseInQuad(moveTimer.progress0_1());
+			if (moveTimer.reachedZero()) {
+				trapStep++;
+			}
+			break;
+		case 4://終了
+			canPlayerKill = false;
+			isDelete = true;
+			break;
+		}
+
+		hitBox->setPos(pos);
+	}
+
+	void DiscordTrap::draw() const {
+		if(isActivated) TextureAsset(textureName).scaled(textureScale).drawAt(pos);
+		//hitBox->draw(Palette::Pink);
+	}
+
+	// ----- 偽Discordについてるりんごトラップ -----
+	DiscordCherryTrap::DiscordCherryTrap(Vec2 startPos, int32 id) : SpecialTrap(startPos, id) {
+		textureName = U"sprCherryLow";
+		textureScale = 1.0;
+		textureAlpha = 1.0;
+		hitBox = std::make_shared<CircleHitBox>(pos, 10);
+		hitBox->setPos(pos);//当たり判定の位置をテクスチャの中心に調整
+		canPlayerKill = true;
+		isActivated = false;
+		trapStep = 0;
+		basePos = pos;
+	}
+
+	void DiscordCherryTrap::trapUpdate() {
+		switch (trapStep) {
+		case 0:
+			if (trapID == nowTrapID) {
+				moveTimer.restart();
+				isActivated = true;
+				trapStep++;
+			}
+			break;
+		case 1://横移動
+			pos.x = basePos.x - moveRange * EaseOutQuad(moveTimer.progress0_1());
+			if (moveTimer.reachedZero()) {
+				basePos = pos;
+				trapStopwatch.restart();
+				trapStep++;
+			}
+			break;
+		case 2://待機
+			if (reachedTrapTime(1.2) && !isPlayerDied) {
+				hspeed = -7;
+				vspeed = 0;
+				AudioAsset(Sound::BLOCKBREAK).playOneShot();
+				trapStep++;
+			}
+			break;
+		case 3://もどる
+			vspeed += gravity;
+			pos.x += hspeed;
+			pos.y += vspeed;
+			if (pos.y > 1000) {
+				trapStep++;
+			}
+			break;
+		case 4://終了
+			canPlayerKill = false;
+			isDelete = true;
+			break;
+		}
+
+		hitBox->setPos(pos);
+	}
+
+	void DiscordCherryTrap::draw() const {
+		if (isActivated) TextureAsset(textureName).scaled(textureScale).drawAt(pos);
+		//hitBox->draw(Palette::Pink);
 	}
 }

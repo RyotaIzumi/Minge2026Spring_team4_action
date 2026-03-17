@@ -35,7 +35,7 @@ namespace Iwanna {
 
 	void Bullet::onCollision(GameObject& other) {
 		// ブロック、ミク衝突
-		if (other.type == ObjectType::Block) {
+		if (this->intersects(other) && other.type == ObjectType::Block) {
 			auto* block = dynamic_cast<Block*>(&other);
 			if (block->blockType != BlockType::ShootThrough && block->getHasCollide()) {
 				isDelete = true;
@@ -52,12 +52,22 @@ namespace Iwanna {
 			auto* savePoint = dynamic_cast<SavePoint*>(&other);
 			switch (savePoint->saveType) {
 			case SaveType::Normal:
+			{
 				savePoint->saved();
 				break;
+			}
 			case SaveType::MoveTrap:
-				auto* s = dynamic_cast<SaveMoveTrap*>(&other);
-				if (!s->getIsStartTrap())s->saved();
+			{
+				auto* smt = dynamic_cast<SaveMoveTrap*>(&other);
+				if (!smt->getIsStartTrap()) smt->saved();
 				break;
+			}
+			case SaveType::FakeTrap:
+			{
+				auto* sft = dynamic_cast<SaveFakeTrap*>(&other);
+				if (!sft->getIsStartTrap()) sft->setIsStartTrap(true);
+				break;
+			}
 			}
 		}
 	}

@@ -30,6 +30,8 @@ namespace Iwanna {
 		static const String SPIKETRAP_PATH = SE_PATH + SPIKETRAP + U".wav";
 		static const String ERROR = U"sndWindowsError";
 		static const String ERROR_PATH = SE_PATH + ERROR + U".wav";
+		static const String DISCORD = U"sndDiscord";
+		static const String DISCORD_PATH = SE_PATH + DISCORD + U".mp3";
 		
 		void registerBGMs();
 		void registerSEs();

@@ -12,6 +12,7 @@ namespace Iwanna {
 		int32 nowTrapID = 0;//game側で起動中のid
 		int32 trapStep = 0;
 		bool isActivated = false;//トリガーが作動しているかどうか
+		bool isPlayerDied = false;
 		Stopwatch trapStopwatch;
 
 		//テクスチャ関連
@@ -31,6 +32,7 @@ namespace Iwanna {
 		bool getIsActivated() const;
 		int32 getTrapID() const;
 		void setNowTrapID(int32 id);
+		void setIsPlayerDied(bool died);
 
 		bool reachedTrapTime(double time);
 	};
@@ -97,6 +99,29 @@ namespace Iwanna {
 		String holeText;
 	public:
 		AdWindowTrap(Vec2 startPos, int32 id);
+		void trapUpdate() override;
+		void draw() const override;
+	};
+
+	class DiscordTrap : public SpecialTrap {
+	private:
+		Timer moveTimer{ 0.58s };
+		double moveRange = 240;
+		Vec2 basePos;
+	public:
+		DiscordTrap(Vec2 startPos, int32 id);
+		void trapUpdate() override;
+		void draw() const override;
+	};
+
+	class DiscordCherryTrap : public SpecialTrap {
+	private:
+		Timer moveTimer{ 0.58s };
+		double moveRange = 240;
+		Vec2 basePos;
+		double gravity = 0.3;
+	public:
+		DiscordCherryTrap(Vec2 startPos, int32 id);
 		void trapUpdate() override;
 		void draw() const override;
 	};

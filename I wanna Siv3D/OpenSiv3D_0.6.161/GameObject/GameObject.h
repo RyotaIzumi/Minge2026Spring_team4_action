@@ -23,6 +23,7 @@ namespace Iwanna {
 		std::shared_ptr<HitBox> hitBox;
 		ObjectType type;
 		bool canPlayerKill = false;
+		bool isDelete = false; //消去用フラグ
 
 		//基礎パラメータ
 		double hspeed;
