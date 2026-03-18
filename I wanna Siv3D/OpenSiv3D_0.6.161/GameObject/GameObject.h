@@ -55,6 +55,12 @@ namespace Iwanna {
 			vspeed = -speed * Math::Sin(rad);
 		}
 
+		//2つの座標から角度を計算
+		void calculateDirection(Vec2 basePos, Vec2 targetPos) {
+			Vec2 diff = targetPos - basePos;
+			direction = Math::ToDegrees(Atan2(-diff.y, diff.x)) ;
+		}
+
 		virtual void onCollision(GameObject& other) = 0;
 	};
 }

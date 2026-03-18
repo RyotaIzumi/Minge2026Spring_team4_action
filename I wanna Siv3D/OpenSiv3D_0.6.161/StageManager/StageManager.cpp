@@ -226,6 +226,8 @@ namespace Iwanna {
 		if (fileName == U"trap2") {
 			if (Global::trapActivatedInTrap2Map)latestActivatedTriggerID = 30;
 			gameObjects.savePoints << std::make_shared<SaveFakeTrap>(Vec2{ 928,320 });
+
+			gameObjects.specialTraps << std::make_shared<MouseTrap>(Vec2{Cursor::PosF()});
 		}
 	}
 
@@ -329,6 +331,11 @@ namespace Iwanna {
 				st->update();
 				st->setNowTrapID(latestActivatedTriggerID);
 				st->setIsPlayerDied(player->getIsDead());
+
+				if (st->getIsNeedPlayerDir()) {
+					st->setDirection(player->pos);
+				}
+
 				stockLargeNearGameObjects.add(st.get());
 			}
 			for (auto& st : specialBackTraps) {

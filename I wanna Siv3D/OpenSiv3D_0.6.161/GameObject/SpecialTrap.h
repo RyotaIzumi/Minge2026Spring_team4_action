@@ -13,6 +13,7 @@ namespace Iwanna {
 		int32 trapStep = 0;
 		bool isActivated = false;//トリガーが作動しているかどうか
 		bool isPlayerDied = false;
+		bool isNeedPlayerDir = false;
 		Stopwatch trapStopwatch;
 
 		//テクスチャ関連
@@ -33,6 +34,9 @@ namespace Iwanna {
 		int32 getTrapID() const;
 		void setNowTrapID(int32 id);
 		void setIsPlayerDied(bool died);
+
+		bool getIsNeedPlayerDir() const;
+		void setDirection(Vec2 targetPos);
 
 		bool reachedTrapTime(double time);
 	};
@@ -122,6 +126,13 @@ namespace Iwanna {
 		double gravity = 0.3;
 	public:
 		DiscordCherryTrap(Vec2 startPos, int32 id);
+		void trapUpdate() override;
+		void draw() const override;
+	};
+
+	class MouseTrap : public SpecialTrap {
+	public:
+		MouseTrap(Vec2 startPos);
 		void trapUpdate() override;
 		void draw() const override;
 	};

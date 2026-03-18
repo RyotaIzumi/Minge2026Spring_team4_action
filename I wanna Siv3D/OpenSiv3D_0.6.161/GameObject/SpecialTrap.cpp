@@ -48,6 +48,16 @@ namespace Iwanna {
 		return trapStopwatch.s() >= time;
 	}
 
+	//playerまでの角度を必要とするかどうかを取得
+	bool SpecialTrap::getIsNeedPlayerDir() const{
+		return isNeedPlayerDir;
+	}
+
+	//目標の座標から角度を計算
+	void SpecialTrap::setDirection(Vec2 targetPos) {
+		calculateDirection(pos,targetPos);
+	}
+
 	// ----- 偽警告ウィンドウトラップ -----
 	WarningWindowTrap::WarningWindowTrap(Vec2 startPos, int32 id) : SpecialTrap(startPos,id) {
 		textureName = U"warningTrap";
@@ -508,5 +518,49 @@ namespace Iwanna {
 	void DiscordCherryTrap::draw() const {
 		if (isActivated) TextureAsset(textureName).scaled(textureScale).drawAt(pos);
 		//hitBox->draw(Palette::Pink);
+	}
+
+	// ----- マウストラップ -----
+	MouseTrap::MouseTrap(Vec2 startPos) : SpecialTrap(startPos, -1) {
+		textureName = U"sprCherryLow";
+		textureScale = 1.0;
+		textureAlpha = 1.0;
+		hitBox = std::make_shared<CircleHitBox>(pos, 2);
+		hitBox->setPos(pos);//当たり判定の位置をテクスチャの中心に調整
+
+		canPlayerKill = true;
+		isActivated = false;
+		isNeedPlayerDir = true;
+
+		speed = 7;
+		direction = 0;
+	}
+
+	void MouseTrap::trapUpdate() {
+
+		if (Abs(Cursor::DeltaF().x) > 0 || Abs(Cursor::DeltaF().y) > 0) {
+			trapStopwatch.restart();
+		}
+
+		if (reachedTrapTime(5.0) && Cursor::OnClientRect() && !isPlayerDied) {
+			calculateSpeed();
+			pos.x += hspeed;
+			pos.y += vspeed;
+			Cursor::SetPos(pos.asPoint());
+		}
+		else {
+			pos = Cursor::PosF();
+		}
+
+		if (isPlayerDied) {
+			Cursor::RequestStyle(U"cursorPiece");
+		}
+
+		hitBox->setPos(pos);
+	}
+
+	void MouseTrap::draw() const {
+		//if (isActivated) TextureAsset(textureName).scaled(textureScale).drawAt(pos);
+		hitBox->draw(Palette::Pink);
 	}
 }

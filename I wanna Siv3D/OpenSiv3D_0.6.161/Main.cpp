@@ -17,6 +17,9 @@ void Main()
 	FontAsset::Register(U"Button", FontMethod::MSDF, 20, Typeface::Medium);
 	FontAsset::Register(U"TitleTrap", FontMethod::MSDF, 10, Typeface::Medium);
 
+	//カーソル設定
+	Image cursorImage{ U"✌"_emoji };
+	Cursor::RegisterCustomCursorStyle(U"cursorPiece", cursorImage.scaled(0.2), Point{10,10});
 	
 	Iwanna::registerTextures();
 	Iwanna::registerTexturesSync();

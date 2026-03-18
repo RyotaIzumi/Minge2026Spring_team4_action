@@ -18,7 +18,7 @@ namespace Iwanna {
 	void SavePoint::trapUpdate(int32 id) {
 	}
 	void SavePoint::draw() const {
-		hitBox->draw(Palette::Gray);
+		//hitBox->draw(Palette::Gray);
 		TextureAsset(U"sprSave")(isSaving ? side : 0, 0, side, side).draw(pos);
 	}
 	// セーブされたときの処理
