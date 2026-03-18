@@ -159,7 +159,7 @@ namespace Iwanna {
 					auto* hideBlock = dynamic_cast<HideBlock*>(&other);
 					if (hideBlock->getIsHidden()) {
 						hideBlock->setIsHidden(false);
-						AudioAsset(Sound::BLOCKCHANGE).play();
+						AudioAsset(Sound::BLOCKCHANGE).playOneShot();
 					}
 				}
 				else if (block->blockType == BlockType::ConditionalHide) {
@@ -240,7 +240,14 @@ namespace Iwanna {
 		if (other.type == ObjectType::Trigger) {
 			if (this->intersects(other)) {
 				auto* trigger = dynamic_cast<Trigger*>(&other);
-				if(!trigger->getCheckPrevID())trigger->triggerActivate();
+				if (!trigger->getCheckPrevID()) {
+					trigger->triggerActivate();
+
+					//trap2 map専用
+					if (trigger->getTrapID() == 30) {
+						Global::trapActivatedId30InTrap2Map = true;
+					}
+				}
 				else {
 					if(trigger->getTrapID() - 1 == nowTrapID)trigger->triggerActivate();
 				}

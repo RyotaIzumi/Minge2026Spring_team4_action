@@ -1,10 +1,11 @@
 ﻿#include "SavePoint.h"
+#include "../Audio/AudioAsset.h"
 
 namespace Iwanna {
 	SavePoint::SavePoint(Vec2 startPos) {
 		//GameObject.hの値初期化
 		pos = { startPos.x * side, startPos.y * side };
-		hitBox = std::make_shared<RectHitBox>(Vec2{ pos.x,pos.y + 8 }, SizeF{ side,24 });
+		hitBox = std::make_shared<RectHitBox>(Vec2{ pos.x,pos.y + gapY }, SizeF{ hitBoxSize });
 		type = ObjectType::SavePoint;
 		saveType = SaveType::Normal;
 		canPlayerKill = false;
@@ -17,7 +18,7 @@ namespace Iwanna {
 	void SavePoint::trapUpdate(int32 id) {
 	}
 	void SavePoint::draw() const {
-		//hitBox->draw(Palette::Gray);
+		hitBox->draw(Palette::Gray);
 		TextureAsset(U"sprSave")(isSaving ? side : 0, 0, side, side).draw(pos);
 	}
 	// セーブされたときの処理
@@ -48,13 +49,13 @@ namespace Iwanna {
 	// ----- 以下別種類のセーブブロック ----- //
 	//(移動セーブトラップ)
 
-	SaveMoveTrap::SaveMoveTrap(Vec2 startPos, int32 id) : SavePoint(startPos){
+	SaveMoveTrap::SaveMoveTrap(Vec2 startPos, int32 id, double spd, double dir) : SavePoint(startPos){
 		pos = startPos;
 		trapID = id;
-		speed = 18;
-		direction = 90;
+		speed = spd;
+		direction = dir;
 
-		hitBox = std::make_shared<RectHitBox>(Vec2{ pos.x,pos.y + 8 }, SizeF{ side,24 });
+		hitBox = std::make_shared<RectHitBox>(Vec2{ pos.x,pos.y + gapY }, SizeF{ hitBoxSize });
 		type = ObjectType::SavePoint;
 		saveType = SaveType::MoveTrap;
 
@@ -64,8 +65,9 @@ namespace Iwanna {
 	}
 
 	void SaveMoveTrap::trapUpdate(int32 id) {
-		if (trapID == id) {
+		if (trapID == id && !isStartTrap) {
 			isStartTrap = true;
+			AudioAsset(Sound::SPIKETRAP).playOneShot();
 		}
 
 		if (isStartTrap) {
@@ -73,7 +75,7 @@ namespace Iwanna {
 			calculateSpeed();
 			pos.x += hspeed;
 			pos.y += vspeed;
-			hitBox->setPos(pos);
+			hitBox->setPos({ pos.x + hitBoxSize.x / 2, pos.y + hitBoxSize.y / 2 + gapY });
 		}
 	}
 
@@ -85,7 +87,7 @@ namespace Iwanna {
 	SaveFakeTrap::SaveFakeTrap(Vec2 startPos) : SavePoint(startPos) {
 		pos = startPos;
 
-		hitBox = std::make_shared<RectHitBox>(Vec2{ pos.x,pos.y + 8 }, SizeF{ side,24 });
+		hitBox = std::make_shared<RectHitBox>(Vec2{ pos.x,pos.y + gapY }, SizeF{ hitBoxSize });
 		type = ObjectType::SavePoint;
 		saveType = SaveType::FakeTrap;
 

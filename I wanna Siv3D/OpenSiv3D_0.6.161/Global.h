@@ -39,6 +39,9 @@ namespace Global {
 
 	// 特殊罠関連
 	inline bool warningTrapPaused = false;
+	//trap2 map専用
+	inline bool trapActivatedInTrap2Map = false;
+	inline bool trapActivatedId30InTrap2Map = false;
 
 	 // ======================
 	// 定数

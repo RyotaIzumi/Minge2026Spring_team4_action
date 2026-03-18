@@ -17,6 +17,10 @@ namespace Iwanna {
 		int32 side = 32;
 		bool isSaving = false;
 		Timer saveIntervalTimer{ SecondsF{ 1.0 }, StartImmediately::No };
+
+		//判定調整用
+		Vec2 hitBoxSize = {32,24};
+		double gapY = 8;
 		//罠関連
 		bool isTrap = false;
 		int32 trapID = 0;
@@ -39,7 +43,7 @@ namespace Iwanna {
 	private:
 		bool isStartTrap;
 	public:
-		SaveMoveTrap(Vec2 startPos, int32 id);
+		SaveMoveTrap(Vec2 startPos, int32 id, double spd, double dir);
 
 		void trapUpdate(int32 id) override;
 		bool getIsStartTrap() const;

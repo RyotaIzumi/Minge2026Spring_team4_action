@@ -47,7 +47,10 @@ namespace Iwanna {
 		//血を生成したかどうか
 		bool isGenerateBloods = false;
 
+		//ステージ情報
 		int32 oneTileSize = 32;
+		String stageName;
+		int32 latestActivatedTriggerID = -1;
 
 		int32 step = 0;
 	public:

@@ -124,7 +124,7 @@
       {
         "gimmikName": "罠トリガー",
         "gimmikPos": [
-          608.0,
+          640.0,
           512.0
         ],
         "value1": 12,
@@ -282,6 +282,46 @@
         "value3": 2.0
       },
       {
+        "gimmikName": "前トリガー",
+        "gimmikPos": [
+          672.0,
+          256.0
+        ],
+        "value1": 32,
+        "value2": 0.5,
+        "value3": 3.0
+      },
+      {
+        "gimmikName": "前トリガー",
+        "gimmikPos": [
+          640.0,
+          336.0
+        ],
+        "value1": 33,
+        "value2": 4.0,
+        "value3": 0.5
+      },
+      {
+        "gimmikName": "前トリガー",
+        "gimmikPos": [
+          640.0,
+          192.0
+        ],
+        "value1": 34,
+        "value2": 1.0,
+        "value3": 1.0
+      },
+      {
+        "gimmikName": "前トリガー",
+        "gimmikPos": [
+          704.0,
+          192.0
+        ],
+        "value1": 35,
+        "value2": 1.0,
+        "value3": 1.0
+      },
+      {
         "gimmikName": "罠トリガー",
         "gimmikPos": [
           1088.0,
@@ -430,11 +470,51 @@
         "value1": 40,
         "value2": 180.0,
         "value3": 30.0
+      },
+      {
+        "gimmikName": "罠針_上",
+        "gimmikPos": [
+          640.0,
+          352.0
+        ],
+        "value1": 33,
+        "value2": 3.0,
+        "value3": 3.0
+      },
+      {
+        "gimmikName": "罠針_上",
+        "gimmikPos": [
+          672.0,
+          352.0
+        ],
+        "value1": 33,
+        "value2": 3.0,
+        "value3": 3.0
+      },
+      {
+        "gimmikName": "罠針_右",
+        "gimmikPos": [
+          640.0,
+          416.0
+        ],
+        "value1": 34,
+        "value2": 90.0,
+        "value3": 20.0
+      },
+      {
+        "gimmikName": "罠針_右",
+        "gimmikPos": [
+          640.0,
+          448.0
+        ],
+        "value1": 34,
+        "value2": 90.0,
+        "value3": 20.0
       }
     ],
     "startPlayerPos": [
-      144.0,
-      416.0
+      544.0,
+      316.0
     ]
   }
 ]

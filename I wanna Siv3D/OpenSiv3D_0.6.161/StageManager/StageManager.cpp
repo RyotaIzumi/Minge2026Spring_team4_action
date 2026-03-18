@@ -24,6 +24,7 @@ namespace Iwanna {
 
 		// 一部変数の初期化
 		isGenerateBloods = false;
+		Global::trapActivatedId30InTrap2Map = false;
 
 		loadGameObjects(U"trap2");
 	}
@@ -72,6 +73,9 @@ namespace Iwanna {
 		//ステージサイズを更新
 		Global::stageWidth = csv.columns(0) * oneTileSize;
 		Global::stageHeight = csv.rows() * oneTileSize;
+
+		stageName = fileName;
+		latestActivatedTriggerID = -1;
 
 		// 次に同名のJsonファイルからギミックデータを読み込む
 
@@ -172,13 +176,37 @@ namespace Iwanna {
 							gameObjects.specialBackTraps << std::make_shared<TreeTrap>(Vec2{ 400,80 }, static_cast<int32>(gimmikValue1), U"transParentTreeTrap");
 						}
 						if (gimmikValue1 == 28 && gimmikName == U"前トリガー") {
-							gameObjects.savePoints << std::make_shared<SaveMoveTrap>(Vec2{ 384,384 }, static_cast<int32>(gimmikValue1));
+							gameObjects.savePoints << std::make_shared<SaveMoveTrap>(Vec2{ 384,384 }, static_cast<int32>(gimmikValue1),18,90);
 						}
 						if (gimmikValue1 == 29 && gimmikName == U"前トリガー") {
 							gameObjects.blocks << std::make_shared<ConditionalHideBlock>(U"sprBlock_low1", Vec2{ 424,240 }, static_cast<int32>(gimmikValue1));
 						}
 						if (gimmikValue1 == 30 && gimmikName == U"罠ブロック") {
 							gameObjects.blocks << std::make_shared<BreakBlock>(U"sprBlock_low3",gimmikParsePos, static_cast<int32>(gimmikValue1));
+						}
+						//専用の隠しブロック
+						if (gimmikValue1 == 32 && Global::trapActivatedInTrap2Map && !Global::trapActivatedId30InTrap2Map) {
+							for(int32 i = 0;i < 5;i++) gameObjects.blocks << std::make_shared<HideBlock>(U"sprBlock_low1", Vec2{ 19 + i,7 });
+							gameObjects.blocks << std::make_shared<HideBlock>(U"sprBlock_low1", Vec2{ 23,8 });
+							gameObjects.blocks << std::make_shared<HideBlock>(U"sprBlock_low1", Vec2{ 23,9 });
+							for (int32 i = 0; i < 3; i++) gameObjects.blocks << std::make_shared<HideBlock>(U"sprBlock_low1", Vec2{ 14,7 + i });
+						}
+						if (gimmikValue1 == 32 && gimmikName == U"前トリガー") {
+							gameObjects.triggers << std::make_shared<Trigger>(gimmikIntactPos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3, [this]() {return Global::trapActivatedInTrap2Map && !Global::trapActivatedId30InTrap2Map; });
+							gameObjects.blocks << std::make_shared<ConditionalHideBlock>(U"sprBlock_low1", Vec2{ 608,256 }, static_cast<int32>(gimmikValue1));
+							gameObjects.blocks << std::make_shared<ConditionalHideBlock>(U"sprBlock_low1", Vec2{ 608,288 }, static_cast<int32>(gimmikValue1));
+							continue;
+						}
+						if (gimmikValue1 == 33 && gimmikName == U"罠針_上") {
+							gameObjects.spikes << std::make_shared<SpikePathTrap>(gimmikParsePos, 0, static_cast<int32>(gimmikValue1), Vec2{ 2,0 }, 0.1);
+							continue;
+						}
+						if (gimmikValue1 == 34 && gimmikName == U"前トリガー") {
+							gameObjects.triggers << std::make_shared<Trigger>(gimmikIntactPos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3, [this]() {return Global::trapActivatedInTrap2Map && !Global::trapActivatedId30InTrap2Map; });
+							continue;
+						}
+						if (gimmikValue1 == 35 && gimmikName == U"前トリガー") {
+							gameObjects.savePoints << std::make_shared<SaveMoveTrap>(Vec2{ 704,128 }, static_cast<int32>(gimmikValue1),8,270);
 						}
 					}
 
@@ -187,16 +215,17 @@ namespace Iwanna {
 					if (gimmikName == U"罠針_左") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikParsePos, 1, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
 					if (gimmikName == U"罠針_下") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikParsePos, 2, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
 					if (gimmikName == U"罠針_右") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikParsePos, 3, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
-					if (gimmikName == U"罠トリガー") gameObjects.triggers << std::make_shared<Trigger>(gimmikParsePos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3, false);
-					if (gimmikName == U"前トリガー") gameObjects.triggers << std::make_shared<Trigger>(gimmikParsePos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3, true);
+					if (gimmikName == U"罠トリガー") gameObjects.triggers << std::make_shared<Trigger>(gimmikIntactPos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3, false);
+					if (gimmikName == U"前トリガー") gameObjects.triggers << std::make_shared<Trigger>(gimmikIntactPos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3, true);
 					if (gimmikName == U"罠りんご") gameObjects.cherries << std::make_shared<CherryTrap>(gimmikIntactPos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
 				}
 			}
+		}
 
-			// トリガー不必要の特殊配置物
-			if (fileName == U"trap2") {
-				gameObjects.savePoints << std::make_shared<SaveFakeTrap>(Vec2{ 928,320 });
-			}
+		// トリガー不必要の特殊配置物
+		if (fileName == U"trap2") {
+			if (Global::trapActivatedInTrap2Map)latestActivatedTriggerID = 30;
+			gameObjects.savePoints << std::make_shared<SaveFakeTrap>(Vec2{ 928,320 });
 		}
 	}
 
@@ -263,12 +292,20 @@ namespace Iwanna {
 			stockLargeNearGameObjects.add(player.get());
 
 			// トリガーの更新と、最新の起動トリガーIDの取得
-			int32 latestActivatedTriggerID = -1;
+			//latestActivatedTriggerID = -1;
 			for (auto& t : triggers) {
+				stockLargeNearGameObjects.add(t.get());
+				//生成時に設定した他条件で起動するトリガー用
+				if (t->getCheckOtherCondition()) {
+					if (t->checkOtherConditionFunc() && t->getIsActivated()) {
+						latestActivatedTriggerID = t->getTrapID();
+					}
+					continue;
+				}
+				//他通常トリガー用
 				if (t->getIsActivated()) {
 					latestActivatedTriggerID = t->getTrapID();
 				}
-				stockLargeNearGameObjects.add(t.get());
 			}
 
 			//playerに現在の罠IDを渡す
@@ -349,6 +386,13 @@ namespace Iwanna {
 				auto nearObjs = stockBulletsNearGameObjects.query(b->getBroadRect());
 				for (auto* obj : nearObjs) {
 					b->onCollision(*obj);
+				}
+			}
+
+			//あるマップ専用処理
+			if (stageName == U"trap2") {
+				if (latestActivatedTriggerID == 30) {
+					Global::trapActivatedInTrap2Map = true;
 				}
 			}
 
