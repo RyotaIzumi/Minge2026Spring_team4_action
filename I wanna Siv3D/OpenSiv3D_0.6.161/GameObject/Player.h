@@ -8,8 +8,6 @@
 namespace Iwanna {
 	class Player : public GameObject {
 	private://以下値は元のI wanna の値と同じ
-		bool frozen = false; //操作を受け付けるかどうか
-		bool frozen2 = false; //↑の予備
 		double jump = 8.5; //１段目ジャンプ力
 		double jump2 = 7; //２段目ジャンプ力
 		double djump = true; //２段ジャンプできるかどうか
@@ -21,6 +19,8 @@ namespace Iwanna {
 		bool roomOutTrue = false;//kid君をroom外にいけるようにする
 		bool isDead = false; //死亡状態かどうか
 		bool isGenerateBullet = false; //弾生成フラグ
+
+		int32 nowTrapID = 0;
 
 		//player当たり判定サイズ
 		SizeF hitBoxSize{ 11,21 };
@@ -60,5 +60,8 @@ namespace Iwanna {
 		Global::Direction getDirection() const;
 		void setIsMuteki(bool value);
 		bool getIsMuteki() const;
+		void setStopOrPlayAnimation(bool isPlay);
+
+		void setNowTrapID(int32 id);
 	};
 }

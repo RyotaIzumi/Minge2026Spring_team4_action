@@ -18,9 +18,13 @@ void DrawTileCursor()
 }
 
 /// @brief オブジェクト上でカーソルを描きます。(ギミックモード時)
-void DrawGimmikCursor(Vec2 pos, Texture gimmikTexture)
+/// @param pos 基本座標
+/// @param gimmikTexture 対象のテクスチャ
+/// @param isFitFrame 格子状に納めるか否か
+void DrawGimmikCursor(Vec2 pos, Texture gimmikTexture,bool isFitFrame)
 {
-	gimmikTexture(0,0,32,32).drawAt(pos.x + 16,pos.y + 16);
+	if(isFitFrame)gimmikTexture(0,0,32,32).drawAt(pos.x + 16,pos.y + 16);
+	else          gimmikTexture(0,0,32,32).drawAt(pos.x,pos.y);
 }
 
 /// @brief マウスカーソルがあるタイルのインデックスを返します。
@@ -92,6 +96,9 @@ Grid<AutoTileConnectivity> connectivityGrid(gridSize);
 //保存ファイル名
 TextEditState saveFileName;
 
+//メインのアクションプロジェクトまでのパス
+FilePath mainActionProjectPath = U"../../../I wanna Siv3D/OpenSiv3D_0.6.161/App/MapData/";
+
 
 void Main()
 {
@@ -116,11 +123,14 @@ void Main()
 		AutoTile{ Image{ objectPath + U"sprSpikeDown.png" }, 23 },
 		AutoTile{ Image{ objectPath + U"sprSpikeRight.png" }, 24 },
 		AutoTile{ Image{ objectPath + U"sprSave.png" }, 25 },
+		AutoTile{ Image{ objectPath + U"sprBlockHide.png" }, 26 },
+		AutoTile{ Image{ objectPath + U"sprBlockShootTrough.png" }, 27 },
+		AutoTile{ Image{ objectPath + U"sprBlockFake.png" }, 28 },
 	};
 	size_t autoTileIndex = 0;
 
 	// 敵の名前配列（ListBox と一致させる）
-	const Array<String> gimmikNames = { U"罠針_上", U"罠針_左", U"罠針_下",U"罠針_右", U"罠トリガー"};
+	const Array<String> gimmikNames = { U"罠針_上", U"罠針_左", U"罠針_下",U"罠針_右", U"罠トリガー", U"罠りんご",U"罠ブロック",U"前トリガー"};
 
 	//敵の準備
 	ListBoxState listBoxGimmiks{
@@ -133,7 +143,7 @@ void Main()
 	ListBoxState listBoxPlacedGimmiks;
 	listBoxPlacedGimmiks.selectedItemIndex = 0;
 
-	const FilePath gimmikPath = U"texture/enemy/";
+	const FilePath gimmikPath = U"texture/gimmik/";
 	const Array<Texture> gimmikTextures =
 	{
 		Texture{ gimmikPath + U"spikeTrapUp.png" },
@@ -141,6 +151,9 @@ void Main()
 		Texture{ gimmikPath + U"spikeTrapDown.png" },
 		Texture{ gimmikPath + U"spikeTrapRight.png" },
 		Texture{ gimmikPath + U"trapTrigger.png" },
+		Texture{ gimmikPath + U"trapCherry.png" },
+		Texture{ gimmikPath + U"trapBlock.png" },
+		Texture{ gimmikPath + U"trapTriggerPrev.png" },
 	};
 
 	// --- 敵情報構造体 ---
@@ -148,9 +161,9 @@ void Main()
 	{
 		String name;
 		Vec2 pos;      // マップ上のピクセル座標（左上原点）
-		int32 trapId;  // トリガーと結び付けるID
-		double direction; // 罠の向き
-		double speed; // 罠の速度
+		int32 value1;  // 罠 : トリガーと結び付けるID
+		double value2; // 罠 : 罠の向き
+		double value3; // 罠 : 罠の速度
 	};
 
 	// 配置済みの敵リスト
@@ -164,17 +177,15 @@ void Main()
 	String posYText = Format(startPlayerPos.y);
 
 	// テキストボックス
-	TextEditState editX;
-	TextEditState editY;
-	editX.text = posXText;
-	editY.text = posYText;
+	TextEditState editPlayerX;
+	TextEditState editPlayerY;
+	editPlayerX.text = posXText;
+	editPlayerY.text = posYText;
 
 	// 敵の値（GUI で変更可能にするためのテキスト入力）
-	TextEditState gimmikIdText;
-	TextEditState gimmikDirText;
-	TextEditState gimmikSpdText;
-
-
+	TextEditState gimmikValueText1;
+	TextEditState gimmikValueText2;
+	TextEditState gimmikValueText3;
 
 	// マップのセルの数
 	 Size GridSize{ 25, 19 };
@@ -217,9 +228,9 @@ void Main()
 	size_t settingMode = 0;//0: tile, 1: gimmik
 
 	// 敵の値初期文字列
-	gimmikIdText.text = U"0";
-	gimmikDirText.text = U"0";
-	gimmikSpdText.text = U"0";
+	gimmikValueText1.text = U"0";
+	gimmikValueText2.text = U"0";
+	gimmikValueText3.text = U"0";
 
 	while (System::Update())
 	{
@@ -306,10 +317,13 @@ void Main()
 		// === マップ保存ボタン & ファイル名指定text box ===
 		FontAsset(U"Font")(U"保存ファイル名").draw(1080, 120);
 		SimpleGUI::TextBox(saveFileName, Vec2{ 1080, 150 }, 150);
-		if (SimpleGUI::Button(U"Save CSV", Vec2{ 1080, 200 }))
+
+		FontAsset(U"Font")(U"CSV").draw(1080, 190);
+		// CSV 保存処理
+		if (SimpleGUI::Button(U"Save", Vec2{ 1080, 220 }))
 		{
 			CSV csv;
-			const FilePath path = U"./MapData/" + saveFileName.text + U".csv";
+			const FilePath path = mainActionProjectPath + saveFileName.text + U".csv";
 			if (!path.isEmpty())
 			{
 				for (int y = 0; y < grid.height(); ++y)
@@ -325,27 +339,42 @@ void Main()
 			}
 		}
 
-		if (SimpleGUI::Button(U"Save JSON", Vec2{ 1080, 240 }))
+		// CSV 読み込み処理
+		if (SimpleGUI::Button(U"Load", Vec2{ 1170, 220 }))
 		{
-			// JSON を手作りで組み立てる（シンプル）
-			// 望ましい形式:
-			// [
-			//  {
-			//    "startPlayerPos": [30, 30],
-			//    "Gimmiks": [
-			//      { "gimmikName": "crab", "gimmikPos": [1500, 510], "gimmikValue": 1.8 },
-			//      ...
-			//    ]
-			//  }
-			// ]
-			// 
+			const FilePath path = mainActionProjectPath + saveFileName.text + U".csv";
+
+			if (FileSystem::Exists(path))
+			{
+				CSV csv(path);
+
+				for (int y = 0; y < Min(grid.height(), csv.rows()); ++y)
+				{
+					for (int x = 0; x < Min(grid.width(), csv.columns(y)); ++x)
+					{
+						grid[y][x] = Parse<int32>(csv[y][x]);
+					}
+				}
+
+				Print << U"CSVを読み込みました: " << path;
+			}
+			else
+			{
+				Print << U"ファイルが存在しません";
+			}
+		}
+
+
+		FontAsset(U"Font")(U"JSON").draw(1080, 260);
+		// JSON 保存処理
+		if (SimpleGUI::Button(U"Save", Vec2{ 1080, 290 }))
+		{
 			// トップレベル配列 JSON を作る
 			JSON json;
-			//json.setArray();  // これが最重要！
 
 			JSON root;  // 配列に入れるオブジェクト
 
-			const FilePath path = U"./MapData/" + saveFileName.text + U".json";
+			const FilePath path = mainActionProjectPath + saveFileName.text + U".json";
 
 			// --- startPlayerPos ---
 			root[U"startPlayerPos"].push_back(startPlayerPos.x);
@@ -361,9 +390,9 @@ void Main()
 				gimmik[U"gimmikPos"].push_back(e.pos.x);
 				gimmik[U"gimmikPos"].push_back(e.pos.y);
 
-				gimmik[U"id"] = e.trapId;
-				gimmik[U"direction"] = e.direction;
-				gimmik[U"speed"] = e.speed;
+				gimmik[U"value1"] = e.value1;
+				gimmik[U"value2"] = e.value2;
+				gimmik[U"value3"] = e.value3;
 
 				root[U"Gimmiks"].push_back(gimmik);
 			}
@@ -376,7 +405,60 @@ void Main()
 			Print << U"情報を保存しました: " << path;
 		}
 
+		// JSON 読み込み処理
+		if (SimpleGUI::Button(U"Load", Vec2{ 1170, 290 }))
+		{
+			const FilePath path = mainActionProjectPath + saveFileName.text + U".json";
 
+			if (FileSystem::Exists(path))
+			{
+				JSON json = JSON::Load(path);
+
+				if (json.isArray() && !json.isEmpty())
+				{
+					const JSON& root = json[0];
+
+					// --- startPlayerPos ---
+					if (root.contains(U"startPlayerPos"))
+					{
+						startPlayerPos.x = root[U"startPlayerPos"][0].get<double>();
+						startPlayerPos.y = root[U"startPlayerPos"][1].get<double>();
+
+						editPlayerX.text = Format(startPlayerPos.x);
+						editPlayerY.text = Format(startPlayerPos.y);
+					}
+
+					// --- Gimmiks ---
+					placedGimmiks.clear();
+
+					if (root.contains(U"Gimmiks"))
+					{
+						for (const auto& g : root[U"Gimmiks"].arrayView())
+						{
+							GimmikInfo e;
+
+							e.name = g[U"gimmikName"].getString();
+
+							e.pos.x = g[U"gimmikPos"][0].get<double>();
+							e.pos.y = g[U"gimmikPos"][1].get<double>();
+
+							e.value1 = g[U"value1"].get<int32>();
+							e.value2 = g[U"value2"].get<double>();
+							e.value3 = g[U"value3"].get<double>();
+
+							placedGimmiks << e;
+							listBoxPlacedGimmiks.items.push_back(e.name);
+						}
+					}
+
+					Print << U"JSONを読み込みました: " << path;
+				}
+			}
+			else
+			{
+				Print << U"ファイルが存在しません";
+			}
+		}
 
 
 
@@ -437,14 +519,21 @@ void Main()
 					
 					// 罠の値をパース（失敗時は 0.0 をデフォルトに）
 					double val = 0.0;
-					if (const auto d = Parse<int32>(gimmikIdText.text)) val = d;
+					if (const auto d = Parse<int32>(gimmikValueText1.text)) val = d;
 
 					GimmikInfo e;
 					e.name = gimmikNames[*listBoxGimmiks.selectedItemIndex]; // listBox の選択と同期
 					e.pos = Vec2{ worldPos };
-					e.trapId = val;
-					e.direction = val;
-					e.speed = val;
+					if (e.name == U"罠トリガー" || e.name == U"前トリガー") {
+						e.value1 = 0;
+						e.value2 = 1.0;
+						e.value3 = 1.0;
+					}
+					else {
+						e.value1 = val;
+						e.value2 = val;
+						e.value3 = val;
+					}
 
 					placedGimmiks.push_back(e);
 					listBoxPlacedGimmiks.items.push_back(e.name);
@@ -483,8 +572,9 @@ void Main()
 			}
 		}
 
+		// ----- 盤面へのギミックの描画 -----
+
 		int placedgimmikCount = 0;
-		// placedGimmiks にある敵の描画
 		for (const auto& e : placedGimmiks){
 			// e.name に対応する gimmikNames のインデックスを探す（存在しなければ -1）
 			int idx = -1;
@@ -503,8 +593,18 @@ void Main()
 					(e.pos.y - (scrollY * tileSize)) + LayerOffset.y
 				};
 				if (0 <= drawgimmikPos.x && drawgimmikPos.x < 800) {
-					gimmikTextures[idx](0, 0, 32, 32).drawAt(drawgimmikPos.x + 16, drawgimmikPos.y + 16).drawFrame(
-						1.0, placedgimmikCount == listBoxPlacedGimmiks.selectedItemIndex ? ColorF(1.0, 0.0, 0.0, 1.0) : ColorF(0.0, 0.0));
+					if (e.name == U"罠トリガー" || e.name == U"前トリガー") {
+						gimmikTextures[idx](0, 0, 32, 32).scaled({e.value2,e.value3}).draw(drawgimmikPos.x, drawgimmikPos.y).drawFrame(
+							1.0, placedgimmikCount == listBoxPlacedGimmiks.selectedItemIndex ? ColorF(1.0, 0.0, 0.0, 1.0) : ColorF(0.0, 0.0));
+					}
+					else if (e.name == U"罠りんご") {// 格子状の交点に描画させたいテクスチャ
+						gimmikTextures[idx](0, 0, 32, 32).drawAt(drawgimmikPos.x, drawgimmikPos.y).drawFrame(
+							1.0, placedgimmikCount == listBoxPlacedGimmiks.selectedItemIndex ? ColorF(1.0, 0.0, 0.0, 1.0) : ColorF(0.0, 0.0));
+					}
+					else {//針など32*32の範囲に収まるテクスチャ
+						gimmikTextures[idx](0, 0, 32, 32).draw(drawgimmikPos.x, drawgimmikPos.y).drawFrame(
+							1.0, placedgimmikCount == listBoxPlacedGimmiks.selectedItemIndex ? ColorF(1.0, 0.0, 0.0, 1.0) : ColorF(0.0, 0.0));
+					}
 				}
 			}
 			else{
@@ -532,7 +632,7 @@ void Main()
 					DrawTileCursor();
 					break;
 				case 1: // ギミックモードのときはそれ自体を描画
-					DrawGimmikCursor(highlightPos, gimmikTextures[*listBoxGimmiks.selectedItemIndex]);
+					DrawGimmikCursor(highlightPos, gimmikTextures[*listBoxGimmiks.selectedItemIndex], gimmikNames[*listBoxGimmiks.selectedItemIndex] != U"罠りんご");
 					break;
 			}
 		}
@@ -594,55 +694,68 @@ void Main()
 				if (SimpleGUI::Button(U"Delete", Vec2{ baseJsonValueUIPos.x, 350 })) {
 					placedGimmiks.remove_at(idx);
 					listBoxPlacedGimmiks.items.remove_at(idx);
+					continue;
 				}
 
 				// === id入力GUI ===
-				FontAsset(U"Font")(U"id : ").draw(baseJsonValueUIPos.x, 390);
-				FontAsset(U"Font")(U"角度 : ").draw(baseJsonValueUIPos.x, 430);
-				FontAsset(U"Font")(U"速度 : ").draw(baseJsonValueUIPos.x, 470);
+				if (placedGimmiks[idx].name == U"罠針_上" || placedGimmiks[idx].name == U"罠針_左" || placedGimmiks[idx].name == U"罠針_下" || placedGimmiks[idx].name == U"罠針_右" || placedGimmiks[idx].name == U"罠りんご") {
+					FontAsset(U"Font")(U"id : ").draw(baseJsonValueUIPos.x, 390);
+					FontAsset(U"Font")(U"角度 : ").draw(baseJsonValueUIPos.x, 430);
+					FontAsset(U"Font")(U"速度 : ").draw(baseJsonValueUIPos.x, 470);
+				}
+				else if (placedGimmiks[idx].name == U"罠トリガー" || placedGimmiks[idx].name == U"前トリガー") {
+					FontAsset(U"Font")(U"id : ").draw(baseJsonValueUIPos.x, 390);
+					FontAsset(U"Font")(U"x scale : ").draw(baseJsonValueUIPos.x, 430);
+					FontAsset(U"Font")(U"y scale : ").draw(baseJsonValueUIPos.x, 470);
+				}
+				else if (placedGimmiks[idx].name == U"罠ブロック") {
+					FontAsset(U"Font")(U"id : ").draw(baseJsonValueUIPos.x, 390);
+					FontAsset(U"Font")(U"").draw(baseJsonValueUIPos.x, 430);
+					FontAsset(U"Font")(U"").draw(baseJsonValueUIPos.x, 470);
+				}
 
 				static Optional<size_t> prevIdx = none;
 
 				// idx が変わったときだけ text を初期化する
 				if (prevIdx != idx)
 				{
-					gimmikIdText.text = Format(placedGimmiks[idx].trapId);
-					gimmikDirText.text = Format(placedGimmiks[idx].direction);
-					gimmikSpdText.text = Format(placedGimmiks[idx].speed);
+					gimmikValueText1.text = Format(placedGimmiks[idx].value1);
+					gimmikValueText2.text = Format(placedGimmiks[idx].value2);
+					gimmikValueText3.text = Format(placedGimmiks[idx].value3);
 					prevIdx = idx;
 				}
 
-				SimpleGUI::TextBox(gimmikIdText, Vec2{ baseJsonValueUIPos.x + 70, 390 }, 80);
-				SimpleGUI::TextBox(gimmikDirText, Vec2{ baseJsonValueUIPos.x + 70, 430 }, 80);
-				SimpleGUI::TextBox(gimmikSpdText, Vec2{ baseJsonValueUIPos.x + 70, 470 }, 80);
+				SimpleGUI::TextBox(gimmikValueText1, Vec2{ baseJsonValueUIPos.x + 70, 390 }, 80);
+				SimpleGUI::TextBox(gimmikValueText2, Vec2{ baseJsonValueUIPos.x + 70, 430 }, 80);
+				SimpleGUI::TextBox(gimmikValueText3, Vec2{ baseJsonValueUIPos.x + 70, 470 }, 80);
 
 				// 変更があった瞬間だけ value に反映
-				if (gimmikIdText.textChanged && gimmikIdText.text != U"")
+				if (gimmikValueText1.textChanged && gimmikValueText1.text != U"")
 				{
-					if (const auto evt = Parse<double>(gimmikIdText.text))
+					if (const auto evt = Parse<double>(gimmikValueText1.text))
 					{
 						// clamp range 例：0.0〜999.0 とか
-						placedGimmiks[idx].trapId = Math::Max(0.0, evt);
+						placedGimmiks[idx].value1 = Math::Max(0.0, evt);
 					}
 				}
 
 				// 変更があった瞬間だけ value に反映
-				if (gimmikDirText.textChanged && gimmikDirText.text != U"")
+				if (gimmikValueText2.textChanged && gimmikValueText2.text != U"")
 				{
-					if (const auto evt = Parse<double>(gimmikDirText.text))
+					if (const auto evt = Parse<double>(gimmikValueText2.text))
 					{
 						// clamp range 例：0.0〜999.0 とか
-						placedGimmiks[idx].direction = Math::Max(0.0, evt);
+						placedGimmiks[idx].value2 = Math::Max(0.0, evt);
 					}
 				}
 
 				// 変更があった瞬間だけ value に反映
-				if (gimmikSpdText.textChanged && gimmikSpdText.text != U"")
+				if (gimmikValueText3.textChanged && gimmikValueText3.text != U"")
 				{
-					if (const auto evt = Parse<double>(gimmikSpdText.text))
+					if (const auto evt = Parse<double>(gimmikValueText3.text))
 					{
 						// clamp range 例：0.0〜999.0 とか
-						placedGimmiks[idx].speed = Math::Max(0.0, evt);
+						placedGimmiks[idx].value3 = Math::Max(0.0, evt);
 					}
 				}
 			}
@@ -654,21 +767,21 @@ void Main()
 			FontAsset(U"Font")(U"y").draw(baseJsonValueUIPos.x, baseJsonValueUIPos.y + 80, Palette::White);
 
 			// X テキストボックス
-			if (SimpleGUI::TextBox(editX, Vec2{ baseJsonValueUIPos.x + 20, baseJsonValueUIPos.y + 40 }, 80))
+			if (SimpleGUI::TextBox(editPlayerX, Vec2{ baseJsonValueUIPos.x + 20, baseJsonValueUIPos.y + 40 }, 80))
 			{
 				// 入力されたとき、数値か判定
-				if (editX.text)
+				if (editPlayerX.text)
 				{
-					startPlayerPos.x = Parse<int>(editX.text);
+					startPlayerPos.x = Parse<int>(editPlayerX.text);
 				}
 			}
 
 			// Y テキストボックス
-			if (SimpleGUI::TextBox(editY, Vec2{ baseJsonValueUIPos.x + 20, baseJsonValueUIPos.y + 80 }, 80))
+			if (SimpleGUI::TextBox(editPlayerY, Vec2{ baseJsonValueUIPos.x + 20, baseJsonValueUIPos.y + 80 }, 80))
 			{
-				if (editY.text)
+				if (editPlayerY.text)
 				{
-					startPlayerPos.y = Parse<int>(editY.text);
+					startPlayerPos.y = Parse<int>(editPlayerY.text);
 				}
 			}
 

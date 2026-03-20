@@ -23,12 +23,14 @@ namespace Iwanna {
 		registerTexture(U"sprCherryAllWhite", CherryPath + U"sprCherryAllWhite.png");
 		registerTexture(U"sprCherryFrameWhite", CherryPath + U"sprCherryFrameWhite.png");
 		registerTexture(U"sprCherryWhite", CherryPath + U"sprCherryWhite.png");
+		registerTexture(U"sprCherryLow", CherryPath + U"sprCherryLow.png");
 
 		//ブロックテクスチャ登録
 		static const FilePath BlockPath = U"Texture/Block/";
 		registerTexture(U"sprBlock_low1", BlockPath + U"sprBlock_low1.png");
 		registerTexture(U"sprBlock_low2", BlockPath + U"sprBlock_low2.png");
 		registerTexture(U"sprBlock_low3", BlockPath + U"sprBlock_low3.png");
+		registerTexture(U"sprBlockShootTrough", BlockPath + U"sprBlockShootTrough.png");
 
 		//mikuテクスチャ登録
 		static const FilePath MikuPath = U"Texture/Miku/";
@@ -44,6 +46,17 @@ namespace Iwanna {
 		//その他テクスチャ登録
 		static const FilePath OtherPath = U"Texture/Other/";
 		registerTexture(U"sprSave", OtherPath + U"sprSave.png");
+		registerTexture(U"sprWarp", OtherPath + U"sprWarp.png");
+		registerTexture(U"sprFakeSave", OtherPath + U"sprFakeSave.png");
+		registerTexture(U"warningTrap", OtherPath + U"warningTrap.png");
+		registerTexture(U"steamTrap", OtherPath + U"steamTrap.png");
+		registerTexture(U"discordTrap", OtherPath + U"discordTrap.png");
+		registerTexture(U"adTrap", OtherPath + U"adTrap.png");
+		registerTexture(U"panddChanTrap", OtherPath + U"panddChan.png");
+		registerTexture(U"treeTrap", OtherPath + U"tree.png");
+		registerTexture(U"transParentTreeTrap", OtherPath + U"transParentTree.png");
+		registerTexture(U"sprGAMEOVER", OtherPath + U"sprGAMEOVER.png");
+		registerTexture(U"hideLine", OtherPath + U"hideLine.png");
 	}
 
 	void registerTexturesSync() {

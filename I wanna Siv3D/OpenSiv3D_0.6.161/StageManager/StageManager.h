@@ -8,6 +8,9 @@
 #include "../GameObject/Spike.h"
 #include "../GameObject/Trigger.h"
 #include "../GameObject/SavePoint.h"
+#include "../GameObject/SpecialTrap.h"
+#include "../GameObject/Blood.h"
+#include "../GameObject/Warp.h"
 #include "../Global.h"
 
 namespace Iwanna {
@@ -20,23 +23,45 @@ namespace Iwanna {
 		Array<std::shared_ptr<Spike>> spikes;
 		Array<std::shared_ptr<Trigger>> triggers;
 		Array<std::shared_ptr<SavePoint>> savePoints;
+		Array<std::shared_ptr<SpecialTrap>> specialTraps;
+		Array<std::shared_ptr<SpecialTrap>> specialBackTraps;//↑と違い、背景側のレイヤー配置用
+		Array<std::shared_ptr<Blood>> bloods;
+		Array<std::shared_ptr<Warp>> warps;
 	};
 
 	class StageManager {
 	private:
 		StockNearGameObjects stockNearGameObjects;
 		StockNearGameObjects stockBulletsNearGameObjects;
+		StockNearGameObjects stockLargeNearGameObjects;//大きいオブジェクトなど、通常のストッククラスでは処理できないものを入れる用
 		StageGameObjects gameObjects;
 
 		//カメラ関連
 		Vec2 cameraBasePos{ 400, 304 };
 		Camera2D camera{ cameraBasePos, 1.0 };
+		double cameraScale = 1.0;
+
+		//特殊トラップ用
+		Vec2 saveTrapCameraPos{0,0};
+		int32 specialSaveTrapTriggerID = 50;
 
 		//弾丸関連
-		double bulletSpeed = 8;
+		double bulletSpeed = 12;
 		int32 bulletMaxNum = 5;
 
+		//血しぶき数
+		int32 bloodNum = 80;
+		//血を生成したかどうか
+		bool isGenerateBloods = false;
+
+		//ステージ情報
 		int32 oneTileSize = 32;
+		String stageName;
+		int32 latestActivatedTriggerID = -1;
+
+		//GAMEOVER画面用
+		Timer gameoverTimer{ 0.5s };
+		bool isShowGameOver = false;
 
 		int32 step = 0;
 	public:
@@ -45,6 +70,7 @@ namespace Iwanna {
 		void setUpObjects(int32 chapter);
 		void loadGameObjects(String);
 		Vec2 parsePos(const JSON& json);
+		Vec2 parseIntactPos(const JSON& json);
 
 		void update();
 		void debug();
@@ -54,9 +80,15 @@ namespace Iwanna {
 		void saveGame();
 		Vec2 executeCameraPos();
 
+		//取得用関数
 		std::shared_ptr<Player> getPlayer();
 		Array<std::shared_ptr<Cherry>> getCherries();
 		Array<std::shared_ptr<Block>> getBlocks();
+
+		String getStageName() const;
+
+		//ある罠用に取得用
+		std::shared_ptr<SpecialTrap> getWarningWindowTrap();
 
 		void createCherry(std::shared_ptr<Cherry> cherry);
 

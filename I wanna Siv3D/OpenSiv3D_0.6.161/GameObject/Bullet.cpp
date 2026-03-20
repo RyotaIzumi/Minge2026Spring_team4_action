@@ -1,6 +1,7 @@
 ﻿#include "Bullet.h"
 #include "../Audio/AudioAsset.h"
 #include "../GameObject/SavePoint.h"
+#include "../GameObject/Block.h"
 
 namespace Iwanna {
 	Bullet::Bullet(Vec2& genePos, double hs){
@@ -34,8 +35,11 @@ namespace Iwanna {
 
 	void Bullet::onCollision(GameObject& other) {
 		// ブロック、ミク衝突
-		if (other.type == ObjectType::Block) {
-			isDelete = true;
+		if (this->intersects(other) && other.type == ObjectType::Block) {
+			auto* block = dynamic_cast<Block*>(&other);
+			if (block->blockType != BlockType::ShootThrough && block->getHasCollide()) {
+				isDelete = true;
+			}
 		}
 
 		// ミク衝突
@@ -46,7 +50,25 @@ namespace Iwanna {
 		// セーブポイント衝突
 		if (this->intersects(other) && other.type == ObjectType::SavePoint) {
 			auto* savePoint = dynamic_cast<SavePoint*>(&other);
-			savePoint->saved();
+			switch (savePoint->saveType) {
+			case SaveType::Normal:
+			{
+				savePoint->saved();
+				break;
+			}
+			case SaveType::MoveTrap:
+			{
+				auto* smt = dynamic_cast<SaveMoveTrap*>(&other);
+				if (!smt->getIsStartTrap()) smt->saved();
+				break;
+			}
+			case SaveType::FakeTrap:
+			{
+				auto* sft = dynamic_cast<SaveFakeTrap*>(&other);
+				if (!sft->getIsStartTrap()) sft->setIsStartTrap(true);
+				break;
+			}
+			}
 		}
 	}
 

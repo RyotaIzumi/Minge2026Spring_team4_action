@@ -11,9 +11,10 @@ namespace Iwanna {
 		canPlayerKill = true;
 		isDelete = false;
 		isOutOfScreen = false;
+		isTrap = false;
 
 		speed = 0;
-		dir = 0;
+		direction = 0;
 	}
 
 	void Cherry::update() {
@@ -30,18 +31,12 @@ namespace Iwanna {
 		hitBox->setPos(pos);
 	}
 
-	void Cherry::draw() const {
-		TextureAsset(U"sprCherry").drawAt(pos.x,pos.y-1);
-		//hitBox->draw(Palette::Blue);//判定の可視化
+	void Cherry::trapUpdate(int32 id) {
 	}
 
-	//speedとdirからhspeedとvspeedを計算
-	void Cherry::calculateSpeed() {
-		//ラジアンに変換
-		double rad = Math::ToRadians(dir);
-
-		hspeed = speed * Math::Cos(rad);
-		vspeed = -speed * Math::Sin(rad);
+	void Cherry::draw() const {
+		TextureAsset(U"sprCherryLow").drawAt(pos.x,pos.y-1);
+		//hitBox->draw(Palette::Blue);//判定の可視化
 	}
 
 	//画面外判定
@@ -57,5 +52,39 @@ namespace Iwanna {
 	}
 
 	void Cherry::onCollision(GameObject& other) {
+	}
+
+	CherryTrap::CherryTrap(Vec2 startPos, int32 id, double dir, double spd) : trapID(id) {
+		pos = startPos;
+		direction = dir;
+		trapSpeed = spd;
+		speed = 0;
+		hspeed = 0;
+		vspeed = 0;
+
+		isTrap = true;
+		soundPlayOne = false;
+	}
+
+	void CherryTrap::trapUpdate(int32 id) {
+		checkOutOfScreen();
+		if (trapID == id) {
+			isTrapActived = true;
+		}
+
+		if (isTrapActived) {
+			speed = trapSpeed;
+
+			//効果音再生
+			if (!soundPlayOne) {
+				AudioAsset(Sound::CHERRYFALL).playOneShot();
+				soundPlayOne = true;
+			}
+		}
+	}
+
+	//罠のIDを取得
+	int32 CherryTrap::getTrapID() const {
+		return trapID;
 	}
 }

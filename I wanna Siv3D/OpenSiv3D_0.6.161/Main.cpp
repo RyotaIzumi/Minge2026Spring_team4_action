@@ -10,12 +10,16 @@ void Main()
 {
 	System60::SetDisplaySize(Size{800,608});
 
-	Window::SetTitle(U"I wanna Siv3D");
+	Window::SetTitle(U"I wanna Siv3D (Debug Build)");
 
 	//フォントはここで宣言
 	FontAsset::Register(U"Big", 60, Typeface::Regular);
 	FontAsset::Register(U"Button", FontMethod::MSDF, 20, Typeface::Medium);
+	FontAsset::Register(U"TitleTrap", FontMethod::MSDF, 10, Typeface::Medium);
 
+	//カーソル設定
+	Image cursorImage{ U"✌"_emoji };
+	Cursor::RegisterCustomCursorStyle(U"cursorPiece", cursorImage.scaled(0.5), Point{10,10});
 	
 	Iwanna::registerTextures();
 	Iwanna::registerTexturesSync();

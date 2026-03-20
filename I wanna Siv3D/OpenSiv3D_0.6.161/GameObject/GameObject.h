@@ -11,8 +11,11 @@ namespace Iwanna {
 		Bullet,
 		Spike,
 		Trigger,
+		SpecialTrap,
 		SavePoint,
-		Miku
+		Blood,
+		Miku,
+		Warp
 	};
 
 	class GameObject {
@@ -21,9 +24,13 @@ namespace Iwanna {
 		std::shared_ptr<HitBox> hitBox;
 		ObjectType type;
 		bool canPlayerKill = false;
+		bool isDelete = false; //消去用フラグ
 
+		//基礎パラメータ
 		double hspeed;
 		double vspeed;
+		double speed;
+		double direction;
 
 		virtual ~GameObject() = default;
 
@@ -38,6 +45,21 @@ namespace Iwanna {
 
 		bool intersects(const GameObject& other) const {
 			return hitBox->intersects(*other.hitBox);
+		}
+
+		//speedとdirectionからhspeedとvspeedを計算
+		void calculateSpeed() {
+			//ラジアンに変換
+			double rad = Math::ToRadians(direction);
+
+			hspeed = speed * Math::Cos(rad);
+			vspeed = -speed * Math::Sin(rad);
+		}
+
+		//2つの座標から角度を計算
+		void calculateDirection(Vec2 basePos, Vec2 targetPos) {
+			Vec2 diff = targetPos - basePos;
+			direction = Math::ToDegrees(Atan2(-diff.y, diff.x)) ;
 		}
 
 		virtual void onCollision(GameObject& other) = 0;

@@ -24,6 +24,12 @@ namespace Iwanna {
 			registerAudio(JUMP, JUMP_PATH);
 			registerAudio(DJUMP, DJUMP_PATH);
 			registerAudio(SHOOT, SHOOT_PATH);
+			registerAudio(CHERRYFALL, CHERRYFALL_PATH);
+			registerAudio(BLOCKCHANGE, BLOCKCHANGE_PATH);
+			registerAudio(BLOCKBREAK, BLOCKBREAK_PATH);
+			registerAudio(SPIKETRAP, SPIKETRAP_PATH);
+			registerAudio(ERROR,ERROR_PATH);
+			registerAudio(DISCORD,DISCORD_PATH);
 		}
 
 		/**

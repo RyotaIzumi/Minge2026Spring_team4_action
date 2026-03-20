@@ -24,6 +24,17 @@ namespace Iwanna {
 		stopwatch.restart();
 	}
 
+	//アニメーションの再生と停止を切り替える
+	// true の場合は再生、false の場合は停止
+	void SpriteSystem::stopOrPlayAnimation(bool isPlay){
+		if (isPlay) {
+			stopwatch.resume();
+		}
+		else {
+			stopwatch.pause();
+		}
+	}
+
 	// 現在のアニメーションフレームから TextureRegion を返す
 	TextureRegion SpriteSystem::getTextureRegion(Global::Direction direction) const {
 		if (!sprites.contains(currentSprite)) {

@@ -1,11 +1,11 @@
 ﻿#include "Player.h"
 #include "../Audio/AudioAsset.h"
 #include "../GameObject/Trigger.h"
+#include "../GameObject/Block.h"
+#include "../GameObject/Warp.h"
 
-namespace Iwanna{
+namespace Iwanna {
 	Player::Player() {
-		frozen = false; //操作を受け付けるかどうか
-		frozen2 = false; //↑の予備
 		jump = 8.5; //１段目ジャンプ力
 		jump2 = 7; //２段目ジャンプ力
 		djump = true; //２段ジャンプできるかどうか
@@ -45,7 +45,7 @@ namespace Iwanna{
 
 		if (isDead) return;
 
-		if (!frozen) {
+		if (!Global::isPlayerFrozen) {
 			if (Global::inputLeft.pressed()) playerMoveLeft();
 			if (Global::inputRight.pressed()) playerMoveRight();
 			if (Global::inputShoot.down()) playerShoot();
@@ -87,8 +87,7 @@ namespace Iwanna{
 	}
 
 	void Player::draw() const {
-		hitBox->draw(Palette::Red);
-		
+		//hitBox->draw(Palette::Red);
 		TextureRegion texture = spriteSystem.getTextureRegion(direction);
 		if(!isDead)texture.drawAt(pos.x,pos.y - 6);
 		else texture.drawAt(pos.x, pos.y - 6, ColorF(0.8,0,0, 0.8));
@@ -136,7 +135,7 @@ namespace Iwanna{
 		isDead = true;
 		hspeed = 0;
 		vspeed = 0;
-		spriteSystem.stopAnimation();
+		spriteSystem.stopOrPlayAnimation(false);
 		AudioAsset(Sound::DEATH).playOneShot();
 	}
 
@@ -151,6 +150,37 @@ namespace Iwanna{
 	void Player::onCollision(GameObject& other) {
 		// ブロック衝突
 		if (other.type == ObjectType::Block) {
+
+			// ブロックが他タイプだった場合
+			auto* block = dynamic_cast<Block*>(&other);
+			if (this->intersects(other)) {
+				if (block->blockType == BlockType::Hide) {
+					auto* hideBlock = dynamic_cast<HideBlock*>(&other);
+					if (hideBlock->getIsHidden()) {
+						hideBlock->setIsHidden(false);
+						AudioAsset(Sound::BLOCKCHANGE).playOneShot();
+					}
+				}
+				else if (block->blockType == BlockType::ConditionalHide) {
+					auto* chBlock = dynamic_cast<ConditionalHideBlock*>(&other);
+					if (chBlock->getIsHidden() && chBlock->getHasCollide()) {
+						chBlock->setIsHidden(false);
+						AudioAsset(Sound::BLOCKCHANGE).playOneShot();
+					}
+				}
+				else if (block->blockType == BlockType::Fake) {
+					auto* fakeBlock = dynamic_cast<FakeBlock*>(&other);
+					if (!fakeBlock->getIsHidden()) {
+						fakeBlock->setIsHidden(true);
+						AudioAsset(Sound::BLOCKCHANGE).play();
+					}
+				}
+			}
+
+			if (!block->getHasCollide())return;
+
+			// --- 以下通常のブロックとの衝突判定 ---
+
 			Vec2 modifiedPos = snappedPos(pos);
 
 			// --- 横方向 予測衝突 ---
@@ -196,7 +226,6 @@ namespace Iwanna{
 			if (nextHitBox.intersects(*other.hitBox->getRect())) {
 				hspeed = 0;
 			}
-
 		}
 
 		// PlayerKill属性を持つオブジェクトとの衝突
@@ -210,7 +239,26 @@ namespace Iwanna{
 		if (other.type == ObjectType::Trigger) {
 			if (this->intersects(other)) {
 				auto* trigger = dynamic_cast<Trigger*>(&other);
-				trigger->triggerActivate();
+				if (!trigger->getCheckPrevID()) {
+					trigger->triggerActivate();
+
+					//trap2 map専用
+					if (trigger->getTrapID() == 30) {
+						Global::trapActivatedId30InTrap2Map = true;
+					}
+				}
+				else {
+					if(trigger->getTrapID() - 1 == nowTrapID)trigger->triggerActivate();
+				}
+			}
+		}
+
+		// ワープとの衝突
+		if (other.type == ObjectType::Warp) {
+			if (this->intersects(other)) {
+				auto* warp = dynamic_cast<Warp*>(&other);
+				Global::nowRoomName = warp->getNextRoomName();
+				Global::isChangeRoom = true;
 			}
 		}
 	}
@@ -248,5 +296,16 @@ namespace Iwanna{
 	// 無敵状態かどうかを取得
 	bool Player::getIsMuteki() const {
 		return isMuteki;
+	}
+
+	// アニメーションの再生と停止を切り替える
+	// true の場合は再生、false の場合は停止
+	void Player::setStopOrPlayAnimation(bool isPlay) {
+		spriteSystem.stopOrPlayAnimation(isPlay);
+	}
+
+	//ステージ上での現在の罠IDを取得する
+	void Player::setNowTrapID(int32 id) {
+		nowTrapID = id;
 	}
 }

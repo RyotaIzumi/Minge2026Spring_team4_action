@@ -32,10 +32,26 @@ namespace Global {
 	inline bool isExistSaveData = false;
 	// セーブされたプレイヤーの開始座標
 	inline Vec2 savedStartPlayerPos = Vec2(-100, -100);
+	// セーブされた部屋名
+	inline String savedRoomName = U"";
 
 	// --- room関連 ---
 	inline int32 stageWidth = 800;
 	inline int32 stageHeight = 608;
+	inline bool isChangeRoom = false;
+	inline String startRoomName = U"trap1";
+	inline String nowRoomName = U"";
+
+	// --- 特殊罠関連 ---
+	inline bool warningTrapPaused = false;
+	//trap2 map専用
+	inline bool trapActivatedInTrap2Map = false;
+	inline bool trapActivatedId30InTrap2Map = false;
+	inline bool trapCameraActivatedInTrap2Map = false;
+	inline bool bgmStop = false;
+
+	// --- player関連 ---
+	inline bool isPlayerFrozen = false;
 
 	 // ======================
 	// 定数
