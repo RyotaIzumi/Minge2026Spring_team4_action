@@ -532,13 +532,15 @@ namespace Iwanna {
 		isActivated = false;
 		isNeedPlayerDir = true;
 
+		trapStopwatch.start();
+
 		speed = 7;
 		direction = 0;
 	}
 
 	void MouseTrap::trapUpdate() {
 
-		if (Abs(Cursor::DeltaF().x) > 0 || Abs(Cursor::DeltaF().y) > 0) {
+		if (Abs(Cursor::DeltaF().x) > 0.1 || Abs(Cursor::DeltaF().y) > 0.1) {
 			trapStopwatch.restart();
 		}
 

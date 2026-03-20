@@ -135,7 +135,7 @@ namespace Iwanna {
 							continue;
 						}
 						if (gimmikValue1 == 5 && gimmikName == U"罠針_左") {
-							gameObjects.spikes << std::make_shared<SpikePathTrap>(gimmikParsePos, 1, static_cast<int32>(gimmikValue1), Vec2{ -7,0 }, 0.7);
+							gameObjects.spikes << std::make_shared<SpikePathTrap>(gimmikParsePos, 1, static_cast<int32>(gimmikValue1), Vec2{ -30,0 }, 2.0);
 							continue;
 						}
 						if (gimmikValue1 == 7 && gimmikName == U"罠針_左") {
@@ -156,7 +156,7 @@ namespace Iwanna {
 							}
 						}
 						if (gimmikValue1 == 13 && gimmikName == U"罠トリガー") {
-							gameObjects.specialTraps << std::make_shared<WarningWindowTrap>(Vec2{ 688,670 }, static_cast<int32>(gimmikValue1));
+							gameObjects.specialTraps << std::make_shared<SteamTrap>(Vec2{ 688,670 }, static_cast<int32>(gimmikValue1));
 						}
 					}
 
@@ -235,6 +235,13 @@ namespace Iwanna {
 		}
 
 		// トリガー不必要の特殊配置物
+		//(Warpは後々Editに適応)
+
+		if (fileName == U"trap1") {
+			gameObjects.warps << std::make_shared<Warp>(Vec2{ 512,608 }, U"trap2");
+			gameObjects.warps << std::make_shared<Warp>(Vec2{ 544,608 }, U"trap2");
+		}
+
 		if (fileName == U"trap2") {
 			if (Global::trapActivatedInTrap2Map)latestActivatedTriggerID = 30;
 
