@@ -6,7 +6,25 @@ namespace Iwanna {
 
 	void MainGame::startGame() {
 		int32 chapter = 1;
-		stageManager.setUpObjects(chapter);
+
+		//ステージ名称系の初期化
+		if (!Global::isExistSaveData) {
+			Global::savedRoomName = Global::startRoomName;
+			Global::nowRoomName = Global::startRoomName;
+		}
+
+		//ステージの名称から種類を決定
+		if (Global::nowRoomName == U"boss") {
+			stageType = StageType::Boss;
+		}
+		else {
+			stageType = StageType::Normal;
+		}
+
+		switch (stageType) {
+		case StageType::Normal:stageManager.setUpObjects(chapter); break;
+		case StageType::Boss:bossStageManager.setUpObjects(chapter); break;
+		}
 
 		//BGM再生関連
 		if (!audio.isPlaying()) {
@@ -16,35 +34,56 @@ namespace Iwanna {
 	}
 
 	void MainGame::updateGame() {
-		
-		if (!Global::warningTrapPaused) {
-			stageManager.update();
-		}
-		else {
-			stageManager.getWarningWindowTrap()->trapUpdate();
+
+		switch (stageType) {
+		case StageType::Normal:
+			if (!Global::warningTrapPaused) {
+				stageManager.update();
+			}
+			else {
+				stageManager.getWarningWindowTrap()->trapUpdate();
+			}
+
+			//playerが死亡していたらBGM一時停止
+			if (stageManager.getPlayer()->getIsDead() || Global::bgmStop) {
+				pauseBgm();
+				return;
+			}
+			stageManager.getPlayer()->setStopOrPlayAnimation(!Global::warningTrapPaused);
+			break;
+
+		case StageType::Boss:
+			bossStageManager.update();
+			//playerが死亡していたらBGM一時停止
+			if (bossStageManager.getPlayer()->getIsDead() || Global::bgmStop) {
+				pauseBgm();
+				return;
+			}
+			break;
 		}
 
-		//playerが死亡していたらBGM一時停止
-		if (stageManager.getPlayer()->getIsDead() || Global::bgmStop) {
-			pauseBgm();
-			return;
-		}
-
-		if (stageManager.getStageName() == U"boss") {
-			stopBgm();
-		}
-
-		stageManager.getPlayer()->setStopOrPlayAnimation(!Global::warningTrapPaused);
+		if(Global::nowRoomName == U"boss")pauseBgm();
 	}
 
 	void MainGame::debugGame() {
-		stageManager.debug();
+		switch (stageType) {
+		case StageType::Normal:
+			stageManager.debug();
+		case StageType::Boss:
+			bossStageManager.debug();
+		}
+
 		if (Global::inputDebugPause.down())pauseBgm();
 		if (Global::inputDebugStart.down())audio.play();
 	}
 
 	void MainGame::drawGame() {
-		stageManager.draw();
+		switch (stageType) {
+		case StageType::Normal:
+			stageManager.draw();
+		case StageType::Boss:
+			bossStageManager.draw();
+		}
 	}
 
 	void MainGame::playBgm(int32 chapter) {

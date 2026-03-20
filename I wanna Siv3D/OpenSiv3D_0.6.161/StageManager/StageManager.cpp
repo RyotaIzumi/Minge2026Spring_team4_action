@@ -34,8 +34,6 @@ namespace Iwanna {
 		gameoverTimer.reset();
 		isShowGameOver = false;
 
-		if (!Global::isExistSaveData)Global::savedRoomName = Global::startRoomName;
-
 		if(Global::isChangeRoom)loadGameObjects(Global::nowRoomName);
 		else loadGameObjects(Global::savedRoomName);
 		Global::isChangeRoom = false;

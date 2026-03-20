@@ -8,6 +8,7 @@
 namespace Iwanna {
 	enum class SaveType {
 		Normal,
+		Boss,
 		MoveTrap,
 		FakeTrap
 	};
@@ -37,6 +38,19 @@ namespace Iwanna {
 		void onCollision(GameObject& other) override;
 		bool getIsTrap() const;
 		int32 getTrapID() const;
+	};
+
+	class BossSavePoint : public SavePoint {
+	private:
+		int32 appendBossId;
+		double saveAlpha = 1.0;
+		double saveScale = 1.0;
+		double saveRotate = 0.0;
+	public:
+		BossSavePoint(Vec2 startPos,int32 bossId);
+
+		void update() override;
+		void draw() const override;
 	};
 
 	class SaveMoveTrap : public SavePoint {

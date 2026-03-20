@@ -68,6 +68,12 @@ namespace Iwanna {
 				if (!sft->getIsStartTrap()) sft->setIsStartTrap(true);
 				break;
 			}
+			case SaveType::Boss:
+			{
+				auto* bsp = dynamic_cast<BossSavePoint*>(&other);
+				bsp->saved();
+				break;
+			}
 			}
 		}
 	}

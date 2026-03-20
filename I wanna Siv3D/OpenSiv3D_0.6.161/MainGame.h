@@ -3,8 +3,14 @@
 #include "GameObject/StockNearGameObjects.h"
 #include "AvoidanceManager/AvoidanceManager.h"
 #include "StageManager/StageManager.h"	
+#include "StageManager/BossStageManager.h"	
 
 namespace Iwanna {
+	enum class StageType {
+		Normal,
+		Boss
+	};
+
 	class MainGame {
 	private:
 		StockNearGameObjects stockNearGameObjects;
@@ -13,6 +19,9 @@ namespace Iwanna {
 
 		AvoidanceManager avoidanceManager;
 		StageManager stageManager;
+		BossStageManager bossStageManager;
+
+		StageType stageType;
 
 	public:
 		MainGame();
