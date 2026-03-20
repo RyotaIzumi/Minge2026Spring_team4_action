@@ -10,9 +10,10 @@ namespace Iwanna {
 
 		data.updateGame();
 
-		if (Global::inputRestart.down()) {
+		if (Global::inputRestart.down() || Global::isChangeRoom) {
 			data.startGame();
 			Window::SetTitle(U"I wanna Siv3D (Debug Build)");
+
 			changeScene(SceneType::IN_GAME, 0.0s);
 		}
 

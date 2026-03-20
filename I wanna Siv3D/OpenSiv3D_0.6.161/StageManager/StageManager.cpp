@@ -21,6 +21,7 @@ namespace Iwanna {
 		gameObjects.specialTraps.clear();
 		gameObjects.specialBackTraps.clear();
 		gameObjects.bloods.clear();
+		gameObjects.warps.clear();
 
 		// 一部変数の初期化
 		isGenerateBloods = false;
@@ -33,7 +34,11 @@ namespace Iwanna {
 		gameoverTimer.reset();
 		isShowGameOver = false;
 
-		loadGameObjects(U"trap2");
+		if (!Global::isExistSaveData)Global::savedRoomName = Global::startRoomName;
+
+		if(Global::isChangeRoom)loadGameObjects(Global::nowRoomName);
+		else loadGameObjects(Global::savedRoomName);
+		Global::isChangeRoom = false;
 	}
 
 	void StageManager::loadGameObjects(String fileName) {
@@ -100,7 +105,7 @@ namespace Iwanna {
 			Vec2 startPlayerPos = parsePos(stage[U"startPlayerPos"]);
 			startPlayerPos *= oneTileSize;
 			// セーブデータが無い場合、初期位置をCSVの値から設定
-			if (!Global::isExistSaveData) {
+			if (!Global::isExistSaveData || Global::isChangeRoom) {
 				gameObjects.player->pos = startPlayerPos;
 			}
 			else {
@@ -239,6 +244,9 @@ namespace Iwanna {
 
 			gameObjects.specialTraps << std::make_shared<MouseTrap>(Vec2{Cursor::PosF()});
 
+			gameObjects.warps << std::make_shared<Warp>(Vec2{ 1600,512 }, U"boss");
+			gameObjects.warps << std::make_shared<Warp>(Vec2{ 1600,544},U"boss");
+
 			//画面外ブロック
 			gameObjects.blocks << std::make_shared<Block>(U"sprBlock_low1", Vec2{16,-1});
 			gameObjects.blocks << std::make_shared<Block>(U"sprBlock_low1", Vec2{17,-1});
@@ -266,6 +274,7 @@ namespace Iwanna {
 		auto& specialTraps = gameObjects.specialTraps;
 		auto& specialBackTraps = gameObjects.specialBackTraps;
 		auto& bloods = gameObjects.bloods;
+		auto& warps = gameObjects.warps;
 
 		if (player->getIsDead()) {
 			gameoverTimer.start();
@@ -400,6 +409,9 @@ namespace Iwanna {
 				};
 				stockBulletsNearGameObjects.add(s.get());
 			}
+			for (auto& w : warps) {
+				stockNearGameObjects.add(w.get());
+			}
 
 			//playerの近くのオブジェクトのみを取得して当たり判定確認
 			auto near = stockNearGameObjects.query(player->getBroadRect());
@@ -516,6 +528,8 @@ namespace Iwanna {
 			for (auto t : gameObjects.triggers) t->draw();
 			//セーブポイント描画
 			for (auto s : gameObjects.savePoints) s->draw();
+			//ワープの描画
+			for (auto w : gameObjects.warps) w->draw();
 			//kid君描画
 			gameObjects.player->draw();
 			//血の描画
@@ -542,6 +556,7 @@ namespace Iwanna {
 	void StageManager::saveGame() {
 		//プレイヤーの位置を保存
 		Global::savedStartPlayerPos = gameObjects.player->pos;
+		Global::savedRoomName = stageName;
 		Global::isExistSaveData = true;
 	}
 
@@ -565,6 +580,10 @@ namespace Iwanna {
 
 	Array<std::shared_ptr<Block>> StageManager::getBlocks() {
 		return gameObjects.blocks;
+	}
+
+	String StageManager::getStageName() const {
+		return stageName;
 	}
 
 	//ある罠用に取得用

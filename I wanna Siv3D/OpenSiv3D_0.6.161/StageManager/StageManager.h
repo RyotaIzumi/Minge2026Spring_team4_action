@@ -10,6 +10,7 @@
 #include "../GameObject/SavePoint.h"
 #include "../GameObject/SpecialTrap.h"
 #include "../GameObject/Blood.h"
+#include "../GameObject/Warp.h"
 #include "../Global.h"
 
 namespace Iwanna {
@@ -25,6 +26,7 @@ namespace Iwanna {
 		Array<std::shared_ptr<SpecialTrap>> specialTraps;
 		Array<std::shared_ptr<SpecialTrap>> specialBackTraps;//↑と違い、背景側のレイヤー配置用
 		Array<std::shared_ptr<Blood>> bloods;
+		Array<std::shared_ptr<Warp>> warps;
 	};
 
 	class StageManager {
@@ -78,9 +80,12 @@ namespace Iwanna {
 		void saveGame();
 		Vec2 executeCameraPos();
 
+		//取得用関数
 		std::shared_ptr<Player> getPlayer();
 		Array<std::shared_ptr<Cherry>> getCherries();
 		Array<std::shared_ptr<Block>> getBlocks();
+
+		String getStageName() const;
 
 		//ある罠用に取得用
 		std::shared_ptr<SpecialTrap> getWarningWindowTrap();

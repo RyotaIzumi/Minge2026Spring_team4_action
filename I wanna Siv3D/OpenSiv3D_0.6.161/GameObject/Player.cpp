@@ -2,6 +2,7 @@
 #include "../Audio/AudioAsset.h"
 #include "../GameObject/Trigger.h"
 #include "../GameObject/Block.h"
+#include "../GameObject/Warp.h"
 
 namespace Iwanna {
 	Player::Player() {
@@ -249,6 +250,15 @@ namespace Iwanna {
 				else {
 					if(trigger->getTrapID() - 1 == nowTrapID)trigger->triggerActivate();
 				}
+			}
+		}
+
+		// ワープとの衝突
+		if (other.type == ObjectType::Warp) {
+			if (this->intersects(other)) {
+				auto* warp = dynamic_cast<Warp*>(&other);
+				Global::nowRoomName = warp->getNextRoomName();
+				Global::isChangeRoom = true;
 			}
 		}
 	}

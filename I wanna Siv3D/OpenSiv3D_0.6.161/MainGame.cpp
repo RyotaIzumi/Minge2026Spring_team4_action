@@ -30,6 +30,10 @@ namespace Iwanna {
 			return;
 		}
 
+		if (stageManager.getStageName() == U"boss") {
+			stopBgm();
+		}
+
 		stageManager.getPlayer()->setStopOrPlayAnimation(!Global::warningTrapPaused);
 	}
 
