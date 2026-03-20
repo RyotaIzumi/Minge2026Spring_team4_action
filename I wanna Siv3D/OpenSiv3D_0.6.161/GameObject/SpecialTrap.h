@@ -136,4 +136,15 @@ namespace Iwanna {
 		void trapUpdate() override;
 		void draw() const override;
 	};
+
+	class PanddTrap : public SpecialTrap {
+	private:
+		Timer moveTimer{ 2.0s };
+		double moveRange = 780;
+		Vec2 basePos;
+	public:
+		PanddTrap(Vec2 startPos, int32 id);
+		void trapUpdate() override;
+		void draw() const override;
+	};
 }

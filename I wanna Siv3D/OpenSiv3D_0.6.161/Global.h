@@ -37,11 +37,16 @@ namespace Global {
 	inline int32 stageWidth = 800;
 	inline int32 stageHeight = 608;
 
-	// 特殊罠関連
+	// --- 特殊罠関連 ---
 	inline bool warningTrapPaused = false;
 	//trap2 map専用
 	inline bool trapActivatedInTrap2Map = false;
 	inline bool trapActivatedId30InTrap2Map = false;
+	inline bool trapCameraActivatedInTrap2Map = false;
+	inline bool bgmStop = false;
+
+	// --- player関連 ---
+	inline bool isPlayerFrozen = false;
 
 	 // ======================
 	// 定数

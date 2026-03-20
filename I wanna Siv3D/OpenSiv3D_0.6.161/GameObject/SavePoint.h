@@ -52,6 +52,8 @@ namespace Iwanna {
 	class SaveFakeTrap : public SavePoint {
 	private:
 		bool isStartTrap;
+		int32 trapStep = 0;
+		Timer trapIntervalTimer{ 1.5s };
 	public:
 		SaveFakeTrap(Vec2 startPos);
 

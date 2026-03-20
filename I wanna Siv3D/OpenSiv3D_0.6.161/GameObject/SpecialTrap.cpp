@@ -561,6 +561,51 @@ namespace Iwanna {
 
 	void MouseTrap::draw() const {
 		//if (isActivated) TextureAsset(textureName).scaled(textureScale).drawAt(pos);
-		hitBox->draw(Palette::Pink);
+		//hitBox->draw(Palette::Pink);
+	}
+
+	// ----- PandDトラップ -----
+	PanddTrap::PanddTrap(Vec2 startPos, int32 id) : SpecialTrap(startPos, id) {
+		textureName = U"panddChanTrap";
+		textureScale = 1.0;
+		textureAlpha = 1.0;
+		textureSize = Vec2{ 320,160 };
+		hitBox = std::make_shared<RectHitBox>(pos, SizeF{ textureSize });
+		hitBox->setPos(pos);//当たり判定の位置をテクスチャの中心に調整
+		canPlayerKill = false;
+		isActivated = false;
+		trapStep = 0;
+		basePos = pos;
+	}
+
+	void PanddTrap::trapUpdate() {
+		switch (trapStep) {
+		case 0:
+			if (trapID == nowTrapID) {
+				canPlayerKill = true;
+				isActivated = true;
+				moveTimer.restart();
+				trapStep++;
+			}
+			break;
+		case 1://上昇
+			pos.y = basePos.y - moveRange * moveTimer.progress0_1();
+			if (moveTimer.reachedZero()) {
+				basePos = pos;
+				trapStep++;
+			}
+			break;
+		case 2://終了
+
+			break;
+		}
+
+		hitBox->setPos(pos);
+	}
+
+	void PanddTrap::draw() const {
+		if(isActivated)
+		TextureAsset(textureName).scaled(textureScale).drawAt(pos);
+		//hitBox->draw(Palette::Pink);
 	}
 }

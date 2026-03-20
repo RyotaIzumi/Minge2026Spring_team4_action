@@ -24,7 +24,14 @@ namespace Iwanna {
 
 		// 一部変数の初期化
 		isGenerateBloods = false;
+
+		Global::bgmStop = false;
 		Global::trapActivatedId30InTrap2Map = false;
+		Global::trapCameraActivatedInTrap2Map = false;
+		Global::isPlayerFrozen = false;
+
+		gameoverTimer.reset();
+		isShowGameOver = false;
 
 		loadGameObjects(U"trap2");
 	}
@@ -225,9 +232,16 @@ namespace Iwanna {
 		// トリガー不必要の特殊配置物
 		if (fileName == U"trap2") {
 			if (Global::trapActivatedInTrap2Map)latestActivatedTriggerID = 30;
-			gameObjects.savePoints << std::make_shared<SaveFakeTrap>(Vec2{ 928,320 });
+
+			saveTrapCameraPos = { 928,320 };
+			gameObjects.savePoints << std::make_shared<SaveFakeTrap>(Vec2{ saveTrapCameraPos });
+			gameObjects.specialTraps << std::make_shared<PanddTrap>(Vec2{ saveTrapCameraPos.x, saveTrapCameraPos.y + 800 }, specialSaveTrapTriggerID);
 
 			gameObjects.specialTraps << std::make_shared<MouseTrap>(Vec2{Cursor::PosF()});
+
+			//画面外ブロック
+			gameObjects.blocks << std::make_shared<Block>(U"sprBlock_low1", Vec2{16,-1});
+			gameObjects.blocks << std::make_shared<Block>(U"sprBlock_low1", Vec2{17,-1});
 		}
 	}
 
@@ -241,21 +255,41 @@ namespace Iwanna {
 
 	void StageManager::update() {
 
-		camera.setTargetCenter(executeCameraPos());
+		// ----- update関連 -----
+		auto& player = gameObjects.player;
+		auto& bullets = gameObjects.bullets;
+		auto& cherries = gameObjects.cherries;
+		auto& blocks = gameObjects.blocks;
+		auto& spikes = gameObjects.spikes;
+		auto& triggers = gameObjects.triggers;
+		auto& savePoints = gameObjects.savePoints;
+		auto& specialTraps = gameObjects.specialTraps;
+		auto& specialBackTraps = gameObjects.specialBackTraps;
+		auto& bloods = gameObjects.bloods;
+
+		if (player->getIsDead()) {
+			gameoverTimer.start();
+			if (gameoverTimer.reachedZero()) {
+				isShowGameOver = true;
+			}
+		}
+
+		//trap2 mapの罠セーブ用
+		if (Global::trapCameraActivatedInTrap2Map) {
+			camera.setTargetCenter(saveTrapCameraPos);
+			cameraScale = 2.0;
+			latestActivatedTriggerID = specialSaveTrapTriggerID;
+		}
+		else {
+			camera.setTargetCenter(executeCameraPos());
+			cameraScale = 1.0;
+		}
+
+		camera.setTargetScale(cameraScale);
 		camera.update(); {
 			const auto t = camera.createTransformer();
 
-			// ----- update関連 -----
-			auto& player = gameObjects.player;
-			auto& bullets = gameObjects.bullets;
-			auto& cherries = gameObjects.cherries;
-			auto& blocks = gameObjects.blocks;
-			auto& spikes = gameObjects.spikes;
-			auto& triggers = gameObjects.triggers;
-			auto& savePoints = gameObjects.savePoints;
-			auto& specialTraps = gameObjects.specialTraps;
-			auto& specialBackTraps = gameObjects.specialBackTraps;
-			auto& bloods = gameObjects.bloods;
+			
 
 			player->update();
 
@@ -309,6 +343,9 @@ namespace Iwanna {
 					latestActivatedTriggerID = t->getTrapID();
 				}
 			}
+
+			// 特殊罠用にトリガー再設定
+			if (Global::trapCameraActivatedInTrap2Map)latestActivatedTriggerID = specialSaveTrapTriggerID;
 
 			//playerに現在の罠IDを渡す
 			player->setNowTrapID(latestActivatedTriggerID);
@@ -491,7 +528,9 @@ namespace Iwanna {
 			for (auto st : gameObjects.specialTraps) st->draw();
 
 			//GAMEOVER描画
-			if(gameObjects.player->getIsDead())TextureAsset(U"sprGAMEOVER").drawAt(executeCameraPos());
+			if(isShowGameOver)
+				if(Global::trapCameraActivatedInTrap2Map) TextureAsset(U"sprGAMEOVER").scaled(1 / cameraScale).drawAt(saveTrapCameraPos);
+				else TextureAsset(U"sprGAMEOVER").drawAt(executeCameraPos());
 		}
 	}
 

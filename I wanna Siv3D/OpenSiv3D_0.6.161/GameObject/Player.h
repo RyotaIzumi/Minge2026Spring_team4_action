@@ -8,8 +8,6 @@
 namespace Iwanna {
 	class Player : public GameObject {
 	private://以下値は元のI wanna の値と同じ
-		bool frozen = false; //操作を受け付けるかどうか
-		bool frozen2 = false; //↑の予備
 		double jump = 8.5; //１段目ジャンプ力
 		double jump2 = 7; //２段目ジャンプ力
 		double djump = true; //２段ジャンプできるかどうか

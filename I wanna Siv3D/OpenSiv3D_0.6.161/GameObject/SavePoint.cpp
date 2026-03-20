@@ -60,13 +60,14 @@ namespace Iwanna {
 		saveType = SaveType::MoveTrap;
 
 		isTrap = true;
-		canPlayerKill = true;
+		canPlayerKill = false;
 		isStartTrap = false;
 	}
 
 	void SaveMoveTrap::trapUpdate(int32 id) {
 		if (trapID == id && !isStartTrap) {
 			isStartTrap = true;
+			canPlayerKill = true;
 			AudioAsset(Sound::SPIKETRAP).playOneShot();
 		}
 
@@ -99,7 +100,21 @@ namespace Iwanna {
 	void SaveFakeTrap::trapUpdate(int32 id) {
 		//idは使わない
 		if (isStartTrap) {
+			switch (trapStep) {
+			case 0:
+				Global::isPlayerFrozen = true;
+				Global::bgmStop = true;
+				trapIntervalTimer.restart();
 
+				trapStep++;
+				break;
+			case 1:
+				if (trapIntervalTimer.reachedZero()) {
+					Global::trapCameraActivatedInTrap2Map = true;
+					trapStep++;
+				}
+				break;
+			}
 		}
 	}
 
@@ -113,5 +128,7 @@ namespace Iwanna {
 
 	void SaveFakeTrap::draw() const {
 		TextureAsset(U"sprFakeSave")(0, 0, side, side).draw(pos);
+		if (Global::trapCameraActivatedInTrap2Map)
+			FontAsset(U"Button")(U"↓").drawAt(pos.x + 16,pos.y - 20,ColorF(Palette::Black));
 	}
 }

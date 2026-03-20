@@ -5,8 +5,6 @@
 
 namespace Iwanna {
 	Player::Player() {
-		frozen = false; //操作を受け付けるかどうか
-		frozen2 = false; //↑の予備
 		jump = 8.5; //１段目ジャンプ力
 		jump2 = 7; //２段目ジャンプ力
 		djump = true; //２段ジャンプできるかどうか
@@ -46,7 +44,7 @@ namespace Iwanna {
 
 		if (isDead) return;
 
-		if (!frozen) {
+		if (!Global::isPlayerFrozen) {
 			if (Global::inputLeft.pressed()) playerMoveLeft();
 			if (Global::inputRight.pressed()) playerMoveRight();
 			if (Global::inputShoot.down()) playerShoot();

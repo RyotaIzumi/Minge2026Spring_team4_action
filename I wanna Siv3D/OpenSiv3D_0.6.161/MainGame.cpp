@@ -25,7 +25,7 @@ namespace Iwanna {
 		}
 
 		//playerが死亡していたらBGM一時停止
-		if (stageManager.getPlayer()->getIsDead()) {
+		if (stageManager.getPlayer()->getIsDead() || Global::bgmStop) {
 			pauseBgm();
 			return;
 		}

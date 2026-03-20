@@ -37,6 +37,11 @@ namespace Iwanna {
 		//カメラ関連
 		Vec2 cameraBasePos{ 400, 304 };
 		Camera2D camera{ cameraBasePos, 1.0 };
+		double cameraScale = 1.0;
+
+		//特殊トラップ用
+		Vec2 saveTrapCameraPos{0,0};
+		int32 specialSaveTrapTriggerID = 50;
 
 		//弾丸関連
 		double bulletSpeed = 12;
@@ -51,6 +56,10 @@ namespace Iwanna {
 		int32 oneTileSize = 32;
 		String stageName;
 		int32 latestActivatedTriggerID = -1;
+
+		//GAMEOVER画面用
+		Timer gameoverTimer{ 0.5s };
+		bool isShowGameOver = false;
 
 		int32 step = 0;
 	public:
