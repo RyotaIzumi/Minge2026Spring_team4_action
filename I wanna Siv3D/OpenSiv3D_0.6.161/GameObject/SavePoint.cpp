@@ -50,7 +50,7 @@ namespace Iwanna {
 	//(ボス開始用セーブ)
 	BossSavePoint::BossSavePoint(Vec2 startPos, int32 id) : SavePoint(startPos) {
 		//GameObject.hの値初期化
-		pos = { startPos.x * side, startPos.y * side };
+		pos = { startPos };
 		appendBossId = id;
 
 		hitBox = std::make_shared<RectHitBox>(Vec2{ pos.x,pos.y + gapY }, SizeF{ hitBoxSize });
@@ -70,13 +70,12 @@ namespace Iwanna {
 		}
 	}
 	void BossSavePoint::draw() const {
-		//hitBox->draw(Palette::Gray);
+		hitBox->draw(ColorF(0.7,0.7));
 		const Vec2 rotateOffset = { 16,16 };
-		TextureAsset(U"sprSave")(isSaving ? side : 0, 0, side, side).scaled(saveScale).rotatedAt(400,304,saveRotate).draw(pos, ColorF(1.0, saveAlpha));
+		TextureAsset(U"sprSave")(isSaving ? side : 0, 0, side, side).scaled(saveScale).rotated(saveRotate).drawAt(pos, ColorF(1.0, saveAlpha));
 	}
 	 
 	//(移動セーブトラップ)
-
 	SaveMoveTrap::SaveMoveTrap(Vec2 startPos, int32 id, double spd, double dir) : SavePoint(startPos){
 		pos = startPos;
 		trapID = id;
