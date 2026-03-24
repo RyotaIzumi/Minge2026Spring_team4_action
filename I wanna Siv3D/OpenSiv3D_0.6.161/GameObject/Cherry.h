@@ -37,6 +37,9 @@ namespace Iwanna {
 		int32 hp;
 		bool isMuteki = false;
 		Timer mutekiInterval{0.5s};
+
+		//描画関連
+		double alpha = 1.0;
 	public:
 		bool isDelete = false;//消去用フラグ
 		bool isOutOfScreen = false;//画面外判定用フラグ

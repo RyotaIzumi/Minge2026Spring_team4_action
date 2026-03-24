@@ -71,7 +71,7 @@ namespace Iwanna {
 
 	void BossCherry::draw() const {
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
-		TextureAsset(U"sprCherryLow").scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1,ColorF(1.0, isMuteki ? 0.6 : 1.0));
+		TextureAsset(U"sprCherryLowBoss").scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1,ColorF(1.0, isMuteki ? 0.6 : 1.0));
 		//hitBox->draw(ColorF(0.7,0.7));//判定の可視化
 	}
 
@@ -139,30 +139,49 @@ namespace Iwanna {
 
 		pos.x = r * cos(Math::ToRadians(c)) + centerPos.x;
 		pos.y = -r * sin(Math::ToRadians(c)) + centerPos.y;
+
+		setTypeColor();
+	}
+
+	void BossSubCherry::draw() const {
+
+		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
+		TextureAsset(U"sprCherryLowWhite").scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1, typeColor);
+		//hitBox->draw(ColorF(0.7,0.7));//判定の可視化
+	}
+
+	void BossSubCherry::setCenterPos(Vec2 cPos) {
+		centerPos = cPos;
+	}
+
+	// 種類で色を決定する
+	void BossSubCherry::setTypeColor() {
+		alpha = isMuteki ? 0.6 : 1.0;
+		switch (cherrySubType) {
+		case BossCherryType::Red:    typeColor = ColorF(Palette::Red, alpha); break;
+		case BossCherryType::Blue:   typeColor = ColorF(Palette::Blue,alpha); break;
+		case BossCherryType::Yellow: typeColor = ColorF(Palette::Yellow,alpha); break;
+		case BossCherryType::Green:  typeColor = ColorF(Palette::Greenyellow,alpha); break;
+		case BossCherryType::Orange: typeColor = ColorF(Palette::Orange,alpha); break;
+		case BossCherryType::Sky:    typeColor = ColorF(Palette::Skyblue,alpha); break;
+		}
 	}
 
 	// 攻撃を呼び出す
 	void BossSubCherry::generateAttack(BossCherryType type) {
+		double throwDir, throwSpd;
 		if (cherrySubType == type) {
 			switch (cherrySubType) {
 			case BossCherryType::Red:
-				bossStageManager->createSubThrowCherry(120, 9, [this]() { return std::make_shared<BossSubThrowCherry>(pos,2.0,cherrySubType,*bossStageManager); });
+				throwDir = 60 + Random(60);
+				throwSpd = 9 + Random(3);
+				bossStageManager->createSubThrowCherry(throwDir, throwSpd, [this]() { return std::make_shared<BossSubThrowCherry>(pos,2.0,cherrySubType,*bossStageManager); });
 				break;
 			case BossCherryType::Blue:
 
 				break;
 			}
 		}
-	}
-
-	void BossSubCherry::draw() const {
-		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
-		TextureAsset(U"sprCherryLow").scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1, ColorF(1.0, isMuteki ? 0.6 : 1.0));
-		//hitBox->draw(ColorF(0.7,0.7));//判定の可視化
-	}
-
-	void BossSubCherry::setCenterPos(Vec2 cPos) {
-		centerPos = cPos;
 	}
 
 	// ----- 弾幕用りんご ----- //
@@ -182,6 +201,7 @@ namespace Iwanna {
 		isDeleteOutOfScreen = true;
 		isTrap = false;
 
+		alpha = 1.0;
 		startStep = 0;
 	}
 
@@ -197,12 +217,26 @@ namespace Iwanna {
 		case 2:
 			break;
 		}
+
+		setTypeColor();
 	}
 
 	void BossBarrageCherry::draw() const {
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
-		TextureAsset(U"sprCherryLow").scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1, ColorF(1.0, isMuteki ? 0.6 : 1.0));
+		TextureAsset(U"sprCherryLowWhite").scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1, typeColor);
 		//hitBox->draw(ColorF(0.7,0.7));//判定の可視化
+	}
+
+	// 種類で色を決定する
+	void BossBarrageCherry::setTypeColor() {
+		switch (cherrySubType) {
+		case BossCherryType::Red:    typeColor = ColorF(Palette::Red, alpha); break;
+		case BossCherryType::Blue:   typeColor = ColorF(Palette::Blue, alpha); break;
+		case BossCherryType::Yellow: typeColor = ColorF(Palette::Yellow, alpha); break;
+		case BossCherryType::Green:  typeColor = ColorF(Palette::Lawngreen, alpha); break;
+		case BossCherryType::Orange: typeColor = ColorF(Palette::Orange, alpha); break;
+		case BossCherryType::Sky:    typeColor = ColorF(Palette::Skyblue, alpha); break;
+		}
 	}
 
 	// ----- ファンネルりんごが投げるでかりんご ----- //
@@ -222,7 +256,7 @@ namespace Iwanna {
 		isDeleteOutOfScreen = false;
 		isTrap = false;
 
-		gravity = 0.3;
+		gravity = 0.25;
 
 		startStep = 0;
 	}
@@ -243,6 +277,14 @@ namespace Iwanna {
 			isDelete = true;
 			break;
 		}
+
+		//回転方向を決定する
+		const double rightAngle = 90;//直角
+		isRorateLeft = direction > rightAngle;
+		if (!isRorateLeft)rotateC += addRorateC;
+		else rotateC -= addRorateC;
+
+		setTypeColor();
 	}
 
 	// 破裂時にりんごを生成する
@@ -256,7 +298,7 @@ namespace Iwanna {
 
 	void BossSubThrowCherry::draw() const {
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
-		TextureAsset(U"sprCherryLow").scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1, ColorF(1.0, isMuteki ? 0.6 : 1.0));
+		TextureAsset(U"sprCherryLowWhite").scaled(scaleMag).rotated(rotateC).drawAt(pos.x - 1, pos.y - 1, typeColor);
 		//hitBox->draw(ColorF(0.7,0.7));//判定の可視化
 	}
 }
