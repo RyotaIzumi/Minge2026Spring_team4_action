@@ -61,7 +61,7 @@ namespace Iwanna {
 
 		// 一定間隔でファンネルりんごを一つ選んで攻撃
 		if (reachedAttackTime(attackIntervalTime)) {
-			cherryAttackType = BossCherryType::Red;
+			cherryAttackType = BossCherryType::Blue;
 			attackStopwatch.restart();
 		}
 		else {
@@ -178,7 +178,9 @@ namespace Iwanna {
 				bossStageManager->createSubThrowCherry(throwDir, throwSpd, [this]() { return std::make_shared<BossSubThrowCherry>(pos,2.0,cherrySubType,*bossStageManager); });
 				break;
 			case BossCherryType::Blue:
-
+				throwDir = 70 + Random(40);
+				throwSpd = 14 + Random(3);
+				bossStageManager->createSubThrowCherry(throwDir, throwSpd, [this]() { return std::make_shared<BossSubThrowCherry>(pos, 2.0, cherrySubType, *bossStageManager); });
 				break;
 			}
 		}
@@ -292,6 +294,9 @@ namespace Iwanna {
 		switch (cherrySubType) {
 		case BossCherryType::Red:
 			bossStageManager->createCherrySpread(30,6, [this]() { return std::make_shared<BossBarrageCherry>(pos, 1.0, cherrySubType); });
+			break;
+		case BossCherryType::Blue:
+			bossStageManager->createBlueLineCherry(20, 80, [this]() { return std::make_shared<BossFallBlueCherry>(pos, 1.0, cherrySubType); });
 			break;
 		}
 	}

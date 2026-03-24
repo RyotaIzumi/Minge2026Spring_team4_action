@@ -124,6 +124,7 @@
     <ClCompile Include="AvoidanceManager\CherryPatternManagers\GeneralPurposePatterns.cpp" />
     <ClCompile Include="GameObject\Block.cpp" />
     <ClCompile Include="GameObject\Blood.cpp" />
+    <ClCompile Include="GameObject\Boss\BossCherries.cpp" />
     <ClCompile Include="GameObject\Boss\BossCherry.cpp" />
     <ClCompile Include="GameObject\Bullet.cpp" />
     <ClCompile Include="GameObject\Cherry.cpp" />

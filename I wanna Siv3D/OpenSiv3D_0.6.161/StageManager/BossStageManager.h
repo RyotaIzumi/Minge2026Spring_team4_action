@@ -92,5 +92,6 @@ namespace Iwanna {
 		// りんご生成パターン(別cppファイルで定義)
 		void createCherrySpread(int32 num, double spd, const std::function<std::shared_ptr<Cherry>()>& factory);
 		void createSubThrowCherry(double dir, double spd, const std::function<std::shared_ptr<Cherry>()>& factory);
+		void createBlueLineCherry(int32 num, double interval, const std::function<std::shared_ptr<Cherry>()>& factory);
 	};
 }

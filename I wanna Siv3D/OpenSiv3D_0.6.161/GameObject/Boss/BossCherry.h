@@ -72,7 +72,18 @@ namespace Iwanna {
 
 		void setTypeColor();
 	};
-	
+
+	class BossFallBlueCherry : public BossBarrageCherry {
+	protected:
+		int32 startStep = 0;
+		BossCherryType cherrySubType;
+		ColorF typeColor;
+	public:
+		BossFallBlueCherry(Vec2 startPos, double scale, BossCherryType cType);
+
+		void barrageUpdate() override;
+	};
+
 	class BossSubThrowCherry : public BossBarrageCherry {
 	private:
 		BossStageManager* bossStageManager = nullptr;

@@ -34,4 +34,20 @@ namespace Iwanna {
 		cherry->direction = dir;
 		createCherry(cherry);
 	}
+
+	/**
+		 * @brief 青攻撃用のライン型
+		 * @param num 生成数
+		 * @param interval 間隔
+		 * @param cherry 生成するcherryオブジェクト
+		 */
+	void BossStageManager::createBlueLineCherry(int32 num, double interval, const std::function<std::shared_ptr<Cherry>()>& factory) {
+		const double startX = -1 * Random(interval);
+		for (int i = 0; i < num; i++) {
+			auto cherry = factory();
+			cherry->pos.x = startX + interval * i;
+			cherry->pos.y = -100;
+			createCherry(cherry);
+		}
+	}
 }
