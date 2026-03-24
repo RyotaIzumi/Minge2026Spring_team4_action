@@ -4,6 +4,7 @@
 #include "../GameObject/Player.h"
 #include "../GameObject/Bullet.h"
 #include "../GameObject/Cherry.h"
+#include "../GameObject/Boss/BossCherry.h"
 #include "../GameObject/Block.h"
 #include "../GameObject/Spike.h"
 #include "../GameObject/SavePoint.h"
@@ -17,9 +18,10 @@ namespace Iwanna {
 		std::shared_ptr<Player> player;
 		Array<std::shared_ptr<Bullet>> bullets;
 		Array<std::shared_ptr<Cherry>> cherries;
+		Array<std::shared_ptr<Cherry>> bossCherries;
 		Array<std::shared_ptr<Block>> blocks;
 		Array<std::shared_ptr<Spike>> spikes;
-		Array<std::shared_ptr<SavePoint>> savePoints;
+		Array<std::shared_ptr<BossSavePoint>> savePoints;
 		Array<std::shared_ptr<Blood>> bloods;
 		Array<std::shared_ptr<Warp>> warps;
 	};
@@ -30,6 +32,9 @@ namespace Iwanna {
 		StockNearGameObjects stockBulletsNearGameObjects;
 		StockNearGameObjects stockLargeNearGameObjects;//大きいオブジェクトなど、通常のストッククラスでは処理できないものを入れる用
 		BossStageGameObjects gameObjects;
+
+		// 追加するりんごを一時格納するためのもの
+		Array<std::shared_ptr<Cherry>> pendingCherries;
 
 		//カメラ関連
 		Vec2 cameraBasePos{ 400, 304 };
@@ -70,6 +75,8 @@ namespace Iwanna {
 		void saveGame();
 		Vec2 executeCameraPos();
 
+		void generateBoss(int32 type);
+
 		//取得用関数
 		std::shared_ptr<Player> getPlayer();
 		Array<std::shared_ptr<Cherry>> getCherries();
@@ -81,5 +88,9 @@ namespace Iwanna {
 
 		void createPeripheryBlocks();
 		void createFloorBlocks(Vec2 basePos);
+
+		// りんご生成パターン(別cppファイルで定義)
+		void createCherrySpread(int32 num, double spd, const std::function<std::shared_ptr<Cherry>()>& factory);
+		void createSubThrowCherry(double dir, double spd, const std::function<std::shared_ptr<Cherry>()>& factory);
 	};
 }

@@ -10,7 +10,6 @@ namespace Iwanna {
 	private:
 		//当たり判定サイズ(半径)
 		int32 hitBoxSize = 2;
-		double gravity = 0.4;
 		double speed = 10;
 		double direction = 0;
 

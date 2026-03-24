@@ -124,6 +124,7 @@
     <ClCompile Include="AvoidanceManager\CherryPatternManagers\GeneralPurposePatterns.cpp" />
     <ClCompile Include="GameObject\Block.cpp" />
     <ClCompile Include="GameObject\Blood.cpp" />
+    <ClCompile Include="GameObject\Boss\BossCherry.cpp" />
     <ClCompile Include="GameObject\Bullet.cpp" />
     <ClCompile Include="GameObject\Cherry.cpp" />
     <ClCompile Include="GameObject\HitBox.cpp" />
@@ -142,6 +143,7 @@
     <ClCompile Include="Sprite\SpriteAsset.cpp" />
     <ClCompile Include="Sprite\SpriteSystem.cpp" />
     <ClCompile Include="StageManager\BossStageManager.cpp" />
+    <ClCompile Include="StageManager\CherryPatternManager\GenerateBossCherryPattern.cpp" />
     <ClCompile Include="StageManager\StageManager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -371,6 +373,7 @@
     <ClInclude Include="CommonData.h" />
     <ClInclude Include="GameObject\Block.h" />
     <ClInclude Include="GameObject\Blood.h" />
+    <ClInclude Include="GameObject\Boss\BossCherry.h" />
     <ClInclude Include="GameObject\Bullet.h" />
     <ClInclude Include="GameObject\Cherry.h" />
     <ClInclude Include="GameObject\GameObject.h" />

@@ -10,14 +10,13 @@ namespace Iwanna {
 		 * @param spd 速度
 		 * @param cherry 生成するcherryオブジェクト
 		 */
-	void AvoidanceManager::createCherrySpread(Vec2 pos, int32 num, double spd, const std::function<std::shared_ptr<Cherry>()>& factory){
+	void AvoidanceManager::createCherrySpread(int32 num, double spd, const std::function<std::shared_ptr<Cherry>()>& factory){
 		const double dirRange = 360.0;
 
 		for (int i = 0; i < num; i++) {
 			auto cherry = factory();
-			cherry->pos = pos;
 			cherry->speed = spd;
-			cherry->dir = i * (dirRange / num);
+			cherry->direction = i * (dirRange / num);
 			createCherry(cherry);
 		}
 	}

@@ -53,7 +53,8 @@ namespace Iwanna {
 		pos = { startPos };
 		appendBossId = id;
 
-		hitBox = std::make_shared<RectHitBox>(Vec2{ pos.x,pos.y + gapY }, SizeF{ hitBoxSize });
+		const Vec2 centerOffset = { 16,16 };
+		hitBox = std::make_shared<RectHitBox>(Vec2{ pos.x,pos.y + gapY } - centerOffset, SizeF{ hitBoxSize });
 		type = ObjectType::SavePoint;
 		saveType = SaveType::Boss;
 		canPlayerKill = false;
@@ -71,8 +72,11 @@ namespace Iwanna {
 	}
 	void BossSavePoint::draw() const {
 		hitBox->draw(ColorF(0.7,0.7));
-		const Vec2 rotateOffset = { 16,16 };
 		TextureAsset(U"sprSave")(isSaving ? side : 0, 0, side, side).scaled(saveScale).rotated(saveRotate).drawAt(pos, ColorF(1.0, saveAlpha));
+	}
+
+	int32 BossSavePoint::getAppendBossId() const {
+		return appendBossId;
 	}
 	 
 	//(移動セーブトラップ)

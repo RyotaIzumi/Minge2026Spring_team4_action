@@ -4,7 +4,7 @@
 namespace Iwanna {
 	BossStageManager::BossStageManager() {
 		stockNearGameObjects.cellSize = 96;
-		stockBulletsNearGameObjects.cellSize = 96;
+		stockBulletsNearGameObjects.cellSize = 160;
 		stockLargeNearGameObjects.cellSize = 800;
 	}
 
@@ -14,6 +14,7 @@ namespace Iwanna {
 		// 既存のオブジェクトを抹消して初期化
 		gameObjects.bullets.clear();
 		gameObjects.cherries.clear();
+		gameObjects.bossCherries.clear();
 		gameObjects.blocks.clear();
 		gameObjects.spikes.clear();
 		gameObjects.savePoints.clear();
@@ -69,7 +70,7 @@ namespace Iwanna {
 				case 22: gameObjects.spikes << std::make_shared<Spike>(pos, 1); break;
 				case 23: gameObjects.spikes << std::make_shared<Spike>(pos, 2); break;
 				case 24: gameObjects.spikes << std::make_shared<Spike>(pos, 3); break;
-				case 25: gameObjects.savePoints << std::make_shared<SavePoint>(pos); break;
+				//case 25: gameObjects.savePoints << std::make_shared<SavePoint>(pos); break;
 				case 26: gameObjects.blocks << std::make_shared<HideBlock>(U"sprBlock_low1", pos); break;
 				case 27: gameObjects.blocks << std::make_shared<ShootTroughBlock>(U"sprBlockShootTrough", pos); break;
 				case 28: gameObjects.blocks << std::make_shared<FakeBlock>(U"sprBlock_low2", pos); break;
@@ -108,7 +109,7 @@ namespace Iwanna {
 		}
 
 		if (stageName == U"boss") {
-			gameObjects.savePoints << std::make_shared<BossSavePoint>(Vec2{12,17},1);
+			gameObjects.savePoints << std::make_shared<BossSavePoint>(Vec2{400,480},1);
 		}
 	}
 
@@ -126,6 +127,7 @@ namespace Iwanna {
 		auto& player = gameObjects.player;
 		auto& bullets = gameObjects.bullets;
 		auto& cherries = gameObjects.cherries;
+		auto& bossCherries = gameObjects.bossCherries;
 		auto& blocks = gameObjects.blocks;
 		auto& spikes = gameObjects.spikes;
 		auto& savePoints = gameObjects.savePoints;
@@ -193,16 +195,43 @@ namespace Iwanna {
 			for (auto& b : bullets) {
 				b->update();
 			}
+			//通常の弾幕用りんご
 			for (auto& c : cherries) {
 				c->update();
 				stockNearGameObjects.add(c.get());
 			}
+			//ボスりんご
+			Vec2 bossCherryPos;
+			BossCherryType attackCherryType;
+			for (auto& bc : bossCherries) {
+				bc->update();
+
+				if (bc->getCherryType() == CherryType::Boss) {
+					auto* b = dynamic_cast<BossCherry*>(bc.get());
+					bossCherryPos = b->pos;
+					attackCherryType = b->getBossCherryAttackType();
+				}
+				else if (bc->getCherryType() == CherryType::BossSub) {
+					auto* bs = dynamic_cast<BossSubCherry*>(bc.get());
+					bs->setCenterPos(bossCherryPos);
+					bs->generateAttack(attackCherryType);
+				}
+
+				stockNearGameObjects.add(bc.get());
+				stockBulletsNearGameObjects.add(bc.get());
+			}
+			// 一時格納したりんごをここでまとめて追加
+			for (auto& c : pendingCherries) {
+				cherries << c;
+			}
+			pendingCherries.clear();
+
+
+			//セーブ関連
 			for (auto& s : savePoints) {
 				s->update();
-				if (s->getIsTrap()) {
-					stockNearGameObjects.add(s.get());
-				}
-				s->onSavedCallback = [this]() {
+				s->onSavedCallback = [this,s]() {
+					generateBoss(s->getAppendBossId());
 					saveGame();
 				};
 				stockBulletsNearGameObjects.add(s.get());
@@ -247,7 +276,7 @@ namespace Iwanna {
 
 			//画面外のりんごを削除
 			cherries.remove_if([](auto&& cherry) {
-				return cherry->isOutOfScreen;
+				return cherry->isOutOfScreen || cherry->isDelete;
 			});
 
 			//画面外の針を削除
@@ -284,18 +313,12 @@ namespace Iwanna {
 			player->setIsMuteki(!player->getIsMuteki());
 		}
 
-		/*
+		
 		ClearPrint();
 		Print << U" Stage Step : " << step;
 		Print << U" Player Pos : " << player->pos;
 		Print << U" Player Muteki : " << player->getIsMuteki();
-		Print << U" Camera Pos : " << executeCameraPos();
 		Print << U" Cherries Num : " << gameObjects.cherries.size();
-		Print << U" Bullets Num : " << gameObjects.bullets.size();
-		Print << U" Spikes Num : " << gameObjects.spikes.size();
-		Print << U" Special Num : " << gameObjects.specialTraps[0]->pos;
-		*/
-		
 	}
 
 	void BossStageManager::draw() {
@@ -313,14 +336,18 @@ namespace Iwanna {
 			for (auto s : gameObjects.savePoints) s->draw();
 			//ワープの描画
 			for (auto w : gameObjects.warps) w->draw();
+			//ボスりんご描画
+			for (auto it = gameObjects.bossCherries.rbegin(); it != gameObjects.bossCherries.rend(); ++it) {
+				(*it)->draw();
+			}
+			//りんご描画
+			for (auto c : gameObjects.cherries) c->draw();
 			//kid君描画
 			gameObjects.player->draw();
 			//血の描画
 			for (auto b : gameObjects.bloods) b->draw();
 			//弾丸描画
 			for (auto b : gameObjects.bullets) b->draw();
-			//りんご描画
-			for (auto c : gameObjects.cherries) c->draw();
 
 			//GAMEOVER描画
 			if(isShowGameOver) TextureAsset(U"sprGAMEOVER").drawAt(executeCameraPos());
@@ -349,6 +376,22 @@ namespace Iwanna {
 		return nextPos;
 	}
 
+	void BossStageManager::generateBoss(int32 type) {
+
+		switch (type) {
+		case 1:
+			gameObjects.bossCherries <<  std::make_shared<BossCherry>(Vec2{ getPlayer()->pos.x,getPlayer()->pos.y + 500}, 5.0, *this);
+			gameObjects.bossCherries <<  std::make_shared<BossSubCherry>(Vec2{ 100, -100}, 2.0, BossCherryType::Red, *this);
+			gameObjects.bossCherries <<  std::make_shared<BossSubCherry>(Vec2{ 200, -100}, 2.0, BossCherryType::Blue, *this);
+			gameObjects.bossCherries <<  std::make_shared<BossSubCherry>(Vec2{ 300, -100}, 2.0, BossCherryType::Yellow, *this);
+			gameObjects.bossCherries <<  std::make_shared<BossSubCherry>(Vec2{ 400, -100}, 2.0, BossCherryType::Green, *this);
+			gameObjects.bossCherries <<  std::make_shared<BossSubCherry>(Vec2{ 500, -100}, 2.0, BossCherryType::Orange, *this);
+			gameObjects.bossCherries <<  std::make_shared<BossSubCherry>(Vec2{ 600, -100}, 2.0, BossCherryType::Sky, *this);
+
+			break;
+		}
+	}
+
 	std::shared_ptr<Player> BossStageManager::getPlayer() {
 		return gameObjects.player;
 	}
@@ -367,7 +410,7 @@ namespace Iwanna {
 
 	//りんご生成と管理配列への追加
 	void BossStageManager::createCherry(std::shared_ptr<Cherry> cherry) {
-		gameObjects.cherries << cherry;
+		pendingCherries << cherry;
 	}
 
 	//外周のブロック配置

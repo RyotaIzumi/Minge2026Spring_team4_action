@@ -2,6 +2,7 @@
 #include "../Audio/AudioAsset.h"
 #include "../GameObject/SavePoint.h"
 #include "../GameObject/Block.h"
+#include "../GameObject/Cherry.h"
 
 namespace Iwanna {
 	Bullet::Bullet(Vec2& genePos, double hs){
@@ -45,6 +46,15 @@ namespace Iwanna {
 		// ミク衝突
 		if (this->intersects(other) && other.type == ObjectType::Miku) {
 			isDelete = true;
+		}
+
+		// hpをもつりんご衝突
+		if (this->intersects(other) && other.type == ObjectType::Cherry) {
+			auto* cherry = dynamic_cast<Cherry*>(&other);
+			if (cherry->getHasHp()) {
+				cherry->hited();
+				isDelete = true;
+			}
 		}
 
 		// セーブポイント衝突

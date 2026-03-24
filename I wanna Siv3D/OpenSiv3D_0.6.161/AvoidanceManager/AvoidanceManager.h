@@ -54,6 +54,6 @@ namespace Iwanna {
 		void chapter2();
 
 		//cherry生成パターン
-		void createCherrySpread(Vec2 pos, int32 num, double spd, const std::function<std::shared_ptr<Cherry>()>& factory);
+		void createCherrySpread(int32 num, double spd, const std::function<std::shared_ptr<Cherry>()>& factory);
 	};
 }

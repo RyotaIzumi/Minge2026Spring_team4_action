@@ -51,6 +51,7 @@ namespace Iwanna {
 
 		void update() override;
 		void draw() const override;
+		int32 getAppendBossId() const;
 	};
 
 	class SaveMoveTrap : public SavePoint {

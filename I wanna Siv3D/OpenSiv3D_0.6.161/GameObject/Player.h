@@ -12,7 +12,6 @@ namespace Iwanna {
 		double jump2 = 7; //２段目ジャンプ力
 		double djump = true; //２段ジャンプできるかどうか
 		double maxSpeed = 3; //横方向速度の最大値
-		double gravity = 0.4; //重力の値
 		double maxVspeed = 9; //縦方向速度(主に落下速度)の最大値
 		double image_speed = 0.2; //アニメーション再生速度
 		bool isMuteki = false; //無敵状態かどうか
