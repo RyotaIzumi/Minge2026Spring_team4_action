@@ -21,6 +21,8 @@ namespace Iwanna {
 		Stopwatch attackStopwatch{StartImmediately::No};
 		double attackIntervalTime;
 
+		Timer startAttackTimer{ 0.8s, StartImmediately::Yes };
+
 		//hpバー用
 		double hpBarAlpha = 0.0;
 		
@@ -36,6 +38,7 @@ namespace Iwanna {
 		void barrageUpdate() override;
 		void draw() const override;
 
+		void startAttack(BossCherryType type);
 		BossCherryType getBossCherryAttackType() const;
 		void removeDefeatedAttackType(BossCherryType type);
 		int32 getDefeatedBossNum() const;
@@ -116,6 +119,7 @@ namespace Iwanna {
 		double activeTimer = 0.0;
 	public:
 		BossGreenWaveCherry(Vec2 startPos, double scale, BossCherryType cType);
+		double highSpeed = 10;
 
 		void barrageUpdate() override;
 		void setActiveTimer(double time);

@@ -28,6 +28,7 @@ namespace Iwanna {
 		Global::trapActivatedId30InTrap2Map = false;
 		Global::trapCameraActivatedInTrap2Map = false;
 		Global::isPlayerFrozen = false;
+		Global::isBossAttackPowerUp = false;
 
 		gameoverTimer.reset();
 		isShowGameOver = false;
@@ -141,7 +142,10 @@ namespace Iwanna {
 			}
 		}
 
-		camera.setTargetCenter(executeCameraPos());
+		// 揺れ更新
+		cameraShake.update();
+		// カメラ位置 + 揺れ
+		camera.setTargetCenter(executeCameraPos() + cameraShake.getOffset());
 		camera.update(); {
 			const auto t = camera.createTransformer();
 
@@ -285,6 +289,17 @@ namespace Iwanna {
 				}
 			}
 
+			//暗転演出の透明度を変更
+			if (darkAlpha > 0.1) {
+				darkAlpha -= 0.08;
+			}
+			else {
+				if (darkAlphaTimer.reachedZero()) {
+					darkAlpha = 0.05 + Random(0.05);
+					darkAlphaTimer.restart();
+				}
+			}
+
 			// ----- 以下削除処理 -----
 
 			//画面外のりんごを削除
@@ -330,7 +345,6 @@ namespace Iwanna {
 			player->setIsMuteki(!player->getIsMuteki());
 		}
 
-		
 		ClearPrint();
 		Print << U" Stage Step : " << step;
 		Print << U" Player Pos : " << player->pos;
@@ -366,6 +380,9 @@ namespace Iwanna {
 			//弾丸描画
 			for (auto b : gameObjects.bullets) b->draw();
 
+			//暗転演出
+			Rect(0, 0, 800, 608).draw(ColorF(0.0, 0.0, 0.0, darkAlpha));
+
 			//GAMEOVER描画
 			if(isShowGameOver) TextureAsset(U"sprGAMEOVER").drawAt(executeCameraPos());
 		}
@@ -396,7 +413,7 @@ namespace Iwanna {
 	void BossStageManager::generateBoss(int32 type) {
 
 		switch (type) {
-		case 1:
+		case 1://boss召喚
 			gameObjects.bossCherries <<  std::make_shared<BossCherry>(Vec2{ getPlayer()->pos.x,getPlayer()->pos.y + 500}, 5.0, *this);
 			gameObjects.bossCherries <<  std::make_shared<BossSubCherry>(Vec2{ 100, -100}, 2.0, BossCherryType::Red, *this);
 			gameObjects.bossCherries <<  std::make_shared<BossSubCherry>(Vec2{ 200, -100}, 2.0, BossCherryType::Blue, *this);
@@ -405,6 +422,8 @@ namespace Iwanna {
 			gameObjects.bossCherries <<  std::make_shared<BossSubCherry>(Vec2{ 500, -100}, 2.0, BossCherryType::Orange, *this);
 			gameObjects.bossCherries <<  std::make_shared<BossSubCherry>(Vec2{ 600, -100}, 2.0, BossCherryType::Sky, *this);
 			bossBgmStart = true;
+			darkAlpha = 0.9;
+			cameraShake.shake(0.4, 20.0);
 			break;
 		}
 	}

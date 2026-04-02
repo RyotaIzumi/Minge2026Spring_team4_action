@@ -17,6 +17,7 @@ namespace Iwanna {
 			registerAudio(MAIN_LOW, Path_MAIN_LOW, Loop::Yes);
 			registerAudio(MAIN_NORMAL, Path_MAIN_NORMAL, Loop::Yes);
 			registerAudio(BOSS_NORMAL, Path_BOSS_NORMAL, Loop::Yes);
+			registerAudio(GAMEOVER_NORMAL, Path_GAMEOVER_NORMAL, Loop::No);
 		}
 		
 		//SEを登録する

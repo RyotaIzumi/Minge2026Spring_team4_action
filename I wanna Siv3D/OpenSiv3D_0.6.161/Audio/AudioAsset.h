@@ -10,6 +10,8 @@ namespace Iwanna {
 		const FilePath Path_MAIN_NORMAL{ U"Sound/Bgm/main_normal.mp3" };
 		const String BOSS_NORMAL{ U"boss_normal" };
 		const FilePath Path_BOSS_NORMAL{ U"Sound/Bgm/boss_normal.mp3" };
+		const String GAMEOVER_NORMAL{ U"gameover_normal" };
+		const FilePath Path_GAMEOVER_NORMAL{ U"Sound/Bgm/gameover_normal.mp3" };
 
 		//SEの名前とパスの定数
 		static const String SE_PATH = U"Sound/Se/";

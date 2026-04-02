@@ -16,6 +16,7 @@ namespace Iwanna {
 		StockNearGameObjects stockNearGameObjects;
 
 		Audio audio;
+		Audio gameoverAudio;
 
 		AvoidanceManager avoidanceManager;
 		StageManager stageManager;
@@ -32,6 +33,7 @@ namespace Iwanna {
 		void drawGame();
 
 		void playBgm(String);
+		void playGameoverBgm();
 		void stopBgm();
 
 		void pauseBgm();

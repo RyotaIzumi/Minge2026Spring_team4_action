@@ -26,6 +26,37 @@ namespace Iwanna {
 		Array<std::shared_ptr<Warp>> warps;
 	};
 
+	//カメラの揺れを管理する構造体
+	struct CameraShake
+	{
+		double time = 0.0;
+		double power = 0.0;
+		double frequency = 30;
+
+		void shake(double t = 0.5, double p = 10.0)
+		{
+			time = t;
+			power = p;
+		}
+
+		void update()
+		{
+			if (time > 0.0)	time -= Scene::DeltaTime();
+		}
+
+		Vec2 getOffset() const
+		{
+			if (time <= 0.0)
+			{
+				return Vec2{ 0, 0 };
+			}
+			double t = Scene::Time();
+			// 縦方向のみ
+			double y = Math::Sin(t * frequency) * power * time;
+			return Vec2{ 0, y };
+		}
+	};
+
 	class BossStageManager {
 	private:
 		StockNearGameObjects stockNearGameObjects;
@@ -40,6 +71,7 @@ namespace Iwanna {
 		Vec2 cameraBasePos{ 400, 304 };
 		Camera2D camera{ cameraBasePos, 1.0 };
 		double cameraScale = 1.0;
+		CameraShake cameraShake;
 
 		//弾丸関連
 		double bulletSpeed = 12;
@@ -62,6 +94,11 @@ namespace Iwanna {
 
 		// boss関連
 		int32 defeatedBossNum = 0;
+
+		//暗転演出関連
+		double darkAlpha = 0.8;
+		Timer darkAlphaTimer{2.1s,StartImmediately::Yes};
+
 	public:
 		BossStageManager();
 
@@ -110,7 +147,7 @@ namespace Iwanna {
 		void createSubThrowCherry(double dir, double spd, const std::function<std::shared_ptr<Cherry>()>& factory);
 		void createBlueLineCherry(int32 num, double interval, const std::function<std::shared_ptr<Cherry>()>& factory);
 		void createYellowStarCherry(int32 Nkakkei, int32 nextNumber, Vec2 center, int32 lineNum, const std::function<std::shared_ptr<Cherry>()>& factory);
-		void createGreenWaveCherry(Vec2 startPos, double interval, const std::function<std::shared_ptr<BossGreenWaveCherry>()>& factory);
+		void createGreenWaveCherry(Vec2 startPos, double interval, double high, const std::function<std::shared_ptr<BossGreenWaveCherry>()>& factory);
 		void createOrangeStopCherry(bool isAddUpDown, const std::function<std::shared_ptr<BossOrangeStopCherry>()>& factory);
 		void createSkyTargetCherry(int32 lineNum, bool isAddLine, const std::function<std::shared_ptr<BossSkyTargetCherry>()>& factory);
 	};

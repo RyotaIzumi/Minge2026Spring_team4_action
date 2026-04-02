@@ -58,7 +58,7 @@ namespace Iwanna {
 	void BossStageManager::createYellowStarCherry(int32 Nkakkei,int32 nextNumber, Vec2 center,int32 lineNum, const std::function<std::shared_ptr<Cherry>()>& factory) {
 		int32 r = 100;
 		Array<std::shared_ptr<Cherry>> starCherries;
-		double baseSpeed = 10;
+		double baseSpeed = 13;
 		double angleStart = Random(360);
 
 		//外周のみ生成
@@ -93,7 +93,7 @@ namespace Iwanna {
 		 * @param interval 上昇間隔
 		 * @param cherry 生成するcherryオブジェクト
 		 */
-	void BossStageManager::createGreenWaveCherry(Vec2 startPos, double interval, const std::function<std::shared_ptr<BossGreenWaveCherry>()>& factory) {
+	void BossStageManager::createGreenWaveCherry(Vec2 startPos, double interval, double high, const std::function<std::shared_ptr<BossGreenWaveCherry>()>& factory) {
 		const double startX = -1 * Random(interval);
 		const double interX = 16;
 		const int32 num = 70;
@@ -102,6 +102,7 @@ namespace Iwanna {
 			auto cherry = factory();
 			cherry->pos.x = startPos.x + interX * i;
 			cherry->pos.y = Global::stageHeight + 30;
+			cherry->highSpeed = high;
 			cherry->setActiveTimer(interval * i);
 
 			createCherry(cherry);
@@ -111,10 +112,12 @@ namespace Iwanna {
 			auto cherry = factory();
 			cherry->pos.x = startPos.x - interX * i;
 			cherry->pos.y = Global::stageHeight + 30;
+			cherry->highSpeed = high;
 			cherry->setActiveTimer(interval * i);
 
 			createCherry(cherry);
 		}
+		cameraShake.shake(0.4, 20.0);
 	}
 
 	/**
@@ -170,6 +173,8 @@ namespace Iwanna {
 				createCherry(cherry);
 			}
 		}
+
+		cameraShake.shake(0.4, 20.0);
 	}
 
 	/**

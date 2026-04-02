@@ -27,6 +27,8 @@ namespace Iwanna {
 		case StageType::Boss:bossStageManager.setUpObjects(chapter); break;
 		}
 
+		gameoverAudio.stop();
+
 		if (stageType == StageType::Boss)return;
 
 		//BGM再生関連
@@ -49,7 +51,7 @@ namespace Iwanna {
 
 			//playerが死亡していたらBGM一時停止
 			if (stageManager.getPlayer()->getIsDead() || Global::bgmStop) {
-				pauseBgm();
+				playGameoverBgm();
 				return;
 			}
 			stageManager.getPlayer()->setStopOrPlayAnimation(!Global::warningTrapPaused);
@@ -59,7 +61,7 @@ namespace Iwanna {
 			bossStageManager.update();
 			//playerが死亡していたらBGM一時停止
 			if (bossStageManager.getPlayer()->getIsDead() || Global::bgmStop) {
-				pauseBgm();
+				playGameoverBgm();
 				return;
 			}
 			//bossが出現したらBGM再生
@@ -75,8 +77,10 @@ namespace Iwanna {
 		switch (stageType) {
 		case StageType::Normal:
 			stageManager.debug();
+			break;
 		case StageType::Boss:
-			bossStageManager.debug();
+			//bossStageManager.debug();
+			break;
 		}
 
 		if (Global::inputDebugPause.down())pauseBgm();
@@ -85,10 +89,8 @@ namespace Iwanna {
 
 	void MainGame::drawGame() {
 		switch (stageType) {
-		case StageType::Normal:
-			stageManager.draw();
-		case StageType::Boss:
-			bossStageManager.draw();
+		case StageType::Normal:stageManager.draw(); break;
+		case StageType::Boss:bossStageManager.draw(); break;
 		}
 	}
 
@@ -111,6 +113,12 @@ namespace Iwanna {
 		audio.seekTime(startTime);
 		*/
 		audio.play();
+	}
+
+	void MainGame::playGameoverBgm() {
+		pauseBgm();
+		gameoverAudio = AudioAsset{ U"gameover_normal" };
+		if(!gameoverAudio.isPlaying()) gameoverAudio.play();
 	}
 
 	void MainGame::stopBgm() {

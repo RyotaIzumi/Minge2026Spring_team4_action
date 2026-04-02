@@ -109,7 +109,7 @@ namespace Iwanna{
 		case 0:
 			if (waveStopwatch.sF() > activeTimer) {
 				direction = 90;
-				speed = 10;
+				speed = highSpeed;
 				startStep++;
 			}
 			break;

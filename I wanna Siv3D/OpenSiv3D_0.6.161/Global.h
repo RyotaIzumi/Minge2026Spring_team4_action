@@ -39,7 +39,7 @@ namespace Global {
 	inline int32 stageWidth = 800;
 	inline int32 stageHeight = 608;
 	inline bool isChangeRoom = false;
-	inline String startRoomName = U"boss";
+	inline String startRoomName = U"trap2";
 	inline String nowRoomName = U"";
 
 	// --- 特殊罠関連 ---
@@ -52,6 +52,9 @@ namespace Global {
 
 	// --- player関連 ---
 	inline bool isPlayerFrozen = false;
+
+	// --- boss関連 ---
+	inline bool isBossAttackPowerUp = false;
 
 	 // ======================
 	// 定数

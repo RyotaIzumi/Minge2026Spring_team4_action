@@ -51,8 +51,8 @@ namespace Iwanna {
 		// hpをもつりんご衝突
 		if (this->intersects(other) && other.type == ObjectType::Cherry) {
 			auto* cherry = dynamic_cast<Cherry*>(&other);
-			if (cherry->getHasHp() && !cherry->getIsMuteki()) {
-				cherry->hited();
+			if (cherry->getHasHp()) {
+				if(!cherry->getIsMuteki()) cherry->hited();
 				isDelete = true;
 			}
 		}
