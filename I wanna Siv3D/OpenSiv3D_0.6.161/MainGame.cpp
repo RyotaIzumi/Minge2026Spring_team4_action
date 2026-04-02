@@ -16,6 +16,7 @@ namespace Iwanna {
 		//ステージの名称から種類を決定
 		if (Global::nowRoomName == U"boss") {
 			stageType = StageType::Boss;
+			if (Global::nowRoomName == U"boss")pauseBgm();
 		}
 		else {
 			stageType = StageType::Normal;
@@ -26,10 +27,12 @@ namespace Iwanna {
 		case StageType::Boss:bossStageManager.setUpObjects(chapter); break;
 		}
 
+		if (stageType == StageType::Boss)return;
+
 		//BGM再生関連
 		if (!audio.isPlaying()) {
 			if (audio.isPaused())audio.play();
-			else playBgm(chapter);
+			else playBgm(U"main_normal");
 		}
 	}
 
@@ -59,10 +62,13 @@ namespace Iwanna {
 				pauseBgm();
 				return;
 			}
+			//bossが出現したらBGM再生
+			if (bossStageManager.bossBgmStart) {
+				playBgm(U"boss_normal");
+				bossStageManager.bossBgmStart = false;
+			}
 			break;
 		}
-
-		if(Global::nowRoomName == U"boss")pauseBgm();
 	}
 
 	void MainGame::debugGame() {
@@ -86,10 +92,10 @@ namespace Iwanna {
 		}
 	}
 
-	void MainGame::playBgm(int32 chapter) {
+	void MainGame::playBgm(String bgm) {
 		stopBgm();
 		
-		audio = AudioAsset{ U"main_normal"};
+		audio = AudioAsset{bgm};
 		/*
 		SecondsF startTime = 0.0s;
 		int32 startStep = 0;

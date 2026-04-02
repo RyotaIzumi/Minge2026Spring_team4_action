@@ -59,6 +59,9 @@ namespace Iwanna {
 		bool isShowGameOver = false;
 
 		int32 step = 0;
+
+		// boss関連
+		int32 defeatedBossNum = 0;
 	public:
 		BossStageManager();
 
@@ -69,13 +72,14 @@ namespace Iwanna {
 
 		void update();
 		void debug();
-		void draw()
-			;
+		void draw();
 		void setStep(int32 newStep);
 		void saveGame();
 		Vec2 executeCameraPos();
 
 		void generateBoss(int32 type);
+
+		bool bossBgmStart = false;
 
 		//取得用関数
 		std::shared_ptr<Player> getPlayer();
@@ -89,9 +93,25 @@ namespace Iwanna {
 		void createPeripheryBlocks();
 		void createFloorBlocks(Vec2 basePos);
 
+		// --- 計算関数 --- //
+		//2つの座標から角度を計算
+		double calculateDirection(Vec2 basePos, Vec2 targetPos) {
+			Vec2 diff = targetPos - basePos;
+			return Math::ToDegrees(Atan2(-diff.y, diff.x));
+		}
+
+		//2つの座標から距離を計算
+		double calculateDistance(Vec2 basePos, Vec2 targetPos) {
+			return basePos.distanceFrom(targetPos);
+		}
+
 		// りんご生成パターン(別cppファイルで定義)
 		void createCherrySpread(int32 num, double spd, const std::function<std::shared_ptr<Cherry>()>& factory);
 		void createSubThrowCherry(double dir, double spd, const std::function<std::shared_ptr<Cherry>()>& factory);
 		void createBlueLineCherry(int32 num, double interval, const std::function<std::shared_ptr<Cherry>()>& factory);
+		void createYellowStarCherry(int32 Nkakkei, int32 nextNumber, Vec2 center, int32 lineNum, const std::function<std::shared_ptr<Cherry>()>& factory);
+		void createGreenWaveCherry(Vec2 startPos, double interval, const std::function<std::shared_ptr<BossGreenWaveCherry>()>& factory);
+		void createOrangeStopCherry(bool isAddUpDown, const std::function<std::shared_ptr<BossOrangeStopCherry>()>& factory);
+		void createSkyTargetCherry(int32 lineNum, bool isAddLine, const std::function<std::shared_ptr<BossSkyTargetCherry>()>& factory);
 	};
 }

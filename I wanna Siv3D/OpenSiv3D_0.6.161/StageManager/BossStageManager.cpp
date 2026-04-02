@@ -209,11 +209,13 @@ namespace Iwanna {
 				if (bc->getCherryType() == CherryType::Boss) {
 					auto* b = dynamic_cast<BossCherry*>(bc.get());
 					bossCherryPos = b->pos;
+					defeatedBossNum = b->getDefeatedBossNum();
 					attackCherryType = b->getBossCherryAttackType();
 				}
 				else if (bc->getCherryType() == CherryType::BossSub) {
 					auto* bs = dynamic_cast<BossSubCherry*>(bc.get());
 					bs->setCenterPos(bossCherryPos);
+					bs->setDefeatedBossNum(defeatedBossNum);
 					bs->generateAttack(attackCherryType);
 				}
 
@@ -272,10 +274,25 @@ namespace Iwanna {
 				}
 			}
 
+			// 倒されたボスりんごのサブりんご取得用処理
+			if (!bossCherries.empty()) {
+				auto* bossCherry = dynamic_cast<BossCherry*>(bossCherries.front().get());
+				for (auto& bc : bossCherries) {
+					if (bc->getCherryType() == CherryType::BossSub) {
+						auto* bs = dynamic_cast<BossSubCherry*>(bc.get());
+						if (bs->isDelete) bossCherry->removeDefeatedAttackType(bs->getBossCherrySubType());
+					}
+				}
+			}
+
 			// ----- 以下削除処理 -----
 
 			//画面外のりんごを削除
 			cherries.remove_if([](auto&& cherry) {
+				return cherry->isOutOfScreen || cherry->isDelete;
+			});
+			//ボスりんごを削除
+			bossCherries.remove_if([](auto&& cherry) {
 				return cherry->isOutOfScreen || cherry->isDelete;
 			});
 
@@ -387,7 +404,7 @@ namespace Iwanna {
 			gameObjects.bossCherries <<  std::make_shared<BossSubCherry>(Vec2{ 400, -100}, 2.0, BossCherryType::Green, *this);
 			gameObjects.bossCherries <<  std::make_shared<BossSubCherry>(Vec2{ 500, -100}, 2.0, BossCherryType::Orange, *this);
 			gameObjects.bossCherries <<  std::make_shared<BossSubCherry>(Vec2{ 600, -100}, 2.0, BossCherryType::Sky, *this);
-
+			bossBgmStart = true;
 			break;
 		}
 	}

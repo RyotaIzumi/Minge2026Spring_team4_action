@@ -31,7 +31,7 @@ namespace Iwanna {
 		void debugGame();
 		void drawGame();
 
-		void playBgm(int32 chapter);
+		void playBgm(String);
 		void stopBgm();
 
 		void pauseBgm();

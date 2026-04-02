@@ -8,6 +8,8 @@ namespace Iwanna {
 		const FilePath Path_MAIN_LOW{ U"Sound/Bgm/main_low.mp3" };
 		const String MAIN_NORMAL{ U"main_normal" };
 		const FilePath Path_MAIN_NORMAL{ U"Sound/Bgm/main_normal.mp3" };
+		const String BOSS_NORMAL{ U"boss_normal" };
+		const FilePath Path_BOSS_NORMAL{ U"Sound/Bgm/boss_normal.mp3" };
 
 		//SEの名前とパスの定数
 		static const String SE_PATH = U"Sound/Se/";
@@ -28,6 +30,8 @@ namespace Iwanna {
 		static const String BLOCKBREAK_PATH = SE_PATH + BLOCKBREAK + U".wav";
 		static const String SPIKETRAP = U"sndSpikeTrap";
 		static const String SPIKETRAP_PATH = SE_PATH + SPIKETRAP + U".wav";
+		static const String BOSSHIT = U"sndBossHit";
+		static const String BOSSHIT_PATH = SE_PATH + BOSSHIT + U".wav";
 		static const String ERROR = U"sndWindowsError";
 		static const String ERROR_PATH = SE_PATH + ERROR + U".wav";
 		static const String DISCORD = U"sndDiscord";

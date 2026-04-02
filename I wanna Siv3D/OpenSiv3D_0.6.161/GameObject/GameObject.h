@@ -77,6 +77,11 @@ namespace Iwanna {
 			direction = Math::ToDegrees(Atan2(-diff.y, diff.x)) ;
 		}
 
+		//2つの座標から距離を計算
+		double calculateDistance(Vec2 basePos, Vec2 targetPos) {
+			return basePos.distanceFrom(targetPos);
+		}
+
 		virtual void onCollision(GameObject& other) = 0;
 	};
 }

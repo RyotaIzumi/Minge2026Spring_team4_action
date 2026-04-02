@@ -20,11 +20,16 @@ namespace Iwanna {
 
 		Stopwatch attackStopwatch{StartImmediately::No};
 		double attackIntervalTime;
+
+		//hpバー用
+		double hpBarAlpha = 0.0;
 		
 	protected:
 		BossStageManager* bossStageManager = nullptr;
 		BossCherryType cherryAttackType;
+		Array<BossCherryType> canAttackTypes{ BossCherryType::Red, BossCherryType::Blue, BossCherryType::Yellow, BossCherryType::Green, BossCherryType::Orange, BossCherryType::Sky };
 		int32 startStep = 0;
+		int32 defeatedAttackTypeNum = 0;
 	public:
 		BossCherry(Vec2 startPos, double scale, BossStageManager& manager);
 
@@ -32,6 +37,8 @@ namespace Iwanna {
 		void draw() const override;
 
 		BossCherryType getBossCherryAttackType() const;
+		void removeDefeatedAttackType(BossCherryType type);
+		int32 getDefeatedBossNum() const;
 		bool reachedAttackTime(double time);
 	};
 
@@ -41,6 +48,7 @@ namespace Iwanna {
 		BossCherryType cherrySubType;
 		BossCherryType cherryAttackType;
 		int32 startStep = 0;
+		int32 defeatedBossNum = 0;
 		ColorF typeColor;
 
 		Vec2 centerPos;
@@ -56,6 +64,8 @@ namespace Iwanna {
 
 		void setCenterPos(Vec2 cPos);
 		void setTypeColor();
+		void setDefeatedBossNum(int32);
+		BossCherryType getBossCherrySubType() const;
 		void generateAttack(BossCherryType);
 	};
 
@@ -80,6 +90,62 @@ namespace Iwanna {
 		ColorF typeColor;
 	public:
 		BossFallBlueCherry(Vec2 startPos, double scale, BossCherryType cType);
+
+		void barrageUpdate() override;
+	};
+
+	class BossYellowStarCherry : public BossBarrageCherry {
+	protected:
+		int32 startStep = 0;
+		BossCherryType cherrySubType;
+		ColorF typeColor;
+		Vec2 centerPos;
+	public:
+		BossYellowStarCherry(Vec2 startPos, double scale, BossCherryType cType);
+
+		void barrageUpdate() override;
+	};
+
+	class BossGreenWaveCherry : public BossBarrageCherry {
+	protected:
+		int32 startStep = 0;
+		BossCherryType cherrySubType;
+		ColorF typeColor;
+
+		Stopwatch waveStopwatch{ StartImmediately::Yes };
+		double activeTimer = 0.0;
+	public:
+		BossGreenWaveCherry(Vec2 startPos, double scale, BossCherryType cType);
+
+		void barrageUpdate() override;
+		void setActiveTimer(double time);
+	};
+
+	class BossOrangeStopCherry : public BossBarrageCherry {
+	protected:
+		int32 startStep = 0;
+		BossCherryType cherrySubType;
+		ColorF typeColor;
+
+		Vec2 startPos;
+		Vec2 targetPos;
+		double moveRangeX, moveRangeY;
+		Timer moveTimer{ 0.5s, StartImmediately::Yes };
+	public:
+		BossOrangeStopCherry(Vec2 startPos, double scale, BossCherryType cType);
+
+		void barrageUpdate() override;
+		void setStartPos(Vec2 tPos);
+		void setTargetPos(Vec2 tPos);
+	};
+
+	class BossSkyTargetCherry : public BossBarrageCherry {
+	protected:
+		int32 startStep = 0;
+		BossCherryType cherrySubType;
+		ColorF typeColor;
+	public:
+		BossSkyTargetCherry(Vec2 startPos, double scale, BossCherryType cType);
 
 		void barrageUpdate() override;
 	};

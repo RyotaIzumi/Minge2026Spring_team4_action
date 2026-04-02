@@ -125,9 +125,23 @@ namespace Iwanna {
 
 	//ダメージを受けた際の処理
 	void Cherry::hited() {
-		if (hp > 0) hp--;
+		if (hp > 0) {
+			AudioAsset(Sound::BOSSHIT).playOneShot();
+			hp--;
+		}
+
+		if (hp <= 0) {
+			AudioAsset(Sound::DEATH).playOneShot();
+			isDelete = true;
+		}
+
 		isMuteki = true;
 		mutekiInterval.restart();
+	}
+
+	//無敵状態かどうか
+	bool Cherry::getIsMuteki() const {
+		return isMuteki;
 	}
 
 	// 自身の種類を取得

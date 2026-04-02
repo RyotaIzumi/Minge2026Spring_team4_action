@@ -59,9 +59,11 @@ namespace Iwanna {
 			break;
 		}
 
+		if (hpBarAlpha < 1)hpBarAlpha += 0.05;
+
 		// 一定間隔でファンネルりんごを一つ選んで攻撃
 		if (reachedAttackTime(attackIntervalTime)) {
-			cherryAttackType = BossCherryType::Blue;
+			cherryAttackType = canAttackTypes.choice();
 			attackStopwatch.restart();
 		}
 		else {
@@ -72,12 +74,50 @@ namespace Iwanna {
 	void BossCherry::draw() const {
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
 		TextureAsset(U"sprCherryLowBoss").scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1,ColorF(1.0, isMuteki ? 0.6 : 1.0));
+
+		// ===== HPバー =====
+		if (hasHp) {
+			double width = Global::stageWidth;   // 横幅
+			double height = 20;              // 高さ
+			Vec2 barPos = Vec2(400,0);
+
+			// 最大HP（赤）
+			RectF(barPos.x - width / 2, barPos.y, width, height)
+				.draw(ColorF(1.0, 0.2, 0.2, hpBarAlpha));
+
+			// 現在HP（緑）
+			double hpRate = static_cast<double>(hp) / maxHp;
+			RectF(barPos.x - width / 2, barPos.y, width * hpRate, height)
+				.draw(ColorF(0.2, 1.0, 0.2, hpBarAlpha));
+
+			// 文字表示
+			Vec2 textBasePos = Vec2(2, 18);
+			FontAsset(U"BossHp")(U"Guardian Cherry").draw(textBasePos.x - 1, textBasePos.y, ColorF(0, 0, 0, hpBarAlpha));
+			FontAsset(U"BossHp")(U"Guardian Cherry").draw(textBasePos.x + 1, textBasePos.y, ColorF(0, 0, 0, hpBarAlpha));
+			FontAsset(U"BossHp")(U"Guardian Cherry").draw(textBasePos.x, textBasePos.y - 1, ColorF(0, 0, 0, hpBarAlpha));
+			FontAsset(U"BossHp")(U"Guardian Cherry").draw(textBasePos.x, textBasePos.y + 1, ColorF(0, 0, 0, hpBarAlpha));
+
+			// 本体（白）
+			FontAsset(U"BossHp")(U"Guardian Cherry")
+				.draw(textBasePos.x, textBasePos.y, ColorF(1.0, 1.0, 1.0, hpBarAlpha));
+		}
 		//hitBox->draw(ColorF(0.7,0.7));//判定の可視化
 	}
 
 	//次に攻撃するりんごの種類を取得
 	BossCherryType BossCherry::getBossCherryAttackType() const {
 		return cherryAttackType;
+	}
+
+	//攻撃できるりんごの種類を設定
+	void BossCherry::removeDefeatedAttackType(BossCherryType type) {
+		defeatedAttackTypeNum++;
+		canAttackTypes.remove(type);
+	}
+
+	// 倒した攻撃の種類の数を取得
+	int32 BossCherry::getDefeatedBossNum() const {
+		return defeatedAttackTypeNum;
 	}
 
 	// 攻撃間隔が指定時間に達したかどうかを取得
@@ -137,6 +177,15 @@ namespace Iwanna {
 			break;
 		}
 
+		switch (defeatedBossNum) {
+		case 1:c += 0.2;break;
+		case 2:c += 0.5;break;
+		case 3:c += 1.0;break;
+		case 4:c += 3.0;break;
+		case 5:c += 5.0;break;
+		case 6:c += 10.0;break;
+		}
+
 		pos.x = r * cos(Math::ToRadians(c)) + centerPos.x;
 		pos.y = -r * sin(Math::ToRadians(c)) + centerPos.y;
 
@@ -148,10 +197,30 @@ namespace Iwanna {
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
 		TextureAsset(U"sprCherryLowWhite").scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1, typeColor);
 		//hitBox->draw(ColorF(0.7,0.7));//判定の可視化
+
+		// ===== HPバー =====
+		if (hasHp && isMuteki) {
+			double width = 32 * scaleMag;   // 横幅
+			double height = 4;              // 高さ
+			Vec2 barPos = pos + Vec2(0, -10 * scaleMag); // 上に表示
+
+			// 最大HP（赤）
+			RectF(barPos.x - width / 2, barPos.y, width, height)
+				.draw(ColorF(1.0, 0.2, 0.2));
+
+			// 現在HP（緑）
+			double hpRate = static_cast<double>(hp) / maxHp;
+			RectF(barPos.x - width / 2, barPos.y, width * hpRate, height)
+				.draw(ColorF(0.2, 1.0, 0.2));
+		}
 	}
 
 	void BossSubCherry::setCenterPos(Vec2 cPos) {
 		centerPos = cPos;
+	}
+
+	BossCherryType BossSubCherry::getBossCherrySubType() const {
+		return cherrySubType;
 	}
 
 	// 種類で色を決定する
@@ -167,6 +236,11 @@ namespace Iwanna {
 		}
 	}
 
+	// 倒したボスの数を設定
+	void BossSubCherry::setDefeatedBossNum(int32 num) {
+		defeatedBossNum = num;
+	}
+
 	// 攻撃を呼び出す
 	void BossSubCherry::generateAttack(BossCherryType type) {
 		double throwDir, throwSpd;
@@ -180,6 +254,26 @@ namespace Iwanna {
 			case BossCherryType::Blue:
 				throwDir = 70 + Random(40);
 				throwSpd = 14 + Random(3);
+				bossStageManager->createSubThrowCherry(throwDir, throwSpd, [this]() { return std::make_shared<BossSubThrowCherry>(pos, 2.0, cherrySubType, *bossStageManager); });
+				break;
+			case BossCherryType::Yellow:
+				throwDir = 60 + Random(60);
+				throwSpd = 9 + Random(3);
+				bossStageManager->createSubThrowCherry(throwDir, throwSpd, [this]() { return std::make_shared<BossSubThrowCherry>(pos, 2.0, cherrySubType, *bossStageManager); });
+				break;
+			case BossCherryType::Green:
+				throwDir = 75 + Random(30);
+				throwSpd = 9 + Random(3);
+				bossStageManager->createSubThrowCherry(throwDir, throwSpd, [this]() { return std::make_shared<BossSubThrowCherry>(pos, 2.0, cherrySubType, *bossStageManager); });
+				break;
+			case BossCherryType::Orange:
+				throwDir = 70 + Random(40);
+				throwSpd = 9 + Random(3);
+				bossStageManager->createSubThrowCherry(throwDir, throwSpd, [this]() { return std::make_shared<BossSubThrowCherry>(pos, 2.0, cherrySubType, *bossStageManager); });
+				break;
+			case BossCherryType::Sky:
+				throwDir = 60 + Random(60);
+				throwSpd = 9 + Random(3);
 				bossStageManager->createSubThrowCherry(throwDir, throwSpd, [this]() { return std::make_shared<BossSubThrowCherry>(pos, 2.0, cherrySubType, *bossStageManager); });
 				break;
 			}
@@ -217,6 +311,7 @@ namespace Iwanna {
 
 			break;
 		case 2:
+
 			break;
 		}
 
@@ -270,10 +365,27 @@ namespace Iwanna {
 			startStep++;
 			break;
 		case 1://破裂して弾幕生成
-			if (splitTimer.reachedZero()) {
-				split();
-				startStep++;
+
+			switch (cherrySubType) {
+				case BossCherryType::Red:
+				case BossCherryType::Blue:
+				case BossCherryType::Yellow:
+				case BossCherryType::Sky:
+					if (splitTimer.reachedZero()) {
+						split();
+						startStep++;
+					}
+					break;
+
+				case BossCherryType::Green:
+				case BossCherryType::Orange:
+					if (pos.y > Global::stageHeight) {
+						split();
+						startStep++;
+					}
+					break;
 			}
+			
 			break;
 		case 2:
 			isDelete = true;
@@ -297,6 +409,18 @@ namespace Iwanna {
 			break;
 		case BossCherryType::Blue:
 			bossStageManager->createBlueLineCherry(20, 80, [this]() { return std::make_shared<BossFallBlueCherry>(pos, 1.0, cherrySubType); });
+			break;
+		case BossCherryType::Yellow:
+			bossStageManager->createYellowStarCherry(5, 2, pos, 10, [this]() { return std::make_shared<BossYellowStarCherry>(pos, 1.0, cherrySubType); });
+			break;
+		case BossCherryType::Green:
+			bossStageManager->createGreenWaveCherry(pos, 0.05, [this]() { return std::make_shared<BossGreenWaveCherry>(pos, 1.0, cherrySubType); });
+			break;
+		case BossCherryType::Orange:
+			bossStageManager->createOrangeStopCherry(false, [this]() { return std::make_shared<BossOrangeStopCherry>(pos, 1.0, cherrySubType); });
+			break;
+		case BossCherryType::Sky:
+			bossStageManager->createSkyTargetCherry(3, false, [this]() { return std::make_shared<BossSkyTargetCherry>(pos, 1.0, cherrySubType); });
 			break;
 		}
 	}

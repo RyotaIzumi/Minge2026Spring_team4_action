@@ -50,4 +50,161 @@ namespace Iwanna {
 			createCherry(cherry);
 		}
 	}
+
+	/**
+		 * @brief 黄色攻撃用の星型
+		 * @param cherry 生成するcherryオブジェクト
+		 */
+	void BossStageManager::createYellowStarCherry(int32 Nkakkei,int32 nextNumber, Vec2 center,int32 lineNum, const std::function<std::shared_ptr<Cherry>()>& factory) {
+		int32 r = 100;
+		Array<std::shared_ptr<Cherry>> starCherries;
+		double baseSpeed = 10;
+		double angleStart = Random(360);
+
+		//外周のみ生成
+		for (int j = 0; j < 2; j++) {
+			for (int i = 0; i < Nkakkei; i++) {
+				auto cherry = factory();
+				cherry->pos.x = r * cos(Math::ToRadians(i * (360.0 / Nkakkei) + angleStart)) + center.x;
+				cherry->pos.y = r * sin(Math::ToRadians(i * (360.0 / Nkakkei) + angleStart)) + center.y;
+				cherry->speed = calculateDistance(center,cherry->pos) / baseSpeed;
+				cherry->direction = calculateDirection(center,cherry->pos);
+				starCherries << cherry;
+				createCherry(cherry);
+			}
+		}
+		
+		//内側の線も生成
+		for (int i = 0; i < Nkakkei; i++) {
+			for (int j = 0; j < lineNum; j++) {
+				auto cherry = factory();
+				cherry->pos.x = starCherries[i]->pos.x + (starCherries[i + nextNumber]->pos.x - starCherries[i]->pos.x) * j / lineNum;
+				cherry->pos.y = starCherries[i]->pos.y + (starCherries[i + nextNumber]->pos.y - starCherries[i]->pos.y) * j / lineNum;
+				cherry->speed = calculateDistance(center,cherry->pos) / baseSpeed;
+				cherry->direction = calculateDirection(center,cherry->pos);
+				createCherry(cherry);
+			}
+		}
+	}
+
+	/**
+		 * @brief 緑攻撃用のウェーブ型
+		 * @param startPos 生成位置
+		 * @param interval 上昇間隔
+		 * @param cherry 生成するcherryオブジェクト
+		 */
+	void BossStageManager::createGreenWaveCherry(Vec2 startPos, double interval, const std::function<std::shared_ptr<BossGreenWaveCherry>()>& factory) {
+		const double startX = -1 * Random(interval);
+		const double interX = 16;
+		const int32 num = 70;
+		//右側
+		for (int i = 0; i < num; i++) {
+			auto cherry = factory();
+			cherry->pos.x = startPos.x + interX * i;
+			cherry->pos.y = Global::stageHeight + 30;
+			cherry->setActiveTimer(interval * i);
+
+			createCherry(cherry);
+		}
+		//左側
+		for (int i = 0; i < num; i++) {
+			auto cherry = factory();
+			cherry->pos.x = startPos.x - interX * i;
+			cherry->pos.y = Global::stageHeight + 30;
+			cherry->setActiveTimer(interval * i);
+
+			createCherry(cherry);
+		}
+	}
+
+	/**
+		 * @brief オレンジ攻撃用のライン型
+		 * @param targetPos 目標位置
+		 * @param interval 上昇間隔
+		 * @param cherry 生成するcherryオブジェクト
+		 */
+	void BossStageManager::createOrangeStopCherry(bool isAddUpDown, const std::function<std::shared_ptr<BossOrangeStopCherry>()>& factory) {
+		const double inter = 20;
+		const int32 num = 50;
+		const Vec2 targetPos = gameObjects.player->pos;
+
+		//左側
+		for (int i = 0; i < num; i++) {
+			auto cherry = factory();
+			cherry->pos.x = -inter;
+			cherry->pos.y = -inter + inter * i;
+			cherry->setStartPos(cherry->pos);
+			cherry->setTargetPos(Vec2{ targetPos.x - inter, cherry->pos.y });
+			createCherry(cherry);
+		}
+		
+		//右側
+		for (int i = 0; i < num; i++) {
+			auto cherry = factory();
+			cherry->pos.x = Global::stageWidth + inter;
+			cherry->pos.y = -inter + inter * i;
+			cherry->setStartPos(cherry->pos);
+			cherry->setTargetPos(Vec2{ targetPos.x + inter, cherry->pos.y });
+
+			createCherry(cherry);
+		}
+
+		if (isAddUpDown) {
+			//上側
+			for (int i = 0; i < num; i++) {
+				auto cherry = factory();
+				cherry->pos.x = -inter + inter * i;
+				cherry->pos.y = -inter;
+				cherry->setStartPos(cherry->pos);
+				cherry->setTargetPos(Vec2{ cherry->pos.x, targetPos.y - (inter + 10) });
+				createCherry(cherry);
+			}
+
+			//下側
+			for (int i = 0; i < num; i++) {
+				auto cherry = factory();
+				cherry->pos.x = -inter + inter * i;
+				cherry->pos.y = Global::stageHeight + inter;
+				cherry->setStartPos(cherry->pos);
+				cherry->setTargetPos(Vec2{ cherry->pos.x, targetPos.y + (inter + 10) });
+				createCherry(cherry);
+			}
+		}
+	}
+
+	/**
+		 * @brief 水色攻撃用の星型
+		 * @param cherry 生成するcherryオブジェクト
+		 * @param lineNum １線内の弾幕数
+		 * @param isAddLine 左右に弾幕を追加するかどうか
+		 */
+	void BossStageManager::createSkyTargetCherry(int32 lineNum, bool isAddLine, const std::function<std::shared_ptr<BossSkyTargetCherry>()>& factory) {
+		Vec2 targetPos = gameObjects.player->pos;
+		double baseSpd = 5;
+		double interSpd = 2;
+		double interAngle = 20;
+
+		for (int i = 0; i < lineNum; i++) {
+			auto cherry = factory();
+			cherry->direction = calculateDirection(cherry->pos, targetPos);
+			cherry->speed = baseSpd + i * interSpd;
+			createCherry(cherry);
+		}
+
+		if (isAddLine) {
+			//左右の追加弾幕
+			for (int i = 0; i < lineNum; i++) {
+				auto cherry = factory();
+				cherry->direction = calculateDirection(cherry->pos, targetPos) + interAngle;
+				cherry->speed = baseSpd + i * interSpd;
+				createCherry(cherry);
+			}
+			for (int i = 0; i < lineNum; i++) {
+				auto cherry = factory();
+				cherry->direction = calculateDirection(cherry->pos, targetPos) - interAngle;
+				cherry->speed = baseSpd + i * interSpd;
+				createCherry(cherry);
+			}
+		}
+	}
 }

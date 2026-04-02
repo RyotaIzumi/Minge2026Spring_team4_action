@@ -14,6 +14,7 @@ void Main()
 
 	//フォントはここで宣言
 	FontAsset::Register(U"Big", 60, Typeface::Regular);
+	FontAsset::Register(U"BossHp", FontMethod::MSDF, 30, Typeface::Medium);
 	FontAsset::Register(U"Button", FontMethod::MSDF, 20, Typeface::Medium);
 	FontAsset::Register(U"TitleTrap", FontMethod::MSDF, 10, Typeface::Medium);
 

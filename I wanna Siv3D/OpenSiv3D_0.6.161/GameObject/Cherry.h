@@ -60,6 +60,7 @@ namespace Iwanna {
 
 		bool getHasHp() const;
 		void hited();
+		bool getIsMuteki() const;
 
 		CherryType getCherryType() const;
 
