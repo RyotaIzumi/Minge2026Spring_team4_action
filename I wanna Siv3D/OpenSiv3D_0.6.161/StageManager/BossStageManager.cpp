@@ -110,7 +110,7 @@ namespace Iwanna {
 		}
 
 		if (stageName == U"boss") {
-			gameObjects.savePoints << std::make_shared<BossSavePoint>(Vec2{400,480},1);
+			gameObjects.savePoints << std::make_shared<BossSavePoint>(Vec2{400,500},1);
 		}
 	}
 

@@ -24,6 +24,8 @@ namespace Iwanna {
 
 		StageType stageType;
 
+		bool playGameoverBgmOne = true;
+
 	public:
 		MainGame();
 
