@@ -69,7 +69,7 @@ namespace Iwanna {
 
 		//カメラ関連
 		Vec2 cameraBasePos{ 400, 304 };
-		Camera2D camera{ cameraBasePos, 1.0, CameraControl::None_ };
+		Camera2D camera{ cameraBasePos, 1.0};
 		double cameraScale = 1.0;
 		CameraShake cameraShake;
 
@@ -150,5 +150,7 @@ namespace Iwanna {
 		void createGreenWaveCherry(Vec2 startPos, double interval, double high, const std::function<std::shared_ptr<BossGreenWaveCherry>()>& factory);
 		void createOrangeStopCherry(bool isAddUpDown, const std::function<std::shared_ptr<BossOrangeStopCherry>()>& factory);
 		void createSkyTargetCherry(int32 lineNum, bool isAddLine, const std::function<std::shared_ptr<BossSkyTargetCherry>()>& factory);
+
+		void createGrayLatticeCherry(double interval,const std::function<std::shared_ptr<BossGrayLatticeCherry>()>& factory);
 	};
 }

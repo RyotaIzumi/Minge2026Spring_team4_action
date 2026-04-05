@@ -830,5 +830,8 @@
     <ClInclude Include="AutoTile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EditorState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

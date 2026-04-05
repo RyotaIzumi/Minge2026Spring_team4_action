@@ -1,6 +1,23 @@
 ﻿# include <Siv3D.hpp> // OpenSiv3D v0.6.16
 #include "AutoTile.h"
 
+struct EditorState
+{
+	Size mapSize{ 25, 19 };
+	Size gridSize{ 25, 19 };
+
+	Grid<uint32> grid{ gridSize, 0 };
+	Grid<AutoTileConnectivity> connectivity{ gridSize };
+
+	double scrollX = 0;
+	double scrollY = 0;
+
+	int32 selectedTileId = 1;
+	Optional<Point> cursorIndex;
+
+	size_t settingMode = 0; // 0: tile, 1: gimmick
+};
+
 /// @brief オートタイルの接続情報
 struct AutoTileConnectivity
 {

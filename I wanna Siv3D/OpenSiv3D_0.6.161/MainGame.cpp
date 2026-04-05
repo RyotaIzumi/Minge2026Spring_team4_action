@@ -50,8 +50,12 @@ namespace Iwanna {
 				stageManager.getWarningWindowTrap()->trapUpdate();
 			}
 
+			if (Global::bgmStop) {
+				pauseBgm();
+			}
+
 			//playerが死亡していたらBGM一時停止
-			if (stageManager.getPlayer()->getIsDead() || Global::bgmStop) {
+			if (stageManager.getPlayer()->getIsDead()) {
 				if (playGameoverBgmOne) {
 					playGameoverBgm();
 					playGameoverBgmOne = false;
@@ -63,12 +67,12 @@ namespace Iwanna {
 
 		case StageType::Boss:
 			bossStageManager.update();
-			if (Global::bgmStop) {
-				pauseBgm();
-			}
 			//playerが死亡していたらBGM一時停止
 			if (bossStageManager.getPlayer()->getIsDead()) {
-				playGameoverBgm();
+				if (playGameoverBgmOne) {
+					playGameoverBgm();
+					playGameoverBgmOne = false;
+				}
 				return;
 			}
 			//bossが出現したらBGM再生
@@ -86,7 +90,7 @@ namespace Iwanna {
 			stageManager.debug();
 			break;
 		case StageType::Boss:
-			//bossStageManager.debug();
+			bossStageManager.debug();
 			break;
 		}
 

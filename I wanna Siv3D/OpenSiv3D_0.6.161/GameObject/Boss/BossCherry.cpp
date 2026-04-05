@@ -20,7 +20,7 @@ namespace Iwanna {
 		isTrap = false;
 
 		hasHp = true;
-		maxHp = 36;
+		maxHp = 25;
 		hp = maxHp;
 
 		baseCenterPos = Vec2{ 400, 350 };
@@ -32,6 +32,8 @@ namespace Iwanna {
 		r = 20;
 		attackIntervalTime = 3.5;
 		startStep = 0;
+
+		specialAttackStep = 0;
 	}
 
 	void BossCherry::barrageUpdate() {
@@ -50,6 +52,7 @@ namespace Iwanna {
 			if (getIsMoveFinished()) {
 				attackStopwatch.restart();//攻撃の開始
 				attackIntervalTime = 3.5;
+				isSpecialAttack = true;
 				startStep++;
 			}
 			break;
@@ -72,17 +75,32 @@ namespace Iwanna {
 		//攻撃間隔の設定
 		switch (defeatedAttackTypeNum) {
 		case 0:attackIntervalTime = 3.5; break;
-		case 1:attackIntervalTime = 3.0; break;
-		case 2:attackIntervalTime = 2.5; break;
-		case 3:attackIntervalTime = 2.0; break;
-		case 4:attackIntervalTime = 1.5; break;
-		case 5:attackIntervalTime = 0.8; break;
+		case 1:attackIntervalTime = 3.2; break;
+		case 2:attackIntervalTime = 2.8; break;
+		case 3:attackIntervalTime = 2.4; break;
+		case 4:attackIntervalTime = 2.0; break;
+		case 5:attackIntervalTime = 1.5; break;
 		}
 
 		//攻撃強化関連の処理
 		if (hp < maxHp / 2 || defeatedAttackTypeNum >= 3) {
 			Global::isBossAttackPowerUp = true;
 			if (attackIntervalTime > 2.0)attackIntervalTime = 2.0;
+		}
+
+		//特殊攻撃の呼び出し
+		if (isSpecialAttack) {
+			switch (specialAttackStep) {
+			case 0:
+				bossStageManager->createGrayLatticeCherry(100,[this]() { return std::make_shared<BossGrayLatticeCherry>(pos, 1.0, BossCherryType::Gray); });
+				AudioAsset(Sound::BLOCKCHANGE).playOneShot();
+				specialAttackStep++;
+				break;
+			case 1:
+
+				break;
+			}
+			return;
 		}
 
 		// 一定間隔でファンネルりんごを一つ選んで攻撃
@@ -401,6 +419,7 @@ namespace Iwanna {
 		case BossCherryType::Green:  typeColor = ColorF(Palette::Lawngreen, alpha); break;
 		case BossCherryType::Orange: typeColor = ColorF(Palette::Orange, alpha); break;
 		case BossCherryType::Sky:    typeColor = ColorF(Palette::Skyblue, alpha); break;
+		case BossCherryType::Gray:   typeColor = ColorF(Palette::Gray, alpha); break;
 		}
 	}
 

@@ -332,6 +332,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutoTile.h" />
+    <ClInclude Include="EditorState.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>

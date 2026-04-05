@@ -212,4 +212,65 @@ namespace Iwanna {
 			}
 		}
 	}
+
+	/**
+		 * @brief 灰色攻撃用の格子型
+		 * @param cherry 生成するcherryオブジェクト
+		 */
+	void BossStageManager::createGrayLatticeCherry(double interval, const std::function<std::shared_ptr<BossGrayLatticeCherry>()>& factory) {
+		Vec2 startBasePos{-100,-400};
+		Vec2 centerPos{400,150};
+		double cherryInterval = 24;
+		int32 lineNumX = 15;
+		int32 lineNumY = 15;
+		int32 cherryNumInLineX = 70;
+		int32 cherryNumInLineY = 70;
+		double randomAngle = Random(360);
+
+		//横方向
+		for (int i = 0; i < lineNumX; i++) {
+			for (int j = 0; j < cherryNumInLineX; j++) {
+				auto cherry = factory();
+				cherry->pos.x = startBasePos.x + j * cherryInterval;
+				cherry->pos.y = startBasePos.y + interval * i;
+				cherry->setCenterPos(centerPos);
+				cherry->setDistanceAndAngle(calculateDistance(centerPos, cherry->pos), calculateDirection(centerPos, cherry->pos) + randomAngle);
+				cherry->setAttackPattern(0);
+				createCherry(cherry);
+			}
+		}
+
+		//縦方向
+		for (int i = 0; i < lineNumY; i++) {
+			for (int j = 0; j < cherryNumInLineY; j++) {
+				auto cherry = factory();
+				cherry->pos.x = startBasePos.x + interval * i;
+				cherry->pos.y = startBasePos.y + j * cherryInterval;
+				cherry->setCenterPos(centerPos);
+				cherry->setDistanceAndAngle(calculateDistance(centerPos, cherry->pos), calculateDirection(centerPos, cherry->pos) + randomAngle);
+				cherry->setAttackPattern(0);
+				createCherry(cherry);
+			}
+		}
+
+		int32 cherryNumCircle = 60;
+		double circleAngleInterval = 360 / cherryNumCircle;
+		//最初の予告円形
+		for (int32 i = 0; i <= cherryNumCircle; i++) {
+			auto cherry = factory();
+			cherry->setCenterPos(centerPos);
+			cherry->setDistanceAndAngle(0, i * circleAngleInterval);
+			cherry->setAttackPattern(1);
+			createCherry(cherry);
+		}
+
+		//2つ目の予告円形
+		for (int32 i = 0; i <= cherryNumCircle; i++) {
+			auto cherry = factory();
+			cherry->setCenterPos(centerPos);
+			cherry->setDistanceAndAngle(0, i * circleAngleInterval);
+			cherry->setAttackPattern(2);
+			createCherry(cherry);
+		}
+	}
 }

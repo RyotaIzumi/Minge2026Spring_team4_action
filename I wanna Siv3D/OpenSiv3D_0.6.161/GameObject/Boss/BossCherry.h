@@ -10,6 +10,7 @@ namespace Iwanna {
 		Green,
 		Orange,
 		Sky,
+		Gray,
 		None
 	};
 
@@ -22,6 +23,10 @@ namespace Iwanna {
 		double attackIntervalTime;
 
 		Timer startAttackTimer{ 0.8s, StartImmediately::Yes };
+
+		//特殊攻撃関連
+		bool isSpecialAttack = false;
+		int32 specialAttackStep = 0;
 
 		//hpバー用
 		double hpBarAlpha = 0.0;
@@ -152,6 +157,30 @@ namespace Iwanna {
 		BossSkyTargetCherry(Vec2 startPos, double scale, BossCherryType cType);
 
 		void barrageUpdate() override;
+	};
+
+	class BossGrayLatticeCherry : public BossBarrageCherry {
+	protected:
+		int32 startStep = 0;
+		BossCherryType cherrySubType;
+		ColorF typeColor;
+		Vec2 centerPos;
+		double c, r;
+		double showR = 200;
+		int32 attackStep = 0;
+		int32 attackPattern = 0;//0:格子,1:最初の円,2:最後の円
+
+		double addAngleValue = 0.0;
+		Timer circleTimer{ 1.0s, StartImmediately::No };
+		Timer attackTimer{ 5.0s, StartImmediately::No };
+		Timer alphaTimer{ 1.0s, StartImmediately::No };
+	public:
+		BossGrayLatticeCherry(Vec2 startPos, double scale, BossCherryType cType);
+
+		void barrageUpdate() override;
+		void setCenterPos(Vec2 cPos);
+		void setDistanceAndAngle(double c, double r);
+		void setAttackPattern(int32 pattern);
 	};
 
 	class BossSubThrowCherry : public BossBarrageCherry {
