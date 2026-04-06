@@ -52,6 +52,7 @@ MapEditor::MapEditor()
 
 void MapEditor::update()
 {
+	updateUndoRedo();
 	updateMapSize();
 	updatePageScroll();
 	updateInput();
@@ -64,6 +65,7 @@ void MapEditor::update()
 	}
 	else
 	{
+		if (MouseL.down()) saveSnapshot();
 		gimmikManager.update(state.cursorIndex, tileSize);
 	}
 }
@@ -166,6 +168,8 @@ void MapEditor::updateTilePlacement()
 {
 	if (!state.cursorIndex) return;
 
+	if (MouseL.down() || MouseR.down()) saveSnapshot();
+
 	if (MouseL.pressed())
 	{
 		state.grid[*state.cursorIndex] = state.selectedTileId;
@@ -174,6 +178,21 @@ void MapEditor::updateTilePlacement()
 	{
 		state.grid[*state.cursorIndex] = 0;
 		state.connectivity[*state.cursorIndex] = AutoTileConnectivity{};
+	}
+}
+
+void MapEditor::updateUndoRedo()
+{
+	if (KeyControl.pressed())
+	{
+		if (KeyZ.down())
+		{
+			undo();
+		}
+		else if (KeyY.down())
+		{
+			redo();
+		}
 	}
 }
 
@@ -207,12 +226,14 @@ void MapEditor::draw()
 	FontAsset(U"Font")(U"CSV").draw(1080, 190);
 	if (SimpleGUI::Button(U"Save", Vec2{ 1080, 220 }))
 	{
+		saveSnapshot();
 		const FilePath path = mainActionProjectPath + saveFileName.text + U".csv";
 
 		MapSerializer::SaveCSV(state.grid, path);
 	}
 	if (SimpleGUI::Button(U"Load", Vec2{ 1170, 220 }))
 	{
+		saveSnapshot();
 		const FilePath path = mainActionProjectPath + saveFileName.text + U".csv";
 
 		if (!FileSystem::Exists(path)) return;
@@ -244,6 +265,7 @@ void MapEditor::draw()
 	FontAsset(U"Font")(U"JSON").draw(1080, 260);
 	if (SimpleGUI::Button(U"Save", Vec2{ 1080, 290 }))
 	{
+		saveSnapshot();
 		const FilePath path = mainActionProjectPath + saveFileName.text + U".json";
 
 		MapSerializer::SaveJSON(
@@ -254,6 +276,7 @@ void MapEditor::draw()
 	}
 	if (SimpleGUI::Button(U"Load", Vec2{ 1170, 290 }))
 	{
+		saveSnapshot();
 		const FilePath path = mainActionProjectPath + saveFileName.text + U".json";
 
 		auto& gimmiks = gimmikManager.getGimmiks();
@@ -431,4 +454,73 @@ void MapEditor::drawTileSelector(int32 tileSize)
 	// 選択中表示
 	Rect{ (*selectedTileCursorIndex * tileSize + OFFSET), tileSize }
 	.drawFrame(2, Palette::Red);
+}
+
+// ----- undo / redo 関連 ----- //
+
+void MapEditor::saveSnapshot()
+{
+	EditorSnapshot snap;
+
+	snap.grid = state.grid;
+	snap.gimmiks = gimmikManager.getGimmiks();
+	snap.playerPos = startPlayerPos;
+
+	undoStack << snap;
+
+	// 上限
+	if (undoStack.size() > MAX_HISTORY)
+	{
+		undoStack.pop_front();
+	}
+
+	// 新操作時はRedo消す
+	redoStack.clear();
+}
+
+void MapEditor::loadSnapshot(const EditorSnapshot& snap)
+{
+	state.grid = snap.grid;
+	gimmikManager.getGimmiks() = snap.gimmiks;
+	startPlayerPos = snap.playerPos;
+}
+
+void MapEditor::undo()
+{
+	if (undoStack.isEmpty()) return;
+
+	// 現在をredoへ
+	EditorSnapshot current{
+		state.grid,
+		gimmikManager.getGimmiks(),
+		startPlayerPos
+	};
+
+	redoStack << current;
+
+	// 1つ戻る
+	auto snap = undoStack.back();
+	undoStack.pop_back();
+
+	loadSnapshot(snap);
+}
+
+void MapEditor::redo()
+{
+	if (redoStack.isEmpty()) return;
+
+	// 現在をundoへ
+	EditorSnapshot current{
+		state.grid,
+		gimmikManager.getGimmiks(),
+		startPlayerPos
+	};
+
+	undoStack << current;
+
+	// 進む
+	auto snap = redoStack.back();
+	redoStack.pop_back();
+
+	loadSnapshot(snap);
 }

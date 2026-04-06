@@ -339,6 +339,7 @@
     <ClInclude Include="EditorState.h" />
     <ClInclude Include="Gimmik\Gimmik.h" />
     <ClInclude Include="Gimmik\GimmikManager.h" />
+    <ClInclude Include="History.h" />
     <ClInclude Include="MapSerializer.h" />
     <ClInclude Include="MapEditor.h" />
     <ClInclude Include="stdafx.h" />

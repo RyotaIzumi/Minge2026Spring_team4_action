@@ -4,6 +4,7 @@
 #include "AutoTile.h"
 #include "Gimmik/GimmikManager.h"
 #include "MapSerializer.h"
+#include "History.h"
 
 class MapEditor
 {
@@ -32,6 +33,11 @@ private:
 	TextEditState playerXText;
 	TextEditState playerYText;
 
+	// redo/undo用
+	Array<EditorSnapshot> undoStack;
+	Array<EditorSnapshot> redoStack;
+	static constexpr size_t MAX_HISTORY = 50;
+
 public:
 	MapEditor();
 
@@ -43,6 +49,7 @@ private:
 	void updateMapSize();
 	void updatePageScroll();
 	void updateTilePlacement();
+	void updateUndoRedo();
 
 	void drawMap();
 	void drawMapSizeUI();
@@ -51,4 +58,9 @@ private:
 	void drawPageInfo();
 	void drawCursor();
 	void drawTileSelector(int32 tileSize);
+
+	void saveSnapshot();
+	void loadSnapshot(const EditorSnapshot& snapshot);
+	void undo();
+	void redo();
 };
