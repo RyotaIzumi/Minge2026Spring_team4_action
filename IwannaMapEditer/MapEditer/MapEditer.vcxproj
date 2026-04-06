@@ -115,11 +115,15 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Gimmik\GimmikManager.cpp" />
+    <ClCompile Include="MapSerializer.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MapEditor.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TileUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\PandD-Aizu\Minge2025Summer_Team2\Minge2025Summer_Team2\App\texture\tile\iwahada_mapchip.png" />
@@ -333,7 +337,12 @@
   <ItemGroup>
     <ClInclude Include="AutoTile.h" />
     <ClInclude Include="EditorState.h" />
+    <ClInclude Include="Gimmik\Gimmik.h" />
+    <ClInclude Include="Gimmik\GimmikManager.h" />
+    <ClInclude Include="MapSerializer.h" />
+    <ClInclude Include="MapEditor.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TileUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App\example\obj\blacksmith.obj">
