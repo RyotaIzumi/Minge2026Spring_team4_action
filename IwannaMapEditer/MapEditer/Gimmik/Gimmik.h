@@ -9,4 +9,6 @@ struct Gimmik
 	int32 value1 = 0;
 	double value2 = 0;
 	double value3 = 0;
+
+	String valueString;
 };

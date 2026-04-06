@@ -8,7 +8,7 @@ namespace Iwanna {
 		int32 chapter = 1;
 
 		//ステージ名称系の初期化
-		if (!Global::isExistSaveData) {
+		if (!Global::isExistSaveData && !Global::isChangeRoom) {
 			Global::savedRoomName = Global::startRoomName;
 			Global::nowRoomName = Global::startRoomName;
 		}

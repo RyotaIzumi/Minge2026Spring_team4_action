@@ -52,9 +52,16 @@ void MapSerializer::SaveJSON(
 		obj[U"gimmikPos"].push_back(g.pos.x);
 		obj[U"gimmikPos"].push_back(g.pos.y);
 
-		obj[U"value1"] = g.value1;
-		obj[U"value2"] = g.value2;
-		obj[U"value3"] = g.value3;
+		if (g.name == U"ワープ") {
+			obj[U"value1"] = g.valueString;
+			obj[U"value2"] = g.value2;
+			obj[U"value3"] = g.value3;
+		}
+		else {
+			obj[U"value1"] = g.value1;
+			obj[U"value2"] = g.value2;
+			obj[U"value3"] = g.value3;
+		}
 
 		root[U"Gimmiks"].push_back(obj);
 	}
@@ -95,9 +102,16 @@ void MapSerializer::LoadJSON(
 			obj.pos.x = g[U"gimmikPos"][0].get<double>();
 			obj.pos.y = g[U"gimmikPos"][1].get<double>();
 
-			obj.value1 = g[U"value1"].get<int32>();
-			obj.value2 = g[U"value2"].get<double>();
-			obj.value3 = g[U"value3"].get<double>();
+			if (obj.name == U"ワープ") {
+				obj.valueString = g[U"value1"].get<String>();
+				obj.value2 = g[U"value2"].get<double>();
+				obj.value3 = g[U"value3"].get<double>();
+			}
+			else {
+				obj.value1 = g[U"value1"].get<int32>();
+				obj.value2 = g[U"value2"].get<double>();
+				obj.value3 = g[U"value3"].get<double>();
+			}
 
 			gimmiks << obj;
 		}

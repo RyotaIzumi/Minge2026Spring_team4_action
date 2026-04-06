@@ -4,7 +4,8 @@ GimmikManager::GimmikManager()
 {
 	names = {
 		U"罠針_上", U"罠針_左", U"罠針_下", U"罠針_右",
-		U"罠トリガー", U"罠りんご", U"罠ブロック", U"前トリガー"
+		U"罠トリガー", U"前トリガー", U"罠りんご", U"罠ブロック",
+		U"ワープ"
 	};
 
 	const FilePath path = U"texture/gimmik/";
@@ -15,9 +16,10 @@ GimmikManager::GimmikManager()
 		Texture{ path + U"spikeTrapDown.png" },
 		Texture{ path + U"spikeTrapRight.png" },
 		Texture{ path + U"trapTrigger.png" },
+		Texture{ path + U"trapTriggerPrev.png" },
 		Texture{ path + U"trapCherry.png" },
 		Texture{ path + U"trapBlock.png" },
-		Texture{ path + U"trapTriggerPrev.png" },
+		Texture{ path + U"sprWarp.png" }
 	};
 
 	listBox.items = names;
@@ -139,6 +141,11 @@ void GimmikManager::drawUI()
 		FontAsset(U"Font")(U"").draw(base.x, base.y + 80);
 		FontAsset(U"Font")(U"").draw(base.x, base.y + 120);
 	}
+	else if (gimmiks[idx].name == U"ワープ") {
+		FontAsset(U"Font")(U"stage ").draw(base.x, base.y + 40);
+		FontAsset(U"Font")(U"next x").draw(base.x, base.y + 80);
+		FontAsset(U"Font")(U"next y").draw(base.x, base.y + 120);
+	}
 
 	// === 入力 ===
 	SimpleGUI::TextBox(value1Text, Vec2{ base.x + 80, base.y + 40 }, 80);
@@ -148,7 +155,8 @@ void GimmikManager::drawUI()
 	// === 反映 ===
 	if (value1Text.textChanged && value1Text.text != U"")
 	{
-		gimmiks[idx].value1 = Parse<int32>(value1Text.text);
+		if(gimmiks[idx].name == U"ワープ") gimmiks[idx].valueString = value1Text.text;
+		else gimmiks[idx].value1 = Parse<int32>(value1Text.text);
 	}
 	if (value2Text.textChanged && value2Text.text != U"")
 	{

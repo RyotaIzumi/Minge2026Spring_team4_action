@@ -99,6 +99,8 @@ namespace Iwanna {
 		for (const auto& stage : jsonArray.arrayView()) {
 			// プレイヤーの初期位置を取得し反映
 			Vec2 startPlayerPos = parsePos(stage[U"startPlayerPos"]);
+
+
 			startPlayerPos *= oneTileSize;
 			// セーブデータが無い場合、初期位置をCSVの値から設定
 			if (!Global::isExistSaveData || Global::isChangeRoom) {
@@ -106,6 +108,36 @@ namespace Iwanna {
 			}
 			else {
 				gameObjects.player->pos = Global::savedStartPlayerPos;
+			}
+
+			//各ギミックの情報を取得し反映
+			String gimmikName;
+			Vec2 gimmikParsePos;
+			Vec2 gimmikIntactPos;
+			double gimmikValue1;
+			double gimmikValue2;
+			double gimmikValue3;
+			String gimmikString;
+
+			if (stage.contains(U"Gimmiks")) {
+				for (const auto& gimmik : stage[U"Gimmiks"].arrayView()) {
+					gimmikName = gimmik[U"gimmikName"].getString();
+					gimmikParsePos = parsePos(gimmik[U"gimmikPos"]);
+					gimmikIntactPos = parseIntactPos(gimmik[U"gimmikPos"]);
+
+					if (gimmikName == U"ワープ") {
+						gimmikString = gimmik[U"value1"].getString();
+						gimmikValue2 = gimmik[U"value2"].get<double>();
+						gimmikValue3 = gimmik[U"value3"].get<double>();
+					}
+					else {
+						gimmikValue1 = gimmik[U"value1"].get<double>();
+						gimmikValue2 = gimmik[U"value2"].get<double>();
+						gimmikValue3 = gimmik[U"value3"].get<double>();
+					}
+
+					if (gimmikName == U"ワープ") gameObjects.warps << std::make_shared<Warp>(gimmikIntactPos, gimmikString);
+				}
 			}
 		}
 
