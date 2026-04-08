@@ -305,15 +305,15 @@ namespace Iwanna {
 			latestActivatedTriggerID = specialSaveTrapTriggerID;
 		}
 		else {
-			camera.setTargetCenter(executeCameraPos());
-			cameraScale = 1.0;
+			if (!Global::isLoopStage) {
+				camera.setTargetCenter(executeCameraPos());
+				cameraScale = 1.0;
+			}
 		}
 
 		camera.setTargetScale(cameraScale);
 		camera.update(); {
 			const auto t = camera.createTransformer();
-
-			
 
 			player->update();
 

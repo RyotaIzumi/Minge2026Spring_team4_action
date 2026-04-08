@@ -18,6 +18,7 @@ namespace Iwanna {
 		bool roomOutTrue = false;//kid君をroom外にいけるようにする
 		bool isDead = false; //死亡状態かどうか
 		bool isGenerateBullet = false; //弾生成フラグ
+		bool isOutOfScreen = false;//画面外判定用フラグ
 
 		int32 nowTrapID = 0;
 
@@ -62,5 +63,8 @@ namespace Iwanna {
 		void setStopOrPlayAnimation(bool isPlay);
 
 		void setNowTrapID(int32 id);
+
+		void checkOutOfScreen();
+		void loopStage();
 	};
 }
