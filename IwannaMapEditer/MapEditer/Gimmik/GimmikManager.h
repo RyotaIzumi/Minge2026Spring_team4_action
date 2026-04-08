@@ -14,6 +14,8 @@ private:
 	ListBoxState placedListBox;
 
 	// 値編集用
+	TextEditState xText,yText;
+
 	TextEditState value1Text;
 	TextEditState value2Text;
 	TextEditState value3Text;

@@ -559,7 +559,13 @@ namespace Iwanna {
 			//GAMEOVER描画
 			if(isShowGameOver)
 				if(Global::trapCameraActivatedInTrap2Map) TextureAsset(U"sprGAMEOVER").scaled(1 / cameraScale).drawAt(saveTrapCameraPos);
-				else TextureAsset(U"sprGAMEOVER").drawAt(executeCameraPos());
+				else if(Global::isLoopStage)
+				{
+					TextureAsset(U"sprGAMEOVER").drawAt(Global::stageWidth / 2,Global::stageHeight / 2);
+				}
+				else {
+					TextureAsset(U"sprGAMEOVER").drawAt(executeCameraPos());
+				}
 		}
 	}
 

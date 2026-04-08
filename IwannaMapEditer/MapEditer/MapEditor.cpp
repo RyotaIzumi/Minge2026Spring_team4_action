@@ -48,6 +48,14 @@ MapEditor::MapEditor()
 
 	playerXText.text = Format(startPlayerPos.x);
 	playerYText.text = Format(startPlayerPos.y);
+
+	backgroundListBox.items = {
+		U"背景1",
+		U"背景2",
+		U"背景3",
+		U"背景4",
+		U"背景5",
+	};
 }
 
 void MapEditor::update()
@@ -82,24 +90,6 @@ void MapEditor::updateInput()
 		state.scrollX,
 		state.scrollY
 	);
-
-	// Player X
-	if (SimpleGUI::TextBox(playerXText, Vec2{ 1100, 620 }, 80))
-	{
-		if (const auto v = ParseIntOpt<int32>(playerXText.text))
-		{
-			startPlayerPos.x = *v;
-		}
-	}
-
-	// Player Y
-	if (SimpleGUI::TextBox(playerYText, Vec2{ 1100, 660 }, 80))
-	{
-		if (const auto v = ParseIntOpt<int32>(playerYText.text))
-		{
-			startPlayerPos.y = *v;
-		}
-	}
 }
 
 void MapEditor::updateMapSize()
@@ -202,7 +192,6 @@ void MapEditor::draw()
 
 	drawMapSizeUI();
 	drawPageInfo();
-	drawPlayerUI();
 	drawPlayerOnMap(autoTiles[0].getTileSize());
 
 	//配置モード切替
@@ -212,6 +201,8 @@ void MapEditor::draw()
 	if (state.settingMode == 0)
 	{
 		drawTileSelector(tileSize);
+		drawPlayerUI();
+		drawBackgroundUI();
 	}
 	else
 	{
@@ -270,6 +261,7 @@ void MapEditor::draw()
 
 		MapSerializer::SaveJSON(
 			startPlayerPos,
+			currentBackground,
 			gimmikManager.getGimmiks(),
 			path
 		);
@@ -283,6 +275,7 @@ void MapEditor::draw()
 
 		MapSerializer::LoadJSON(
 			startPlayerPos,
+			currentBackground,
 			gimmiks,
 			path
 		);
@@ -343,10 +336,41 @@ void MapEditor::drawMapSizeUI()
 
 void MapEditor::drawPlayerUI()
 {
-	FontAsset(U"Font")(U"Player初期座標").draw(1100, 580);
+	Vec2 basePos{ 1100, 400 };
 
-	FontAsset(U"Font")(U"x").draw(1080, 625);
-	FontAsset(U"Font")(U"y").draw(1080, 665);
+	FontAsset(U"Font")(U"Player初期座標").draw(basePos);
+
+	FontAsset(U"Font")(U"x").draw(basePos.x, basePos.y + 40);
+	FontAsset(U"Font")(U"y").draw(basePos.x + 85, basePos.y + 40);
+
+	// Player X
+	if (SimpleGUI::TextBox(playerXText, Vec2{ basePos.x + 20, basePos.y + 40 }, 60))
+	{
+		if (const auto v = ParseIntOpt<int32>(playerXText.text))
+		{
+			startPlayerPos.x = *v;
+		}
+	}
+
+	// Player Y
+	if (SimpleGUI::TextBox(playerYText, Vec2{ basePos.x + 100, basePos.y + 40 }, 60))
+	{
+		if (const auto v = ParseIntOpt<int32>(playerYText.text))
+		{
+			startPlayerPos.y = *v;
+		}
+	}
+}
+
+void MapEditor::drawBackgroundUI()
+{
+	Vec2 basePos{ 1100, 500 };
+	FontAsset(U"Font")(U"背景").draw(basePos);
+
+	SimpleGUI::ListBox(backgroundListBox, Vec2{ basePos.x,basePos.y + 40 }, 120, 160);
+
+	if (!backgroundListBox.selectedItemIndex) return;
+	currentBackground = backgroundListBox.items[*backgroundListBox.selectedItemIndex];
 }
 
 void MapEditor::drawPlayerOnMap(int tileSize)

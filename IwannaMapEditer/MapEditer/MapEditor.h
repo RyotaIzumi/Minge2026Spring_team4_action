@@ -33,6 +33,11 @@ private:
 	TextEditState playerXText;
 	TextEditState playerYText;
 
+	// background変更用
+	ListBoxState backgroundListBox;
+	String currentBackground;
+	Array<String> backgroundNames;
+
 	// redo/undo用
 	Array<EditorSnapshot> undoStack;
 	Array<EditorSnapshot> redoStack;
@@ -54,6 +59,7 @@ private:
 	void drawMap();
 	void drawMapSizeUI();
 	void drawPlayerUI();
+	void drawBackgroundUI();
 	void drawPlayerOnMap(int tileSize);
 	void drawPageInfo();
 	void drawCursor();

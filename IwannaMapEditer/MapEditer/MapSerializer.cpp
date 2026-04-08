@@ -33,6 +33,7 @@ void MapSerializer::LoadCSV(Grid<uint32>& grid, const FilePath& path)
 
 void MapSerializer::SaveJSON(
 	const Vec2& playerPos,
+	const String& backgroundName,
 	const Array<Gimmik>& gimmiks,
 	const FilePath& path)
 {
@@ -42,6 +43,9 @@ void MapSerializer::SaveJSON(
 	// プレイヤー
 	root[U"startPlayerPos"].push_back(playerPos.x);
 	root[U"startPlayerPos"].push_back(playerPos.y);
+
+	// 背景
+	root[U"background"] = backgroundName;
 
 	// ギミック
 	for (const auto& g : gimmiks)
@@ -72,6 +76,7 @@ void MapSerializer::SaveJSON(
 
 void MapSerializer::LoadJSON(
 	Vec2& playerPos,
+	String& backgroundName,
 	Array<Gimmik>& gimmiks,
 	const FilePath& path)
 {
@@ -87,6 +92,12 @@ void MapSerializer::LoadJSON(
 	{
 		playerPos.x = root[U"startPlayerPos"][0].get<double>();
 		playerPos.y = root[U"startPlayerPos"][1].get<double>();
+	}
+
+	// 背景
+	if (root.contains(U"background"))
+	{
+		backgroundName = root[U"background"].getString();
 	}
 
 	// ギミック

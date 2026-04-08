@@ -10,11 +10,13 @@ public:
 
 	static void SaveJSON(
 		const Vec2& playerPos,
+		const String& backgroundName,
 		const Array<Gimmik>& gimmiks,
 		const FilePath& path);
 
 	static void LoadJSON(
 		Vec2& playerPos,
+		String& backgroundName,
 		Array<Gimmik>& gimmiks,
 		const FilePath& path);
 };

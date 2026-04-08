@@ -119,40 +119,60 @@ void GimmikManager::drawUI()
 	// === 初期化 ===
 	if (prevIndex != idx)
 	{
+		xText.text = Format(gimmiks[idx].pos.x);
+		yText.text = Format(gimmiks[idx].pos.y);
 		value1Text.text = Format(gimmiks[idx].value1);
 		value2Text.text = Format(gimmiks[idx].value2);
 		value3Text.text = Format(gimmiks[idx].value3);
 		prevIndex = idx;
 	}
 
+	int32 valuePosAddHeight = 40;
+	int32 value1AddHeight = 80;
+	int32 value2AddHeight = 120;
+	int32 value3AddHeight = 160;
+
+	FontAsset(U"Font")(U"x").draw(base.x, base.y + valuePosAddHeight);
+	FontAsset(U"Font")(U"y").draw(base.x + 85, base.y + valuePosAddHeight);
+
 	// === ラベル === (gimmikによって変更)
 	if (gimmiks[idx].name == U"罠針_上" || gimmiks[idx].name == U"罠針_下" || gimmiks[idx].name == U"罠針_右" || gimmiks[idx].name == U"罠針_左" || gimmiks[idx].name == U"罠りんご") {
-		FontAsset(U"Font")(U"id : ").draw(base.x, base.y + 40);
-		FontAsset(U"Font")(U"角度 : ").draw(base.x, base.y + 80);
-		FontAsset(U"Font")(U"速度 : ").draw(base.x, base.y + 120);
+		FontAsset(U"Font")(U"id : ").draw(base.x, base.y + value1AddHeight);
+		FontAsset(U"Font")(U"角度 : ").draw(base.x, base.y + value2AddHeight);
+		FontAsset(U"Font")(U"速度 : ").draw(base.x, base.y + value3AddHeight);
 	}
 	else if (gimmiks[idx].name == U"罠トリガー" || gimmiks[idx].name == U"前トリガー") {
-		FontAsset(U"Font")(U"id : ").draw(base.x, base.y + 40);
-		FontAsset(U"Font")(U"x scale : ").draw(base.x, base.y + 80);
-		FontAsset(U"Font")(U"y scale : ").draw(base.x, base.y + 120);
+		FontAsset(U"Font")(U"id : ").draw(base.x, base.y + value1AddHeight);
+		FontAsset(U"Font")(U"x scale : ").draw(base.x, base.y + value2AddHeight);
+		FontAsset(U"Font")(U"y scale : ").draw(base.x, base.y + value3AddHeight);
 	}
 	else if (gimmiks[idx].name == U"罠ブロック") {
-		FontAsset(U"Font")(U"id : ").draw(base.x, base.y + 40);
-		FontAsset(U"Font")(U"").draw(base.x, base.y + 80);
-		FontAsset(U"Font")(U"").draw(base.x, base.y + 120);
+		FontAsset(U"Font")(U"id : ").draw(base.x, base.y + value1AddHeight);
+		FontAsset(U"Font")(U"").draw(base.x, base.y + value2AddHeight);
+		FontAsset(U"Font")(U"").draw(base.x, base.y + value3AddHeight);
 	}
 	else if (gimmiks[idx].name == U"ワープ") {
-		FontAsset(U"Font")(U"stage ").draw(base.x, base.y + 40);
-		FontAsset(U"Font")(U"next x").draw(base.x, base.y + 80);
-		FontAsset(U"Font")(U"next y").draw(base.x, base.y + 120);
+		FontAsset(U"Font")(U"stage ").draw(base.x, base.y + value1AddHeight);
+		FontAsset(U"Font")(U"next x").draw(base.x, base.y + value2AddHeight);
+		FontAsset(U"Font")(U"next y").draw(base.x, base.y + value3AddHeight);
 	}
 
 	// === 入力 ===
-	SimpleGUI::TextBox(value1Text, Vec2{ base.x + 80, base.y + 40 }, 80);
-	SimpleGUI::TextBox(value2Text, Vec2{ base.x + 80, base.y + 80 }, 80);
-	SimpleGUI::TextBox(value3Text, Vec2{ base.x + 80, base.y + 120 }, 80);
+	SimpleGUI::TextBox(xText, Vec2{ base.x + 20, base.y + valuePosAddHeight }, 60);
+	SimpleGUI::TextBox(yText, Vec2{ base.x + 100, base.y + valuePosAddHeight }, 60);
+	SimpleGUI::TextBox(value1Text, Vec2{ base.x + 80, base.y + value1AddHeight }, 80);
+	SimpleGUI::TextBox(value2Text, Vec2{ base.x + 80, base.y + value2AddHeight }, 80);
+	SimpleGUI::TextBox(value3Text, Vec2{ base.x + 80, base.y + value3AddHeight }, 80);
 
 	// === 反映 ===
+	if (xText.textChanged && xText.text != U"")
+	{
+		gimmiks[idx].pos.x = Parse<double>(xText.text);
+	}
+	if (yText.textChanged && yText.text != U"")
+	{
+		gimmiks[idx].pos.y = Parse<double>(yText.text);
+	}
 	if (value1Text.textChanged && value1Text.text != U"")
 	{
 		if(gimmiks[idx].name == U"ワープ") gimmiks[idx].valueString = value1Text.text;
