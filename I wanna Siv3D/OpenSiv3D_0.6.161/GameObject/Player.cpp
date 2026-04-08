@@ -338,8 +338,8 @@ namespace Iwanna {
 
 	//ループモード時の画面外判定
 	void Player::loopStage() {
-		const int32 excessX = hitBoxSize.x;//画面端からの余白
-		const int32 excessY = hitBoxSize.y;//画面端からの余白
+		const int32 excessX = hitBoxSize.x / 2;//画面端からの余白
+		const int32 excessY = hitBoxSize.y / 2;//画面端からの余白
 		if (pos.x < -1 * excessX) {
 			pos.x = Global::stageWidth + excessX;
 		}
