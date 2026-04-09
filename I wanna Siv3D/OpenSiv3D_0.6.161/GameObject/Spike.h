@@ -8,10 +8,11 @@ namespace Iwanna {
 	class Spike : public GameObject {
 	private:
 	protected:
+		String typeName;
 		int32 side = 32;
 		int32 spriteDirection;//針の向き
 	public:
-		Spike(Vec2 startPos, int32 dir);
+		Spike(String typeName, Vec2 startPos, int32 dir);
 
 		bool isOutOfScreen = false;
 
@@ -29,7 +30,7 @@ namespace Iwanna {
 		double speed = 0;
 		bool isTrapActived = false;
 	public:
-		SpikeTrap(Vec2 startPos, int32 dir, int32 id, double direction, double speed);
+		SpikeTrap(String typeName, Vec2 startPos, int32 dir, int32 id, double direction, double speed);
 		void trapUpdate(int32 id) override;
 		void calculateSpeed();
 
@@ -48,7 +49,7 @@ namespace Iwanna {
 		double elapsedTime = 0.0;   // 経過時間
 		Vec2 velocity;              // 移動ベクトル
 	public:
-		SpikePathTrap(Vec2 startPos, int32 dir, int32 id, Vec2 next, double time);
+		SpikePathTrap(String typeName, Vec2 startPos, int32 dir, int32 id, Vec2 next, double time);
 		void trapUpdate(int32 id) override;
 	};
 }
