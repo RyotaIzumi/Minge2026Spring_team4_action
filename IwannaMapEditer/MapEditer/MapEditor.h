@@ -26,7 +26,7 @@ private:
 
 	//マップ保存用
 	TextEditState saveFileName;
-	FilePath mainActionProjectPath = U"../../../I wanna Siv3D/OpenSiv3D_0.6.161/App/MapData/";
+	FilePath mainActionProjectMapDataPath = U"../../../I wanna Siv3D/OpenSiv3D_0.6.161/App/MapData/";
 
 	//player位置保存用
 	Vec2 startPlayerPos{ 30, 30 };
@@ -37,6 +37,8 @@ private:
 	ListBoxState backgroundListBox;
 	String currentBackground;
 	Array<String> backgroundNames;
+	HashTable<String, Texture> backgroundTextures;
+	FilePath mainActionProjectBackgroundPath = U"../../../I wanna Siv3D/OpenSiv3D_0.6.161/App/Texture/Background/";
 
 	// redo/undo用
 	Array<EditorSnapshot> undoStack;
@@ -50,6 +52,8 @@ public:
 	void draw();
 
 private:
+	void LoadBackgroundList(const FilePath& folder, Array<String>& names, ListBoxState& listBox);
+
 	void updateInput();
 	void updateMapSize();
 	void updatePageScroll();
@@ -57,6 +61,7 @@ private:
 	void updateUndoRedo();
 
 	void drawMap();
+	void drawBackground();
 	void drawMapSizeUI();
 	void drawPlayerUI();
 	void drawBackgroundUI();

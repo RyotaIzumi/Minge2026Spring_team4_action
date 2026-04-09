@@ -49,13 +49,36 @@ MapEditor::MapEditor()
 	playerXText.text = Format(startPlayerPos.x);
 	playerYText.text = Format(startPlayerPos.y);
 
-	backgroundListBox.items = {
-		U"背景1",
-		U"背景2",
-		U"背景3",
-		U"背景4",
-		U"背景5",
-	};
+	LoadBackgroundList(mainActionProjectBackgroundPath,backgroundNames,backgroundListBox);
+}
+
+void MapEditor::LoadBackgroundList(const FilePath& folder,Array<String>& names,ListBoxState& listBox){
+	names.clear();
+	listBox.items.clear();
+
+	for (const auto& path : FileSystem::DirectoryContents(folder))
+	{
+		if (FileSystem::IsFile(path))
+		{
+			// 拡張子チェック（画像のみ）
+			String ext = FileSystem::Extension(path).lowercased();
+
+			if (ext == U"png")
+			{
+				// ファイル名だけ取得
+				String name = FileSystem::BaseName(path);
+
+				names << name;
+				listBox.items << name;
+			}
+		}
+	}
+
+	for (const auto& name : backgroundNames)
+	{
+		FilePath path = mainActionProjectBackgroundPath + name + U".png";
+		backgroundTextures[name] = Texture{ path };
+	}
 }
 
 void MapEditor::update()
@@ -188,6 +211,7 @@ void MapEditor::updateUndoRedo()
 
 void MapEditor::draw()
 {
+	drawBackground();
 	drawMap();
 
 	drawMapSizeUI();
@@ -218,14 +242,14 @@ void MapEditor::draw()
 	if (SimpleGUI::Button(U"Save", Vec2{ 1080, 220 }))
 	{
 		saveSnapshot();
-		const FilePath path = mainActionProjectPath + saveFileName.text + U".csv";
+		const FilePath path = mainActionProjectMapDataPath + saveFileName.text + U".csv";
 
 		MapSerializer::SaveCSV(state.grid, path);
 	}
 	if (SimpleGUI::Button(U"Load", Vec2{ 1170, 220 }))
 	{
 		saveSnapshot();
-		const FilePath path = mainActionProjectPath + saveFileName.text + U".csv";
+		const FilePath path = mainActionProjectMapDataPath + saveFileName.text + U".csv";
 
 		if (!FileSystem::Exists(path)) return;
 		CSV csv(path);
@@ -257,7 +281,7 @@ void MapEditor::draw()
 	if (SimpleGUI::Button(U"Save", Vec2{ 1080, 290 }))
 	{
 		saveSnapshot();
-		const FilePath path = mainActionProjectPath + saveFileName.text + U".json";
+		const FilePath path = mainActionProjectMapDataPath + saveFileName.text + U".json";
 
 		MapSerializer::SaveJSON(
 			startPlayerPos,
@@ -269,7 +293,7 @@ void MapEditor::draw()
 	if (SimpleGUI::Button(U"Load", Vec2{ 1170, 290 }))
 	{
 		saveSnapshot();
-		const FilePath path = mainActionProjectPath + saveFileName.text + U".json";
+		const FilePath path = mainActionProjectMapDataPath + saveFileName.text + U".json";
 
 		auto& gimmiks = gimmikManager.getGimmiks();
 
@@ -284,6 +308,17 @@ void MapEditor::draw()
 
 		playerXText.text = Format(startPlayerPos.x);
 		playerYText.text = Format(startPlayerPos.y);
+
+		// 背景情報更新
+		backgroundListBox.selectedItemIndex = none;
+		for (size_t i = 0; i < backgroundNames.size(); ++i)
+		{
+			if (backgroundNames[i] == currentBackground)
+			{
+				backgroundListBox.selectedItemIndex = i;
+				break;
+			}
+		}
 	}
 
 	drawCursor();
@@ -320,6 +355,12 @@ void MapEditor::drawMap()
 				Rect{ drawPos, tileSize }.drawFrame(1, ColorF{ 0.5 });
 			}
 		}
+	}
+}
+
+void MapEditor::drawBackground() {
+	if (backgroundTextures.contains(currentBackground)){
+		backgroundTextures[currentBackground].draw(OFFSET);
 	}
 }
 

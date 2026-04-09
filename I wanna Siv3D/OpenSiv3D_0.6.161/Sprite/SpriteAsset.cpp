@@ -17,6 +17,10 @@ namespace Iwanna {
 		registerTexture(U"sprPlayerRunning", PlayerPath + U"sprPlayerRunning.png");
 		registerTexture(U"sprBullet", PlayerPath + U"bullet.png");
 
+		registerTexture(U"sprIdle_normal", PlayerPath + U"sprIdle_normal.png");
+		registerTexture(U"sprFall_normal", PlayerPath + U"sprFall_normal.png");
+		registerTexture(U"sprJump_normal", PlayerPath + U"sprJump_normal.png");
+
 		//さくらんぼテクスチャ登録
 		static const FilePath CherryPath = U"Texture/Cherry/";
 		registerTexture(U"sprCherry", CherryPath + U"sprCherry.png");
@@ -44,6 +48,11 @@ namespace Iwanna {
 		registerTexture(U"sprSpikeLeft_low", SpikePath + U"sprSpikeLeft_low.png");
 		registerTexture(U"sprSpikeDown_low", SpikePath + U"sprSpikeDown_low.png");
 		registerTexture(U"sprSpikeRight_low", SpikePath + U"sprSpikeRight_low.png");
+
+		//背景テクスチャ登録
+		static const FilePath BackgroundPath = U"Texture/Background/";
+		registerTexture(U"background_sample", BackgroundPath + U"sample.png");
+		registerTexture(U"background_black", BackgroundPath + U"black.png");
 
 		//その他テクスチャ登録
 		static const FilePath OtherPath = U"Texture/Other/";

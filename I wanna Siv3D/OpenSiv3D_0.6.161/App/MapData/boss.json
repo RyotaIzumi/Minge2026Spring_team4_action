@@ -1,17 +1,6 @@
 ﻿[
   {
-    "Gimmiks": [
-      {
-        "gimmikName": "ワープ",
-        "gimmikPos": [
-          224.0,
-          480.0
-        ],
-        "value1": "trap1",
-        "value2": 50.0,
-        "value3": 50.0
-      }
-    ],
+    "background": "sample",
     "startPlayerPos": [
       400.0,
       30.0

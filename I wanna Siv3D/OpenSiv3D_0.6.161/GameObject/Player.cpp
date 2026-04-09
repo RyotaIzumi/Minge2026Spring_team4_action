@@ -28,10 +28,10 @@ namespace Iwanna {
 		//アニメーションデータの登録
 		//(アクション名,フレーム数,各フレーム再生時間,ループするかどうか(省略可), 左右差分があるか(省略可))
 		spriteSystem = SpriteSystem(32, 32);
-		spriteSystem.addSprite(SpriteAction::PLAYER_WAIT, SpriteData(U"sprPlayerIdle", 4, 0.15,true,false));
+		spriteSystem.addSprite(SpriteAction::PLAYER_WAIT, SpriteData(U"sprIdle_normal", 4, 0.15,true,false));
 		spriteSystem.addSprite(SpriteAction::PLAYER_RUN, SpriteData(U"sprPlayerRunning", 4, 0.1,true,false));
-		spriteSystem.addSprite(SpriteAction::PLAYER_JUMP, SpriteData(U"sprPlayerJump", 2, 0.1,true,false));
-		spriteSystem.addSprite(SpriteAction::PLAYER_FALL, SpriteData(U"sprPlayerFall", 2, 0.1,true,false));
+		spriteSystem.addSprite(SpriteAction::PLAYER_JUMP, SpriteData(U"sprJump_normal", 1, 0.1,true,false));
+		spriteSystem.addSprite(SpriteAction::PLAYER_FALL, SpriteData(U"sprFall_normal", 1, 0.1,true,false));
 
 		//初期の向き
 		direction = Global::Direction::RIGHT;

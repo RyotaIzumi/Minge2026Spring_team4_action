@@ -90,7 +90,7 @@ namespace Iwanna {
 			stageManager.debug();
 			break;
 		case StageType::Boss:
-			bossStageManager.debug();
+			//bossStageManager.debug();
 			break;
 		}
 

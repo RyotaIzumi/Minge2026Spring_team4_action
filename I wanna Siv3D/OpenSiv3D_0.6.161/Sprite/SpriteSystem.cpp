@@ -76,7 +76,7 @@ namespace Iwanna {
 
 		// テクスチャ切り出しと左右反転
 		TextureRegion texture = TextureAsset((data.haveLR) ? AddedTextureName : data.spriteName)
-			(texRange, 0, frameWidth, frameHeight).mirrored(direction == Global::Direction::LEFT);
+			(texRange, 0, frameWidth, frameHeight).mirrored(direction == Global::Direction::RIGHT);
 
 		return texture;
 	}

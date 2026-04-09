@@ -139,6 +139,14 @@ namespace Iwanna {
 					if (gimmikName == U"ワープ") gameObjects.warps << std::make_shared<Warp>(gimmikIntactPos, gimmikString);
 				}
 			}
+
+			//背景ロード
+			if (stage.contains(U"background")) {
+				backgroundName = U"background_" + stage[U"background"].getString();
+			}
+			else {
+				backgroundName = U"background_sample";
+			}
 		}
 
 		if (stageName == U"boss") {
@@ -386,7 +394,7 @@ namespace Iwanna {
 
 	void BossStageManager::draw() {
 		//背景描画
-		Rect(0, 0, 800, 608).draw(ColorF(0.8, 1.0));
+		TextureAsset(backgroundName).draw();
 
 		camera.update(); {
 			const auto t = camera.createTransformer();

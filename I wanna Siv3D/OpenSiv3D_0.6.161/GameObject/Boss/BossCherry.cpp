@@ -88,6 +88,7 @@ namespace Iwanna {
 			if (attackIntervalTime > 2.0)attackIntervalTime = 2.0;
 		}
 
+		/*
 		//特殊攻撃の呼び出し
 		if (isSpecialAttack) {
 			switch (specialAttackStep) {
@@ -102,6 +103,7 @@ namespace Iwanna {
 			}
 			return;
 		}
+		*/
 
 		// 一定間隔でファンネルりんごを一つ選んで攻撃
 		if (reachedAttackTime(attackIntervalTime)) {

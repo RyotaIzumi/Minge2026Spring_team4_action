@@ -73,6 +73,9 @@ namespace Iwanna {
 		double cameraScale = 1.0;
 		CameraShake cameraShake;
 
+		//背景用
+		String backgroundName;
+
 		//弾丸関連
 		double bulletSpeed = 12;
 		int32 bulletMaxNum = 5;

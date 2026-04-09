@@ -63,6 +63,9 @@ namespace Iwanna {
 		Timer gameoverTimer{ 0.5s };
 		bool isShowGameOver = false;
 
+		//背景
+		String backgroundName;
+
 		int32 step = 0;
 	public:
 		StageManager();
