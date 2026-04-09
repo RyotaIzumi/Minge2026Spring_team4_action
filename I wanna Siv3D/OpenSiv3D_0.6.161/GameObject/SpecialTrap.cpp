@@ -465,6 +465,7 @@ namespace Iwanna {
 		textureName = U"sprCherryLow";
 		textureScale = 1.0;
 		textureAlpha = 1.0;
+		gravity = 0.3;
 		hitBox = std::make_shared<CircleHitBox>(pos, 10);
 		hitBox->setPos(pos);//当たり判定の位置をテクスチャの中心に調整
 		canPlayerKill = true;

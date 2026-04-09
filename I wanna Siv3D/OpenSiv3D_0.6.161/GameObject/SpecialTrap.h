@@ -123,7 +123,6 @@ namespace Iwanna {
 		Timer moveTimer{ 0.58s };
 		double moveRange = 240;
 		Vec2 basePos;
-		double gravity = 0.3;
 	public:
 		DiscordCherryTrap(Vec2 startPos, int32 id);
 		void trapUpdate() override;

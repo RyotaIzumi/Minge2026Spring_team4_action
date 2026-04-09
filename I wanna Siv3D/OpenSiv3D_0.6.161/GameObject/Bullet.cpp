@@ -2,6 +2,7 @@
 #include "../Audio/AudioAsset.h"
 #include "../GameObject/SavePoint.h"
 #include "../GameObject/Block.h"
+#include "../GameObject/Cherry.h"
 
 namespace Iwanna {
 	Bullet::Bullet(Vec2& genePos, double hs){
@@ -47,6 +48,15 @@ namespace Iwanna {
 			isDelete = true;
 		}
 
+		// hpをもつりんご衝突
+		if (this->intersects(other) && other.type == ObjectType::Cherry) {
+			auto* cherry = dynamic_cast<Cherry*>(&other);
+			if (cherry->getHasHp()) {
+				if(!cherry->getIsMuteki()) cherry->hited();
+				isDelete = true;
+			}
+		}
+
 		// セーブポイント衝突
 		if (this->intersects(other) && other.type == ObjectType::SavePoint) {
 			auto* savePoint = dynamic_cast<SavePoint*>(&other);
@@ -66,6 +76,12 @@ namespace Iwanna {
 			{
 				auto* sft = dynamic_cast<SaveFakeTrap*>(&other);
 				if (!sft->getIsStartTrap()) sft->setIsStartTrap(true);
+				break;
+			}
+			case SaveType::Boss:
+			{
+				auto* bsp = dynamic_cast<BossSavePoint*>(&other);
+				bsp->saved();
 				break;
 			}
 			}

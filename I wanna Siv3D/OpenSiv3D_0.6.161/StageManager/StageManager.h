@@ -38,7 +38,7 @@ namespace Iwanna {
 
 		//カメラ関連
 		Vec2 cameraBasePos{ 400, 304 };
-		Camera2D camera{ cameraBasePos, 1.0 };
+		Camera2D camera{ cameraBasePos, 1.0 ,CameraControl::None_ };
 		double cameraScale = 1.0;
 
 		//特殊トラップ用
@@ -62,6 +62,9 @@ namespace Iwanna {
 		//GAMEOVER画面用
 		Timer gameoverTimer{ 0.5s };
 		bool isShowGameOver = false;
+
+		//背景
+		String backgroundName;
 
 		int32 step = 0;
 	public:

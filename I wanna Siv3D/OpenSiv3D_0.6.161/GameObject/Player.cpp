@@ -16,6 +16,8 @@ namespace Iwanna {
 		isMuteki = false; //無敵状態かどうか
 		roomOutTrue = false;//kid君をroom外にいけるようにする
 		isDead = false;//死亡状態かどうか
+		isGenerateBullet = false;//弾生成フラグ
+		isOutOfScreen = false;//画面外判定用フラグ
 
 		//GameObject.hの値初期化
 		pos = Vec2(-100, -100);
@@ -26,10 +28,10 @@ namespace Iwanna {
 		//アニメーションデータの登録
 		//(アクション名,フレーム数,各フレーム再生時間,ループするかどうか(省略可), 左右差分があるか(省略可))
 		spriteSystem = SpriteSystem(32, 32);
-		spriteSystem.addSprite(SpriteAction::PLAYER_WAIT, SpriteData(U"sprPlayerIdle", 4, 0.15,true,false));
+		spriteSystem.addSprite(SpriteAction::PLAYER_WAIT, SpriteData(U"sprIdle_normal", 4, 0.15,true,false));
 		spriteSystem.addSprite(SpriteAction::PLAYER_RUN, SpriteData(U"sprPlayerRunning", 4, 0.1,true,false));
-		spriteSystem.addSprite(SpriteAction::PLAYER_JUMP, SpriteData(U"sprPlayerJump", 2, 0.1,true,false));
-		spriteSystem.addSprite(SpriteAction::PLAYER_FALL, SpriteData(U"sprPlayerFall", 2, 0.1,true,false));
+		spriteSystem.addSprite(SpriteAction::PLAYER_JUMP, SpriteData(U"sprJump_normal", 1, 0.1,true,false));
+		spriteSystem.addSprite(SpriteAction::PLAYER_FALL, SpriteData(U"sprFall_normal", 1, 0.1,true,false));
 
 		//初期の向き
 		direction = Global::Direction::RIGHT;
@@ -82,6 +84,18 @@ namespace Iwanna {
 		// 移動
 		pos.x += hspeed;
 		pos.y += vspeed;
+
+		if (!Global::isLoopStage) {
+			//非ループモード時は画面外で死ぬ
+			checkOutOfScreen();
+			if (isOutOfScreen) {
+				playerDead();
+			}
+		}
+		else {
+			//ループモード時は画面端で反対側にワープ
+			loopStage();
+		}
 
 		hitBox->setPos(pos);
 	}
@@ -307,5 +321,36 @@ namespace Iwanna {
 	//ステージ上での現在の罠IDを取得する
 	void Player::setNowTrapID(int32 id) {
 		nowTrapID = id;
+	}
+
+	//画面外判定
+	void Player::checkOutOfScreen() {
+		const int32 excessX = 0;//画面端からの余白
+		const int32 excessY = 0;//画面端からの余白
+		if ((pos.x < -1 * excessX || pos.x > Global::stageWidth + excessX ||
+			pos.y < -1 * excessY || pos.y > Global::stageHeight + excessY)) {
+			isOutOfScreen = true;
+		}
+		else {
+			isOutOfScreen = false;
+		}
+	}
+
+	//ループモード時の画面外判定
+	void Player::loopStage() {
+		const int32 excessX = hitBoxSize.x / 2;//画面端からの余白
+		const int32 excessY = hitBoxSize.y / 2;//画面端からの余白
+		if (pos.x < -1 * excessX) {
+			pos.x = Global::stageWidth + excessX;
+		}
+		else if (pos.x > Global::stageWidth + excessX) {
+			pos.x = -1 * excessX;
+		}
+		else if (pos.y < -1 * excessY) {
+			pos.y = Global::stageHeight + excessY;
+		}
+		else if (pos.y > Global::stageHeight + excessY) {
+			pos.y = -1 * excessY;
+		}
 	}
 }

@@ -14,7 +14,7 @@ namespace Iwanna {
 	}
 	void Warp::draw() const {
 		TextureAsset(U"sprWarp").draw(pos);
-		hitBox->draw(ColorF(Palette::White,0.7));
+		//hitBox->draw(ColorF(Palette::White,0.7));
 	}
 	void Warp::onCollision(GameObject& other) {
 	}

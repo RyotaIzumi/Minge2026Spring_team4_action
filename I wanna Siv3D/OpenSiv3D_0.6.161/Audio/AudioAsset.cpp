@@ -16,6 +16,8 @@ namespace Iwanna {
 		void registerBGMs() {
 			registerAudio(MAIN_LOW, Path_MAIN_LOW, Loop::Yes);
 			registerAudio(MAIN_NORMAL, Path_MAIN_NORMAL, Loop::Yes);
+			registerAudio(BOSS_NORMAL, Path_BOSS_NORMAL, Loop::Yes);
+			registerAudio(GAMEOVER_NORMAL, Path_GAMEOVER_NORMAL, Loop::No);
 		}
 		
 		//SEを登録する
@@ -28,6 +30,7 @@ namespace Iwanna {
 			registerAudio(BLOCKCHANGE, BLOCKCHANGE_PATH);
 			registerAudio(BLOCKBREAK, BLOCKBREAK_PATH);
 			registerAudio(SPIKETRAP, SPIKETRAP_PATH);
+			registerAudio(BOSSHIT, BOSSHIT_PATH);
 			registerAudio(ERROR,ERROR_PATH);
 			registerAudio(DISCORD,DISCORD_PATH);
 		}

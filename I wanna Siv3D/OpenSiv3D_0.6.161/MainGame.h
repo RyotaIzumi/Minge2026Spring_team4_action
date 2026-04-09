@@ -3,16 +3,28 @@
 #include "GameObject/StockNearGameObjects.h"
 #include "AvoidanceManager/AvoidanceManager.h"
 #include "StageManager/StageManager.h"	
+#include "StageManager/BossStageManager.h"	
 
 namespace Iwanna {
+	enum class StageType {
+		Normal,
+		Boss
+	};
+
 	class MainGame {
 	private:
 		StockNearGameObjects stockNearGameObjects;
 
 		Audio audio;
+		Audio gameoverAudio;
 
 		AvoidanceManager avoidanceManager;
 		StageManager stageManager;
+		BossStageManager bossStageManager;
+
+		StageType stageType;
+
+		bool playGameoverBgmOne = true;
 
 	public:
 		MainGame();
@@ -22,7 +34,8 @@ namespace Iwanna {
 		void debugGame();
 		void drawGame();
 
-		void playBgm(int32 chapter);
+		void playBgm(String);
+		void playGameoverBgm();
 		void stopBgm();
 
 		void pauseBgm();

@@ -34,8 +34,6 @@ namespace Iwanna {
 		gameoverTimer.reset();
 		isShowGameOver = false;
 
-		if (!Global::isExistSaveData)Global::savedRoomName = Global::startRoomName;
-
 		if(Global::isChangeRoom)loadGameObjects(Global::nowRoomName);
 		else loadGameObjects(Global::savedRoomName);
 		Global::isChangeRoom = false;
@@ -118,15 +116,24 @@ namespace Iwanna {
 			double gimmikValue1;
 			double gimmikValue2;
 			double gimmikValue3;
+			String gimmikString;
 
 			if (stage.contains(U"Gimmiks")) {
 				for (const auto& gimmik : stage[U"Gimmiks"].arrayView()) {
 					gimmikName = gimmik[U"gimmikName"].getString();
 					gimmikParsePos = parsePos(gimmik[U"gimmikPos"]);
 					gimmikIntactPos = parseIntactPos(gimmik[U"gimmikPos"]);
-					gimmikValue1 = gimmik[U"value1"].get<double>();
-					gimmikValue2 = gimmik[U"value2"].get<double>();
-					gimmikValue3 = gimmik[U"value3"].get<double>();
+
+					if (gimmikName == U"ワープ") {
+						gimmikString = gimmik[U"gimmikString"].getString();
+						gimmikValue2 = gimmik[U"value2"].get<double>();
+						gimmikValue3 = gimmik[U"value3"].get<double>();
+					}
+					else {
+						gimmikValue1 = gimmik[U"value1"].get<double>();
+						gimmikValue2 = gimmik[U"value2"].get<double>();
+						gimmikValue3 = gimmik[U"value3"].get<double>();
+					}
 
 					//特定マップの特定idのトラップ用
 					if (fileName == U"trap1") {
@@ -230,7 +237,16 @@ namespace Iwanna {
 					if (gimmikName == U"罠トリガー") gameObjects.triggers << std::make_shared<Trigger>(gimmikIntactPos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3, false);
 					if (gimmikName == U"前トリガー") gameObjects.triggers << std::make_shared<Trigger>(gimmikIntactPos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3, true);
 					if (gimmikName == U"罠りんご") gameObjects.cherries << std::make_shared<CherryTrap>(gimmikIntactPos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
+					if (gimmikName == U"ワープ") gameObjects.warps << std::make_shared<Warp>(Vec2{ gimmikValue2, gimmikValue3 }, gimmikString);
 				}
+			}
+
+			//背景ロード
+			if (stage.contains(U"background")) {
+				backgroundName = U"background_" + stage[U"background"].getString();
+			}
+			else {
+				backgroundName = U"background_sample";
 			}
 		}
 
@@ -297,15 +313,15 @@ namespace Iwanna {
 			latestActivatedTriggerID = specialSaveTrapTriggerID;
 		}
 		else {
-			camera.setTargetCenter(executeCameraPos());
-			cameraScale = 1.0;
+			if (!Global::isLoopStage) {
+				camera.setTargetCenter(executeCameraPos());
+				cameraScale = 1.0;
+			}
 		}
 
 		camera.setTargetScale(cameraScale);
 		camera.update(); {
 			const auto t = camera.createTransformer();
-
-			
 
 			player->update();
 
@@ -518,7 +534,7 @@ namespace Iwanna {
 
 	void StageManager::draw() {
 		//背景描画
-		Rect(0, 0, 800, 608).draw(ColorF(0.8, 1.0));
+		TextureAsset(backgroundName).draw();
 
 		camera.update(); {
 			const auto t = camera.createTransformer();
@@ -551,7 +567,13 @@ namespace Iwanna {
 			//GAMEOVER描画
 			if(isShowGameOver)
 				if(Global::trapCameraActivatedInTrap2Map) TextureAsset(U"sprGAMEOVER").scaled(1 / cameraScale).drawAt(saveTrapCameraPos);
-				else TextureAsset(U"sprGAMEOVER").drawAt(executeCameraPos());
+				else if(Global::isLoopStage)
+				{
+					TextureAsset(U"sprGAMEOVER").drawAt(Global::stageWidth / 2,Global::stageHeight / 2);
+				}
+				else {
+					TextureAsset(U"sprGAMEOVER").drawAt(executeCameraPos());
+				}
 		}
 	}
 

@@ -19,6 +19,9 @@ namespace Iwanna {
 	};
 
 	class GameObject {
+	private:
+		double prevSpd = 0.0;
+		double prevDir = 0.0;
 	public:
 		Vec2 pos;
 		std::shared_ptr<HitBox> hitBox;
@@ -31,6 +34,7 @@ namespace Iwanna {
 		double vspeed;
 		double speed;
 		double direction;
+		double gravity;
 
 		virtual ~GameObject() = default;
 
@@ -56,10 +60,26 @@ namespace Iwanna {
 			vspeed = -speed * Math::Sin(rad);
 		}
 
+		//speedかdirectionの値が変化したかどうかを取得
+		bool isChangedDirOrSpd() {
+			bool changed = (speed != prevSpd) || (direction != prevDir);
+
+			// 更新
+			prevSpd = speed;
+			prevDir = direction;
+
+			return changed;
+		}
+
 		//2つの座標から角度を計算
 		void calculateDirection(Vec2 basePos, Vec2 targetPos) {
 			Vec2 diff = targetPos - basePos;
 			direction = Math::ToDegrees(Atan2(-diff.y, diff.x)) ;
+		}
+
+		//2つの座標から距離を計算
+		double calculateDistance(Vec2 basePos, Vec2 targetPos) {
+			return basePos.distanceFrom(targetPos);
 		}
 
 		virtual void onCollision(GameObject& other) = 0;
