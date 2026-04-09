@@ -1,7 +1,8 @@
 ﻿#include "Spike.h"
 
 namespace Iwanna {
-	Spike::Spike(Vec2 startPos, int32 dir) {
+	Spike::Spike(String typeName, Vec2 startPos, int32 dir) {
+		this->typeName = typeName;
 		//GameObject.hの値初期化
 		pos.x = startPos.x * side;
 		pos.y = startPos.y * side;
@@ -19,10 +20,10 @@ namespace Iwanna {
 
 	void Spike::draw() const {
 		switch (spriteDirection) {
-		case 0:TextureAsset(U"sprSpikeUp_low").draw(pos); break;
-		case 1:TextureAsset(U"sprSpikeLeft_low").draw(pos); break;
-		case 2:TextureAsset(U"sprSpikeDown_low").draw(pos); break;
-		case 3:TextureAsset(U"sprSpikeRight_low").draw(pos); break;
+		case 0:TextureAsset(U"sprSpikeUp_" + typeName).draw(pos); break;
+		case 1:TextureAsset(U"sprSpikeLeft_" + typeName).draw(pos); break;
+		case 2:TextureAsset(U"sprSpikeDown_" + typeName).draw(pos); break;
+		case 3:TextureAsset(U"sprSpikeRight_" + typeName).draw(pos); break;
 		}
 		
 		//hitBox->draw(ColorF(Palette::Blue,0.7));
@@ -45,7 +46,7 @@ namespace Iwanna {
 
 	// ----- 以下罠用針 ----- //
 
-	SpikeTrap::SpikeTrap(Vec2 startPos, int32 dir, int32 id, double direction, double speed) : Spike({ startPos.x, startPos.y }, dir), trapID(id), direction(direction), speed(speed) {
+	SpikeTrap::SpikeTrap(String typeName, Vec2 startPos, int32 dir, int32 id, double direction, double speed) : Spike(typeName, { startPos.x, startPos.y }, dir), trapID(id), direction(direction), speed(speed) {
 		hspeed = 0;
 		vspeed = 0;
 	}
@@ -79,7 +80,7 @@ namespace Iwanna {
 	}
 
 	//特定の箇所へ移動する針トラップ
-	SpikePathTrap::SpikePathTrap(Vec2 startPos, int32 dir, int32 id, Vec2 next, double time) : Spike({ startPos.x, startPos.y }, dir), trapID(id) {
+	SpikePathTrap::SpikePathTrap(String typeName, Vec2 startPos, int32 dir, int32 id, Vec2 next, double time) : Spike(typeName, { startPos.x, startPos.y }, dir), trapID(id) {
 		hspeed = 0;
 		vspeed = 0;
 		nextGoalPos = { (startPos.x + next.x) * side, (startPos.y + next.y) * side };
