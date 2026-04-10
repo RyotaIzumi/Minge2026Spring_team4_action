@@ -142,9 +142,7 @@ namespace Iwanna {
 					gimmikIntactPos = parseIntactPos(gimmik[U"gimmikPos"]);
 
 					if (gimmikName == U"ワープ") {
-						gimmikString = gimmik[U"gimmikString"].getString();
-						gimmikValue2 = gimmik[U"value2"].get<double>();
-						gimmikValue3 = gimmik[U"value3"].get<double>();
+						gimmikString = gimmik[U"value1"].getString();
 					}
 					else {
 						gimmikValue1 = gimmik[U"value1"].get<double>();
@@ -254,7 +252,7 @@ namespace Iwanna {
 					if (gimmikName == U"罠トリガー") gameObjects.triggers << std::make_shared<Trigger>(gimmikIntactPos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3, false);
 					if (gimmikName == U"前トリガー") gameObjects.triggers << std::make_shared<Trigger>(gimmikIntactPos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3, true);
 					if (gimmikName == U"罠りんご") gameObjects.cherries << std::make_shared<CherryTrap>(gimmikIntactPos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
-					if (gimmikName == U"ワープ") gameObjects.warps << std::make_shared<Warp>(Vec2{ gimmikValue2, gimmikValue3 }, gimmikString);
+					if (gimmikName == U"ワープ") gameObjects.warps << std::make_shared<Warp>(gimmikIntactPos, gimmikString);
 				}
 			}
 
