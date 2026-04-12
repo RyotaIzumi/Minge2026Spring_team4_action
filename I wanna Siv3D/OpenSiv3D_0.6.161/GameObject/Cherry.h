@@ -6,11 +6,25 @@
 #include "GameObject.h"
 
 namespace Iwanna {
+	class StageManager;
+	// りんごの種類
 	enum class CherryType {
 		Normal,
 		Boss,
 		BossSub,
-		Barrage
+		Barrage,
+		Trap,
+		Gimmik
+	};
+	// りんごの色の種類
+	enum class CherryColorType {
+		Red,
+		Blue,
+		Yellow,
+		Green,
+		Orange,
+		Sky,
+		None
 	};
 	class Cherry : public GameObject {
 	private:
@@ -43,7 +57,6 @@ namespace Iwanna {
 	public:
 		bool isDelete = false;//消去用フラグ
 		bool isOutOfScreen = false;//画面外判定用フラグ
-		bool isTrap = false;//罠用かどうか
 
 		Cherry(Vec2 startPos, double scale = 1.0);
 
@@ -78,5 +91,38 @@ namespace Iwanna {
 		void trapUpdate(int32 id) override;
 
 		int32 getTrapID() const;
+	};
+
+	class BarrageCherry : public Cherry {
+	protected:
+		int32 startStep = 0;
+		CherryColorType cherryColorType;
+		ColorF typeColor;
+	public:
+		BarrageCherry(Vec2 startPos, double scale, CherryColorType colorType);
+
+		void barrageUpdate() override;
+		void draw() const override;
+
+		void setTypeColor();
+	};
+
+	class GimmikBigCherry : public Cherry {
+	private:
+		StageManager* stageManager = nullptr;
+		CherryColorType gimmikBigCherryType;
+		int32 startStep = 0;
+		ColorF typeColor;
+
+		Timer startTimer{ 2.3s, StartImmediately::Yes };
+		Timer intervalTimer{ 1.0s };
+	public:
+		GimmikBigCherry(Vec2 startPos, double scale, CherryColorType cType, StageManager& manager);
+
+		void barrageUpdate() override;
+		void draw() const override;
+
+		void setTypeColor();
+		void generateAttack();
 	};
 }

@@ -16,7 +16,6 @@ namespace Iwanna{
 		isDelete = false;
 		isOutOfScreen = false;
 		isDeleteOutOfScreen = false;
-		isTrap = false;
 
 		alpha = 1.0;
 		startStep = 0;
@@ -56,7 +55,6 @@ namespace Iwanna{
 		isDelete = false;
 		isOutOfScreen = false;
 		isDeleteOutOfScreen = true;
-		isTrap = false;
 
 		alpha = 1.0;
 		startStep = 0;
@@ -94,7 +92,6 @@ namespace Iwanna{
 		isDelete = false;
 		isOutOfScreen = false;
 		isDeleteOutOfScreen = false;
-		isTrap = false;
 
 		alpha = 1.0;
 		startStep = 0;
@@ -143,7 +140,6 @@ namespace Iwanna{
 		isDelete = false;
 		isOutOfScreen = false;
 		isDeleteOutOfScreen = false;
-		isTrap = false;
 
 		alpha = 1.0;
 		startStep = 0;
@@ -207,7 +203,6 @@ namespace Iwanna{
 		isDelete = false;
 		isOutOfScreen = false;
 		isDeleteOutOfScreen = true;
-		isTrap = false;
 
 		alpha = 1.0;
 		startStep = 0;
@@ -232,7 +227,6 @@ namespace Iwanna{
 		isDelete = false;
 		isOutOfScreen = false;
 		isDeleteOutOfScreen = false;
-		isTrap = false;
 
 		alpha = 0.5;
 		speed = 0;

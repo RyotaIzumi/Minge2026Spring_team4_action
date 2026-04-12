@@ -27,11 +27,20 @@ namespace Iwanna {
 
 		//アニメーションデータの登録
 		//(アクション名,フレーム数,各フレーム再生時間,ループするかどうか(省略可), 左右差分があるか(省略可))
+		/*
 		spriteSystem = SpriteSystem(32, 32);
 		spriteSystem.addSprite(SpriteAction::PLAYER_WAIT, SpriteData(U"sprIdle_normal", 4, 0.15,true,false));
 		spriteSystem.addSprite(SpriteAction::PLAYER_RUN, SpriteData(U"sprPlayerRunning", 4, 0.1,true,false));
 		spriteSystem.addSprite(SpriteAction::PLAYER_JUMP, SpriteData(U"sprJump_normal", 1, 0.1,true,false));
 		spriteSystem.addSprite(SpriteAction::PLAYER_FALL, SpriteData(U"sprFall_normal", 1, 0.1,true,false));
+		*/
+		//アニメーションデータの登録
+		//(アクション名,フレーム数,各フレーム再生時間,ループするかどうか(省略可), 左右差分があるか(省略可))
+		spriteSystem = SpriteSystem(32, 32);
+		spriteSystem.addSprite(SpriteAction::PLAYER_WAIT, SpriteData(U"sprPlayerIdle", 4, 0.15, true, false));
+		spriteSystem.addSprite(SpriteAction::PLAYER_RUN, SpriteData(U"sprPlayerRunning", 4, 0.1, true, false));
+		spriteSystem.addSprite(SpriteAction::PLAYER_JUMP, SpriteData(U"sprPlayerJump", 2, 0.1, true, false));
+		spriteSystem.addSprite(SpriteAction::PLAYER_FALL, SpriteData(U"sprPlayerFall", 2, 0.1, true, false));
 
 		//初期の向き
 		direction = Global::Direction::RIGHT;
@@ -103,8 +112,8 @@ namespace Iwanna {
 	void Player::draw() const {
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
 		TextureRegion texture = spriteSystem.getTextureRegion(direction);
-		if(!isDead)texture.scaled(0.8, 0.8).drawAt(pos.x,pos.y - 3);
-		else texture.scaled(0.8, 0.8).drawAt(pos.x, pos.y - 3, ColorF(0.8,0,0, 0.8));
+		if(!isDead)texture.scaled(1.0).drawAt(pos.x,pos.y - 6);
+		else texture.scaled(1.0).drawAt(pos.x, pos.y - 6, ColorF(0.8,0,0, 0.8));
 		//hitBox->draw(Palette::Red);
 	}
 
@@ -339,8 +348,8 @@ namespace Iwanna {
 
 	//ループモード時の画面外判定
 	void Player::loopStage() {
-		const int32 excessX = hitBoxSize.x / 2;//画面端からの余白
-		const int32 excessY = hitBoxSize.y / 2;//画面端からの余白
+		const int32 excessX = hitBoxSize.x / 2 - 4;//画面端からの余白
+		const int32 excessY = hitBoxSize.y / 2 - 4;//画面端からの余白
 		if (pos.x < -1 * excessX) {
 			pos.x = Global::stageWidth + excessX;
 		}

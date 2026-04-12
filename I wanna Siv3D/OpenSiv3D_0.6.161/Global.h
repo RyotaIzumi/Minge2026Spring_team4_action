@@ -41,7 +41,7 @@ namespace Global {
 	inline bool isChangeRoom = false;
 	inline String startRoomName = U"normal2";
 	inline String nowRoomName = U"";
-	inline bool isLoopStage = false;
+	inline bool isLoopStage = true;
 
 	// --- 特殊罠関連 ---
 	inline bool warningTrapPaused = false;

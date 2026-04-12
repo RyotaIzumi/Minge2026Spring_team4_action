@@ -4,6 +4,7 @@
 #include "../GameObject/Player.h"
 #include "../GameObject/Bullet.h"
 #include "../GameObject/Cherry.h"
+#include "../GameObject/Boss/BossCherry.h"
 #include "../GameObject/Block.h"
 #include "../GameObject/Spike.h"
 #include "../GameObject/Trigger.h"
@@ -11,6 +12,7 @@
 #include "../GameObject/SpecialTrap.h"
 #include "../GameObject/Blood.h"
 #include "../GameObject/Warp.h"
+#include "CameraShake.h"
 #include "../Global.h"
 
 namespace Iwanna {
@@ -36,10 +38,14 @@ namespace Iwanna {
 		StockNearGameObjects stockLargeNearGameObjects;//大きいオブジェクトなど、通常のストッククラスでは処理できないものを入れる用
 		StageGameObjects gameObjects;
 
+		// 追加するりんごを一時格納するためのもの
+		Array<std::shared_ptr<Cherry>> pendingCherries;
+
 		//カメラ関連
 		Vec2 cameraBasePos{ 400, 304 };
 		Camera2D camera{ cameraBasePos, 1.0 ,CameraControl::None_ };
 		double cameraScale = 1.0;
+		CameraShake cameraShake;
 
 		//特殊トラップ用
 		Vec2 saveTrapCameraPos{0,0};
@@ -71,7 +77,7 @@ namespace Iwanna {
 		StageManager();
 
 		void setUpObjects(int32 chapter);
-		void loadGameObjects(String);
+		void loadGameObjects(String); //別cppファイルのLoadGameObjectsにて定義
 		Vec2 parsePos(const JSON& json);
 		Vec2 parseIntactPos(const JSON& json);
 
@@ -97,5 +103,27 @@ namespace Iwanna {
 
 		void createPeripheryBlocks();
 		void createFloorBlocks(Vec2 basePos);
+
+		// --- 計算関数 --- //
+		//2つの座標から角度を計算
+		double calculateDirection(Vec2 basePos, Vec2 targetPos) {
+			Vec2 diff = targetPos - basePos;
+			return Math::ToDegrees(Atan2(-diff.y, diff.x));
+		}
+
+		//2つの座標から距離を計算
+		double calculateDistance(Vec2 basePos, Vec2 targetPos) {
+			return basePos.distanceFrom(targetPos);
+		}
+
+		// りんご生成パターン(別cppファイルで定義)
+		void createCherrySpread(int32 num, double spd, const std::function<std::shared_ptr<Cherry>()>& factory);
+		void createSubThrowCherry(double dir, double spd, const std::function<std::shared_ptr<Cherry>()>& factory);
+		void createBlueLineCherry(int32 num, double interval, const std::function<std::shared_ptr<Cherry>()>& factory);
+		void createYellowStarCherry(int32 Nkakkei, int32 nextNumber, Vec2 center, int32 lineNum, const std::function<std::shared_ptr<Cherry>()>& factory);
+		void createGreenWaveCherry(Vec2 startPos, double interval, double high, const std::function<std::shared_ptr<BossGreenWaveCherry>()>& factory);
+		void createOrangeStopCherry(bool isAddUpDown, const std::function<std::shared_ptr<BossOrangeStopCherry>()>& factory);
+		void createSkyTargetCherry(int32 lineNum, bool isAddLine, const std::function<std::shared_ptr<BossSkyTargetCherry>()>& factory);
+		void createGrayLatticeCherry(double interval, const std::function<std::shared_ptr<BossGrayLatticeCherry>()>& factory);
 	};
 }

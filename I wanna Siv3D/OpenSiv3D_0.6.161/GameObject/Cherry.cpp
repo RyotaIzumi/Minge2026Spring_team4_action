@@ -1,5 +1,6 @@
 ﻿#include "Cherry.h"
 #include "../Audio/AudioAsset.h"
+#include "../StageManager/StageManager.h"
 
 namespace Iwanna {
 	Cherry::Cherry(Vec2 startPos, double scale) {
@@ -14,7 +15,6 @@ namespace Iwanna {
 		canPlayerKill = true;
 		isDelete = false;
 		isOutOfScreen = false;
-		isTrap = false;
 
 		speed = 0;
 		gravity = 0;
@@ -160,9 +160,8 @@ namespace Iwanna {
 		hspeed = 0;
 		vspeed = 0;
 
-		cherryType = CherryType::Normal;
+		cherryType = CherryType::Trap;
 
-		isTrap = true;
 		soundPlayOne = false;
 	}
 
@@ -186,5 +185,129 @@ namespace Iwanna {
 	//罠のIDを取得
 	int32 CherryTrap::getTrapID() const {
 		return trapID;
+	}
+
+	// ----- 道中のギミックでかりんご ----- //
+	GimmikBigCherry::GimmikBigCherry(Vec2 startPos, double scale, CherryColorType cType, StageManager& manager) : Cherry(startPos, scale) {
+
+		//GameObject.hの値初期化
+		pos = startPos;
+		scaleMag = scale;
+		hitBox = std::make_shared<CircleHitBox>(pos, hitBoxSize * scaleMag);
+		type = ObjectType::Cherry;
+		cherryType = CherryType::Gimmik;
+		gimmikBigCherryType = cType;
+
+		stageManager = &manager;
+
+		canPlayerKill = true;
+		isDelete = false;
+		isOutOfScreen = false;
+		isDeleteOutOfScreen = true;
+
+		hasHp = false;
+
+		speed = 0;
+		direction = 0;
+		gravity = 0;
+
+		startStep = 0;
+	}
+
+	void GimmikBigCherry::barrageUpdate() {
+		if (startTimer.reachedZero()) {
+			generateAttack();
+			startTimer.reset();
+			intervalTimer.restart();
+		}
+
+		if (intervalTimer.reachedZero()) {
+			generateAttack();
+			intervalTimer.restart();
+		}
+
+		setTypeColor();
+	}
+
+	void GimmikBigCherry::draw() const {
+
+		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
+		TextureAsset(U"sprCherryLowWhite").scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1, typeColor);
+		//hitBox->draw(ColorF(0.7,0.7));//判定の可視化
+	}
+
+	// 種類で色を決定する
+	void GimmikBigCherry::setTypeColor() {
+		alpha = isMuteki ? 0.6 : 1.0;
+		switch (gimmikBigCherryType) {
+		case CherryColorType::Red:    typeColor = ColorF(Palette::Red, alpha); break;
+		case CherryColorType::Blue:   typeColor = ColorF(Palette::Blue, alpha); break;
+		case CherryColorType::Yellow: typeColor = ColorF(Palette::Yellow, alpha); break;
+		case CherryColorType::Green:  typeColor = ColorF(Palette::Greenyellow, alpha); break;
+		case CherryColorType::Orange: typeColor = ColorF(Palette::Orange, alpha); break;
+		case CherryColorType::Sky:    typeColor = ColorF(Palette::Skyblue, alpha); break;
+		}
+	}
+
+	// 攻撃を呼び出す
+	void GimmikBigCherry::generateAttack() {
+			switch (gimmikBigCherryType) {
+			case CherryColorType::Red:
+				stageManager->createCherrySpread(20, 6, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0,gimmikBigCherryType); });
+				break;
+			case CherryColorType::Blue:
+				break;
+			case CherryColorType::Yellow:
+				break;
+			case CherryColorType::Green:
+				break;
+			case CherryColorType::Orange:
+				break;
+			case CherryColorType::Sky:
+				break;
+			}
+	}
+
+	// ----- 弾幕用りんご ----- //
+	BarrageCherry::BarrageCherry(Vec2 startPos, double scale, CherryColorType colorType) : Cherry(startPos, scale) {
+
+		//GameObject.hの値初期化
+		pos = startPos;
+		scaleMag = scale;
+		hitBox = std::make_shared<CircleHitBox>(pos, hitBoxSize * scaleMag);
+		type = ObjectType::Cherry;
+		cherryType = CherryType::Barrage;
+		cherryColorType = colorType;
+
+		canPlayerKill = true;
+		isDelete = false;
+		isOutOfScreen = false;
+		isDeleteOutOfScreen = true;
+
+		alpha = 1.0;
+		startStep = 0;
+	}
+
+	void BarrageCherry::barrageUpdate() {
+		setTypeColor();
+	}
+
+	void BarrageCherry::draw() const {
+		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
+		TextureAsset(U"sprCherryLowWhite").scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1, typeColor);
+		//hitBox->draw(ColorF(0.7,0.7));//判定の可視化
+	}
+
+	// 種類で色を決定する
+	void BarrageCherry::setTypeColor() {
+		switch (cherryColorType) {
+		case CherryColorType::Red:    typeColor = ColorF(Palette::Red, alpha); break;
+		case CherryColorType::Blue:   typeColor = ColorF(Palette::Blue, alpha); break;
+		case CherryColorType::Yellow: typeColor = ColorF(Palette::Yellow, alpha); break;
+		case CherryColorType::Green:  typeColor = ColorF(Palette::Lawngreen, alpha); break;
+		case CherryColorType::Orange: typeColor = ColorF(Palette::Orange, alpha); break;
+		case CherryColorType::Sky:    typeColor = ColorF(Palette::Skyblue, alpha); break;
+		//case CherryColorType::Gray:   typeColor = ColorF(Palette::Gray, alpha); break;
+		}
 	}
 }

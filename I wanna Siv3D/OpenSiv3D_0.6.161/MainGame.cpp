@@ -124,6 +124,8 @@ namespace Iwanna {
 		audio.seekTime(startTime);
 		*/
 		audio.play();
+
+		//assert("うへぇ");
 	}
 
 	void MainGame::playGameoverBgm() {

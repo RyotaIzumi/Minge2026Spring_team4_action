@@ -145,6 +145,8 @@
     <ClCompile Include="Sprite\SpriteSystem.cpp" />
     <ClCompile Include="StageManager\BossStageManager.cpp" />
     <ClCompile Include="StageManager\CherryPatternManager\GenerateBossCherryPattern.cpp" />
+    <ClCompile Include="StageManager\CherryPatternManager\GenerateGimmikCherryPattern.cpp" />
+    <ClCompile Include="StageManager\LoadGameObjects.cpp" />
     <ClCompile Include="StageManager\StageManager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -394,6 +396,7 @@
     <ClInclude Include="Sprite\SpriteEnum.h" />
     <ClInclude Include="Sprite\SpriteSystem.h" />
     <ClInclude Include="StageManager\BossStageManager.h" />
+    <ClInclude Include="StageManager\CameraShake.h" />
     <ClInclude Include="StageManager\StageManager.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>

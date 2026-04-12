@@ -10,7 +10,9 @@
 #include "../GameObject/SavePoint.h"
 #include "../GameObject/Blood.h"
 #include "../GameObject/Warp.h"
+#include "CameraShake.h"
 #include "../Global.h"
+
 
 namespace Iwanna {
 
@@ -24,37 +26,6 @@ namespace Iwanna {
 		Array<std::shared_ptr<BossSavePoint>> savePoints;
 		Array<std::shared_ptr<Blood>> bloods;
 		Array<std::shared_ptr<Warp>> warps;
-	};
-
-	//カメラの揺れを管理する構造体
-	struct CameraShake
-	{
-		double time = 0.0;
-		double power = 0.0;
-		double frequency = 30;
-
-		void shake(double t = 0.5, double p = 10.0)
-		{
-			time = t;
-			power = p;
-		}
-
-		void update()
-		{
-			if (time > 0.0)	time -= Scene::DeltaTime();
-		}
-
-		Vec2 getOffset() const
-		{
-			if (time <= 0.0)
-			{
-				return Vec2{ 0, 0 };
-			}
-			double t = Scene::Time();
-			// 縦方向のみ
-			double y = Math::Sin(t * frequency) * power * time;
-			return Vec2{ 0, y };
-		}
 	};
 
 	class BossStageManager {
@@ -153,7 +124,6 @@ namespace Iwanna {
 		void createGreenWaveCherry(Vec2 startPos, double interval, double high, const std::function<std::shared_ptr<BossGreenWaveCherry>()>& factory);
 		void createOrangeStopCherry(bool isAddUpDown, const std::function<std::shared_ptr<BossOrangeStopCherry>()>& factory);
 		void createSkyTargetCherry(int32 lineNum, bool isAddLine, const std::function<std::shared_ptr<BossSkyTargetCherry>()>& factory);
-
 		void createGrayLatticeCherry(double interval,const std::function<std::shared_ptr<BossGrayLatticeCherry>()>& factory);
 	};
 }

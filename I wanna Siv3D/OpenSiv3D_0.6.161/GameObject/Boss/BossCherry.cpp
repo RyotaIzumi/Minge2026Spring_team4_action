@@ -17,7 +17,6 @@ namespace Iwanna {
 		isDelete = false;
 		isOutOfScreen = false;
 		isDeleteOutOfScreen = false;
-		isTrap = false;
 
 		hasHp = true;
 		maxHp = 25;
@@ -228,7 +227,6 @@ namespace Iwanna {
 		isDelete = false;
 		isOutOfScreen = false;
 		isDeleteOutOfScreen = false;
-		isTrap = false;
 
 		hasHp = true;
 		maxHp = 7;
@@ -383,26 +381,12 @@ namespace Iwanna {
 		isDelete = false;
 		isOutOfScreen = false;
 		isDeleteOutOfScreen = true;
-		isTrap = false;
 
 		alpha = 1.0;
 		startStep = 0;
 	}
 
 	void BossBarrageCherry::barrageUpdate() {
-		//ボス戦開始時の処理
-		switch (startStep) {
-		case 0:
-
-			break;
-		case 1:
-
-			break;
-		case 2:
-
-			break;
-		}
-
 		setTypeColor();
 	}
 
@@ -440,7 +424,6 @@ namespace Iwanna {
 		isDelete = false;
 		isOutOfScreen = false;
 		isDeleteOutOfScreen = false;
-		isTrap = false;
 
 		gravity = 0.25;
 
