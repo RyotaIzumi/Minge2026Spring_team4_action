@@ -223,7 +223,7 @@ namespace Iwanna {
 			break;
 		case CherryColorType::Green:  attackInterval = 1.0; break;
 		case CherryColorType::Orange: attackInterval = 1.0; break;
-		case CherryColorType::Sky:    attackInterval = 1.0; break;
+		case CherryColorType::Sky:    attackInterval = 1.9; break;
 		}
 	}
 
@@ -279,6 +279,7 @@ namespace Iwanna {
 			case CherryColorType::Orange:
 				break;
 			case CherryColorType::Sky:
+				stageManager->createSkyTargetCherry(7, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0, gimmikBigCherryType); });
 				break;
 			}
 	}

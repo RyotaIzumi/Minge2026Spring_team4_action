@@ -144,7 +144,7 @@ namespace Iwanna {
 						}
 					}
 
-					//罠マップ2マップ目
+					// ----- 罠マップ2マップ目 ----- //
 					if (fileName == U"trap2") {
 						if (gimmikValue1 == 2 && gimmikName == U"罠トリガー") {
 							gameObjects.specialTraps << std::make_shared<TitleTrap>(Vec2{ 145,-32 }, static_cast<int32>(gimmikValue1));
@@ -206,6 +206,14 @@ namespace Iwanna {
 						}
 					}
 
+					// ----- 水色りんごギミックマップ ----- //
+					if (fileName == U"normal5") {
+						if (gimmikName == U"罠針_上") {
+							gameObjects.spikes << std::make_shared<SpikePathTrap>(U"low", gimmikParsePos, 0, static_cast<int32>(gimmikValue1), Vec2{ -1,1 }, 0.5);
+							continue;
+						}
+					}
+
 					// ギミックの種類に応じてオブジェクトを生成
 					if (gimmikName == U"罠針_上") gameObjects.spikes << std::make_shared<SpikeTrap>(U"low", gimmikParsePos, 0, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
 					if (gimmikName == U"罠針_左") gameObjects.spikes << std::make_shared<SpikeTrap>(U"low", gimmikParsePos, 1, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
@@ -258,5 +266,6 @@ namespace Iwanna {
 		if (fileName == U"normal2")gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{400,304},3.0,CherryColorType::Red,*this);
 		if (fileName == U"normal3")gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{400,560},3.0,CherryColorType::Blue,*this);
 		if (fileName == U"normal4")gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{400,304},3.0,CherryColorType::Yellow,*this);
+		if (fileName == U"normal5")gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{80,80},3.0,CherryColorType::Sky,*this);
 	}
 }

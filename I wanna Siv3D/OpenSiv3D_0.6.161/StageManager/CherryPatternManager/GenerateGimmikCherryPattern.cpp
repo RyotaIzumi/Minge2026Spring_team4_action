@@ -181,10 +181,10 @@ namespace Iwanna {
 		 * @param lineNum １線内の弾幕数
 		 * @param isAddLine 左右に弾幕を追加するかどうか
 		 */
-	void StageManager::createSkyTargetCherry(int32 lineNum, bool isAddLine, const std::function<std::shared_ptr<BossSkyTargetCherry>()>& factory) {
+	void StageManager::createSkyTargetCherry(int32 lineNum, const std::function<std::shared_ptr<BarrageCherry>()>& factory) {
 		Vec2 targetPos = gameObjects.player->pos;
-		double baseSpd = 5;
-		double interSpd = 2;
+		double baseSpd = 1;
+		double interSpd = 1.7;
 		double interAngle = 20;
 
 		for (int i = 0; i < lineNum; i++) {
@@ -192,22 +192,6 @@ namespace Iwanna {
 			cherry->direction = calculateDirection(cherry->pos, targetPos);
 			cherry->speed = baseSpd + i * interSpd;
 			createCherry(cherry);
-		}
-
-		if (isAddLine) {
-			//左右の追加弾幕
-			for (int i = 0; i < lineNum; i++) {
-				auto cherry = factory();
-				cherry->direction = calculateDirection(cherry->pos, targetPos) + interAngle;
-				cherry->speed = baseSpd + i * interSpd;
-				createCherry(cherry);
-			}
-			for (int i = 0; i < lineNum; i++) {
-				auto cherry = factory();
-				cherry->direction = calculateDirection(cherry->pos, targetPos) - interAngle;
-				cherry->speed = baseSpd + i * interSpd;
-				createCherry(cherry);
-			}
 		}
 	}
 
