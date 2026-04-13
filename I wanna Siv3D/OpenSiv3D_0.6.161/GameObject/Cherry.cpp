@@ -212,18 +212,31 @@ namespace Iwanna {
 		gravity = 0;
 
 		startStep = 0;
+
+		switch (gimmikBigCherryType) {
+		case CherryColorType::Red:    attackInterval = 1.0; break;
+		case CherryColorType::Blue:   attackInterval = 2.0; break;
+		case CherryColorType::Yellow:
+			startTimer.pause();
+			generateAttack();
+			attackInterval = 100000.0;
+			break;
+		case CherryColorType::Green:  attackInterval = 1.0; break;
+		case CherryColorType::Orange: attackInterval = 1.0; break;
+		case CherryColorType::Sky:    attackInterval = 1.0; break;
+		}
 	}
 
 	void GimmikBigCherry::barrageUpdate() {
 		if (startTimer.reachedZero()) {
 			generateAttack();
 			startTimer.reset();
-			intervalTimer.restart();
+			attackIntervalStopwatch.restart();
 		}
 
-		if (intervalTimer.reachedZero()) {
+		if (attackIntervalStopwatch.sF() > attackInterval) {
 			generateAttack();
-			intervalTimer.restart();
+			attackIntervalStopwatch.restart();
 		}
 
 		setTypeColor();
@@ -256,8 +269,10 @@ namespace Iwanna {
 				stageManager->createCherrySpread(20, 6, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0,gimmikBigCherryType); });
 				break;
 			case CherryColorType::Blue:
+				stageManager->createBlueLineCherry([this]() { return std::make_shared<BarrageGimmikBlueCherry>(pos, 1.0, gimmikBigCherryType); });
 				break;
 			case CherryColorType::Yellow:
+				stageManager->createYellowStarCherry(5, 2, pos, 7, [this]() { return std::make_shared<BarrageGimmikYellowCherry>(pos, 1.0, gimmikBigCherryType); });
 				break;
 			case CherryColorType::Green:
 				break;
@@ -309,5 +324,64 @@ namespace Iwanna {
 		case CherryColorType::Sky:    typeColor = ColorF(Palette::Skyblue, alpha); break;
 		//case CherryColorType::Gray:   typeColor = ColorF(Palette::Gray, alpha); break;
 		}
+	}
+
+	// ----- 弾幕用青りんご ----- //
+	BarrageGimmikBlueCherry::BarrageGimmikBlueCherry(Vec2 startPos, double scale, CherryColorType colorType) : BarrageCherry(startPos, scale, colorType) {
+
+		canPlayerKill = true;
+		isDelete = false;
+		isDeleteOutOfScreen = false;
+
+		alpha = 1.0;
+		startStep = 0;
+	}
+
+	void BarrageGimmikBlueCherry::barrageUpdate() {
+		switch (startStep) {
+		case 0:
+			gravity = 0.2;
+			speed = 1;
+			direction = 270;
+			startStep++;
+			break;
+		case 1:
+			if (pos.y > 700) {
+				isDelete = true;
+			}
+			break;
+		}
+
+		setTypeColor();
+	}
+
+	// ----- 弾幕用黄りんご ----- //
+	BarrageGimmikYellowCherry::BarrageGimmikYellowCherry(Vec2 startPos, double scale, CherryColorType colorType) : BarrageCherry(startPos, scale, colorType) {
+
+		canPlayerKill = true;
+		isDelete = false;
+		isDeleteOutOfScreen = false;
+
+		centerPos = startPos;
+
+		alpha = 1.0;
+		startStep = 0;
+	}
+
+	void BarrageGimmikYellowCherry::barrageUpdate() {
+		switch (startStep) {
+		case 0:
+			r = calculateDistance(pos, centerPos);
+			c = direction;
+			startStep++;
+			break;
+		case 1:
+			pos.x = r * cos(Math::ToRadians(c)) + centerPos.x;
+			pos.y = -r * sin(Math::ToRadians(c)) + centerPos.y;
+			c -= 0.3;
+			break;
+		}
+
+		setTypeColor();
 	}
 }

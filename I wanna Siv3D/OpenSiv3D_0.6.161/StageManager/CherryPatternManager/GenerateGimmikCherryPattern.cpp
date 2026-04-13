@@ -37,15 +37,16 @@ namespace Iwanna {
 
 	/**
 		 * @brief 青攻撃用のライン型
-		 * @param num 生成数
-		 * @param interval 間隔
 		 * @param cherry 生成するcherryオブジェクト
 		 */
-	void StageManager::createBlueLineCherry(int32 num, double interval, const std::function<std::shared_ptr<Cherry>()>& factory) {
-		const double startX = -1 * Random(interval);
+	void StageManager::createBlueLineCherry(const std::function<std::shared_ptr<Cherry>()>& factory) {
+		const int32 num = 15;
+		const double interval = 64;
+		double startX = 16;
+
 		for (int i = 0; i < num; i++) {
 			auto cherry = factory();
-			cherry->pos.x = startX + interval * i;
+			cherry->pos.x = interval * i + startX;
 			cherry->pos.y = -100;
 			createCherry(cherry);
 		}
@@ -56,10 +57,9 @@ namespace Iwanna {
 		 * @param cherry 生成するcherryオブジェクト
 		 */
 	void StageManager::createYellowStarCherry(int32 Nkakkei, int32 nextNumber, Vec2 center, int32 lineNum, const std::function<std::shared_ptr<Cherry>()>& factory) {
-		int32 r = 100;
+		int32 r = 300;
 		Array<std::shared_ptr<Cherry>> starCherries;
-		double baseSpeed = 13;
-		double angleStart = Random(360);
+		double angleStart = 270;
 
 		//外周のみ生成
 		for (int j = 0; j < 2; j++) {
@@ -67,7 +67,6 @@ namespace Iwanna {
 				auto cherry = factory();
 				cherry->pos.x = r * cos(Math::ToRadians(i * (360.0 / Nkakkei) + angleStart)) + center.x;
 				cherry->pos.y = r * sin(Math::ToRadians(i * (360.0 / Nkakkei) + angleStart)) + center.y;
-				cherry->speed = calculateDistance(center, cherry->pos) / baseSpeed;
 				cherry->direction = calculateDirection(center, cherry->pos);
 				starCherries << cherry;
 				createCherry(cherry);
@@ -80,7 +79,6 @@ namespace Iwanna {
 				auto cherry = factory();
 				cherry->pos.x = starCherries[i]->pos.x + (starCherries[i + nextNumber]->pos.x - starCherries[i]->pos.x) * j / lineNum;
 				cherry->pos.y = starCherries[i]->pos.y + (starCherries[i + nextNumber]->pos.y - starCherries[i]->pos.y) * j / lineNum;
-				cherry->speed = calculateDistance(center, cherry->pos) / baseSpeed;
 				cherry->direction = calculateDirection(center, cherry->pos);
 				createCherry(cherry);
 			}

@@ -107,6 +107,23 @@ namespace Iwanna {
 		void setTypeColor();
 	};
 
+	class BarrageGimmikBlueCherry : public BarrageCherry {
+	public:
+		BarrageGimmikBlueCherry(Vec2 startPos, double scale, CherryColorType colorType);
+
+		void barrageUpdate() override;
+	};
+
+	class BarrageGimmikYellowCherry : public BarrageCherry {
+	private:
+		Vec2 centerPos;
+		double r, c;
+	public:
+		BarrageGimmikYellowCherry(Vec2 startPos, double scale, CherryColorType colorType);
+
+		void barrageUpdate() override;
+	};
+
 	class GimmikBigCherry : public Cherry {
 	private:
 		StageManager* stageManager = nullptr;
@@ -114,8 +131,9 @@ namespace Iwanna {
 		int32 startStep = 0;
 		ColorF typeColor;
 
-		Timer startTimer{ 2.3s, StartImmediately::Yes };
-		Timer intervalTimer{ 1.0s };
+		Timer startTimer{ 2.2s, StartImmediately::Yes };
+		Stopwatch attackIntervalStopwatch{StartImmediately::No};
+		double attackInterval = 0;
 	public:
 		GimmikBigCherry(Vec2 startPos, double scale, CherryColorType cType, StageManager& manager);
 
