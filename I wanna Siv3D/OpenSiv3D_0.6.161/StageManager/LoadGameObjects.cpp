@@ -38,6 +38,7 @@ namespace Iwanna {
 					case 26: gameObjects.blocks << std::make_shared<HideBlock>(U"sprBlock_low1", pos); break;
 					case 27: gameObjects.blocks << std::make_shared<ShootTroughBlock>(U"sprBlockShootTrough", pos); break;
 					case 28: gameObjects.blocks << std::make_shared<FakeBlock>(U"sprBlock_low2", pos); break;
+					case 31: gameObjects.cherries << std::make_shared<SpriteCherry>(U"sprCherryLowWhiteLine", pos, 1); break;
 					}
 				}
 				else {
@@ -54,6 +55,8 @@ namespace Iwanna {
 					case 26: gameObjects.blocks << std::make_shared<HideBlock>(U"sprBlock_low1", pos); break;
 					case 27: gameObjects.blocks << std::make_shared<ShootTroughBlock>(U"sprBlockShootTrough", pos); break;
 					case 28: gameObjects.blocks << std::make_shared<FakeBlock>(U"sprBlock_low2", pos); break;
+					case 31: gameObjects.cherries << std::make_shared<SpriteCherry>(U"sprCherryLow", pos, 1
+					); break;
 					}
 				}
 			}

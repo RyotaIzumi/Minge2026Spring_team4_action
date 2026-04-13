@@ -29,6 +29,8 @@ namespace Iwanna {
 		registerTexture(U"sprCherryWhite", CherryPath + U"sprCherryWhite.png");
 		registerTexture(U"sprCherryLow", CherryPath + U"sprCherryLow.png");
 		registerTexture(U"sprCherryLowWhite", CherryPath + U"sprCherryLowWhite.png");
+		registerTexture(U"sprCherryLowWhiteLine", CherryPath + U"sprCherryLowWhiteLine.png");
+		registerTexture(U"sprCherryLowBarrageWhite", CherryPath + U"sprCherryLowBarrageWhite.png");
 		registerTexture(U"sprCherryLowBoss", CherryPath + U"sprCherryLowBoss.png");
 
 		//ブロックテクスチャ登録

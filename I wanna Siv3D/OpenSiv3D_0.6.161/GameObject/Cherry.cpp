@@ -19,6 +19,11 @@ namespace Iwanna {
 		speed = 0;
 		gravity = 0;
 		direction = 0;
+
+		//描画関連の決定
+		hasAnimation = true;
+		cherryTextureName = U"sprCherryLow";
+		cherryColorType = CherryColorType::None;
 	}
 
 	void Cherry::update() {
@@ -46,6 +51,8 @@ namespace Iwanna {
 				isMuteki = false;
 			}
 		}
+
+		setTypeColor();
 	}
 
 	void Cherry::barrageUpdate() {
@@ -54,9 +61,27 @@ namespace Iwanna {
 	void Cherry::trapUpdate(int32 id) {
 	}
 
+	// 種類で色を決定する
+	void Cherry::setTypeColor() {
+		switch (cherryColorType) {
+		case CherryColorType::None:   typeColor = ColorF(1.0, alpha); break;
+		case CherryColorType::Red:    typeColor = ColorF(Palette::Red, alpha); break;
+		case CherryColorType::Blue:   typeColor = ColorF(Palette::Blue, alpha); break;
+		case CherryColorType::Yellow: typeColor = ColorF(Palette::Yellow, alpha); break;
+		case CherryColorType::Green:  typeColor = ColorF(Palette::Lawngreen, alpha); break;
+		case CherryColorType::Orange: typeColor = ColorF(Palette::Orange, alpha); break;
+		case CherryColorType::Sky:    typeColor = ColorF(Palette::Skyblue, alpha); break;
+			//case CherryColorType::Gray:   typeColor = ColorF(Palette::Gray, alpha); break;
+		}
+	}
+
 	void Cherry::draw() const {
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
-		TextureAsset(U"sprCherryLow").scaled(scaleMag).drawAt(pos.x, pos.y - 1);
+		int32 texRange;
+		if(hasAnimation)texRange = Periodic::Square0_1(0.5) * textureEdge;
+		else texRange = 0;
+
+		TextureAsset(cherryTextureName)(texRange,0,textureEdge,textureEdge).scaled(scaleMag).drawAt(pos.x, pos.y - 1,typeColor);
 		//hitBox->draw(Palette::Blue);//判定の可視化
 	}
 
@@ -152,6 +177,18 @@ namespace Iwanna {
 	void Cherry::onCollision(GameObject& other) {
 	}
 
+
+	// ----- りんごの見た目を作成時に設定可能 ----- //
+	SpriteCherry::SpriteCherry(String name, Vec2 startPos, double scale) : Cherry(startPos,scale){
+		const double side = 32;
+		pos = { startPos.x * side, startPos.y * side };
+		//描画関連の決定
+		hasAnimation = true;
+		cherryTextureName = name;
+		cherryColorType = CherryColorType::None;
+	}
+
+	// ----- 罠りんご ----- //
 	CherryTrap::CherryTrap(Vec2 startPos, int32 id, double dir, double spd) : Cherry(startPos,1.0), trapID(id) {
 		pos = startPos;
 		direction = dir;
@@ -196,7 +233,7 @@ namespace Iwanna {
 		hitBox = std::make_shared<CircleHitBox>(pos, hitBoxSize * scaleMag);
 		type = ObjectType::Cherry;
 		cherryType = CherryType::Gimmik;
-		gimmikBigCherryType = cType;
+		cherryColorType = cType;
 
 		stageManager = &manager;
 
@@ -211,7 +248,8 @@ namespace Iwanna {
 		direction = 0;
 		gravity = 0;
 
-		startStep = 0;
+		hasAnimation = true;
+		cherryTextureName = U"sprCherryLowWhite";
 	}
 
 	void GimmikBigCherry::barrageUpdate() {
@@ -229,31 +267,11 @@ namespace Iwanna {
 		setTypeColor();
 	}
 
-	void GimmikBigCherry::draw() const {
-
-		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
-		TextureAsset(U"sprCherryLowWhite").scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1, typeColor);
-		//hitBox->draw(ColorF(0.7,0.7));//判定の可視化
-	}
-
-	// 種類で色を決定する
-	void GimmikBigCherry::setTypeColor() {
-		alpha = isMuteki ? 0.6 : 1.0;
-		switch (gimmikBigCherryType) {
-		case CherryColorType::Red:    typeColor = ColorF(Palette::Red, alpha); break;
-		case CherryColorType::Blue:   typeColor = ColorF(Palette::Blue, alpha); break;
-		case CherryColorType::Yellow: typeColor = ColorF(Palette::Yellow, alpha); break;
-		case CherryColorType::Green:  typeColor = ColorF(Palette::Greenyellow, alpha); break;
-		case CherryColorType::Orange: typeColor = ColorF(Palette::Orange, alpha); break;
-		case CherryColorType::Sky:    typeColor = ColorF(Palette::Skyblue, alpha); break;
-		}
-	}
-
 	// 攻撃を呼び出す
 	void GimmikBigCherry::generateAttack() {
-			switch (gimmikBigCherryType) {
+			switch (cherryColorType) {
 			case CherryColorType::Red:
-				stageManager->createCherrySpread(20, 6, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0,gimmikBigCherryType); });
+				stageManager->createCherrySpread(20, 4, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0,cherryColorType); });
 				break;
 			case CherryColorType::Blue:
 				break;
@@ -275,7 +293,6 @@ namespace Iwanna {
 		pos = startPos;
 		scaleMag = scale;
 		hitBox = std::make_shared<CircleHitBox>(pos, hitBoxSize * scaleMag);
-		type = ObjectType::Cherry;
 		cherryType = CherryType::Barrage;
 		cherryColorType = colorType;
 
@@ -285,29 +302,12 @@ namespace Iwanna {
 		isDeleteOutOfScreen = true;
 
 		alpha = 1.0;
-		startStep = 0;
+
+		hasAnimation = false;
+		cherryTextureName = U"sprCherryLowWhite";
 	}
 
 	void BarrageCherry::barrageUpdate() {
 		setTypeColor();
-	}
-
-	void BarrageCherry::draw() const {
-		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
-		TextureAsset(U"sprCherryLowWhite").scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1, typeColor);
-		//hitBox->draw(ColorF(0.7,0.7));//判定の可視化
-	}
-
-	// 種類で色を決定する
-	void BarrageCherry::setTypeColor() {
-		switch (cherryColorType) {
-		case CherryColorType::Red:    typeColor = ColorF(Palette::Red, alpha); break;
-		case CherryColorType::Blue:   typeColor = ColorF(Palette::Blue, alpha); break;
-		case CherryColorType::Yellow: typeColor = ColorF(Palette::Yellow, alpha); break;
-		case CherryColorType::Green:  typeColor = ColorF(Palette::Lawngreen, alpha); break;
-		case CherryColorType::Orange: typeColor = ColorF(Palette::Orange, alpha); break;
-		case CherryColorType::Sky:    typeColor = ColorF(Palette::Skyblue, alpha); break;
-		//case CherryColorType::Gray:   typeColor = ColorF(Palette::Gray, alpha); break;
-		}
 	}
 }

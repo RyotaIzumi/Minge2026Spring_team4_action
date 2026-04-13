@@ -281,7 +281,7 @@ namespace Iwanna {
 	void BossSubCherry::draw() const {
 
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
-		TextureAsset(U"sprCherryLowWhite").scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1, typeColor);
+		TextureAsset(U"sprCherryLowBarrageWhite").scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1, typeColor);
 		//hitBox->draw(ColorF(0.7,0.7));//判定の可視化
 
 		// ===== HPバー =====
@@ -392,7 +392,7 @@ namespace Iwanna {
 
 	void BossBarrageCherry::draw() const {
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
-		TextureAsset(U"sprCherryLowWhite").scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1, typeColor);
+		TextureAsset(U"sprCherryLowBarrageWhite").scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1, typeColor);
 		//hitBox->draw(ColorF(0.7,0.7));//判定の可視化
 	}
 
@@ -537,7 +537,7 @@ namespace Iwanna {
 
 	void BossSubThrowCherry::draw() const {
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
-		TextureAsset(U"sprCherryLowWhite").scaled(scaleMag).rotated(rotateC).drawAt(pos.x - 1, pos.y - 1, typeColor);
+		TextureAsset(U"sprCherryLowBarrageWhite").scaled(scaleMag).rotated(rotateC).drawAt(pos.x - 1, pos.y - 1, typeColor);
 		//hitBox->draw(ColorF(0.7,0.7));//判定の可視化
 	}
 }

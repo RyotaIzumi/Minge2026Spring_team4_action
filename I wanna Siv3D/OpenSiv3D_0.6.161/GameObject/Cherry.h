@@ -18,13 +18,13 @@ namespace Iwanna {
 	};
 	// りんごの色の種類
 	enum class CherryColorType {
+		None,
 		Red,
 		Blue,
 		Yellow,
 		Green,
 		Orange,
-		Sky,
-		None
+		Sky
 	};
 	class Cherry : public GameObject {
 	private:
@@ -52,8 +52,15 @@ namespace Iwanna {
 		bool isMuteki = false;
 		Timer mutekiInterval{0.5s};
 
-		//描画関連
+		//描画,アニメーション関連
 		double alpha = 1.0;
+		bool hasAnimation = false;
+		int32 textureEdge = 32;
+		String cherryTextureName = U"sprCherryLow";
+
+		CherryColorType cherryColorType;
+		ColorF typeColor;
+
 	public:
 		bool isDelete = false;//消去用フラグ
 		bool isOutOfScreen = false;//画面外判定用フラグ
@@ -63,6 +70,8 @@ namespace Iwanna {
 		void update() override;
 		virtual void barrageUpdate();
 		virtual void trapUpdate(int32 id);
+
+		void setTypeColor();
 		void draw() const override;
 
 		void movePosition(const Vec2& targetPoint, double timeSec, bool accele = false);
@@ -80,6 +89,11 @@ namespace Iwanna {
 		void onCollision(GameObject& other) override;
 	};
 
+	class SpriteCherry : public Cherry {
+	public:
+		SpriteCherry(String name, Vec2 startPos, double scale);
+	};
+
 	class CherryTrap : public Cherry {
 	private:
 		int32 trapID = 0;
@@ -94,35 +108,23 @@ namespace Iwanna {
 	};
 
 	class BarrageCherry : public Cherry {
-	protected:
-		int32 startStep = 0;
-		CherryColorType cherryColorType;
-		ColorF typeColor;
 	public:
 		BarrageCherry(Vec2 startPos, double scale, CherryColorType colorType);
 
 		void barrageUpdate() override;
-		void draw() const override;
-
-		void setTypeColor();
 	};
 
 	class GimmikBigCherry : public Cherry {
 	private:
 		StageManager* stageManager = nullptr;
-		CherryColorType gimmikBigCherryType;
-		int32 startStep = 0;
-		ColorF typeColor;
 
-		Timer startTimer{ 2.3s, StartImmediately::Yes };
-		Timer intervalTimer{ 1.0s };
+		Timer startTimer{ 2.1s, StartImmediately::Yes };
+		Timer intervalTimer{ 1.5s };
 	public:
 		GimmikBigCherry(Vec2 startPos, double scale, CherryColorType cType, StageManager& manager);
 
 		void barrageUpdate() override;
-		void draw() const override;
 
-		void setTypeColor();
 		void generateAttack();
 	};
 }

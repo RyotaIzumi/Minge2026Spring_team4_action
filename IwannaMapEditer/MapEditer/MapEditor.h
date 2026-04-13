@@ -13,6 +13,7 @@ private:
 
 	Array<AutoTile> autoTiles;
 	Texture baseTexture{ U"texture/object/none.png" };
+	Array<int32> crossTileIds{};//格子上に置きたいタイルのID
 
 	static constexpr int VIEW_WIDTH = 25;
 	static constexpr int VIEW_HEIGHT = 19;

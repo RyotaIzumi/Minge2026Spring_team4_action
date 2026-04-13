@@ -11,12 +11,11 @@ namespace Iwanna {
 		 */
 	void StageManager::createCherrySpread(int32 num, double spd, const std::function<std::shared_ptr<Cherry>()>& factory) {
 		const double dirRange = 360.0;
-		const double startDir = Random(360);
 
 		for (int i = 0; i < num; i++) {
 			auto cherry = factory();
 			cherry->speed = spd;
-			cherry->direction = i * (dirRange / num) + startDir;
+			cherry->direction = i * (dirRange / num);
 			createCherry(cherry);
 		}
 	}

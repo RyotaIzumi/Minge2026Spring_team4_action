@@ -41,6 +41,12 @@ MapEditor::MapEditor()
 		AutoTile{ Image{ objectPath + U"sprBlockHide.png" }, 26 },
 		AutoTile{ Image{ objectPath + U"sprBlockShootTrough.png" }, 27 },
 		AutoTile{ Image{ objectPath + U"sprBlockFake.png" }, 28 },
+		AutoTile{ Image{ objectPath + U"sprCherryLow.png" }, 31 },
+	};
+
+	crossTileIds =
+	{
+		31
 	};
 
 	state.mapWidthText.text = Format(state.mapSize.x);
@@ -327,6 +333,7 @@ void MapEditor::draw()
 void MapEditor::drawMap()
 {
 	const int tileSize = autoTiles[0].getTileSize();
+	const Vec2 crossOffset = Vec2{ tileSize, tileSize } / 2;
 
 	int startX = state.scrollX;
 	int startY = state.scrollY;
@@ -348,7 +355,8 @@ void MapEditor::drawMap()
 				const auto targetTile = autoTiles[GetAutoTileIndexById(autoTiles,state.grid[y][x])];
 				int32 targetId = targetTile.getTileId();
 
-				targetTile.getTile(targetId, 0).draw(drawPos, state.settingMode == 0 ? ColorF{ 1.0, 1.0 } : ColorF{ 1.0, 0.5 });
+				if(crossTileIds.contains(targetId)) targetTile.getTile(targetId, 0).draw(drawPos - crossOffset, state.settingMode == 0 ? ColorF{ 1.0, 1.0 } : ColorF{ 1.0, 0.5 });
+				else targetTile.getTile(targetId, 0).draw(drawPos, state.settingMode == 0 ? ColorF{ 1.0, 1.0 } : ColorF{ 1.0, 0.5 });
 			}
 			else
 			{
