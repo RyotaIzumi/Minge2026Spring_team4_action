@@ -53,7 +53,6 @@ namespace Iwanna {
 		Timer mutekiInterval{0.5s};
 
 		//描画,アニメーション関連
-		double alpha = 1.0;
 		bool hasAnimation = false;
 		int32 textureEdge = 32;
 		String cherryTextureName = U"sprCherryLow";
@@ -108,6 +107,8 @@ namespace Iwanna {
 	};
 
 	class BarrageCherry : public Cherry {
+	protected:
+		int32 startStep = 0;
 	public:
 		BarrageCherry(Vec2 startPos, double scale, CherryColorType colorType);
 

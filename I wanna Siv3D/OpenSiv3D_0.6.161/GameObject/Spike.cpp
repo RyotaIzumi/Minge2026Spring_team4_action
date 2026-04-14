@@ -10,6 +10,7 @@ namespace Iwanna {
 		hitBox = std::make_shared<SpikeHitBox>(pos, dir);
 		type = ObjectType::Spike;
 		canPlayerKill = true;
+		alpha = 1.0;
 	}
 
 	void Spike::update() {
@@ -20,10 +21,10 @@ namespace Iwanna {
 
 	void Spike::draw() const {
 		switch (spriteDirection) {
-		case 0:TextureAsset(U"sprSpikeUp_" + typeName).draw(pos); break;
-		case 1:TextureAsset(U"sprSpikeLeft_" + typeName).draw(pos); break;
-		case 2:TextureAsset(U"sprSpikeDown_" + typeName).draw(pos); break;
-		case 3:TextureAsset(U"sprSpikeRight_" + typeName).draw(pos); break;
+		case 0:TextureAsset(U"sprSpikeUp_" + typeName).draw(pos,ColorF(1.0,alpha)); break;
+		case 1:TextureAsset(U"sprSpikeLeft_" + typeName).draw(pos, ColorF(1.0, alpha)); break;
+		case 2:TextureAsset(U"sprSpikeDown_" + typeName).draw(pos, ColorF(1.0, alpha)); break;
+		case 3:TextureAsset(U"sprSpikeRight_" + typeName).draw(pos, ColorF(1.0, alpha)); break;
 		}
 		
 		//hitBox->draw(ColorF(Palette::Blue,0.7));
@@ -109,5 +110,33 @@ namespace Iwanna {
 			}
 		}
 		hitBox->setPos(pos);
+	}
+
+	// ----- 途中で出現する針 ----- //
+	AppendSpike::AppendSpike(String typeName, Vec2 startPos, int32 dir) : Spike(typeName, { startPos.x, startPos.y }, dir) {
+		alpha = 0.0;
+		canPlayerKill = false;
+	}
+
+	void AppendSpike::update() {
+		if(Global::isSecretTriggerActivated) {
+			alpha += 0.02;
+			canPlayerKill = true;
+			if (alpha > 1.0) alpha = 1.0;
+		}
+	}
+
+	// ----- 途中で消える針 ----- //
+	DeleteSpike::DeleteSpike(String typeName, Vec2 startPos, int32 dir) : Spike(typeName, { startPos.x, startPos.y }, dir) {
+		alpha = 1.0;
+		canPlayerKill = true;
+	}
+
+	void DeleteSpike::update() {
+		if (Global::isSecretTriggerActivated) {
+			alpha -= 0.02;
+			canPlayerKill = false;
+			if (alpha < 0.0) isDelete = true;
+		}
 	}
 }

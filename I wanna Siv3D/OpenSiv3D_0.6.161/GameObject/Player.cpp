@@ -274,6 +274,9 @@ namespace Iwanna {
 				else {
 					if(trigger->getTrapID() - 1 == nowTrapID)trigger->triggerActivate();
 				}
+				if(trigger->getTriggerType() == TriggerType::Secret) {
+					trigger->triggerActivate();
+				}
 			}
 		}
 
@@ -281,8 +284,10 @@ namespace Iwanna {
 		if (other.type == ObjectType::Warp) {
 			if (this->intersects(other)) {
 				auto* warp = dynamic_cast<Warp*>(&other);
-				Global::nowRoomName = warp->getNextRoomName();
-				Global::isChangeRoom = true;
+				if (warp->getCanWarp()) {
+					Global::nowRoomName = warp->getNextRoomName();
+					Global::isChangeRoom = true;
+				}
 			}
 		}
 	}

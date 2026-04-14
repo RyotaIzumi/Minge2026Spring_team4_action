@@ -247,10 +247,11 @@ namespace Iwanna {
 		speed = 0;
 		direction = 0;
 		gravity = 0;
+	
+		hasAnimation = true;
+		cherryTextureName = U"sprCherryLowWhite";
 
-		startStep = 0;
-
-		switch (gimmikBigCherryType) {
+		switch (cherryColorType) {
 		case CherryColorType::Red:    attackInterval = 1.0; break;
 		case CherryColorType::Blue:   attackInterval = 2.0; break;
 		case CherryColorType::Yellow:
@@ -262,9 +263,6 @@ namespace Iwanna {
 		case CherryColorType::Orange: attackInterval = 1.0; break;
 		case CherryColorType::Sky:    attackInterval = 1.9; break;
 		}
-	
-		hasAnimation = true;
-		cherryTextureName = U"sprCherryLowWhite";
 	}
 
 	void GimmikBigCherry::barrageUpdate() {
@@ -278,8 +276,6 @@ namespace Iwanna {
 			generateAttack();
 			attackIntervalStopwatch.restart();
 		}
-
-		setTypeColor();
 	}
 
 	// 攻撃を呼び出す
@@ -289,17 +285,17 @@ namespace Iwanna {
 				stageManager->createCherrySpread(20, 4, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0,cherryColorType); });
 				break;
 			case CherryColorType::Blue:
-				stageManager->createBlueLineCherry([this]() { return std::make_shared<BarrageGimmikBlueCherry>(pos, 1.0, gimmikBigCherryType); });
+				stageManager->createBlueLineCherry([this]() { return std::make_shared<BarrageGimmikBlueCherry>(pos, 1.0, cherryColorType); });
 				break;
 			case CherryColorType::Yellow:
-				stageManager->createYellowStarCherry(5, 2, pos, 7, [this]() { return std::make_shared<BarrageGimmikYellowCherry>(pos, 1.0, gimmikBigCherryType); });
+				stageManager->createYellowStarCherry(5, 2, pos, 7, [this]() { return std::make_shared<BarrageGimmikYellowCherry>(pos, 1.0, cherryColorType); });
 				break;
 			case CherryColorType::Green:
 				break;
 			case CherryColorType::Orange:
 				break;
 			case CherryColorType::Sky:
-				stageManager->createSkyTargetCherry(7, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0, gimmikBigCherryType); });
+				stageManager->createSkyTargetCherry(7, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0, cherryColorType); });
 				break;
 			}
 	}
@@ -326,26 +322,6 @@ namespace Iwanna {
 	}
 
 	void BarrageCherry::barrageUpdate() {
-		setTypeColor();
-	}
-
-	void BarrageCherry::draw() const {
-		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
-		TextureAsset(U"sprCherryLowWhite").scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1, typeColor);
-		//hitBox->draw(ColorF(0.7,0.7));//判定の可視化
-	}
-
-	// 種類で色を決定する
-	void BarrageCherry::setTypeColor() {
-		switch (cherryColorType) {
-		case CherryColorType::Red:    typeColor = ColorF(Palette::Red, alpha); break;
-		case CherryColorType::Blue:   typeColor = ColorF(Palette::Blue, alpha); break;
-		case CherryColorType::Yellow: typeColor = ColorF(Palette::Yellow, alpha); break;
-		case CherryColorType::Green:  typeColor = ColorF(Palette::Lawngreen, alpha); break;
-		case CherryColorType::Orange: typeColor = ColorF(Palette::Orange, alpha); break;
-		case CherryColorType::Sky:    typeColor = ColorF(Palette::Skyblue, alpha); break;
-		//case CherryColorType::Gray:   typeColor = ColorF(Palette::Gray, alpha); break;
-		}
 	}
 
 	// ----- 弾幕用青りんご ----- //
@@ -373,8 +349,6 @@ namespace Iwanna {
 			}
 			break;
 		}
-
-		setTypeColor();
 	}
 
 	// ----- 弾幕用黄りんご ----- //
@@ -403,7 +377,5 @@ namespace Iwanna {
 			c -= 0.3;
 			break;
 		}
-
-		setTypeColor();
 	}
 }

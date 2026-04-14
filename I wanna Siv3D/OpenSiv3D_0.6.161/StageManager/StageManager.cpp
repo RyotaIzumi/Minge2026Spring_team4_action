@@ -127,16 +127,21 @@ namespace Iwanna {
 			for (auto& t : triggers) {
 				stockLargeNearGameObjects.add(t.get());
 				//生成時に設定した他条件で起動するトリガー用
-				if (t->getCheckOtherCondition()) {
-					if (t->checkOtherConditionFunc() && t->getIsActivated()) {
+				switch (t->getTriggerType()) {
+				case TriggerType::Normal:
+					//他通常トリガー用
+					if (t->getIsActivated()) {
 						latestActivatedTriggerID = t->getTrapID();
 					}
-					continue;
+					break;
+				case TriggerType::OtherCondition:
+						//他条件トリガー用
+						if (t->checkOtherConditionFunc() && t->getIsActivated()) {
+							latestActivatedTriggerID = t->getTrapID();
+						}
+					break;
 				}
-				//他通常トリガー用
-				if (t->getIsActivated()) {
-					latestActivatedTriggerID = t->getTrapID();
-				}
+				
 			}
 
 			// 特殊罠用にトリガー再設定

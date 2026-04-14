@@ -2,16 +2,6 @@
   {
     "Gimmiks": [
       {
-        "gimmikName": "罠トリガー",
-        "gimmikPos": [
-          736.0,
-          448.0
-        ],
-        "value1": 1,
-        "value2": 1.0,
-        "value3": 1.0
-      },
-      {
         "gimmikName": "ワープ",
         "gimmikPos": [
           672.0,
@@ -46,6 +36,16 @@
         "gimmikPos": [
           736.0,
           -32.0
+        ],
+        "value1": 0,
+        "value2": 0.0,
+        "value3": 0.0
+      },
+      {
+        "gimmikName": "特殊ワープ",
+        "gimmikPos": [
+          496.0,
+          304.0
         ],
         "value1": 0,
         "value2": 0.0,

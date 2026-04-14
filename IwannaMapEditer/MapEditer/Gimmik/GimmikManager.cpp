@@ -5,7 +5,7 @@ GimmikManager::GimmikManager()
 	names = {
 		U"罠針_上", U"罠針_左", U"罠針_下", U"罠針_右",
 		U"罠トリガー", U"前トリガー", U"罠りんご", U"罠ブロック",
-		U"ワープ"
+		U"ワープ",U"特殊ワープ"
 	};
 
 	const FilePath path = U"texture/gimmik/";
@@ -19,7 +19,8 @@ GimmikManager::GimmikManager()
 		Texture{ path + U"trapTriggerPrev.png" },
 		Texture{ path + U"trapCherry.png" },
 		Texture{ path + U"trapBlock.png" },
-		Texture{ path + U"sprWarp.png" }
+		Texture{ path + U"sprWarp.png" },
+		Texture{ path + U"sprSecretWarp.png" }
 	};
 
 	listBox.items = names;
@@ -151,7 +152,7 @@ void GimmikManager::drawUI()
 		FontAsset(U"Font")(U"").draw(base.x, base.y + value2AddHeight);
 		FontAsset(U"Font")(U"").draw(base.x, base.y + value3AddHeight);
 	}
-	else if (gimmiks[idx].name == U"ワープ") {
+	else if (gimmiks[idx].name == U"ワープ" || gimmiks[idx].name == U"特殊ワープ") {
 		FontAsset(U"Font")(U"stage ").draw(base.x, base.y + value1AddHeight);
 		FontAsset(U"Font")(U"next x").draw(base.x, base.y + value2AddHeight);
 		FontAsset(U"Font")(U"next y").draw(base.x, base.y + value3AddHeight);
@@ -175,7 +176,7 @@ void GimmikManager::drawUI()
 	}
 	if (value1Text.textChanged && value1Text.text != U"")
 	{
-		if(gimmiks[idx].name == U"ワープ") gimmiks[idx].valueString = value1Text.text;
+		if(gimmiks[idx].name == U"ワープ" || gimmiks[idx].name == U"特殊ワープ") gimmiks[idx].valueString = value1Text.text;
 		else gimmiks[idx].value1 = Parse<int32>(value1Text.text);
 	}
 	if (value2Text.textChanged && value2Text.text != U"")

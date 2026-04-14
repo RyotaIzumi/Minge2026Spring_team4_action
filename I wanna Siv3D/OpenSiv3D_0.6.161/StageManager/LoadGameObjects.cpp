@@ -55,8 +55,12 @@ namespace Iwanna {
 					case 26: gameObjects.blocks << std::make_shared<HideBlock>(U"sprBlock_low1", pos); break;
 					case 27: gameObjects.blocks << std::make_shared<ShootTroughBlock>(U"sprBlockShootTrough", pos); break;
 					case 28: gameObjects.blocks << std::make_shared<FakeBlock>(U"sprBlock_low2", pos); break;
-					case 31: gameObjects.cherries << std::make_shared<SpriteCherry>(U"sprCherryLow", pos, 1
-					); break;
+					case 31: gameObjects.cherries << std::make_shared<SpriteCherry>(U"sprCherryLow", pos, 1); break;
+					case 36: gameObjects.spikes << std::make_shared<AppendSpike>(U"low", pos, 0); break;
+					case 37: gameObjects.spikes << std::make_shared<AppendSpike>(U"low", pos, 2); break;
+					case 38: gameObjects.spikes << std::make_shared<DeleteSpike>(U"low", pos, 0); break;
+					case 39: gameObjects.spikes << std::make_shared<DeleteSpike>(U"low", pos, 2); break;
+					case 40: gameObjects.triggers << std::make_shared<SecretTrigger>(pos); break;
 					}
 				}
 			}
@@ -82,8 +86,8 @@ namespace Iwanna {
 		// ステージ情報をパース
 		for (const auto& stage : jsonArray.arrayView()) {
 			// プレイヤーの初期位置を取得し反映
-			Vec2 startPlayerPos = parsePos(stage[U"startPlayerPos"]);
-			startPlayerPos *= oneTileSize;
+			Vec2 startPlayerPos = parseIntactPos(stage[U"startPlayerPos"]);
+
 			// セーブデータが無い場合、初期位置をCSVの値から設定
 			if (!Global::isExistSaveData || Global::isChangeRoom) {
 				gameObjects.player->pos = startPlayerPos;
@@ -227,6 +231,7 @@ namespace Iwanna {
 					if (gimmikName == U"罠りんご") gameObjects.cherries << std::make_shared<CherryTrap>(gimmikIntactPos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
 					if (gimmikName == U"罠ブロック") gameObjects.blocks << std::make_shared<BreakBlock>(U"sprBlock_low3", gimmikParsePos, static_cast<int32>(gimmikValue1));
 					if (gimmikName == U"ワープ") gameObjects.warps << std::make_shared<Warp>(gimmikIntactPos, gimmikString);
+					if (gimmikName == U"特殊ワープ") gameObjects.warps << std::make_shared<SecretWarp>(gimmikIntactPos, gimmikString);
 				}
 			}
 

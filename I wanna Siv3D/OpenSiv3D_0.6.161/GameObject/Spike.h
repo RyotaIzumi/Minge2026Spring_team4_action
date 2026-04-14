@@ -52,4 +52,16 @@ namespace Iwanna {
 		SpikePathTrap(String typeName, Vec2 startPos, int32 dir, int32 id, Vec2 next, double time);
 		void trapUpdate(int32 id) override;
 	};
+
+	class AppendSpike : public Spike {
+	public:
+		AppendSpike(String typeName, Vec2 startPos, int32 dir);
+		void update() override;
+	};
+
+	class DeleteSpike : public Spike {
+	public:
+		DeleteSpike(String typeName, Vec2 startPos, int32 dir);
+		void update() override;
+	};
 }

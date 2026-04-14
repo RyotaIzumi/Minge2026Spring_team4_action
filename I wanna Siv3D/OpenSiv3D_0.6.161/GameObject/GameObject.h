@@ -35,6 +35,7 @@ namespace Iwanna {
 		double speed;
 		double direction;
 		double gravity;
+		double alpha = 1.0;
 
 		virtual ~GameObject() = default;
 
