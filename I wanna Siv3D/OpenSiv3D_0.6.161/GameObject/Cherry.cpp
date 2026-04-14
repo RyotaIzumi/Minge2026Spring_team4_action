@@ -248,6 +248,21 @@ namespace Iwanna {
 		direction = 0;
 		gravity = 0;
 
+		startStep = 0;
+
+		switch (gimmikBigCherryType) {
+		case CherryColorType::Red:    attackInterval = 1.0; break;
+		case CherryColorType::Blue:   attackInterval = 2.0; break;
+		case CherryColorType::Yellow:
+			startTimer.pause();
+			generateAttack();
+			attackInterval = 100000.0;
+			break;
+		case CherryColorType::Green:  attackInterval = 1.0; break;
+		case CherryColorType::Orange: attackInterval = 1.0; break;
+		case CherryColorType::Sky:    attackInterval = 1.9; break;
+		}
+	
 		hasAnimation = true;
 		cherryTextureName = U"sprCherryLowWhite";
 	}
@@ -256,12 +271,12 @@ namespace Iwanna {
 		if (startTimer.reachedZero()) {
 			generateAttack();
 			startTimer.reset();
-			intervalTimer.restart();
+			attackIntervalStopwatch.restart();
 		}
 
-		if (intervalTimer.reachedZero()) {
+		if (attackIntervalStopwatch.sF() > attackInterval) {
 			generateAttack();
-			intervalTimer.restart();
+			attackIntervalStopwatch.restart();
 		}
 
 		setTypeColor();
@@ -274,14 +289,17 @@ namespace Iwanna {
 				stageManager->createCherrySpread(20, 4, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0,cherryColorType); });
 				break;
 			case CherryColorType::Blue:
+				stageManager->createBlueLineCherry([this]() { return std::make_shared<BarrageGimmikBlueCherry>(pos, 1.0, gimmikBigCherryType); });
 				break;
 			case CherryColorType::Yellow:
+				stageManager->createYellowStarCherry(5, 2, pos, 7, [this]() { return std::make_shared<BarrageGimmikYellowCherry>(pos, 1.0, gimmikBigCherryType); });
 				break;
 			case CherryColorType::Green:
 				break;
 			case CherryColorType::Orange:
 				break;
 			case CherryColorType::Sky:
+				stageManager->createSkyTargetCherry(7, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0, gimmikBigCherryType); });
 				break;
 			}
 	}
@@ -308,6 +326,84 @@ namespace Iwanna {
 	}
 
 	void BarrageCherry::barrageUpdate() {
+		setTypeColor();
+	}
+
+	void BarrageCherry::draw() const {
+		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
+		TextureAsset(U"sprCherryLowWhite").scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1, typeColor);
+		//hitBox->draw(ColorF(0.7,0.7));//判定の可視化
+	}
+
+	// 種類で色を決定する
+	void BarrageCherry::setTypeColor() {
+		switch (cherryColorType) {
+		case CherryColorType::Red:    typeColor = ColorF(Palette::Red, alpha); break;
+		case CherryColorType::Blue:   typeColor = ColorF(Palette::Blue, alpha); break;
+		case CherryColorType::Yellow: typeColor = ColorF(Palette::Yellow, alpha); break;
+		case CherryColorType::Green:  typeColor = ColorF(Palette::Lawngreen, alpha); break;
+		case CherryColorType::Orange: typeColor = ColorF(Palette::Orange, alpha); break;
+		case CherryColorType::Sky:    typeColor = ColorF(Palette::Skyblue, alpha); break;
+		//case CherryColorType::Gray:   typeColor = ColorF(Palette::Gray, alpha); break;
+		}
+	}
+
+	// ----- 弾幕用青りんご ----- //
+	BarrageGimmikBlueCherry::BarrageGimmikBlueCherry(Vec2 startPos, double scale, CherryColorType colorType) : BarrageCherry(startPos, scale, colorType) {
+
+		canPlayerKill = true;
+		isDelete = false;
+		isDeleteOutOfScreen = false;
+
+		alpha = 1.0;
+		startStep = 0;
+	}
+
+	void BarrageGimmikBlueCherry::barrageUpdate() {
+		switch (startStep) {
+		case 0:
+			gravity = 0.2;
+			speed = 1;
+			direction = 270;
+			startStep++;
+			break;
+		case 1:
+			if (pos.y > 700) {
+				isDelete = true;
+			}
+			break;
+		}
+
+		setTypeColor();
+	}
+
+	// ----- 弾幕用黄りんご ----- //
+	BarrageGimmikYellowCherry::BarrageGimmikYellowCherry(Vec2 startPos, double scale, CherryColorType colorType) : BarrageCherry(startPos, scale, colorType) {
+
+		canPlayerKill = true;
+		isDelete = false;
+		isDeleteOutOfScreen = false;
+
+		centerPos = startPos;
+
+		alpha = 1.0;
+		startStep = 0;
+	}
+
+	void BarrageGimmikYellowCherry::barrageUpdate() {
+		switch (startStep) {
+		case 0:
+			r = calculateDistance(pos, centerPos);
+			c = direction;
+			startStep++;
+			break;
+		case 1:
+			pos.x = r * cos(Math::ToRadians(c)) + centerPos.x;
+			pos.y = -r * sin(Math::ToRadians(c)) + centerPos.y;
+			c -= 0.3;
+			break;
+		}
+
 		setTypeColor();
 	}
 }

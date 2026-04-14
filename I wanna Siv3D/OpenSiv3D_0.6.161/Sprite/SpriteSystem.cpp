@@ -65,7 +65,6 @@ namespace Iwanna {
 			}
 		}
 
-
 		int texRange = frameIndex * frameWidth;
 
 		String AddedTextureName = U"";
