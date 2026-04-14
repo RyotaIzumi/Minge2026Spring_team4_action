@@ -10,7 +10,8 @@ namespace Iwanna {
 		Normal,
 		Boss,
 		MoveTrap,
-		FakeTrap
+		FakeTrap,
+		Secret
 	};
 
 	class SavePoint : public GameObject {
@@ -38,6 +39,7 @@ namespace Iwanna {
 		void onCollision(GameObject& other) override;
 		bool getIsTrap() const;
 		int32 getTrapID() const;
+		SaveType getSaveType() const;
 	};
 
 	class BossSavePoint : public SavePoint {
@@ -76,5 +78,20 @@ namespace Iwanna {
 		void setIsStartTrap(bool);
 		bool getIsStartTrap() const;
 		void draw() const override;
+	};
+
+	class SecretSavePoint : public SavePoint {
+	private:
+		double textAlpha = 0.0;
+		String escapeRoomName;
+	public:
+		SecretSavePoint(Vec2 startPos, String roomName);
+
+		bool isPlayerTouching = false;
+
+		void update() override;
+		void draw() const override;
+
+		String getEscapeRoomName() const;
 	};
 }

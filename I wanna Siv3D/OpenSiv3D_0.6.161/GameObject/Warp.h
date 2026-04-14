@@ -21,19 +21,23 @@ namespace Iwanna {
 		bool getCanWarp() const;
 	};
 
-	class SecretWarp : public Warp {
-	private:
+	class SecretWarpEffect : public GameObject {
 	public:
-		SecretWarp(Vec2 startPos, String roomName);
+		SecretWarpEffect(Vec2 startPos);
 
 		void update() override;
 		void draw() const override;
+
+		void onCollision(GameObject& other) override;
 	};
 
-	class SecretWarpEffect : public GameObject {
+	class SecretWarp : public Warp {
 	private:
+		double scale = 1.0;
+		Array<std::shared_ptr<SecretWarpEffect>> warpEffects;
+		Timer generateWarpTimer{0.02s,StartImmediately::Yes};
 	public:
-		SecretWarpEffect(Vec2 startPos);
+		SecretWarp(Vec2 startPos, String roomName);
 
 		void update() override;
 		void draw() const override;

@@ -46,6 +46,11 @@ namespace Iwanna {
 		return trapID;
 	}
 
+	//セーブポイントの種類を取得
+	SaveType SavePoint::getSaveType() const {
+		return saveType;
+	}
+
 	// ----- 以下別種類のセーブブロック ----- //
 	//(ボス開始用セーブ)
 	BossSavePoint::BossSavePoint(Vec2 startPos, int32 id) : SavePoint(startPos) {
@@ -161,5 +166,36 @@ namespace Iwanna {
 		TextureAsset(U"sprFakeSave")(0, 0, side, side).draw(pos);
 		if (Global::trapCameraActivatedInTrap2Map)
 			FontAsset(U"Button")(U"↓").drawAt(pos.x + 16,pos.y - 20,ColorF(Palette::Black));
+	}
+
+	// ----- 隠しアイテム部屋用セーブポイント ----- //
+	SecretSavePoint::SecretSavePoint(Vec2 startPos,String roomName) : SavePoint(startPos) {
+		escapeRoomName = roomName;
+	}
+
+	void SecretSavePoint::update() {
+		if (isSaving && saveIntervalTimer.reachedZero()) {
+			isSaving = false;
+		}
+
+		if (Global::isSecretTriggerActivated) {
+			alpha -= 0.02;
+			if (alpha < 0) isDelete = true;
+		}
+
+		if (textAlpha < 1.0 && isPlayerTouching)textAlpha += 0.04;
+		else textAlpha -= 0.02;
+	}
+
+	void SecretSavePoint::draw() const {
+		TextureAsset(U"sprSave")(isSaving ? side : 0, 0, side, side).draw(pos,ColorF(1.0,alpha));
+
+		if (isPlayerTouching) {
+			FontAsset(U"Button")(U"Press Q to escape").drawAt(pos.x, pos.y - 20, ColorF(Palette::Whitesmoke, textAlpha));
+		}
+	}
+
+	String SecretSavePoint::getEscapeRoomName() const {
+		return escapeRoomName;
 	}
 }

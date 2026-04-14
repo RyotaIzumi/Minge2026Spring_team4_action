@@ -69,6 +69,7 @@ namespace Iwanna {
 		static const FilePath OtherPath = U"Texture/Other/";
 		registerTexture(U"sprSave", OtherPath + U"sprSave.png");
 		registerTexture(U"sprWarp", OtherPath + U"sprWarp.png");
+		registerTexture(U"sprSecretWarp", OtherPath + U"sprSecretWarp.png");
 		registerTexture(U"sprFakeSave", OtherPath + U"sprFakeSave.png");
 		registerTexture(U"warningTrap", OtherPath + U"warningTrap.png");
 		registerTexture(U"steamTrap", OtherPath + U"steamTrap.png");

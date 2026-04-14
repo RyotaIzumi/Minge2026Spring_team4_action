@@ -3,6 +3,7 @@
 #include "../GameObject/Trigger.h"
 #include "../GameObject/Block.h"
 #include "../GameObject/Warp.h"
+#include "../GameObject/SavePoint.h"
 
 namespace Iwanna {
 	Player::Player() {
@@ -275,7 +276,8 @@ namespace Iwanna {
 					if(trigger->getTrapID() - 1 == nowTrapID)trigger->triggerActivate();
 				}
 				if(trigger->getTriggerType() == TriggerType::Secret) {
-					trigger->triggerActivate();
+					auto* secretTrigger = dynamic_cast<SecretTrigger*>(trigger);
+					secretTrigger->triggerActivate();
 				}
 			}
 		}
@@ -286,6 +288,20 @@ namespace Iwanna {
 				auto* warp = dynamic_cast<Warp*>(&other);
 				if (warp->getCanWarp()) {
 					Global::nowRoomName = warp->getNextRoomName();
+					Global::isChangeRoom = true;
+				}
+			}
+		}
+
+		// セーブとの衝突
+		if (other.type == ObjectType::SavePoint) {
+			auto* save = dynamic_cast<SavePoint*>(&other);
+			if (save->getSaveType() == SaveType::Secret) {
+				auto* secretSave = dynamic_cast<SecretSavePoint*>(save);
+				secretSave->isPlayerTouching = this->intersects(*secretSave);
+				// セーブポイントに触れている状態で、特定のキーを押すと脱出
+				if (secretSave->isPlayerTouching && Global::inputEscape.down()) {
+					Global::nowRoomName = secretSave->getEscapeRoomName();
 					Global::isChangeRoom = true;
 				}
 			}

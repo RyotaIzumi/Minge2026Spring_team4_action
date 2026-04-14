@@ -21,6 +21,7 @@ namespace Global {
 	inline Input inputShoot = KeyZ;
 	inline Input inputStart = KeyShift;
 	inline Input inputRestart = KeyR;
+	inline Input inputEscape = KeyQ;
 
 	inline Input inputDebugPause = Key1;
 	inline Input inputDebugStart = Key2;
@@ -39,9 +40,9 @@ namespace Global {
 	inline int32 stageWidth = 800;
 	inline int32 stageHeight = 608;
 	inline bool isChangeRoom = false;
-	inline String startRoomName = U"normal4";
+	inline String startRoomName = U"normal3";
 	inline String nowRoomName = U"";
-	inline bool isLoopStage = false;
+	inline bool isLoopStage = true;
 	inline bool isSecretTriggerActivated = false;
 
 	// --- 特殊罠関連 ---

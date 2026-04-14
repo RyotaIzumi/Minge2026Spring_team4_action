@@ -30,6 +30,7 @@ namespace Iwanna {
 		Global::trapActivatedId30InTrap2Map = false;
 		Global::trapCameraActivatedInTrap2Map = false;
 		Global::isPlayerFrozen = false;
+		Global::isSecretTriggerActivated = false;
 
 		gameoverTimer.reset();
 		isShowGameOver = false;
@@ -159,6 +160,7 @@ namespace Iwanna {
 
 			// 針の更新と、起動しているトリガーIDの反映
 			for (auto& s : spikes) {
+				s->update();
 				s->trapUpdate(latestActivatedTriggerID);
 				stockNearGameObjects.add(s.get());
 			}
@@ -212,6 +214,7 @@ namespace Iwanna {
 				stockBulletsNearGameObjects.add(s.get());
 			}
 			for (auto& w : warps) {
+				w->update();
 				stockNearGameObjects.add(w.get());
 			}
 
@@ -254,6 +257,19 @@ namespace Iwanna {
 				}
 			}
 
+			//暗転演出込みのマップ用
+			if (darkEffectStages.includes(stageName)) {
+				if (darkAlpha > 0.3) {
+					darkAlpha -= 0.05;
+				}
+				else {
+					if (darkAlphaTimer.reachedZero()) {
+						darkAlpha = 0.05 + Random(0.20);
+						darkAlphaTimer.restart();
+					}
+				}
+			}
+
 			// ----- 以下削除処理 -----
 
 			//画面外のりんごを削除
@@ -274,6 +290,11 @@ namespace Iwanna {
 			//ブロック削除
 			blocks.remove_if([](auto&& block) {
 				return block->isDelete;
+			});
+
+			//セーブ削除
+			savePoints.remove_if([](auto&& save) {
+				return save->isDelete;
 			});
 
 			//役目を終えた特殊罠削除
@@ -342,6 +363,9 @@ namespace Iwanna {
 			for (auto c : gameObjects.cherries) c->draw();
 			//特殊罠描画
 			for (auto st : gameObjects.specialTraps) st->draw();
+
+			//暗転演出
+			if (darkEffectStages.includes(stageName))Rect(0, 0, 800, 608).draw(ColorF(0.0, 0.0, 0.0, darkAlpha));
 
 			//GAMEOVER描画
 			if(isShowGameOver)

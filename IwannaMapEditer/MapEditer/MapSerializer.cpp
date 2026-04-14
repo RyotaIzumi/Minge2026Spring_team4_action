@@ -56,7 +56,7 @@ void MapSerializer::SaveJSON(
 		obj[U"gimmikPos"].push_back(g.pos.x);
 		obj[U"gimmikPos"].push_back(g.pos.y);
 
-		if (g.name == U"ワープ") {
+		if (g.name == U"ワープ" || g.name == U"特殊ワープ") {
 			obj[U"value1"] = g.valueString;
 			obj[U"value2"] = g.value2;
 			obj[U"value3"] = g.value3;

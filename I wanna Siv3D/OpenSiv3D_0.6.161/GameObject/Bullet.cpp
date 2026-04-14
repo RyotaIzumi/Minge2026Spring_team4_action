@@ -84,6 +84,12 @@ namespace Iwanna {
 				bsp->saved();
 				break;
 			}
+			case SaveType::Secret:
+			{
+				auto* ssp = dynamic_cast<SecretSavePoint*>(&other);
+				if(!Global::isSecretTriggerActivated)ssp->saved();
+				break;
+			}
 			}
 		}
 	}

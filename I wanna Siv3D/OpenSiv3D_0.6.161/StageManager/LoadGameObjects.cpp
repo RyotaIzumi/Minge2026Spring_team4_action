@@ -34,11 +34,16 @@ namespace Iwanna {
 					case 22: gameObjects.spikes << std::make_shared<Spike>(U"secret", pos, 1); break;
 					case 23: gameObjects.spikes << std::make_shared<Spike>(U"secret", pos, 2); break;
 					case 24: gameObjects.spikes << std::make_shared<Spike>(U"secret", pos, 3); break;
-					case 25: gameObjects.savePoints << std::make_shared<SavePoint>(pos); break;
+					case 25: gameObjects.savePoints << std::make_shared<SecretSavePoint>(pos,U"normal5"); break;
 					case 26: gameObjects.blocks << std::make_shared<HideBlock>(U"sprBlock_low1", pos); break;
 					case 27: gameObjects.blocks << std::make_shared<ShootTroughBlock>(U"sprBlockShootTrough", pos); break;
 					case 28: gameObjects.blocks << std::make_shared<FakeBlock>(U"sprBlock_low2", pos); break;
 					case 31: gameObjects.cherries << std::make_shared<SpriteCherry>(U"sprCherryLowWhiteLine", pos, 1); break;
+					case 36: gameObjects.spikes << std::make_shared<AppendSpike>(U"secret", pos, 0); break;
+					case 37: gameObjects.spikes << std::make_shared<AppendSpike>(U"secret", pos, 2); break;
+					case 38: gameObjects.spikes << std::make_shared<DeleteSpike>(U"secret", pos, 0); break;
+					case 39: gameObjects.spikes << std::make_shared<DeleteSpike>(U"secret", pos, 2); break;
+					case 40: gameObjects.triggers << std::make_shared<SecretTrigger>(pos); break;
 					}
 				}
 				else {
@@ -110,7 +115,7 @@ namespace Iwanna {
 					gimmikParsePos = parsePos(gimmik[U"gimmikPos"]);
 					gimmikIntactPos = parseIntactPos(gimmik[U"gimmikPos"]);
 
-					if (gimmikName == U"ワープ") {
+					if (gimmikName == U"ワープ" || gimmikName == U"特殊ワープ") {
 						gimmikString = gimmik[U"value1"].getString();
 					}
 					else {
