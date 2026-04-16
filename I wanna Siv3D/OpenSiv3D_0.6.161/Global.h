@@ -40,7 +40,7 @@ namespace Global {
 	inline int32 stageWidth = 800;
 	inline int32 stageHeight = 608;
 	inline bool isChangeRoom = false;
-	inline String startRoomName = U"normal3";
+	inline String startRoomName = U"normal6";
 	inline String nowRoomName = U"";
 	inline bool isLoopStage = true;
 	inline bool isSecretTriggerActivated = false;

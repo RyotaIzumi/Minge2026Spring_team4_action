@@ -12,7 +12,8 @@ namespace Iwanna {
 		ConditionalHide,
 		Fake,
 		ShootThrough,
-		Break
+		Break,
+		Water
 	};
 
 	class Block : public GameObject {
@@ -90,5 +91,10 @@ namespace Iwanna {
 		bool getIsBreak() const;
 		void setIsBreak(bool hidden);
 		int32 getID();
+	};
+
+	class WaterBlock : public Block {
+	public:
+		WaterBlock(String name, Vec2 startPos);
 	};
 }

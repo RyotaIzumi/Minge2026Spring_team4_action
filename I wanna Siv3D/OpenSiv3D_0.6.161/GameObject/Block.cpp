@@ -199,4 +199,12 @@ namespace Iwanna {
 	int32 BreakBlock::getID() {
 		return triggerID;
 	}
+
+	// ----- 水ブロック ----- //
+	WaterBlock::WaterBlock(String name, Vec2 startPos) : Block(name, startPos) {
+		blockType = BlockType::Water;
+
+		canPlayerKill = false;
+		hasCollide = false;
+	}
 }

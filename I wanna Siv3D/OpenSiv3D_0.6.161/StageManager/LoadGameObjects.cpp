@@ -38,12 +38,15 @@ namespace Iwanna {
 					case 26: gameObjects.blocks << std::make_shared<HideBlock>(U"sprBlock_low1", pos); break;
 					case 27: gameObjects.blocks << std::make_shared<ShootTroughBlock>(U"sprBlockShootTrough", pos); break;
 					case 28: gameObjects.blocks << std::make_shared<FakeBlock>(U"sprBlock_low2", pos); break;
+					case 29: gameObjects.blocks << std::make_shared<WaterBlock>(U"sprWater", pos); break;
 					case 31: gameObjects.cherries << std::make_shared<SpriteCherry>(U"sprCherryLowWhiteLine", pos, 1); break;
 					case 36: gameObjects.spikes << std::make_shared<AppendSpike>(U"secret", pos, 0); break;
 					case 37: gameObjects.spikes << std::make_shared<AppendSpike>(U"secret", pos, 2); break;
 					case 38: gameObjects.spikes << std::make_shared<DeleteSpike>(U"secret", pos, 0); break;
 					case 39: gameObjects.spikes << std::make_shared<DeleteSpike>(U"secret", pos, 2); break;
 					case 40: gameObjects.triggers << std::make_shared<SecretTrigger>(pos); break;
+					case 43: gameObjects.spikes << std::make_shared<DeleteSpike>(U"secret", pos, 1); break;
+					case 44: gameObjects.spikes << std::make_shared<DeleteSpike>(U"secret", pos, 3); break;
 					}
 				}
 				else {
@@ -60,12 +63,15 @@ namespace Iwanna {
 					case 26: gameObjects.blocks << std::make_shared<HideBlock>(U"sprBlock_low1", pos); break;
 					case 27: gameObjects.blocks << std::make_shared<ShootTroughBlock>(U"sprBlockShootTrough", pos); break;
 					case 28: gameObjects.blocks << std::make_shared<FakeBlock>(U"sprBlock_low2", pos); break;
+					case 29: gameObjects.blocks << std::make_shared<WaterBlock>(U"sprWater", pos); break;
 					case 31: gameObjects.cherries << std::make_shared<SpriteCherry>(U"sprCherryLow", pos, 1); break;
 					case 36: gameObjects.spikes << std::make_shared<AppendSpike>(U"low", pos, 0); break;
 					case 37: gameObjects.spikes << std::make_shared<AppendSpike>(U"low", pos, 2); break;
 					case 38: gameObjects.spikes << std::make_shared<DeleteSpike>(U"low", pos, 0); break;
 					case 39: gameObjects.spikes << std::make_shared<DeleteSpike>(U"low", pos, 2); break;
 					case 40: gameObjects.triggers << std::make_shared<SecretTrigger>(pos); break;
+					case 43: gameObjects.spikes << std::make_shared<DeleteSpike>(U"low", pos, 1); break;
+					case 44: gameObjects.spikes << std::make_shared<DeleteSpike>(U"low", pos, 3); break;
 					}
 				}
 			}
@@ -107,6 +113,7 @@ namespace Iwanna {
 			double gimmikValue1;
 			double gimmikValue2;
 			double gimmikValue3;
+			double gimmikValue4;
 			String gimmikString;
 
 			if (stage.contains(U"Gimmiks")) {
@@ -119,9 +126,10 @@ namespace Iwanna {
 						gimmikString = gimmik[U"value1"].getString();
 					}
 					else {
-						gimmikValue1 = gimmik[U"value1"].get<double>();
-						gimmikValue2 = gimmik[U"value2"].get<double>();
-						gimmikValue3 = gimmik[U"value3"].get<double>();
+						if (gimmik.contains(U"value1")) gimmikValue1 = gimmik[U"value1"].get<double>();
+						if (gimmik.contains(U"value2")) gimmikValue2 = gimmik[U"value2"].get<double>();
+						if (gimmik.contains(U"value3")) gimmikValue3 = gimmik[U"value3"].get<double>();
+						if (gimmik.contains(U"value4")) gimmikValue4 = gimmik[U"value4"].get<double>();
 					}
 
 					//特定マップの特定idのトラップ用
@@ -231,6 +239,10 @@ namespace Iwanna {
 					if (gimmikName == U"罠針_左") gameObjects.spikes << std::make_shared<SpikeTrap>(U"low", gimmikParsePos, 1, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
 					if (gimmikName == U"罠針_下") gameObjects.spikes << std::make_shared<SpikeTrap>(U"low", gimmikParsePos, 2, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
 					if (gimmikName == U"罠針_右") gameObjects.spikes << std::make_shared<SpikeTrap>(U"low", gimmikParsePos, 3, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
+					if (gimmikName == U"移動針_上") gameObjects.spikes << std::make_shared<SpikePathTrap>(U"low", gimmikParsePos, 0, static_cast<int32>(gimmikValue1), Vec2{ gimmikValue2, gimmikValue3 }, gimmikValue4);
+					if (gimmikName == U"移動針_左") gameObjects.spikes << std::make_shared<SpikePathTrap>(U"low", gimmikParsePos, 1, static_cast<int32>(gimmikValue1), Vec2{ gimmikValue2, gimmikValue3 }, gimmikValue4);
+					if (gimmikName == U"移動針_下") gameObjects.spikes << std::make_shared<SpikePathTrap>(U"low", gimmikParsePos, 2, static_cast<int32>(gimmikValue1), Vec2{ gimmikValue2, gimmikValue3 }, gimmikValue4);
+					if (gimmikName == U"移動針_右") gameObjects.spikes << std::make_shared<SpikePathTrap>(U"low", gimmikParsePos, 3, static_cast<int32>(gimmikValue1), Vec2{ gimmikValue2, gimmikValue3 }, gimmikValue4);
 					if (gimmikName == U"罠トリガー") gameObjects.triggers << std::make_shared<Trigger>(gimmikIntactPos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3, false);
 					if (gimmikName == U"前トリガー") gameObjects.triggers << std::make_shared<Trigger>(gimmikIntactPos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3, true);
 					if (gimmikName == U"罠りんご") gameObjects.cherries << std::make_shared<CherryTrap>(gimmikIntactPos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);

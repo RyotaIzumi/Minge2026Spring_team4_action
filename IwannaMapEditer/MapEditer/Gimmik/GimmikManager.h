@@ -8,6 +8,7 @@ private:
 	Array<Gimmik> gimmiks;
 
 	Array<String> names;
+	Array<int32> valueNums;
 	Array<Texture> textures;
 
 	ListBoxState listBox;
@@ -19,6 +20,7 @@ private:
 	TextEditState value1Text;
 	TextEditState value2Text;
 	TextEditState value3Text;
+	TextEditState value4Text;
 
 	Optional<size_t> prevIndex = none;
 

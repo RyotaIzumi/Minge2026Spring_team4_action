@@ -206,11 +206,11 @@ namespace Iwanna {
 				s->update();
 				if (s->getIsTrap()) {
 					s->trapUpdate(latestActivatedTriggerID);
-					stockNearGameObjects.add(s.get());
 				}
 				s->onSavedCallback = [this]() {
 					saveGame();
 				};
+				stockNearGameObjects.add(s.get());
 				stockBulletsNearGameObjects.add(s.get());
 			}
 			for (auto& w : warps) {
@@ -345,8 +345,6 @@ namespace Iwanna {
 			}
 			//針描画
 			for (auto s : gameObjects.spikes) s->draw();
-			//ブロック描画
-			for (auto b : gameObjects.blocks) b->draw();
 			//トリガー描画
 			for (auto t : gameObjects.triggers) t->draw();
 			//セーブポイント描画
@@ -355,6 +353,8 @@ namespace Iwanna {
 			for (auto w : gameObjects.warps) w->draw();
 			//kid君描画
 			gameObjects.player->draw();
+			//ブロック描画
+			for (auto b : gameObjects.blocks) b->draw();
 			//血の描画
 			for (auto b : gameObjects.bloods) b->draw();
 			//弾丸描画

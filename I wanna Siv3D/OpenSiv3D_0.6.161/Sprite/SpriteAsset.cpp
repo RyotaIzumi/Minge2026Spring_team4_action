@@ -38,6 +38,7 @@ namespace Iwanna {
 		registerTexture(U"sprBlock_low1", BlockPath + U"sprBlock_low1.png");
 		registerTexture(U"sprBlock_low2", BlockPath + U"sprBlock_low2.png");
 		registerTexture(U"sprBlock_low3", BlockPath + U"sprBlock_low3.png");
+		registerTexture(U"sprWater", BlockPath + U"sprWater.png");
 		registerTexture(U"sprBlockShootTrough", BlockPath + U"sprBlockShootTrough.png");
 
 		registerTexture(U"sprBlock_secret1", BlockPath + U"sprBlock_secret1.png");

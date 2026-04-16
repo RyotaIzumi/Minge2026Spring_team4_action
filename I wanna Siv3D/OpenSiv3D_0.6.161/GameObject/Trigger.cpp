@@ -1,4 +1,5 @@
 ﻿#include "Trigger.h"
+#include "../Audio/AudioAsset.h"
 
 namespace Iwanna {
 	Trigger::Trigger(Vec2 startPos, int32 id, double sizeX, double sizeY, bool checkPrevId) {
@@ -62,6 +63,9 @@ namespace Iwanna {
 	}
 
 	void SecretTrigger::triggerActivate() {
-		Global::isSecretTriggerActivated = true;
+		if (!Global::isSecretTriggerActivated) {
+			AudioAsset(Sound::BLOCKCHANGE).playOneShot();
+			Global::isSecretTriggerActivated = true;
+		}
 	}
 }

@@ -41,12 +41,15 @@ MapEditor::MapEditor()
 		AutoTile{ Image{ objectPath + U"sprBlockHide.png" }, 26 },
 		AutoTile{ Image{ objectPath + U"sprBlockShootTrough.png" }, 27 },
 		AutoTile{ Image{ objectPath + U"sprBlockFake.png" }, 28 },
+		AutoTile{ Image{ objectPath + U"sprWater.png" }, 29 },
 		AutoTile{ Image{ objectPath + U"sprCherryLow.png" }, 31 },
 		AutoTile{ Image{ objectPath + U"sprSpikeUpAppend.png" }, 36 },
 		AutoTile{ Image{ objectPath + U"sprSpikeDownAppend.png" }, 37 },
 		AutoTile{ Image{ objectPath + U"sprSpikeUpDelete.png" }, 38 },
 		AutoTile{ Image{ objectPath + U"sprSpikeDownDelete.png" }, 39 },
-		AutoTile{ Image{ objectPath + U"sprSecretTrigger.png" }, 40 }
+		AutoTile{ Image{ objectPath + U"sprSecretTrigger.png" }, 40 },
+		AutoTile{ Image{ objectPath + U"sprSpikeLeftDelete.png" }, 43 },
+		AutoTile{ Image{ objectPath + U"sprSpikeRightDelete.png" }, 44 }
 	};
 
 	crossTileIds =

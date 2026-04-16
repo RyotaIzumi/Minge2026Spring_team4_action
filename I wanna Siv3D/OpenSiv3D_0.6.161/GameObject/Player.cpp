@@ -200,6 +200,11 @@ namespace Iwanna {
 						AudioAsset(Sound::BLOCKCHANGE).play();
 					}
 				}
+				else if (block->blockType == BlockType::Water) {//水ブロック
+					auto* waterBlock = dynamic_cast<WaterBlock*>(&other);
+					djump = true;//水中で二段ジャンプ復活
+					if (vspeed > 2)vspeed = 2;//水中での落下速度制限
+				}
 			}
 
 			if (!block->getHasCollide())return;

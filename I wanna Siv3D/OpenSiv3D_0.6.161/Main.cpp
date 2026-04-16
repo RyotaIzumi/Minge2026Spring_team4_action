@@ -17,6 +17,7 @@ void Main()
 	FontAsset::Register(U"BossHp", FontMethod::MSDF, 30, Typeface::Medium);
 	FontAsset::Register(U"Button", FontMethod::MSDF, 20, Typeface::Medium);
 	FontAsset::Register(U"TitleTrap", FontMethod::MSDF, 10, Typeface::Medium);
+	FontAsset::Register(U"PlayerMessage", FontMethod::MSDF, 12, Typeface::Medium);
 
 	//カーソル設定
 	Image cursorImage{ U"✌"_emoji };

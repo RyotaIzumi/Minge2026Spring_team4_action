@@ -170,6 +170,8 @@ namespace Iwanna {
 
 	// ----- 隠しアイテム部屋用セーブポイント ----- //
 	SecretSavePoint::SecretSavePoint(Vec2 startPos,String roomName) : SavePoint(startPos) {
+		type = ObjectType::SavePoint;
+		saveType = SaveType::Secret;
 		escapeRoomName = roomName;
 	}
 
@@ -184,15 +186,20 @@ namespace Iwanna {
 		}
 
 		if (textAlpha < 1.0 && isPlayerTouching)textAlpha += 0.04;
-		else textAlpha -= 0.02;
+		else if(textAlpha >= 0.0)textAlpha -= 0.04;
 	}
 
 	void SecretSavePoint::draw() const {
 		TextureAsset(U"sprSave")(isSaving ? side : 0, 0, side, side).draw(pos,ColorF(1.0,alpha));
 
-		if (isPlayerTouching) {
-			FontAsset(U"Button")(U"Press Q to escape").drawAt(pos.x, pos.y - 20, ColorF(Palette::Whitesmoke, textAlpha));
-		}
+		// 文字表示
+		Vec2 textBasePos = Vec2(pos.x + 16, pos.y - 16);
+		FontAsset(U"PlayerMessage")(U"Press Q to escape").drawAt(textBasePos.x - 1,textBasePos.y, ColorF(Palette::Black,textAlpha));
+		FontAsset(U"PlayerMessage")(U"Press Q to escape").drawAt(textBasePos.x + 1,textBasePos.y, ColorF(Palette::Black,textAlpha));
+		FontAsset(U"PlayerMessage")(U"Press Q to escape").drawAt(textBasePos.x,textBasePos.y + 1, ColorF(Palette::Black,textAlpha));
+		FontAsset(U"PlayerMessage")(U"Press Q to escape").drawAt(textBasePos.x,textBasePos.y - 1, ColorF(Palette::Black,textAlpha));
+
+		FontAsset(U"PlayerMessage")(U"Press Q to escape").drawAt(textBasePos, ColorF(Palette::Whitesmoke, textAlpha));
 	}
 
 	String SecretSavePoint::getEscapeRoomName() const {

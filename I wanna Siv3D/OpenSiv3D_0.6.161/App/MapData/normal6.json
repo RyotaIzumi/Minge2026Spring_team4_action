@@ -1,5 +1,49 @@
 ﻿[
   {
+    "Gimmiks": [
+      {
+        "gimmikName": "移動針_上",
+        "gimmikPos": [
+          128.0,
+          32.0
+        ],
+        "value1": 0,
+        "value2": 0.0,
+        "value3": 2.0,
+        "value4": 0.8
+      },
+      {
+        "gimmikName": "罠トリガー",
+        "gimmikPos": [
+          96.0,
+          32.0
+        ],
+        "value1": 0,
+        "value2": 1.0,
+        "value3": 1.0
+      },
+      {
+        "gimmikName": "罠トリガー",
+        "gimmikPos": [
+          224.0,
+          32.0
+        ],
+        "value1": 0,
+        "value2": 1.0,
+        "value3": 1.0
+      },
+      {
+        "gimmikName": "移動針_左",
+        "gimmikPos": [
+          256.0,
+          32.0
+        ],
+        "value1": 0,
+        "value2": 14.0,
+        "value3": 1.0,
+        "value4": 0.5
+      }
+    ],
     "background": "sample",
     "startPlayerPos": [
       48.0,

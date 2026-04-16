@@ -4,13 +4,25 @@ GimmikManager::GimmikManager()
 {
 	names = {
 		U"罠針_上", U"罠針_左", U"罠針_下", U"罠針_右",
+		U"移動針_上", U"移動針_左", U"移動針_下", U"移動針_右",
 		U"罠トリガー", U"前トリガー", U"罠りんご", U"罠ブロック",
 		U"ワープ",U"特殊ワープ"
+	};
+
+	valueNums = {
+		3, 3, 3, 3,
+		4, 4, 4, 4,
+		3, 3, 3, 1,
+		1,1
 	};
 
 	const FilePath path = U"texture/gimmik/";
 
 	textures = {
+		Texture{ path + U"spikeTrapUp.png" },
+		Texture{ path + U"spikeTrapLeft.png" },
+		Texture{ path + U"spikeTrapDown.png" },
+		Texture{ path + U"spikeTrapRight.png" },
 		Texture{ path + U"spikeTrapUp.png" },
 		Texture{ path + U"spikeTrapLeft.png" },
 		Texture{ path + U"spikeTrapDown.png" },
@@ -42,13 +54,19 @@ void GimmikManager::placeGimmik(const Point& index, int tileSize)
 	Gimmik g;
 	g.name = names[*listBox.selectedItemIndex];
 	g.pos = Vec2{ index.x * tileSize, index.y * tileSize };
+	g.valueNum = valueNums[*listBox.selectedItemIndex];
 
-	// 初期値設定（元コード踏襲）
+	// 初期値設定
 	if (g.name == U"罠トリガー" || g.name == U"前トリガー")
 	{
 		g.value1 = 0;
 		g.value2 = 1.0;
 		g.value3 = 1.0;
+	}
+
+	if (g.name == U"ワープ" || g.name == U"特殊ワープ")
+	{
+		g.valueString = U"";
 	}
 
 	gimmiks << g;
@@ -90,6 +108,13 @@ void GimmikManager::drawGimmiks(int tileSize, double scrollX, double scrollY)
 			textures[idx].scaled({ g.value2,g.value3 }).draw(pos).drawFrame(1.0, (placedListBox.selectedItemIndex && count == *placedListBox.selectedItemIndex) ? ColorF(1, 0, 0) : ColorF(0, 0));
 		else if(g.name == U"罠りんご")
 			textures[idx].drawAt(pos).drawFrame(1.0, (placedListBox.selectedItemIndex && count == *placedListBox.selectedItemIndex) ? ColorF(1, 0, 0) : ColorF(0, 0));
+		else if (g.name == U"移動針_上" || g.name == U"移動針_左" || g.name == U"移動針_下" || g.name == U"移動針_右") {//移動先の針をうっすらと表示させる
+			textures[idx].draw(pos).drawFrame(1.0, (placedListBox.selectedItemIndex && count == *placedListBox.selectedItemIndex) ? ColorF(1, 0, 0) : ColorF(0, 0));
+			const double oneTileSide = 32;
+			const Vec2 nextPos{pos.x + oneTileSide * g.value2, pos.y + oneTileSide * g.value3 };
+			textures[idx].draw(nextPos, (placedListBox.selectedItemIndex && count == *placedListBox.selectedItemIndex) ? ColorF(1, 0, 0, 0.6) : ColorF(0, 0))
+				.drawFrame(1.0, (placedListBox.selectedItemIndex && count == *placedListBox.selectedItemIndex) ? ColorF(0, 1, 0) : ColorF(0, 0));
+		}
 		else
 			textures[idx].draw(pos).drawFrame(1.0, (placedListBox.selectedItemIndex && count == *placedListBox.selectedItemIndex)? ColorF(1, 0, 0) : ColorF(0, 0));
 
@@ -102,8 +127,8 @@ void GimmikManager::drawUI()
 	const Vec2 base{ 1100, 350 };
 
 	// === リスト ===
-	SimpleGUI::ListBox(listBox, Vec2{ 900, 140 }, 120, 156);
-	SimpleGUI::ListBox(placedListBox, Vec2{ 900, 350 }, 120, 300);
+	SimpleGUI::ListBox(listBox, Vec2{ 900, 140 }, 150, 156);
+	SimpleGUI::ListBox(placedListBox, Vec2{ 900, 350 }, 150, 300);
 
 	if (!placedListBox.selectedItemIndex) return;
 
@@ -125,6 +150,7 @@ void GimmikManager::drawUI()
 		value1Text.text = Format(gimmiks[idx].value1);
 		value2Text.text = Format(gimmiks[idx].value2);
 		value3Text.text = Format(gimmiks[idx].value3);
+		value4Text.text = Format(gimmiks[idx].value4);
 		prevIndex = idx;
 	}
 
@@ -132,6 +158,7 @@ void GimmikManager::drawUI()
 	int32 value1AddHeight = 80;
 	int32 value2AddHeight = 120;
 	int32 value3AddHeight = 160;
+	int32 value4AddHeight = 200;
 
 	FontAsset(U"Font")(U"x").draw(base.x, base.y + valuePosAddHeight);
 	FontAsset(U"Font")(U"y").draw(base.x + 85, base.y + valuePosAddHeight);
@@ -142,6 +169,12 @@ void GimmikManager::drawUI()
 		FontAsset(U"Font")(U"角度 : ").draw(base.x, base.y + value2AddHeight);
 		FontAsset(U"Font")(U"速度 : ").draw(base.x, base.y + value3AddHeight);
 	}
+	else if (gimmiks[idx].name == U"移動針_上" || gimmiks[idx].name == U"移動針_下" || gimmiks[idx].name == U"移動針_右" || gimmiks[idx].name == U"移動針_左") {
+		FontAsset(U"Font")(U"id : ").draw(base.x, base.y + value1AddHeight);
+		FontAsset(U"Font")(U"移動量x ").draw(base.x, base.y + value2AddHeight);
+		FontAsset(U"Font")(U"移動量y ").draw(base.x, base.y + value3AddHeight);
+		FontAsset(U"Font")(U"移動時間").draw(base.x, base.y + value4AddHeight);
+	}
 	else if (gimmiks[idx].name == U"罠トリガー" || gimmiks[idx].name == U"前トリガー") {
 		FontAsset(U"Font")(U"id : ").draw(base.x, base.y + value1AddHeight);
 		FontAsset(U"Font")(U"x scale : ").draw(base.x, base.y + value2AddHeight);
@@ -149,21 +182,32 @@ void GimmikManager::drawUI()
 	}
 	else if (gimmiks[idx].name == U"罠ブロック") {
 		FontAsset(U"Font")(U"id : ").draw(base.x, base.y + value1AddHeight);
-		FontAsset(U"Font")(U"").draw(base.x, base.y + value2AddHeight);
-		FontAsset(U"Font")(U"").draw(base.x, base.y + value3AddHeight);
 	}
 	else if (gimmiks[idx].name == U"ワープ" || gimmiks[idx].name == U"特殊ワープ") {
 		FontAsset(U"Font")(U"stage ").draw(base.x, base.y + value1AddHeight);
-		FontAsset(U"Font")(U"next x").draw(base.x, base.y + value2AddHeight);
-		FontAsset(U"Font")(U"next y").draw(base.x, base.y + value3AddHeight);
 	}
 
 	// === 入力 ===
 	SimpleGUI::TextBox(xText, Vec2{ base.x + 20, base.y + valuePosAddHeight }, 60);
 	SimpleGUI::TextBox(yText, Vec2{ base.x + 100, base.y + valuePosAddHeight }, 60);
-	SimpleGUI::TextBox(value1Text, Vec2{ base.x + 80, base.y + value1AddHeight }, 80);
-	SimpleGUI::TextBox(value2Text, Vec2{ base.x + 80, base.y + value2AddHeight }, 80);
-	SimpleGUI::TextBox(value3Text, Vec2{ base.x + 80, base.y + value3AddHeight }, 80);
+
+	switch (gimmiks[idx].valueNum) {
+	case 1:
+		SimpleGUI::TextBox(value1Text, Vec2{ base.x + 80, base.y + value1AddHeight }, 80);
+		break;
+	case 3:
+		SimpleGUI::TextBox(value1Text, Vec2{ base.x + 80, base.y + value1AddHeight }, 80);
+		SimpleGUI::TextBox(value2Text, Vec2{ base.x + 80, base.y + value2AddHeight }, 80);
+		SimpleGUI::TextBox(value3Text, Vec2{ base.x + 80, base.y + value3AddHeight }, 80);
+		break;
+	case 4:
+		SimpleGUI::TextBox(value1Text, Vec2{ base.x + 80, base.y + value1AddHeight }, 80);
+		SimpleGUI::TextBox(value2Text, Vec2{ base.x + 80, base.y + value2AddHeight }, 80);
+		SimpleGUI::TextBox(value3Text, Vec2{ base.x + 80, base.y + value3AddHeight }, 80);
+		SimpleGUI::TextBox(value4Text, Vec2{ base.x + 80, base.y + value4AddHeight }, 80);
+		break;
+	}
+	
 
 	// === 反映 ===
 	if (xText.textChanged && xText.text != U"")
@@ -186,5 +230,9 @@ void GimmikManager::drawUI()
 	if (value3Text.textChanged && value3Text.text != U"")
 	{
 		gimmiks[idx].value3 = Parse<double>(value3Text.text);
+	}
+	if (value4Text.textChanged && value4Text.text != U"")
+	{
+		gimmiks[idx].value4 = Parse<double>(value4Text.text);
 	}
 }

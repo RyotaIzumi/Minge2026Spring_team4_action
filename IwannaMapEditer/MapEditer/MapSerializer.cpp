@@ -58,8 +58,15 @@ void MapSerializer::SaveJSON(
 
 		if (g.name == U"ワープ" || g.name == U"特殊ワープ") {
 			obj[U"value1"] = g.valueString;
+		}
+		else if (g.name == U"罠ブロック") {
+			obj[U"value1"] = g.value1;
+		}
+		else if (g.name == U"移動針_上" || g.name == U"移動針_左" || g.name == U"移動針_下" || g.name == U"移動針_右") {
+			obj[U"value1"] = g.value1;
 			obj[U"value2"] = g.value2;
 			obj[U"value3"] = g.value3;
+			obj[U"value4"] = g.value4;
 		}
 		else {
 			obj[U"value1"] = g.value1;
@@ -113,12 +120,22 @@ void MapSerializer::LoadJSON(
 			obj.pos.x = g[U"gimmikPos"][0].get<double>();
 			obj.pos.y = g[U"gimmikPos"][1].get<double>();
 
-			if (obj.name == U"ワープ") {
+			if (obj.name == U"ワープ" || obj.name == U"特殊ワープ") {
 				obj.valueString = g[U"value1"].get<String>();
+				obj.valueNum = 1;
+			}
+			else if (obj.name == U"罠ブロック") {
+				obj.value1 = g[U"value1"].get<int32>();
+				obj.valueNum = 1;
+			}
+			else if (obj.name == U"移動針_上" || obj.name == U"移動針_左" || obj.name == U"移動針_下" || obj.name == U"移動針_右") {
+				obj.value1 = g[U"value1"].get<int32>();
 				obj.value2 = g[U"value2"].get<double>();
 				obj.value3 = g[U"value3"].get<double>();
+				obj.value4 = g[U"value4"].get<double>();
+				obj.valueNum = 4;
 			}
-			else {
+			else  {
 				obj.value1 = g[U"value1"].get<int32>();
 				obj.value2 = g[U"value2"].get<double>();
 				obj.value3 = g[U"value3"].get<double>();
