@@ -126,7 +126,7 @@ namespace Iwanna {
 		void createSubThrowCherry(double dir, double spd, const std::function<std::shared_ptr<Cherry>()>& factory);
 		void createBlueLineCherry(const std::function<std::shared_ptr<Cherry>()>& factory);
 		void createYellowStarCherry(int32 Nkakkei, int32 nextNumber, Vec2 center, int32 lineNum, const std::function<std::shared_ptr<Cherry>()>& factory);
-		void createGreenWaveCherry(Vec2 startPos, double interval, double high, const std::function<std::shared_ptr<BossGreenWaveCherry>()>& factory);
+		void createGreenWaveCherry(Vec2 startPos, double interval, double high, const std::function<std::shared_ptr<BarrageGimmikGreenCherry>()>& factory);
 		void createOrangeStopCherry(bool isAddUpDown, const std::function<std::shared_ptr<BossOrangeStopCherry>()>& factory);
 		void createSkyTargetCherry(int32 lineNum, const std::function<std::shared_ptr<BarrageCherry>()>& factory);
 		void createGrayLatticeCherry(double interval, const std::function<std::shared_ptr<BossGrayLatticeCherry>()>& factory);

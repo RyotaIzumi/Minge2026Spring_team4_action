@@ -274,7 +274,7 @@ namespace Iwanna {
 
 			//画面外のりんごを削除
 			cherries.remove_if([](auto&& cherry) {
-				return cherry->isOutOfScreen;
+				return cherry->isOutOfScreen || cherry->isDelete;
 			});
 
 			//画面外の針を削除
@@ -319,17 +319,16 @@ namespace Iwanna {
 			player->setIsMuteki(!player->getIsMuteki());
 		}
 
-		/*
+		
 		ClearPrint();
 		Print << U" Stage Step : " << step;
 		Print << U" Player Pos : " << player->pos;
 		Print << U" Player Muteki : " << player->getIsMuteki();
-		Print << U" Camera Pos : " << executeCameraPos();
+		//Print << U" Camera Pos : " << executeCameraPos();
 		Print << U" Cherries Num : " << gameObjects.cherries.size();
-		Print << U" Bullets Num : " << gameObjects.bullets.size();
-		Print << U" Spikes Num : " << gameObjects.spikes.size();
-		Print << U" Special Num : " << gameObjects.specialTraps[0]->pos;
-		*/
+		//Print << U" Bullets Num : " << gameObjects.bullets.size();
+		//Print << U" Spikes Num : " << gameObjects.spikes.size();
+		//Print << U" Special Num : " << gameObjects.specialTraps[0]->pos;
 	}
 
 	void StageManager::draw() {
