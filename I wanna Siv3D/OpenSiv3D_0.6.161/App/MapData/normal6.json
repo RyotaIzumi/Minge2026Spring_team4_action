@@ -42,6 +42,42 @@
         "value2": 14.0,
         "value3": 1.0,
         "value4": 0.5
+      },
+      {
+        "gimmikName": "昇降針",
+        "gimmikPos": [
+          416.0,
+          320.0
+        ],
+        "value1": 0,
+        "value2": 1.0
+      },
+      {
+        "gimmikName": "昇降針",
+        "gimmikPos": [
+          384.0,
+          160.0
+        ],
+        "value1": 1,
+        "value2": 1.0
+      },
+      {
+        "gimmikName": "昇降針",
+        "gimmikPos": [
+          448.0,
+          160.0
+        ],
+        "value1": 2,
+        "value2": 1.0
+      },
+      {
+        "gimmikName": "昇降針",
+        "gimmikPos": [
+          512.0,
+          160.0
+        ],
+        "value1": 3,
+        "value2": 1.0
       }
     ],
     "background": "sample",

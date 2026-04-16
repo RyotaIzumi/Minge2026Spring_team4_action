@@ -47,4 +47,7 @@ private:
 	void placeGimmik(const Point& index, int tileSize);
 	void drawGimmiks(int tileSize, double scrollX, double scrollY);
 	void drawUI();
+
+	template <class T>
+	bool checkTextInput(const String& input);
 };

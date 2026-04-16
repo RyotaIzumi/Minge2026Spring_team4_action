@@ -64,4 +64,18 @@ namespace Iwanna {
 		DeleteSpike(String typeName, Vec2 startPos, int32 dir);
 		void update() override;
 	};
+
+	class SpikeUpDown : public Spike {
+	private:
+		int32 moveStep = 0;//移動の段階を管理する変数
+		double moveSide = 32;
+		double moveAmount = 0.0;//移動量を管理する変数
+		double moveTime = 1.0;
+		Vec2 basePos;
+		Stopwatch moveTimer{ StartImmediately::Yes };
+	public:
+		SpikeUpDown(String typeName, Vec2 startPos, int32 dir, double time);
+
+		void update() override;
+	};
 }

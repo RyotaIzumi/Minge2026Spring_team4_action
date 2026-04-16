@@ -253,7 +253,7 @@ void MapEditor::draw()
 
 	//csvの保存と読み込み
 	FontAsset(U"Font")(U"CSV").draw(1080, 190);
-	if (SimpleGUI::Button(U"Save", Vec2{ 1080, 220 }))
+	if (SimpleGUI::Button(U"Save", Vec2{ 1080, 220 },unspecified,canSaveFile()))
 	{
 		saveSnapshot();
 		const FilePath path = mainActionProjectMapDataPath + saveFileName.text + U".csv";
@@ -265,7 +265,10 @@ void MapEditor::draw()
 		saveSnapshot();
 		const FilePath path = mainActionProjectMapDataPath + saveFileName.text + U".csv";
 
-		if (!FileSystem::Exists(path)) return;
+		if (!FileSystem::Exists(path)) {
+			Print << U"csvファイル : " + path + U"が見つかりません!";
+			return;
+		}
 		CSV csv(path);
 
 		// === サイズ取得 ===
@@ -292,7 +295,7 @@ void MapEditor::draw()
 
 	// JSONの保存と読み込み
 	FontAsset(U"Font")(U"JSON").draw(1080, 260);
-	if (SimpleGUI::Button(U"Save", Vec2{ 1080, 290 }))
+	if (SimpleGUI::Button(U"Save", Vec2{ 1080, 290 },unspecified,canSaveFile()))
 	{
 		saveSnapshot();
 		const FilePath path = mainActionProjectMapDataPath + saveFileName.text + U".json";
@@ -334,6 +337,8 @@ void MapEditor::draw()
 			}
 		}
 	}
+
+	if (KeyC.down())ClearPrint();
 
 	drawCursor();
 }
@@ -604,4 +609,26 @@ void MapEditor::redo()
 	redoStack.pop_back();
 
 	loadSnapshot(snap);
+}
+
+// 現状のマップが空かどうか
+bool MapEditor::canSaveFile() const
+{
+	if (saveFileName.text == U"")return false;
+
+	int endX = state.mapSize.x;
+	int endY = state.mapSize.y;
+
+	for (int y = 0; y < endY; ++y)
+	{
+		for (int x = 0; x < endX; ++x)
+		{
+			if (state.grid[y][x])
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
 }

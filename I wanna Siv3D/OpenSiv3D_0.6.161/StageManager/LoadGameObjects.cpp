@@ -249,6 +249,7 @@ namespace Iwanna {
 					if (gimmikName == U"罠ブロック") gameObjects.blocks << std::make_shared<BreakBlock>(U"sprBlock_low3", gimmikParsePos, static_cast<int32>(gimmikValue1));
 					if (gimmikName == U"ワープ") gameObjects.warps << std::make_shared<Warp>(gimmikIntactPos, gimmikString);
 					if (gimmikName == U"特殊ワープ") gameObjects.warps << std::make_shared<SecretWarp>(gimmikIntactPos, gimmikString);
+					if (gimmikName == U"昇降針") gameObjects.spikes << std::make_shared<SpikeUpDown>(U"low", gimmikIntactPos,static_cast<int32>(gimmikValue1),gimmikValue2);
 				}
 			}
 

@@ -75,4 +75,6 @@ private:
 	void loadSnapshot(const EditorSnapshot& snapshot);
 	void undo();
 	void redo();
+
+	bool canSaveFile() const;
 };

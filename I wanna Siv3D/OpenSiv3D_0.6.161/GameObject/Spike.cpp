@@ -139,4 +139,55 @@ namespace Iwanna {
 			if (alpha < 0.0) isDelete = true;
 		}
 	}
+
+	// ----- 昇降針 ----- //
+	SpikeUpDown::SpikeUpDown(String typeName, Vec2 startPos, int32 dir, double time) : Spike(typeName, startPos, dir) {
+		pos = startPos;
+		basePos = pos;
+		hitBox = std::make_shared<SpikeHitBox>(pos, dir);
+		moveTime = time;
+	}
+
+	void SpikeUpDown::update() {
+		switch (moveStep) {
+		case 0://昇
+			if (moveTimer.sF() >= moveTime) {
+				moveAmount = 0;
+				basePos = pos;
+				moveTimer.restart();
+				moveStep++;
+			}
+
+			moveAmount = moveSide * (moveTimer.sF() / moveTime);
+			switch (spriteDirection) {
+				case 0: pos.y = basePos.y - moveAmount; break;
+				case 1: pos.x = basePos.x - moveAmount; break;
+				case 2: pos.y = basePos.y + moveAmount; break;
+				case 3: pos.x = basePos.x + moveAmount; break;
+			}
+			break;
+		case 1://降
+			moveAmount = moveSide * (moveTimer.sF() / moveTime);
+			switch (spriteDirection) {
+			case 0: pos.y = basePos.y + moveAmount; break;
+			case 1: pos.x = basePos.x + moveAmount; break;
+			case 2: pos.y = basePos.y - moveAmount; break;
+			case 3: pos.x = basePos.x - moveAmount; break;
+			}
+
+			if (moveTimer.sF() >= moveTime) {
+				moveAmount = 0;
+				basePos = pos;
+				moveTimer.restart();
+				moveStep = 0;
+			}
+			break;
+		}
+
+		
+		
+
+
+		hitBox->setPos(pos);
+	}
 }

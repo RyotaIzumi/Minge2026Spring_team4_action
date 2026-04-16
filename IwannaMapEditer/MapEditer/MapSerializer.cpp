@@ -14,11 +14,12 @@ void MapSerializer::SaveCSV(const Grid<uint32>& grid, const FilePath& path)
 	}
 
 	csv.save(path);
+	Print << U"csvファイル : " + path + U"を保存しました!";
 }
 
 void MapSerializer::LoadCSV(Grid<uint32>& grid, const FilePath& path)
 {
-	if (!FileSystem::Exists(path)) return;
+	if (!FileSystem::Exists(path))return;
 
 	CSV csv(path);
 
@@ -29,6 +30,8 @@ void MapSerializer::LoadCSV(Grid<uint32>& grid, const FilePath& path)
 			grid[y][x] = Parse<int32>(csv[y][x]);
 		}
 	}
+
+	Print << U"csvファイル : " + path + U"を読み込みました!";
 }
 
 void MapSerializer::SaveJSON(
@@ -62,6 +65,10 @@ void MapSerializer::SaveJSON(
 		else if (g.name == U"罠ブロック") {
 			obj[U"value1"] = g.value1;
 		}
+		else if (g.name == U"昇降針") {
+			obj[U"value1"] = g.value1;
+			obj[U"value2"] = g.value2;
+		}
 		else if (g.name == U"移動針_上" || g.name == U"移動針_左" || g.name == U"移動針_下" || g.name == U"移動針_右") {
 			obj[U"value1"] = g.value1;
 			obj[U"value2"] = g.value2;
@@ -79,6 +86,8 @@ void MapSerializer::SaveJSON(
 
 	json.push_back(root);
 	json.save(path);
+
+	Print << U"jsonファイル : " + path + U"を保存しました!";
 }
 
 void MapSerializer::LoadJSON(
@@ -87,7 +96,10 @@ void MapSerializer::LoadJSON(
 	Array<Gimmik>& gimmiks,
 	const FilePath& path)
 {
-	if (!FileSystem::Exists(path)) return;
+	if (!FileSystem::Exists(path)) {
+		Print << U"jsonファイル : " + path + U"が見つかりません!";
+		return;
+	}
 
 	JSON json = JSON::Load(path);
 	if (!json.isArray() || json.isEmpty()) return;
@@ -128,6 +140,11 @@ void MapSerializer::LoadJSON(
 				obj.value1 = g[U"value1"].get<int32>();
 				obj.valueNum = 1;
 			}
+			else if (obj.name == U"昇降針") {
+				obj.value1 = g[U"value1"].get<int32>();
+				obj.value2 = g[U"value2"].get<double>();
+				obj.valueNum = 2;
+			}
 			else if (obj.name == U"移動針_上" || obj.name == U"移動針_左" || obj.name == U"移動針_下" || obj.name == U"移動針_右") {
 				obj.value1 = g[U"value1"].get<int32>();
 				obj.value2 = g[U"value2"].get<double>();
@@ -144,4 +161,6 @@ void MapSerializer::LoadJSON(
 			gimmiks << obj;
 		}
 	}
+
+	Print << U"jsonファイル : " + path + U"を読み込みました!";
 }
