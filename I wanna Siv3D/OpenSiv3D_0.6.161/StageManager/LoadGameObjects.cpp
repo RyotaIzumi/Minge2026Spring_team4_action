@@ -48,6 +48,8 @@ namespace Iwanna {
 					case 43: gameObjects.spikes << std::make_shared<DeleteSpike>(U"secret", pos, 1); break;
 					case 44: gameObjects.spikes << std::make_shared<DeleteSpike>(U"secret", pos, 3); break;
 					}
+
+					Global::isLoopStage = true;
 				}
 				else {
 					// value に応じて配置
@@ -73,6 +75,8 @@ namespace Iwanna {
 					case 43: gameObjects.spikes << std::make_shared<DeleteSpike>(U"low", pos, 1); break;
 					case 44: gameObjects.spikes << std::make_shared<DeleteSpike>(U"low", pos, 3); break;
 					}
+
+					Global::isLoopStage = false;
 				}
 			}
 		}
