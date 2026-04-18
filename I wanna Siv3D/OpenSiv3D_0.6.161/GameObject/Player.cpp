@@ -115,7 +115,7 @@ namespace Iwanna {
 		TextureRegion texture = spriteSystem.getTextureRegion(direction);
 		if(!isDead)texture.scaled(1.0).drawAt(pos.x,pos.y - 6);
 		else texture.scaled(1.0).drawAt(pos.x, pos.y - 6, ColorF(0.8,0,0, 0.8));
-		//hitBox->draw(Palette::Red);
+		hitBox->draw(Palette::Red);
 	}
 
 	void Player::playerMoveLeft() {
