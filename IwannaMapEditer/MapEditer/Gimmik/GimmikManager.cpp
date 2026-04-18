@@ -232,20 +232,20 @@ void GimmikManager::drawUI()
 	{
 		gimmiks[idx].pos.y = Parse<double>(yText.text);
 	}
+	if (value1Text.textChanged && gimmiks[idx].name == U"ワープ" || gimmiks[idx].name == U"特殊ワープ") gimmiks[idx].valueString = value1Text.text;
 	if (value1Text.textChanged && checkTextInput<int32>(value1Text.text))
 	{
-		if(gimmiks[idx].name == U"ワープ" || gimmiks[idx].name == U"特殊ワープ") gimmiks[idx].valueString = value1Text.text;
-		else gimmiks[idx].value1 = Parse<int32>(value1Text.text);
+		gimmiks[idx].value1 = Parse<int32>(value1Text.text);
 	}
-	if (value2Text.textChanged && checkTextInput<int32>(value2Text.text))
+	if (value2Text.textChanged && checkTextInput<double>(value2Text.text))
 	{
 		gimmiks[idx].value2 = Parse<double>(value2Text.text);
 	}
-	if (value3Text.textChanged && checkTextInput<int32>(value3Text.text))
+	if (value3Text.textChanged && checkTextInput<double>(value3Text.text))
 	{
 		gimmiks[idx].value3 = Parse<double>(value3Text.text);
 	}
-	if (value4Text.textChanged && checkTextInput<int32>(value4Text.text))
+	if (value4Text.textChanged && checkTextInput<double>(value4Text.text))
 	{
 		gimmiks[idx].value4 = Parse<double>(value4Text.text);
 	}

@@ -90,7 +90,7 @@ namespace Iwanna {
 		 * @param interval 上昇間隔
 		 * @param cherry 生成するcherryオブジェクト
 		 */
-	void StageManager::createGreenWaveCherry(Vec2 startPos, double interval, double high, const std::function<std::shared_ptr<BossGreenWaveCherry>()>& factory) {
+	void StageManager::createGreenWaveCherry(Vec2 startPos, double interval, double high, const std::function<std::shared_ptr<BarrageGimmikGreenCherry>()>& factory) {
 		const double startX = -1 * Random(interval);
 		const double interX = 16;
 		const int32 num = 70;
@@ -104,17 +104,6 @@ namespace Iwanna {
 
 			createCherry(cherry);
 		}
-		//左側
-		for (int i = 0; i < num; i++) {
-			auto cherry = factory();
-			cherry->pos.x = startPos.x - interX * i;
-			cherry->pos.y = Global::stageHeight + 30;
-			cherry->highSpeed = high;
-			cherry->setActiveTimer(interval * i);
-
-			createCherry(cherry);
-		}
-		cameraShake.shake(0.4, 20.0);
 	}
 
 	/**
@@ -123,7 +112,7 @@ namespace Iwanna {
 		 * @param interval 上昇間隔
 		 * @param cherry 生成するcherryオブジェクト
 		 */
-	void StageManager::createOrangeStopCherry(bool isAddUpDown, const std::function<std::shared_ptr<BossOrangeStopCherry>()>& factory) {
+	void StageManager::createOrangeStopCherry(bool isAddUpDown, const std::function<std::shared_ptr<BarrageGimmikOrangeCherry>()>& factory) {
 		const double inter = 20;
 		const int32 num = 50;
 		const Vec2 targetPos = gameObjects.player->pos;

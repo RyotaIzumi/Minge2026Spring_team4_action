@@ -48,6 +48,8 @@ namespace Iwanna {
 					case 43: gameObjects.spikes << std::make_shared<DeleteSpike>(U"secret", pos, 1); break;
 					case 44: gameObjects.spikes << std::make_shared<DeleteSpike>(U"secret", pos, 3); break;
 					}
+
+					Global::isLoopStage = true;
 				}
 				else {
 					// value に応じて配置
@@ -73,6 +75,8 @@ namespace Iwanna {
 					case 43: gameObjects.spikes << std::make_shared<DeleteSpike>(U"low", pos, 1); break;
 					case 44: gameObjects.spikes << std::make_shared<DeleteSpike>(U"low", pos, 3); break;
 					}
+
+					Global::isLoopStage = false;
 				}
 			}
 		}
@@ -293,5 +297,7 @@ namespace Iwanna {
 		if (fileName == U"normal3")gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{400,560},3.0,CherryColorType::Blue,*this);
 		if (fileName == U"normal4")gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{400,304},3.0,CherryColorType::Yellow,*this);
 		if (fileName == U"normal5")gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{80,80},3.0,CherryColorType::Sky,*this);
+		if (fileName == U"normal6")gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{80,528},3.0,CherryColorType::Green,*this);
+		if (fileName == U"normal7")gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{400,304},3.0,CherryColorType::Orange,*this);
 	}
 }

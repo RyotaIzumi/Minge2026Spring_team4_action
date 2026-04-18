@@ -351,7 +351,7 @@ namespace Iwanna {
 			textureAlpha = scaleTimer.progress0_1();
 			if (scaleTimer.reachedZero()) {
 				//4つの地点からランダムで座標を決定
-				Array<Vec2>randomPos = { {16,16},{784,16}, {16,592},{784,592} };
+				Array<Vec2>randomPos = { {596,307} };
 				deleteButtonPos = randomPos.choice();
 
 				trapStep++;

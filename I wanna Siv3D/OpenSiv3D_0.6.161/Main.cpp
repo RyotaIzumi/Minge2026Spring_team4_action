@@ -2,6 +2,7 @@
 #include "Sprite/SpriteAsset.h"
 #include "Audio/AudioAsset.h"
 #include "Scene/Scene.h"
+#include "MainGameSerializer.h"
 #include "60FPSwithAutoFrameSkip.h"
 
 using App = SceneManager<Iwanna::SceneType, Iwanna::CommonData>;
@@ -11,6 +12,8 @@ void Main()
 	System60::SetDisplaySize(Size{800,608});
 
 	Window::SetTitle(U"I wanna Siv3D (Debug Build)");
+
+	MainGameSerializer mainGameSerializer;
 
 	//フォントはここで宣言
 	FontAsset::Register(U"Big", 60, Typeface::Regular);
@@ -37,9 +40,13 @@ void Main()
 	app.add<Iwanna::InGame>(Iwanna::SceneType::IN_GAME);
 	app.init(Iwanna::SceneType::START_MENU, 0s);
 
+	mainGameSerializer.LoadCharactersMoraleValue();
+	//mainGameSerializer.defineGlobalStatuses();
+
 	while (System60::Update()) {
 		if (not app.update()) {
 			break;
 		}
 	}
+	mainGameSerializer.SaveEndingValue();
 }

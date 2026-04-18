@@ -199,6 +199,9 @@ namespace Iwanna {
 
 		cherryType = CherryType::Trap;
 
+		cherryTextureName = U"sprCherryLowWhite";
+		cherryColorType = CherryColorType::Blue;
+
 		soundPlayOne = false;
 	}
 
@@ -251,24 +254,35 @@ namespace Iwanna {
 		hasAnimation = true;
 		cherryTextureName = U"sprCherryLowWhite";
 
+		//初期起動時間決定
+		switch (cherryColorType) {
+		case CherryColorType::Red:    startTime = 2.2; break;
+		case CherryColorType::Blue:   startTime = 2.2; break;
+		case CherryColorType::Yellow:
+			generateAttack();
+			startTime = 1000000;
+			attackInterval = 100000;
+			attackIntervalStopwatch.reset();
+			break;
+		case CherryColorType::Green:  startTime = 0.1; break;
+		case CherryColorType::Orange: startTime = 5.0; break;
+		case CherryColorType::Sky:    startTime = 2.2; break;
+		}
+
 		switch (cherryColorType) {
 		case CherryColorType::Red:    attackInterval = 1.0; break;
 		case CherryColorType::Blue:   attackInterval = 2.0; break;
-		case CherryColorType::Yellow:
-			startTimer.pause();
-			generateAttack();
-			attackInterval = 100000.0;
-			break;
-		case CherryColorType::Green:  attackInterval = 1.0; break;
-		case CherryColorType::Orange: attackInterval = 1.0; break;
+		case CherryColorType::Yellow: break;
+		case CherryColorType::Green:  attackInterval = 3.8; break;
+		case CherryColorType::Orange: attackInterval = 5.0; break;
 		case CherryColorType::Sky:    attackInterval = 1.9; break;
 		}
 	}
 
 	void GimmikBigCherry::barrageUpdate() {
-		if (startTimer.reachedZero()) {
+		if (attackIntervalStopwatch.sF() > startTime) {
 			generateAttack();
-			startTimer.reset();
+			startTime = 10000000;
 			attackIntervalStopwatch.restart();
 		}
 
@@ -291,8 +305,10 @@ namespace Iwanna {
 				stageManager->createYellowStarCherry(5, 2, pos, 7, [this]() { return std::make_shared<BarrageGimmikYellowCherry>(pos, 1.0, cherryColorType); });
 				break;
 			case CherryColorType::Green:
+				stageManager->createGreenWaveCherry(Vec2{-32,640}, 0.08, 18.5,[this]() { return std::make_shared<BarrageGimmikGreenCherry>(pos, 1.0, cherryColorType); });
 				break;
 			case CherryColorType::Orange:
+				stageManager->createOrangeStopCherry(true, [this]() { return std::make_shared<BarrageGimmikOrangeCherry>(pos, 1.0, cherryColorType); });
 				break;
 			case CherryColorType::Sky:
 				stageManager->createSkyTargetCherry(7, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0, cherryColorType); });
@@ -377,5 +393,96 @@ namespace Iwanna {
 			c -= 0.3;
 			break;
 		}
+	}
+
+	// ----- 弾幕用緑りんご ----- //
+	BarrageGimmikGreenCherry::BarrageGimmikGreenCherry(Vec2 startPos, double scale, CherryColorType cType) : BarrageCherry(startPos, scale, cType) {
+
+		isDeleteOutOfScreen = false;
+
+		alpha = 1.0;
+		startStep = 0;
+		speed = 0;
+
+		gravity = 0.4;
+	}
+
+	void BarrageGimmikGreenCherry::barrageUpdate() {
+
+		switch (startStep) {
+		case 0:
+			if (waveStopwatch.sF() > activeTimer) {
+				direction = 90;
+				speed = highSpeed;
+				startStep++;
+			}
+			break;
+		case 1:
+			if (pos.y > 1000) {
+				isDelete = true;
+			}
+			break;
+		}
+
+		setTypeColor();
+	}
+
+	void BarrageGimmikGreenCherry::setActiveTimer(double time) {
+		activeTimer = time;
+	}
+
+	// ----- 弾幕用オレンジりんご ----- //
+	BarrageGimmikOrangeCherry::BarrageGimmikOrangeCherry(Vec2 startPos, double scale, CherryColorType colorType) : BarrageCherry(startPos, scale, colorType) {
+
+		cherryColorType = colorType;
+
+		canPlayerKill = true;
+		isDelete = false;
+		isOutOfScreen = false;
+		isDeleteOutOfScreen = false;
+
+		alpha = 1.0;
+		startStep = 0;
+		speed = 0;
+	}
+
+	void BarrageGimmikOrangeCherry::barrageUpdate() {
+
+		switch (startStep) {
+		case 0:
+			pos.x = startPos.x + moveRangeX * EaseOutQuad(moveTimer.progress0_1());
+			pos.y = startPos.y + moveRangeY * EaseOutQuad(moveTimer.progress0_1());
+			if (moveTimer.reachedZero()) {
+				startPos = pos;
+				moveTimer.restart();
+				startStep++;
+			}
+			break;
+		case 1:
+			pos.x = startPos.x - moveRangeX * EaseInQuad(moveTimer.progress0_1());
+			pos.y = startPos.y - moveRangeY * EaseInQuad(moveTimer.progress0_1());
+			if (moveTimer.reachedZero()) {
+				startPos = pos;
+				moveTimer.restart();
+				startStep++;
+			}
+			break;
+		case 2:
+			isDelete = true;
+			break;
+		}
+
+
+		setTypeColor();
+	}
+
+	void BarrageGimmikOrangeCherry::setStartPos(Vec2 pos) {
+		startPos = pos;
+	}
+
+	void BarrageGimmikOrangeCherry::setTargetPos(Vec2 tPos) {
+		targetPos = tPos;
+		moveRangeX = targetPos.x - startPos.x;
+		moveRangeY = targetPos.y - startPos.y;
 	}
 }

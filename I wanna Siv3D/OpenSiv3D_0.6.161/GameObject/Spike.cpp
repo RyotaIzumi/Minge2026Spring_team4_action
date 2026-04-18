@@ -183,11 +183,6 @@ namespace Iwanna {
 			}
 			break;
 		}
-
-		
-		
-
-
 		hitBox->setPos(pos);
 	}
 }

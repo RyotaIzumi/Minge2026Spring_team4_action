@@ -216,6 +216,27 @@
     <ClCompile Include="GameObject\Warp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject\Boss\BossCherries.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Boss\BossCherry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StageManager\BossStageManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StageManager\CherryPatternManager\GenerateBossCherryPattern.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StageManager\CherryPatternManager\GenerateGimmikCherryPattern.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StageManager\LoadGameObjects.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGameSerializer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="App\icon.ico">
@@ -991,6 +1012,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameObject\Warp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Boss\BossCherry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StageManager\BossStageManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StageManager\CameraShake.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MainGameSerializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
