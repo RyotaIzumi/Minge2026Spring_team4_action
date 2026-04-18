@@ -138,6 +138,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainGame.cpp" />
     <ClCompile Include="GameObject\Player.cpp" />
+    <ClCompile Include="MainGameSerializer.cpp" />
     <ClCompile Include="Scene\InGame.cpp" />
     <ClCompile Include="Scene\Loading.cpp" />
     <ClCompile Include="Scene\StartMenu.cpp" />
@@ -389,6 +390,7 @@
     <ClInclude Include="GameObject\Warp.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="MainGame.h" />
+    <ClInclude Include="MainGameSerializer.h" />
     <ClInclude Include="Scene\Scene.h" />
     <ClInclude Include="GameObject\HitBox.h" />
     <ClInclude Include="GameObject\Player.h" />
