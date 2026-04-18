@@ -112,10 +112,20 @@ namespace Iwanna {
 		 * @param interval 上昇間隔
 		 * @param cherry 生成するcherryオブジェクト
 		 */
-	void StageManager::createOrangeStopCherry(bool isAddUpDown, const std::function<std::shared_ptr<BossOrangeStopCherry>()>& factory) {
+	void StageManager::createOrangeStopCherry(bool isAddUpDown, const std::function<std::shared_ptr<BarrageGimmikOrangeCherry>()>& factory) {
 		const double inter = 20;
 		const int32 num = 50;
 		const Vec2 targetPos = gameObjects.player->pos;
+
+		//左側
+		for (int i = 0; i < num; i++) {
+			auto cherry = factory();
+			cherry->pos.x = -inter;
+			cherry->pos.y = -inter + inter * i;
+			cherry->setStartPos(cherry->pos);
+			cherry->setTargetPos(Vec2{ targetPos.x - inter, cherry->pos.y });
+			createCherry(cherry);
+		}
 
 		//右側
 		for (int i = 0; i < num; i++) {

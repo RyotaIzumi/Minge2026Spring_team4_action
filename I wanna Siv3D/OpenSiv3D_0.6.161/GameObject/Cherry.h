@@ -146,6 +146,23 @@ namespace Iwanna {
 		void setActiveTimer(double time);
 	};
 
+	class BarrageGimmikOrangeCherry : public BarrageCherry {
+	protected:
+		int32 startStep = 0;
+		ColorF typeColor;
+
+		Vec2 startPos;
+		Vec2 targetPos;
+		double moveRangeX, moveRangeY;
+		Timer moveTimer{ 0.5s, StartImmediately::Yes };
+	public:
+		BarrageGimmikOrangeCherry(Vec2 startPos, double scale, CherryColorType colorType);
+
+		void barrageUpdate() override;
+		void setStartPos(Vec2 tPos);
+		void setTargetPos(Vec2 tPos);
+	};
+
 	class GimmikBigCherry : public Cherry {
 	private:
 		StageManager* stageManager = nullptr;
