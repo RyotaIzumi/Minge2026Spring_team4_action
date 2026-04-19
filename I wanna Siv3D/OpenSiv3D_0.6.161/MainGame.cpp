@@ -14,9 +14,9 @@ namespace Iwanna {
 		}
 
 		//ステージの名称から種類を決定
-		if (Global::nowRoomName == U"boss") {
+		if (Global::nowRoomName == U"boss" || Global::nowRoomName == U"ExBoss") {
 			stageType = StageType::Boss;
-			if (Global::nowRoomName == U"boss")pauseBgm();
+			if (Global::nowRoomName == U"boss" || Global::nowRoomName == U"ExBoss")pauseBgm();
 		}
 		else {
 			stageType = StageType::Normal;
@@ -77,7 +77,8 @@ namespace Iwanna {
 			}
 			//bossが出現したらBGM再生
 			if (bossStageManager.bossBgmStart) {
-				playBgm(U"boss_normal");
+				if(Global::nowRoomName == U"boss") playBgm(U"boss_normal");
+				if(Global::nowRoomName == U"ExBoss") playBgm(U"ExBoss_normal");
 				bossStageManager.bossBgmStart = false;
 			}
 			break;

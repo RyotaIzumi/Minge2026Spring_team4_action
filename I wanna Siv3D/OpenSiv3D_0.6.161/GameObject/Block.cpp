@@ -12,6 +12,8 @@ namespace Iwanna {
 
 		canPlayerKill = false;
 		hasCollide = true;
+
+		depth = 40;
 	}
 	void Block::update() {
 	}

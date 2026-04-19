@@ -27,6 +27,8 @@ namespace Iwanna {
 		direction = 90;
 		gravity = 0;
 
+		depth = 51;
+
 		c = 0;
 		r = 20;
 		attackIntervalTime = 3.5;

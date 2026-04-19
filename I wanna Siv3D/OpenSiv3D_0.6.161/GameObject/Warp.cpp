@@ -10,6 +10,8 @@ namespace Iwanna {
 		type = ObjectType::Warp;
 		canPlayerKill = false;
 		canWarp = true;
+
+		depth = 20;
 	}
 	void Warp::update() {
 	}

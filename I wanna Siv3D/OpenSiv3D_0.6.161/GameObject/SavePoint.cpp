@@ -9,6 +9,8 @@ namespace Iwanna {
 		type = ObjectType::SavePoint;
 		saveType = SaveType::Normal;
 		canPlayerKill = false;
+
+		depth = 10;
 	}
 	void SavePoint::update() {
 		if(isSaving && saveIntervalTimer.reachedZero()) {

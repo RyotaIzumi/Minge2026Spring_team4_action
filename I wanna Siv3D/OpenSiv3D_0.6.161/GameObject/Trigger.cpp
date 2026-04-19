@@ -12,6 +12,8 @@ namespace Iwanna {
 		canPlayerKill = false;
 		triggerType = TriggerType::Normal;
 		trapID = id;
+
+		depth = 1;
 	}
 	Trigger::Trigger(Vec2 startPos, int32 id, double sizeX, double sizeY, std::function<bool()> checkOtherConditionFunc) {
 		//GameObject.hの値初期化
@@ -24,6 +26,8 @@ namespace Iwanna {
 		triggerType = TriggerType::OtherCondition;
 		this->checkOtherConditionFunc = checkOtherConditionFunc;
 		trapID = id;
+
+		depth = 1;
 	}
 	void Trigger::update() {
 	}

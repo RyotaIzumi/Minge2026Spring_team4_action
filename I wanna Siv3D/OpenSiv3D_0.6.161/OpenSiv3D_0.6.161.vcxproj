@@ -126,6 +126,7 @@
     <ClCompile Include="GameObject\Blood.cpp" />
     <ClCompile Include="GameObject\Boss\BossCherries.cpp" />
     <ClCompile Include="GameObject\Boss\BossCherry.cpp" />
+    <ClCompile Include="GameObject\Boss\ExBossCherry.cpp" />
     <ClCompile Include="GameObject\Bullet.cpp" />
     <ClCompile Include="GameObject\Cherry.cpp" />
     <ClCompile Include="GameObject\HitBox.cpp" />
@@ -208,6 +209,7 @@
     <Text Include="App\example\txt\kr.txt" />
     <Text Include="App\example\txt\sc.txt" />
     <Text Include="App\example\video\river.txt" />
+    <Text Include="depth.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -378,6 +380,7 @@
     <ClInclude Include="GameObject\Block.h" />
     <ClInclude Include="GameObject\Blood.h" />
     <ClInclude Include="GameObject\Boss\BossCherry.h" />
+    <ClInclude Include="GameObject\Boss\ExBossCherry.h" />
     <ClInclude Include="GameObject\Bullet.h" />
     <ClInclude Include="GameObject\Cherry.h" />
     <ClInclude Include="GameObject\GameObject.h" />

@@ -1,0 +1,11 @@
+depth値基準
+
+spike : 0
+trigger : 1
+save : 10
+warp : 20
+kid : 30
+block : 40
+blood : 41
+bullet : 42
+cherry : 50

@@ -152,6 +152,10 @@ namespace Iwanna {
 		if (stageName == U"boss") {
 			gameObjects.savePoints << std::make_shared<BossSavePoint>(Vec2{400,500},1);
 		}
+		if (stageName == U"ExBoss") {
+			gameObjects.savePoints << std::make_shared<BossSavePoint>(Vec2{ 800,450 }, 2);
+			Global::isCameraFollowMode = true;
+		}
 	}
 
 	Vec2 BossStageManager::parsePos(const JSON& json) {
@@ -396,32 +400,32 @@ namespace Iwanna {
 		//背景描画
 		TextureAsset(backgroundName).draw();
 
+		Array<std::shared_ptr<GameObject>> drawList;
+
+		// 全部突っ込む
+		for (auto& s : gameObjects.spikes) drawList << s;
+		for (auto& b : gameObjects.blocks) drawList << b;
+		for (auto& s : gameObjects.savePoints) drawList << s;
+		for (auto& w : gameObjects.warps) drawList << w;
+		for (auto& c : gameObjects.cherries) drawList << c;
+		for (auto& c : gameObjects.bossCherries) drawList << c;
+		for (auto& b : gameObjects.bloods) drawList << b;
+		for (auto& b : gameObjects.bullets) drawList << b;
+		drawList << gameObjects.player;
+
+		// ソート
+		drawList.sort_by([](const auto& a, const auto& b) {
+			return a->depth < b->depth;
+		});
+
 		camera.update(); {
 			const auto t = camera.createTransformer();
 
-			//針描画
-			for (auto s : gameObjects.spikes) s->draw();
-			//ブロック描画
-			for (auto b : gameObjects.blocks) b->draw();
-			//セーブポイント描画
-			for (auto s : gameObjects.savePoints) s->draw();
-			//ワープの描画
-			for (auto w : gameObjects.warps) w->draw();
-			//ボスりんご描画
-			for (auto it = gameObjects.bossCherries.rbegin(); it != gameObjects.bossCherries.rend(); ++it) {
-				(*it)->draw();
-			}
-			//りんご描画
-			for (auto c : gameObjects.cherries) c->draw();
-			//kid君描画
-			gameObjects.player->draw();
-			//血の描画
-			for (auto b : gameObjects.bloods) b->draw();
-			//弾丸描画
-			for (auto b : gameObjects.bullets) b->draw();
+			// 描画
+			for (auto& obj : drawList) obj->draw();
 
 			//暗転演出
-			Rect(0, 0, 800, 608).draw(ColorF(0.0, 0.0, 0.0, darkAlpha));
+			Rect(0, 0, 1600, 608).draw(ColorF(0.0, 0.0, 0.0, darkAlpha));
 
 			//GAMEOVER描画
 			if(isShowGameOver) TextureAsset(U"sprGAMEOVER").drawAt(executeCameraPos());
@@ -443,6 +447,17 @@ namespace Iwanna {
 	// カメラの位置をプレイヤーのいるエリアの中心に設定
 	Vec2 BossStageManager::executeCameraPos() {
 		Vec2 nextPos;
+
+		if (Global::isCameraFollowMode) {
+			nextPos.x = static_cast<int32>(gameObjects.player->pos.x);
+			nextPos.y = Global::stageHeight / 2;
+
+			if (nextPos.x < Global::windowWidth / 2) nextPos.x = Global::windowWidth / 2;
+			else if (nextPos.x > Global::stageWidth - Global::windowWidth / 2) nextPos.x = Global::stageWidth - Global::windowWidth / 2;
+
+			return nextPos;
+		}
+
 		int32 playerAreaX = static_cast<int32>(gameObjects.player->pos.x) / Global::windowWidth;
 		int32 playerAreaY = static_cast<int32>(gameObjects.player->pos.y) / Global::windowHeight;
 		nextPos.x = playerAreaX * Global::windowWidth + Global::windowWidth / 2;
@@ -465,6 +480,13 @@ namespace Iwanna {
 			darkAlpha = 0.9;
 			cameraShake.shake(0.4, 20.0);
 			break;
+		case 2://Exボス召喚
+				gameObjects.bossCherries << std::make_shared<ExBossCherry>(Vec2{ 800,400 }, 5.0, *this);
+				gameObjects.bossCherries << std::make_shared<SordCherriesManager>(Vec2{ 800,500 }, 2.0, *this);
+				bossBgmStart = true;
+				darkAlpha = 0.9;
+				cameraShake.shake(0.4, 20.0);
+				break;
 		}
 	}
 

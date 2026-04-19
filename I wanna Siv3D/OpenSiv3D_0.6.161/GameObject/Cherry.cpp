@@ -20,6 +20,8 @@ namespace Iwanna {
 		gravity = 0;
 		direction = 0;
 
+		depth = 50;
+
 		//描画関連の決定
 		hasAnimation = true;
 		cherryTextureName = U"sprCherryLow";

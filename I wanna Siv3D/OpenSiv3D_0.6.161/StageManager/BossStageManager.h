@@ -5,6 +5,7 @@
 #include "../GameObject/Bullet.h"
 #include "../GameObject/Cherry.h"
 #include "../GameObject/Boss/BossCherry.h"
+#include "../GameObject/Boss/ExBossCherry.h"
 #include "../GameObject/Block.h"
 #include "../GameObject/Spike.h"
 #include "../GameObject/SavePoint.h"
@@ -125,5 +126,8 @@ namespace Iwanna {
 		void createOrangeStopCherry(bool isAddUpDown, const std::function<std::shared_ptr<BossOrangeStopCherry>()>& factory);
 		void createSkyTargetCherry(int32 lineNum, bool isAddLine, const std::function<std::shared_ptr<BossSkyTargetCherry>()>& factory);
 		void createGrayLatticeCherry(double interval,const std::function<std::shared_ptr<BossGrayLatticeCherry>()>& factory);
+
+		// ----- ExBoss用 ----- //
+		//void createSordCherry(Vec2 startPos, const std::function<std::shared_ptr<BossSordCherry>()>& factory);
 	};
 }

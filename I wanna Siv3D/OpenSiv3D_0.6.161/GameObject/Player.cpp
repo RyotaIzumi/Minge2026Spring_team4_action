@@ -48,6 +48,8 @@ namespace Iwanna {
 
 		hspeed = 0.0;
 		vspeed = 0.0;
+
+		depth = 30;
 	}
 
 	void Player::update() {
