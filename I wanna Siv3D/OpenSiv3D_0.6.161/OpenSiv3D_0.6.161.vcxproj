@@ -122,6 +122,7 @@
     <ClCompile Include="AvoidanceManager\Chapter1Manager.cpp" />
     <ClCompile Include="AvoidanceManager\Chapter2Manager.cpp" />
     <ClCompile Include="AvoidanceManager\CherryPatternManagers\GeneralPurposePatterns.cpp" />
+    <ClCompile Include="GameObject\Boss\ExBossAttack.cpp" />
     <ClCompile Include="GameObject\Block.cpp" />
     <ClCompile Include="GameObject\Blood.cpp" />
     <ClCompile Include="GameObject\Boss\BossCherries.cpp" />
@@ -136,6 +137,7 @@
     <ClCompile Include="GameObject\Spike.cpp" />
     <ClCompile Include="GameObject\Trigger.cpp" />
     <ClCompile Include="GameObject\Warp.cpp" />
+    <ClCompile Include="StageManager\CherryPatternManager\GenerateExBossCherryPattern.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainGame.cpp" />
     <ClCompile Include="GameObject\Player.cpp" />
