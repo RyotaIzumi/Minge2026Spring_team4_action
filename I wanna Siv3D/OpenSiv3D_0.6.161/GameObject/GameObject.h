@@ -33,10 +33,12 @@ namespace Iwanna {
 		double hspeed;
 		double vspeed;
 		double speed;
-		double direction;
+		double direction; // 移動方向
 		double gravity;
 		double alpha = 1.0;
 		double depth = 0.0;
+
+		double textureAngle = 0.0; // 描画の角度
 
 		virtual ~GameObject() = default;
 

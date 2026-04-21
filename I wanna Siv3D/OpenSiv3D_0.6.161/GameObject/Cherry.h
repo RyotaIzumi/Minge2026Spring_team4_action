@@ -25,7 +25,10 @@ namespace Iwanna {
 		Yellow,
 		Green,
 		Orange,
-		Sky
+		Sky,
+		Gray,
+		White,
+		Black
 	};
 	class Cherry : public GameObject {
 	private:
@@ -36,6 +39,15 @@ namespace Iwanna {
 		double moveDuration = 0.0; // 移動にかける時間（秒）
 		double moveElapsed = 0.0; // 経過時間
 		double easing = 0.1; // 0.05～0.2くらい
+
+		double startAngle = 0.0;   // 開始角度
+		double targetAngle = 0.0;  // 目標角度
+
+		double rotateDuration = 0.0;
+		double rotateElapsed = 0.0;
+
+		bool isRotating = false;
+		bool isRotateAcceleration = false;
 	protected:
 		//当たり判定サイズ(半径)
 		int32 hitBoxSize = 10;
@@ -77,6 +89,10 @@ namespace Iwanna {
 		void movePosition(const Vec2& targetPoint, double timeSec, bool accele = false);
 		void updateForMoveTargetPos();
 		bool getIsMoveFinished() const;
+
+		void rotateDirection(double deltaAngle, double timeSec, bool accele);
+		void updateForRotateTargetAngle();
+		bool getIsRotateFinished() const;
 
 		void checkOutOfScreen();
 

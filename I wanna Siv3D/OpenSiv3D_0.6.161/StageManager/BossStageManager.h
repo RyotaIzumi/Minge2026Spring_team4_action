@@ -98,6 +98,9 @@ namespace Iwanna {
 		Array<std::shared_ptr<Cherry>> getCherries();
 		Array<std::shared_ptr<Block>> getBlocks();
 
+		//ExBoss用の取得関数
+		std::shared_ptr<SordCherriesManager> getExBossSordManagerCherry();
+
 		String getStageName() const;
 
 		void createCherry(std::shared_ptr<Cherry> cherry);

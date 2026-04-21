@@ -31,6 +31,7 @@ namespace Iwanna {
 	void Cherry::update() {
 		checkOutOfScreen();
 		updateForMoveTargetPos();
+		updateForRotateTargetAngle();
 		barrageUpdate();
 
 		if(isChangedDirOrSpd()) calculateSpeed();
@@ -73,7 +74,9 @@ namespace Iwanna {
 		case CherryColorType::Green:  typeColor = ColorF(Palette::Lawngreen, alpha); break;
 		case CherryColorType::Orange: typeColor = ColorF(Palette::Orange, alpha); break;
 		case CherryColorType::Sky:    typeColor = ColorF(Palette::Skyblue, alpha); break;
-			//case CherryColorType::Gray:   typeColor = ColorF(Palette::Gray, alpha); break;
+		case CherryColorType::Gray:   typeColor = ColorF(Palette::Gray, alpha); break;
+		case CherryColorType::White:   typeColor = ColorF(Palette::White, alpha); break;
+		case CherryColorType::Black:   typeColor = ColorF(Palette::Black, alpha); break;
 		}
 	}
 
@@ -130,6 +133,43 @@ namespace Iwanna {
 
 	bool Cherry::getIsMoveFinished() const {
 		return !isMoving;
+	}
+
+	void Cherry::rotateDirection(double deltaAngle, double timeSec, bool accele) {
+		startAngle = textureAngle;
+		targetAngle = textureAngle + deltaAngle;
+
+		rotateDuration = Math::Max(timeSec, 0.001);
+		rotateElapsed = 0.0;
+
+		isRotating = true;
+		isRotateAcceleration = accele;
+	}
+
+	void Cherry::updateForRotateTargetAngle() {
+		double dt = Scene::DeltaTime();
+		if (!isRotating)return;
+
+		rotateElapsed += dt;
+		double t = rotateElapsed / rotateDuration;
+		t = Min(t, 1.0);
+		double easedT = 0.0;
+		if (isRotateAcceleration) {
+			easedT = t * t;
+		}
+		else {
+			easedT = 1.0 - (1.0 - t) * (1.0 - t);
+		}
+		textureAngle = Math::Lerp(startAngle, targetAngle, easedT);
+		if (t >= 1.0)
+		{
+			textureAngle = targetAngle;
+			isRotating = false;
+		}
+	}
+
+	bool Cherry::getIsRotateFinished() const {
+		return !isRotating;
 	}
 
 	//画面外判定

@@ -154,6 +154,7 @@ namespace Iwanna {
 		}
 		if (stageName == U"ExBoss") {
 			gameObjects.savePoints << std::make_shared<BossSavePoint>(Vec2{ 800,450 }, 2);
+			gameObjects.bossCherries << std::make_shared<SordCherriesManager>(Vec2{ 800,430 }, 2.0, *this);
 			Global::isCameraFollowMode = true;
 		}
 	}
@@ -481,8 +482,7 @@ namespace Iwanna {
 			cameraShake.shake(0.4, 20.0);
 			break;
 		case 2://Exボス召喚
-				gameObjects.bossCherries << std::make_shared<ExBossCherry>(Vec2{ 800,400 }, 5.0, *this);
-				gameObjects.bossCherries << std::make_shared<SordCherriesManager>(Vec2{ 800,500 }, 2.0, *this);
+				gameObjects.bossCherries << std::make_shared<ExBossCherry>(Vec2{ getPlayer()->pos.x,getPlayer()->pos.y + 500 }, 5.0, *this);
 				bossBgmStart = true;
 				darkAlpha = 0.9;
 				cameraShake.shake(0.4, 20.0);
@@ -500,6 +500,13 @@ namespace Iwanna {
 
 	Array<std::shared_ptr<Block>> BossStageManager::getBlocks() {
 		return gameObjects.blocks;
+	}
+
+	std::shared_ptr<SordCherriesManager> BossStageManager::getExBossSordManagerCherry() {
+		if (stageName == U"ExBoss") {
+			return std::dynamic_pointer_cast<SordCherriesManager>(gameObjects.bossCherries.front());
+		}
+		return nullptr;
 	}
 
 	String BossStageManager::getStageName() const {
