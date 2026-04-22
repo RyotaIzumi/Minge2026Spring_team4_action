@@ -293,6 +293,10 @@ namespace Iwanna {
 
 		// ----- 以下通常ステージのギミック ----- //
 
+		if (fileName == U"tutorial") {
+			//gameObjects.signs << std::make_shared<Sign>(Vec2{ 23,7 }, SignType::Tutorial_Jump);
+		}
+
 		if (fileName == U"normal2")gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{400,304},3.0,CherryColorType::Red,*this);
 		if (fileName == U"normal3")gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{400,560},3.0,CherryColorType::Blue,*this);
 		if (fileName == U"normal4")gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{400,304},3.0,CherryColorType::Yellow,*this);

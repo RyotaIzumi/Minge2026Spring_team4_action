@@ -22,6 +22,7 @@ namespace Iwanna {
 		gameObjects.specialBackTraps.clear();
 		gameObjects.bloods.clear();
 		gameObjects.warps.clear();
+		gameObjects.signs.clear();
 
 		// 一部変数の初期化
 		isGenerateBloods = false;
@@ -62,6 +63,7 @@ namespace Iwanna {
 		auto& specialBackTraps = gameObjects.specialBackTraps;
 		auto& bloods = gameObjects.bloods;
 		auto& warps = gameObjects.warps;
+		auto& signs = gameObjects.signs;
 
 		if (player->getIsDead()) {
 			gameoverTimer.start();
@@ -142,7 +144,6 @@ namespace Iwanna {
 						}
 					break;
 				}
-				
 			}
 
 			// 特殊罠用にトリガー再設定
@@ -213,9 +214,15 @@ namespace Iwanna {
 				stockNearGameObjects.add(s.get());
 				stockBulletsNearGameObjects.add(s.get());
 			}
+			//ワープ
 			for (auto& w : warps) {
 				w->update();
 				stockNearGameObjects.add(w.get());
+			}
+			//看板
+			for (auto& s : signs) {
+				s->update();
+				stockNearGameObjects.add(s.get());
 			}
 
 			//playerの近くのオブジェクトのみを取得して当たり判定確認
@@ -352,6 +359,8 @@ namespace Iwanna {
 			for (auto w : gameObjects.warps) w->draw();
 			//kid君描画
 			gameObjects.player->draw();
+			//看板描画
+			for (auto s : gameObjects.signs) s->draw();
 			//ブロック描画
 			for (auto b : gameObjects.blocks) b->draw();
 			//血の描画

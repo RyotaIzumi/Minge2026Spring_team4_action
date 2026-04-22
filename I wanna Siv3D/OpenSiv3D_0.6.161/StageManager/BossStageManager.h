@@ -11,6 +11,7 @@
 #include "../GameObject/SavePoint.h"
 #include "../GameObject/Blood.h"
 #include "../GameObject/Warp.h"
+#include "../UI/TitleCard.h"
 #include "CameraShake.h"
 #include "../Global.h"
 
@@ -44,6 +45,9 @@ namespace Iwanna {
 		Camera2D camera{ cameraBasePos, 1.0};
 		double cameraScale = 1.0;
 		CameraShake cameraShake;
+
+		//タイトルカード(画面右上に表示するやつ)
+		TitleCard titleCard;
 
 		//背景用
 		String backgroundName;

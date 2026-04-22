@@ -12,6 +12,7 @@
 #include "../GameObject/SpecialTrap.h"
 #include "../GameObject/Blood.h"
 #include "../GameObject/Warp.h"
+#include "../GameObject/Sign.h"
 #include "CameraShake.h"
 #include "../Global.h"
 
@@ -29,6 +30,7 @@ namespace Iwanna {
 		Array<std::shared_ptr<SpecialTrap>> specialBackTraps;//↑と違い、背景側のレイヤー配置用
 		Array<std::shared_ptr<Blood>> bloods;
 		Array<std::shared_ptr<Warp>> warps;
+		Array<std::shared_ptr<Sign>> signs;
 	};
 
 	class StageManager {

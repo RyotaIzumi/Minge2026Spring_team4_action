@@ -180,12 +180,16 @@ namespace Iwanna {
 		auto& bloods = gameObjects.bloods;
 		auto& warps = gameObjects.warps;
 
+		//死亡判定
 		if (player->getIsDead()) {
 			gameoverTimer.start();
 			if (gameoverTimer.reachedZero()) {
 				isShowGameOver = true;
 			}
 		}
+
+		//タイトルカード処理
+		titleCard.update();
 
 		// 揺れ更新
 		cameraShake.update();
@@ -480,13 +484,14 @@ namespace Iwanna {
 			bossBgmStart = true;
 			darkAlpha = 0.9;
 			cameraShake.shake(0.4, 20.0);
+			titleCard.startShowTitleCard(U"boss");
 			break;
 		case 2://Exボス召喚
-				gameObjects.bossCherries << std::make_shared<ExBossCherry>(Vec2{ getPlayer()->pos.x,getPlayer()->pos.y + 500 }, 5.0, *this);
-				bossBgmStart = true;
-				darkAlpha = 0.9;
-				cameraShake.shake(0.4, 20.0);
-				break;
+			gameObjects.bossCherries << std::make_shared<ExBossCherry>(Vec2{ getPlayer()->pos.x,getPlayer()->pos.y + 500 }, 5.0, *this);
+			bossBgmStart = true;
+			darkAlpha = 0.9;
+			cameraShake.shake(0.4, 20.0);
+			break;
 		}
 	}
 

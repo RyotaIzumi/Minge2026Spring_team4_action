@@ -117,6 +117,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="UI\TitleCard.cpp" />
     <ClCompile Include="Audio\AudioAsset.cpp" />
     <ClCompile Include="AvoidanceManager\AvoidanceManager.cpp" />
     <ClCompile Include="AvoidanceManager\Chapter1Manager.cpp" />
@@ -134,6 +135,7 @@
     <ClCompile Include="GameObject\HitBox.cpp" />
     <ClCompile Include="GameObject\Miku.cpp" />
     <ClCompile Include="GameObject\SavePoint.cpp" />
+    <ClCompile Include="GameObject\Sign.cpp" />
     <ClCompile Include="GameObject\SpecialTrap.cpp" />
     <ClCompile Include="GameObject\Spike.cpp" />
     <ClCompile Include="GameObject\Trigger.cpp" />
@@ -377,6 +379,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="60FPSwithAutoFrameSkip.h" />
+    <ClInclude Include="UI\TitleCard.h" />
     <ClInclude Include="Audio\AudioAsset.h" />
     <ClInclude Include="AvoidanceManager\AvoidanceManager.h" />
     <ClInclude Include="CommonData.h" />
@@ -389,6 +392,7 @@
     <ClInclude Include="GameObject\GameObject.h" />
     <ClInclude Include="GameObject\Miku.h" />
     <ClInclude Include="GameObject\SavePoint.h" />
+    <ClInclude Include="GameObject\Sign.h" />
     <ClInclude Include="GameObject\SpecialTrap.h" />
     <ClInclude Include="GameObject\Spike.h" />
     <ClInclude Include="GameObject\StockNearGameObjects.h" />
