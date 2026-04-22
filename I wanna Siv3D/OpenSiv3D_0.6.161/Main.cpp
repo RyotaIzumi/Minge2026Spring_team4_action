@@ -21,7 +21,7 @@ void Main()
 	FontAsset::Register(U"Button", FontMethod::MSDF, 20, Typeface::Medium);
 	FontAsset::Register(U"TitleTrap", FontMethod::MSDF, 10, Typeface::Medium);
 	FontAsset::Register(U"PlayerMessage", FontMethod::MSDF, 12, Typeface::Medium);
-	FontAsset::Register(U"TitleCard", FontMethod::MSDF, 14, Typeface::Medium);
+	FontAsset::Register(U"TitleCard", FontMethod::MSDF, 20, Typeface::Medium);
 
 	//カーソル設定
 	Image cursorImage{ U"✌"_emoji };

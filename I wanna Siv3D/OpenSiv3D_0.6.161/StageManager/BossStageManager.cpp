@@ -435,6 +435,8 @@ namespace Iwanna {
 			//GAMEOVER描画
 			if(isShowGameOver) TextureAsset(U"sprGAMEOVER").drawAt(executeCameraPos());
 		}
+
+		titleCard.draw();
 	}
 
 	void BossStageManager::setStep(int32 newStep) {

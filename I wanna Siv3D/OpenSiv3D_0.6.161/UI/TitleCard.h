@@ -6,7 +6,7 @@ namespace Iwanna {
 	class TitleCard {
 	private:
 		String titleName;
-		Size cardSize{200,152};
+		Size cardSize{256,195};
 		Vec2 startPos, nowPos, cameraPos;
 		double moveRangeY;
 		Timer moveTimer{ 1.5s,StartImmediately::No };

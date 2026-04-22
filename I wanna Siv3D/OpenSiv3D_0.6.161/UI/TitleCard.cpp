@@ -56,11 +56,11 @@ namespace Iwanna {
 		TextureAsset(titleCardTexture).draw(nowPos);
 
 		// 文字表示
-		Vec2 textBasePos = nowPos + Vec2(cardSize.x / 2, cardSize.y - 6);
-		FontAsset(U"TitleCard")(titleCardText).drawAt(textBasePos.x - 1, textBasePos.y);
-		FontAsset(U"TitleCard")(titleCardText).drawAt(textBasePos.x + 1, textBasePos.y);
-		FontAsset(U"TitleCard")(titleCardText).drawAt(textBasePos.x, textBasePos.y - 1);
-		FontAsset(U"TitleCard")(titleCardText).drawAt(textBasePos.x, textBasePos.y + 1);
+		Vec2 textBasePos = nowPos + Vec2(cardSize.x / 2, cardSize.y - 12);
+		FontAsset(U"TitleCard")(titleCardText).drawAt(textBasePos.x - 1, textBasePos.y,ColorF(Palette::Black));
+		FontAsset(U"TitleCard")(titleCardText).drawAt(textBasePos.x + 1, textBasePos.y,ColorF(Palette::Black));
+		FontAsset(U"TitleCard")(titleCardText).drawAt(textBasePos.x, textBasePos.y - 1,ColorF(Palette::Black));
+		FontAsset(U"TitleCard")(titleCardText).drawAt(textBasePos.x, textBasePos.y + 1,ColorF(Palette::Black));
 
 		// 本体（白）
 		FontAsset(U"TitleCard")(titleCardText).drawAt(textBasePos.x, textBasePos.y);
