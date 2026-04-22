@@ -23,7 +23,7 @@ namespace Iwanna {
 		Stopwatch sparkStopwatch{ StartImmediately::No };
 		bool canSpark = false;
 		double sparkAlpha = 0.0;
-		Timer sparkTimer{ 0.07s,StartImmediately::No };
+		Timer sparkTimer{ 0.14s,StartImmediately::No };
 		int32 sparkStep = 0;
 	public:
 		SordCherry(Vec2 startPos, double scale, CherryColorType colorType);
@@ -87,6 +87,9 @@ namespace Iwanna {
 
 		Timer startAttackTimer{ 0.8s, StartImmediately::Yes };
 
+		//攻撃関連関数
+		Vec2 attackStartPos;
+
 	protected:
 		BossStageManager* bossStageManager = nullptr;
 		SordCherriesManager* sordCherriesManager = nullptr;
@@ -97,5 +100,29 @@ namespace Iwanna {
 		void barrageUpdate() override;
 		void attack();
 		void draw() const override;
+	};
+
+	class EffectCherrySpark : public Cherry {
+	private:
+		Timer sparkTimer{ 0.6s,StartImmediately::No };
+		double sparkAngle = 0.0;
+		double addAngle = 0.0;
+		double startAddAngle = 0.0;
+		double addScale = 0.0;
+		double startAddScale = 0.0;
+	public:
+		EffectCherrySpark(Vec2 startPos, double scale);
+		void barrageUpdate() override;
+		void draw() const override;
+	};
+
+	class ExproCherry : public Cherry {
+	private:
+		Timer attackTimer{ 0.4s,StartImmediately::No };
+		double startSpeed = 0.0;
+		int32 step = 0;
+	public:
+		ExproCherry(Vec2 startPos, double scale);
+		void barrageUpdate() override;
 	};
 }

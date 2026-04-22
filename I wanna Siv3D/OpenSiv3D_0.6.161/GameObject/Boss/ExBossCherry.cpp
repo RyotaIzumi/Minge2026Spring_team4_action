@@ -45,21 +45,20 @@ namespace Iwanna {
 				pos.x = 800;
 				pos.y = -300;
 				speed = 0;
-				movePosition(Vec2{ 800, 330 }, 1.6, false);
-				rotateDirection(140, 2.0, false);
+				movePosition(Vec2{ 800, 330 }, 1.1, false);
+				rotateDirection(140, 1.2, false);
 				startStep++;
 			}
 			break;
 		case 1:
 			if (getIsMoveFinished() && getIsRotateFinished()) {
-				movePosition(Vec2{ 800, 260 }, 0.6, false);//抜刀
-				rotateDirection(180, 1.0, true);
+				movePosition(Vec2{ 800, 290 }, 0.2, false);//抜刀
 				sordCherriesManager->startFollowBoss();
 				startStep++;
 			}
 			break;
 		case 2:
-			if (getIsRotateFinished()) {
+			if (getIsMoveFinished()) {
 				nowAttackType = ExBossAttackType::SparkExpro;
 				startStep++;
 			}
@@ -256,7 +255,7 @@ namespace Iwanna {
 	}
 
 	void SordCherriesManager::sparkSordBlade() {
-		double sparkInterval = 0.04;
+		double sparkInterval = 0.02;
 		int32 sparkBladeCount = 0;
 
 		for (const auto& cherry : sordCherries) {
@@ -346,5 +345,44 @@ namespace Iwanna {
 				}
 			}
 		}
+	}
+
+	// --- 爆破時のりんご --- //
+	ExproCherry::ExproCherry(Vec2 startPos, double scale) : Cherry(startPos, scale) {
+		pos = startPos;
+		hitBox = std::make_shared<CircleHitBox>(pos, hitBoxSize * scaleMag);
+
+		canPlayerKill = true;
+		isDeleteOutOfScreen = false;
+		hasAnimation = false;
+
+		cherryTextureName = U"sprCherryLowWhite";
+		cherryColorType = CherryColorType::Gray;
+		depth = 18;
+
+		alpha = 1.0;
+		scaleMag = 1.0;
+
+		attackTimer.start();
+
+		setTypeColor();
+	}
+
+	void ExproCherry::barrageUpdate() {
+
+		if (step == 0) {
+			startSpeed = speed;
+			step++;
+		}
+
+		if (attackTimer.isRunning()) {
+			alpha = EaseOutQuint(attackTimer.progress1_0());
+			speed = EaseOutQuart(attackTimer.progress1_0()) * startSpeed;
+		}
+		else {
+			isDelete = true;
+		}
+
+		setTypeColor();
 	}
 }

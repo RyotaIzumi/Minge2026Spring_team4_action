@@ -18,6 +18,7 @@ namespace Iwanna {
 			registerAudio(MAIN_NORMAL, Path_MAIN_NORMAL, Loop::Yes);
 			registerAudio(BOSS_NORMAL, Path_BOSS_NORMAL, Loop::Yes);
 			registerAudio(GAMEOVER_NORMAL, Path_GAMEOVER_NORMAL, Loop::No);
+			registerAudio(EX_BOSS, Path_EX_BOSS, Loop::Yes);
 		}
 		
 		//SEを登録する
@@ -33,6 +34,10 @@ namespace Iwanna {
 			registerAudio(BOSSHIT, BOSSHIT_PATH);
 			registerAudio(ERROR,ERROR_PATH);
 			registerAudio(DISCORD,DISCORD_PATH);
+
+			//EXボスSE
+			registerAudio(EXPRO, EXPRO_PATH);
+			registerAudio(SPARK, SPARK_PATH);
 		}
 
 		/**

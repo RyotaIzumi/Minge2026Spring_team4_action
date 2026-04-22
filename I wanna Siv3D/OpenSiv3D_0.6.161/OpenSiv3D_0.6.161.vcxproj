@@ -128,6 +128,7 @@
     <ClCompile Include="GameObject\Boss\BossCherries.cpp" />
     <ClCompile Include="GameObject\Boss\BossCherry.cpp" />
     <ClCompile Include="GameObject\Boss\ExBossCherry.cpp" />
+    <ClCompile Include="GameObject\Boss\ExBossEffectCherry.cpp" />
     <ClCompile Include="GameObject\Bullet.cpp" />
     <ClCompile Include="GameObject\Cherry.cpp" />
     <ClCompile Include="GameObject\HitBox.cpp" />
