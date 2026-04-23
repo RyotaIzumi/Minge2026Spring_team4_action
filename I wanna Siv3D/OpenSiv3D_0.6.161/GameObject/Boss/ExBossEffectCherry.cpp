@@ -49,4 +49,36 @@ namespace Iwanna {
 		TextureAsset(cherryTextureName)(0, 0, textureEdge, textureEdge).scaled(scaleMag).rotated(Math::ToRadians(sparkAngle)).drawAt(pos.x, pos.y - 1, ColorF(1.0, alpha));
 		//hitBox->draw(Palette::Blue);//判定の可視化
 	}
+
+	// --- フェードアウトりんご --- //
+	FadeCherry::FadeCherry(Vec2 startPos, double scale, String name, CherryColorType colorType, double duration) : Cherry(startPos, scale) {
+		pos = startPos;
+		hitBox = std::make_shared<CircleHitBox>(pos, hitBoxSize * scaleMag);
+
+		canPlayerKill = false;
+		isDeleteOutOfScreen = false;
+		alpha = 1.0;
+		hasAnimation = false;
+		cherryTextureName = name;
+		cherryColorType = colorType;
+		depth = 10;
+
+		fadeTime = duration;
+
+		fadeTimer = Timer{ SecondsF{fadeTime}, StartImmediately::Yes };
+
+		setTypeColor();
+	}
+
+	void FadeCherry::barrageUpdate() {
+
+		if (fadeTimer.isRunning()) {
+			alpha = fadeTimer.progress1_0();
+		}
+		else {
+			isDelete = true;
+		}
+
+		setTypeColor();
+	}
 }

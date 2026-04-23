@@ -40,6 +40,8 @@ namespace Iwanna {
 		static const String ERROR_PATH = SE_PATH + ERROR + U".wav";
 		static const String DISCORD = U"sndDiscord";
 		static const String DISCORD_PATH = SE_PATH + DISCORD + U".mp3";
+		static const String TITLECARD = U"sndTitleCard";
+		static const String TITLECARD_PATH = SE_PATH + TITLECARD + U".wav";
 
 		//EXボスSE
 		static const String EXPRO= U"sndExpro";

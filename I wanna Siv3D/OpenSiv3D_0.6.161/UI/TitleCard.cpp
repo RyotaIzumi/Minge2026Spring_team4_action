@@ -1,4 +1,5 @@
 ﻿#include "TitleCard.h"
+#include "../Audio/AudioAsset.h"
 
 namespace Iwanna {
 	TitleCard::TitleCard() {
@@ -11,7 +12,9 @@ namespace Iwanna {
 		switch (moveStep) {
 		case 0://初期化
 			nowPos = startPos;
+			canShowTitleCard = true;
 			moveTimer.restart();
+			AudioAsset(Sound::TITLECARD).playOneShot();
 
 			moveStep++;
 			break;
@@ -29,13 +32,18 @@ namespace Iwanna {
 			}
 			break;
 		case 3://画面外遷移
-			nowPos.y = startPos.y + cardSize.y - cardSize.y * EaseOutSine(moveTimer.progress0_1());
+			nowPos.y = startPos.y + cardSize.y - cardSize.y * EaseInSine(moveTimer.progress0_1());
 			if (moveTimer.reachedZero()) {
-				nowPos = startPos;
-				moveStep = -1;
+				reset();
 			}
 			break;
 		}
+	}
+
+	void TitleCard::reset() {
+		nowPos = startPos;
+		canShowTitleCard = false;
+		moveStep = -1;
 	}
 
 	void TitleCard::setNowCameraPos(Vec2 pos) {
@@ -52,8 +60,11 @@ namespace Iwanna {
 	}
 
 	void TitleCard::draw() const {
+
+		if(!canShowTitleCard) return;
+
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
-		TextureAsset(titleCardTexture).draw(nowPos);
+		TextureAsset(titleCardTexture).draw(nowPos).drawFrame(1.0,ColorF(Palette::Black));
 
 		// 文字表示
 		Vec2 textBasePos = nowPos + Vec2(cardSize.x / 2, cardSize.y - 12);

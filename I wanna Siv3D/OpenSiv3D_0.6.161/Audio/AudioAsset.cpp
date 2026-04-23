@@ -34,6 +34,7 @@ namespace Iwanna {
 			registerAudio(BOSSHIT, BOSSHIT_PATH);
 			registerAudio(ERROR,ERROR_PATH);
 			registerAudio(DISCORD,DISCORD_PATH);
+			registerAudio(TITLECARD,TITLECARD_PATH);
 
 			//EXボスSE
 			registerAudio(EXPRO, EXPRO_PATH);

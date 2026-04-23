@@ -5,16 +5,15 @@
 namespace Iwanna {
 	void ExBossCherry::attack() {
 		switch (nowAttackType) {
-		case ExBossAttackType::SparkExpro:
+		case ExBossAttackType::SparkExpro: // ✨爆発攻撃
 			switch (attackStep) {
 			case 0://上向きへ回転
-				rotateDirection(180, 0.8, true);
 				attackStep++;
 				break;
 			case 1://回転が終わったら、剣を光らせるエフェクトと攻撃の出す
 				if (getIsRotateFinished()) {
 					sordCherriesManager->sparkSordBlade();
-					rotateDirection(0, 0.7, true);
+					rotateDirection(0, 0.7, false);
 					attackStep++;
 				}
 				break;
@@ -41,13 +40,75 @@ namespace Iwanna {
 					AudioAsset(Sound::EXPRO).playOneShot();
 					bossStageManager->createSordExproCherry(attackStartPos, false, [this]() { return std::make_shared<ExproCherry>(pos, 1.0);});
 
-					rotateDirection(0, 1.0, true);
+					rotateDirection(0, 1.2, true);//攻撃終わりまで待ち
 					attackStep++;
+				}
+				break;
+			case 4:
+				if (getIsRotateFinished()) {
+					movePosition(Vec2{ pos.x, baseY }, 1.1, false);
+					attackStep++;
+				}
+				break;
+			case 5:
+				if (getIsMoveFinished()) {
+					attackStep = 0;
+					isNowAttacking = false;
+					nowAttackType = ExBossAttackType::None;
 				}
 				break;
 			}
 
 			break;
+
+		case ExBossAttackType::SwingOne: // 振り下ろし攻撃
+			switch (attackStep) {
+			case 0://プレイヤーの位置に応じて、右か左に振りかぶる
+				if (isPlayerInRightSide) {
+					rotateDirection(-20, 0.8, false);
+					movePosition(Vec2{ playerPos.x - 135, playerPos.y }, 1.0, false);
+				}
+				else {
+					rotateDirection(20, 0.8, false);
+					movePosition(Vec2{ playerPos.x + 135, playerPos.y }, 1.0, false);
+				}
+
+				attackStep++;
+				break;
+			case 1://振り下ろし開始
+				if (getIsRotateFinished() && getIsMoveFinished()) {
+					if (isPlayerInRightSide) {
+						rotateDirection(220, 0.2, false);
+					}
+					else {
+						rotateDirection(-220, 0.2, false);
+					}
+					sordCherriesManager->setSordCanPlayerKill(true);
+					attackStep++;
+				}
+				break;
+			case 2://振り下ろした後の待機時間
+				if (getIsRotateFinished()) {
+					rotateDirection(0, 0.7, true);
+					sordCherriesManager->setSordCanPlayerKill(false);
+					attackStep++;
+				}
+				break;
+			case 3://戻る
+				if (getIsRotateFinished()) {
+					rotateDirection(getBaseAngleDiff(), 1.2, false);
+					attackStep++;
+				}
+				break;
+			case 4:
+				if (getIsRotateFinished()) {
+					attackStep = 0;
+					nowAttackType = ExBossAttackType::None;
+				}
+				break;
+			}
 		}
+
+
 	}
 }

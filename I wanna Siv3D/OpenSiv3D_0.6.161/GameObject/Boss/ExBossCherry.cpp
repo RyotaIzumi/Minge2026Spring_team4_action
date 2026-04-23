@@ -41,14 +41,13 @@ namespace Iwanna {
 		//ボス戦開始時の処理
 		switch (startStep) {
 		case 0:
-			if (pos.y < -300) {
+				isNowAttacking = true;
 				pos.x = 800;
 				pos.y = -300;
 				speed = 0;
 				movePosition(Vec2{ 800, 330 }, 1.1, false);
 				rotateDirection(140, 1.2, false);
 				startStep++;
-			}
 			break;
 		case 1:
 			if (getIsMoveFinished() && getIsRotateFinished()) {
@@ -57,23 +56,48 @@ namespace Iwanna {
 				startStep++;
 			}
 			break;
-		case 2:
+		case 2://上向きに回転
 			if (getIsMoveFinished()) {
+				rotateDirection(180, 0.8, true);
+				startStep++;
+			}
+			break;
+		case 3:
+			if (getIsRotateFinished()) {
+				baseAngle = textureAngle;
 				nowAttackType = ExBossAttackType::SparkExpro;
 				startStep++;
 			}
 			break;
 		}
 
+		//player関連の情報を取得
+		playerPos = bossStageManager->getPlayer()->pos;
+		isPlayerInRightSide = playerPos.x > pos.x;
+		playerDistance = calculateDistance(pos, playerPos);
+
+		//剣の状態を更新
 		sordCherriesManager->setExBossPos(pos);
 		sordCherriesManager->setExBossAngle(textureAngle);
+
+		//攻撃処理
 		attack();
+
+		if (nowAttackType != ExBossAttackType::None || isNowAttacking)return;
+
+		nowAttackType = ExBossAttackType::SwingOne;
+
+		
 	}
 
 	void ExBossCherry::draw() const {
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
 		TextureAsset(U"sprCherryLowBoss").scaled(scaleMag).rotated(Math::ToRadians(textureAngle)).drawAt(pos.x - 1, pos.y - 1, ColorF(1.0, isMuteki ? 0.6 : 1.0));
 		//hitBox->draw(ColorF(0.7,0.7));//判定の可視化
+	}
+
+	double ExBossCherry::getBaseAngleDiff() const {
+		return baseAngle - textureAngle;
 	}
 
 	// --- 剣を構成するりんご --- //
@@ -176,6 +200,23 @@ namespace Iwanna {
 		sparkStopwatch.restart();
 	}
 
+	// --- 剣の判定用りんご --- //
+	SordHitBoxCherry::SordHitBoxCherry(Vec2 startPos, double scale, CherryColorType colorType) : SordCherry(startPos, scale, colorType) {
+		pos = startPos;
+		hitBox = std::make_shared<CircleHitBox>(pos, hitBoxSize * scaleMag);
+
+		canPlayerKill = false;
+		isDeleteOutOfScreen = false;
+		alpha = 1.0;
+		hasAnimation = false;
+		cherryTextureName = U"sprCherryLowAllWhite";
+		depth = 100;
+	}
+
+	void SordHitBoxCherry::draw() const {
+		//hitBox->draw(ColorF(0.7, 0.7));//判定の可視化
+	}
+
 	// ----- 剣型りんごの動き制御用りんご ----- //
 	SordCherriesManager::SordCherriesManager(Vec2 startPos, double scale, BossStageManager& manager) : bossStageManager(&manager), Cherry(startPos, scale) {
 		pos = startPos;
@@ -204,6 +245,18 @@ namespace Iwanna {
 			pos.y = r * sin(Math::ToRadians(c + exBossAngle)) + exBossPos.y;
 			for (const auto& cherry : sordCherries) {
 				cherry->setSordBaseCenterPos(exBossPos);
+
+				//剣に攻撃判定がある場合は残像エフェクトを生成
+				if(cherry->sordCherryType == SordCherryType::Hitbox && generateEffectTimer.reachedZero()) {
+					const std::function<std::shared_ptr<Cherry>()>& effectCherry = [&]() {
+						return std::make_shared<FadeCherry>(cherry->pos, 1.7, U"sprCherryLowAllWhite", CherryColorType::Gray, 0.5);
+					};
+					bossStageManager->createCherry(effectCherry());
+				}
+			}
+
+			if(generateEffectTimer.reachedZero()) {
+				generateEffectTimer.restart();
 			}
 		}
 	}
@@ -225,6 +278,18 @@ namespace Iwanna {
 		for (const auto& cherry : sordCherries) {
 			cherry->setExBossAngle(c);
 		}
+	}
+
+	//剣の判定用りんごの当たり判定の有効無効を設定する
+	void SordCherriesManager::setSordCanPlayerKill(bool bl) {
+		for (const auto& cherry : sordCherries) {
+			if (cherry->sordCherryType == SordCherryType::Hitbox) {
+				cherry->canPlayerKill = bl;
+			}
+		}
+
+		if(bl) generateEffectTimer.restart();
+		else generateEffectTimer.reset();
 	}
 
 	// 呼び出されると、ExBossへの追従を開始する
@@ -252,6 +317,7 @@ namespace Iwanna {
 
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
 		TextureAsset(cherryTextureName)(0, 0, textureEdge, textureEdge).scaled(scaleMag).drawAt(pos.x, pos.y - 1, typeColor);
+		hitBox->draw(ColorF(0.7, 0.7));//判定の可視化
 	}
 
 	void SordCherriesManager::sparkSordBlade() {
@@ -308,6 +374,19 @@ namespace Iwanna {
 				}
 				bladeCount++;
 			}
+		}
+
+		// 刃の判定用のりんごの生成
+		int hitBoxNum = 4;
+		double bladeHitBoxInterval = 36.0;
+		for(int i = 0; i < hitBoxNum; i++) {
+			auto cherry = std::make_shared<SordHitBoxCherry>(pos, 2.0, CherryColorType::Gray);
+			cherry->pos.x = pos.x;
+			cherry->pos.y = bladeStartPos.y - i * bladeHitBoxInterval;
+			cherry->setSordBaseCenterPos(pos);
+			cherry->sordCherryType = SordCherryType::Hitbox;
+			sordCherries.push_back(cherry);
+			bossStageManager->createCherry(cherry);
 		}
 
 		// 柄部分の生成

@@ -4,7 +4,7 @@
 namespace Iwanna {
 	BossStageManager::BossStageManager() {
 		stockNearGameObjects.cellSize = 96;
-		stockBulletsNearGameObjects.cellSize = 160;
+		stockBulletsNearGameObjects.cellSize = 320;
 		stockLargeNearGameObjects.cellSize = 800;
 	}
 
@@ -32,6 +32,8 @@ namespace Iwanna {
 
 		gameoverTimer.reset();
 		isShowGameOver = false;
+
+		titleCard.reset();
 
 		if(Global::isChangeRoom)loadGameObjects(Global::nowRoomName);
 		else loadGameObjects(Global::savedRoomName);
@@ -489,7 +491,7 @@ namespace Iwanna {
 			titleCard.startShowTitleCard(U"boss");
 			break;
 		case 2://Exボス召喚
-			gameObjects.bossCherries << std::make_shared<ExBossCherry>(Vec2{ getPlayer()->pos.x,getPlayer()->pos.y + 500 }, 5.0, *this);
+			gameObjects.bossCherries << std::make_shared<ExBossCherry>(Vec2{ 800,-300 }, 5.0, *this);
 			bossBgmStart = true;
 			darkAlpha = 0.9;
 			cameraShake.shake(0.4, 20.0);
