@@ -101,6 +101,7 @@ namespace Iwanna {
 		std::shared_ptr<Player> getPlayer();
 		Array<std::shared_ptr<Cherry>> getCherries();
 		Array<std::shared_ptr<Block>> getBlocks();
+		CameraShake& getCameraShake() { return cameraShake; }
 
 		//ExBoss用の取得関数
 		std::shared_ptr<SordCherriesManager> getExBossSordManagerCherry();

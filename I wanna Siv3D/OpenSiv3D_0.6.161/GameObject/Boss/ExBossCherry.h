@@ -92,8 +92,11 @@ namespace Iwanna {
 
 	enum class ExBossAttackType {
 		None,
+		Wait,
 		SparkExpro,
-		SwingOne
+		SwingOne,
+		Fall,
+		Slide
 	};
 
 	class ExBossCherry : public Cherry {
@@ -109,10 +112,9 @@ namespace Iwanna {
 		ExBossAttackType nowAttackType = ExBossAttackType::None;
 		int32 attackStep = 0;
 
-		Stopwatch attackStopwatch{ StartImmediately::No };
-		double attackIntervalTime;
-
-		Timer startAttackTimer{ 0.8s, StartImmediately::Yes };
+		//待機状態関連
+		Stopwatch waitStopwatch{ StartImmediately::No };
+		double waitTime;
 
 		//攻撃関連関数
 		Vec2 attackStartPos;
@@ -130,8 +132,11 @@ namespace Iwanna {
 		ExBossCherry(Vec2 startPos, double scale, BossStageManager& manager);
 
 		void barrageUpdate() override;
-		void attack();
 		void draw() const override;
+
+		// ExBossAttack.cppで定義
+		void attack();
+		void startWait();
 
 		double getBaseAngleDiff() const;
 	};

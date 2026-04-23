@@ -48,6 +48,10 @@ namespace Iwanna {
 		static const String EXPRO_PATH = SE_PATH + EXPRO + U".mp3";
 		static const String SPARK = U"sndSpark";
 		static const String SPARK_PATH = SE_PATH + SPARK + U".mp3";
+		static const String SORD_WEAK = U"sndSordWeak";
+		static const String SORD_WEAK_PATH = SE_PATH + SORD_WEAK + U".mp3";
+		static const String SORD_STRONG = U"sndSordStrong";
+		static const String SORD_STRONG_PATH = SE_PATH + SORD_STRONG + U".mp3";
 		
 		void registerBGMs();
 		void registerSEs();

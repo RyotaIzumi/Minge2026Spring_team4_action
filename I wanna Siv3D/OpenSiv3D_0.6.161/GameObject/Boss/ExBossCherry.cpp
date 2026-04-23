@@ -33,11 +33,12 @@ namespace Iwanna {
 
 		c = 0;
 		r = 20;
-		attackIntervalTime = 3.5;
+		waitTime = 1.5;
 		startStep = 0;
 	}
 
 	void ExBossCherry::barrageUpdate() {
+
 		//ボス戦開始時の処理
 		switch (startStep) {
 		case 0:
@@ -76,18 +77,12 @@ namespace Iwanna {
 		isPlayerInRightSide = playerPos.x > pos.x;
 		playerDistance = calculateDistance(pos, playerPos);
 
-		//剣の状態を更新
-		sordCherriesManager->setExBossPos(pos);
-		sordCherriesManager->setExBossAngle(textureAngle);
-
 		//攻撃処理
 		attack();
 
-		if (nowAttackType != ExBossAttackType::None || isNowAttacking)return;
-
-		nowAttackType = ExBossAttackType::SwingOne;
-
-		
+		//剣の状態を更新
+		sordCherriesManager->setExBossPos(pos);
+		sordCherriesManager->setExBossAngle(textureAngle);
 	}
 
 	void ExBossCherry::draw() const {
@@ -244,7 +239,6 @@ namespace Iwanna {
 			pos.x = r * cos(Math::ToRadians(c + exBossAngle)) + exBossPos.x;
 			pos.y = r * sin(Math::ToRadians(c + exBossAngle)) + exBossPos.y;
 			for (const auto& cherry : sordCherries) {
-				cherry->setSordBaseCenterPos(exBossPos);
 
 				//剣に攻撃判定がある場合は残像エフェクトを生成
 				if(cherry->sordCherryType == SordCherryType::Hitbox && generateEffectTimer.reachedZero()) {
@@ -270,6 +264,12 @@ namespace Iwanna {
 	// ExBossの座標を取得する
 	void SordCherriesManager::setExBossPos(Vec2 bossPos) {
 		exBossPos = bossPos;
+
+		if (isFollowBoss) {
+			for (const auto& cherry : sordCherries) {
+				cherry->setSordBaseCenterPos(exBossPos);
+			}
+		}
 	}
 
 	// ExBossのtexture角度を取得する

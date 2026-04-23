@@ -39,6 +39,8 @@ namespace Iwanna {
 			//EXボスSE
 			registerAudio(EXPRO, EXPRO_PATH);
 			registerAudio(SPARK, SPARK_PATH);
+			registerAudio(SORD_WEAK, SORD_WEAK_PATH);
+			registerAudio(SORD_STRONG, SORD_STRONG_PATH);
 		}
 
 		/**

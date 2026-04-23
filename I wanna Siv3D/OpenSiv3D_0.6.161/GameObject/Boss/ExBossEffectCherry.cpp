@@ -61,7 +61,7 @@ namespace Iwanna {
 		hasAnimation = false;
 		cherryTextureName = name;
 		cherryColorType = colorType;
-		depth = 10;
+		depth = 0;
 
 		fadeTime = duration;
 
