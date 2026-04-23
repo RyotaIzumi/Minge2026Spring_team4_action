@@ -21,7 +21,7 @@ namespace Iwanna {
 		isDeleteOutOfScreen = false;
 
 		hasHp = true;
-		maxHp = 25;
+		maxHp = 60;
 		hp = maxHp;
 
 		baseCenterPos = Vec2{ 800, 330 };
@@ -33,7 +33,7 @@ namespace Iwanna {
 
 		c = 0;
 		r = 20;
-		waitTime = 1.5;
+		waitTime = 1.0;
 		startStep = 0;
 	}
 
@@ -46,26 +46,33 @@ namespace Iwanna {
 				pos.x = 800;
 				pos.y = -300;
 				speed = 0;
-				movePosition(Vec2{ 800, 330 }, 1.1, false);
-				rotateDirection(140, 1.2, false);
+				movePosition(Vec2{ 800, 330 }, 1.8, false);
+				rotateDirection(140, 1.8, false);
 				startStep++;
 			break;
 		case 1:
 			if (getIsMoveFinished() && getIsRotateFinished()) {
 				movePosition(Vec2{ 800, 290 }, 0.2, false);//抜刀
+				//playerのいる方向に回転
+				if(isPlayerInRightSide)rotateDirection(-180, 0.6, false);
+				else rotateDirection(180, 0.6, false);
+
+				AudioAsset(Sound::SORD_STRONG).playOneShot();
 				sordCherriesManager->startFollowBoss();
+				sordCherriesManager->setSordCanPlayerKill(true);
 				startStep++;
 			}
 			break;
-		case 2://上向きに回転
-			if (getIsMoveFinished()) {
-				rotateDirection(180, 0.8, true);
+		case 2://少し待機
+			if (getIsMoveFinished() && getIsRotateFinished()) {
+				rotateDirection(0, 0.4, false);
 				startStep++;
 			}
 			break;
 		case 3:
 			if (getIsRotateFinished()) {
 				baseAngle = textureAngle;
+				sordCherriesManager->setSordCanPlayerKill(false);
 				nowAttackType = ExBossAttackType::SparkExpro;
 				startStep++;
 			}
@@ -243,7 +250,7 @@ namespace Iwanna {
 				//剣に攻撃判定がある場合は残像エフェクトを生成
 				if(cherry->sordCherryType == SordCherryType::Hitbox && generateEffectTimer.reachedZero()) {
 					const std::function<std::shared_ptr<Cherry>()>& effectCherry = [&]() {
-						return std::make_shared<FadeCherry>(cherry->pos, 1.7, U"sprCherryLowAllWhite", CherryColorType::Gray, 0.5);
+						return std::make_shared<FadeCherry>(cherry->pos, 1.7, U"sprCherryLowAllWhite", CherryColorType::Red, 0.5);
 					};
 					bossStageManager->createCherry(effectCherry());
 				}

@@ -9,7 +9,7 @@ namespace Iwanna {
 			if (waitStopwatch.isRunning()) {
 				if (waitStopwatch.s() >= waitTime) {
 					waitStopwatch.reset();
-					nowAttackType = ExBossAttackType::Slide;
+					nowAttackType = ExBossAttackType::Warp;
 				}
 			}
 			break;
@@ -228,6 +228,87 @@ namespace Iwanna {
 				}
 				break;
 			case 6:
+				if (getIsRotateFinished()) {
+					startWait();
+				}
+				break;
+			}
+			break;
+
+		case ExBossAttackType::Warp: // --- ワープ振り下ろし攻撃 --- //
+			switch (attackStep) {
+			case 0://プレイヤーの位置に応じて、右か左に振りかぶる
+				if (isPlayerInRightSide) {
+					rotateDirection(30, 0.6, false);
+					movePosition(pos,0.3, false);
+				}
+				else {
+					rotateDirection(-30, 0.6, false);
+					movePosition(pos,0.3, false);
+				}
+
+				attackStep++;
+				break;
+			case 1://ワープ開始
+				if (getIsMoveFinished()) {
+					bossStageManager->createWarpCurtainCherry(pos, [this]() { return std::make_shared<WarpCurtainCherry>(2.0); });
+					AudioAsset(Sound::BOSS_WARP).playOneShot();
+					attackStep++;
+				}
+				break;
+			case 2://画面外上部へ移動する
+				if (getIsRotateFinished()) {
+					pos.y = -300;
+					movePosition(pos, 0.4, false);
+					attackStep++;
+				}
+				break;
+			case 3://光再出現
+				if (getIsMoveFinished()) {
+					if (isPlayerInRightSide) bossStageManager->createWarpCurtainCherry(Vec2{ playerPos.x + 150, playerPos.y }, [this]() { return std::make_shared<WarpCurtainCherry>(2.0); });
+					else bossStageManager->createWarpCurtainCherry(Vec2{ playerPos.x - 150, playerPos.y }, [this]() { return std::make_shared<WarpCurtainCherry>(2.0); });
+					
+					movePosition(pos, 0.27, false);
+					attackStep++;
+				}
+				break;
+			case 4://本体出現
+				if (getIsMoveFinished()) {
+					if (isPlayerInRightSide) pos.x = playerPos.x + 150;
+					else pos.x = playerPos.x - 150;
+					pos.y = playerPos.y - 10;
+
+					rotateDirection(0, 0.5, false);
+					attackStep++;
+				}
+				break;
+			case 5://振り下ろし開始
+				if (getIsRotateFinished()) {
+					AudioAsset(Sound::SORD_STRONG).playOneShot();
+					if (isPlayerInRightSide) {
+						rotateDirection(230, 0.25, false);
+					}
+					else {
+						rotateDirection(-230, 0.25, false);
+					}
+					sordCherriesManager->setSordCanPlayerKill(true);
+					attackStep++;
+				}
+			case 6://振り下ろした後の待機時間
+				if (getIsRotateFinished()) {
+					rotateDirection(0, 0.7, true);
+					sordCherriesManager->setSordCanPlayerKill(false);
+					attackStep++;
+				}
+				break;
+			case 7://戻る
+				if (getIsRotateFinished()) {
+					movePosition(Vec2{ pos.x, baseY }, 1.0, false);
+					rotateDirection(getBaseAngleDiff(), 1.2, false);
+					attackStep++;
+				}
+				break;
+			case 8:
 				if (getIsRotateFinished()) {
 					startWait();
 				}

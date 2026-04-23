@@ -52,6 +52,8 @@ namespace Iwanna {
 		static const String SORD_WEAK_PATH = SE_PATH + SORD_WEAK + U".mp3";
 		static const String SORD_STRONG = U"sndSordStrong";
 		static const String SORD_STRONG_PATH = SE_PATH + SORD_STRONG + U".mp3";
+		static const String BOSS_WARP = U"sndBossWarp";
+		static const String BOSS_WARP_PATH = SE_PATH + BOSS_WARP + U".mp3";
 		
 		void registerBGMs();
 		void registerSEs();

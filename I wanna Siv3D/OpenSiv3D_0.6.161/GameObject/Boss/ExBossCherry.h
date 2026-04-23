@@ -96,7 +96,8 @@ namespace Iwanna {
 		SparkExpro,
 		SwingOne,
 		Fall,
-		Slide
+		Slide,
+		Warp
 	};
 
 	class ExBossCherry : public Cherry {
@@ -141,6 +142,18 @@ namespace Iwanna {
 		double getBaseAngleDiff() const;
 	};
 
+	// ----- 攻撃に用いるりんご ----- //
+
+	class ExproCherry : public Cherry {
+	private:
+		Timer attackTimer{ 0.5s,StartImmediately::No };
+		double startSpeed = 0.0;
+		int32 step = 0;
+	public:
+		ExproCherry(Vec2 startPos, double scale);
+		void barrageUpdate() override;
+	};
+
 	// ----- 攻撃のエフェクト用りんご ----- //
 
 	class EffectCherrySpark : public Cherry {
@@ -157,22 +170,24 @@ namespace Iwanna {
 		void draw() const override;
 	};
 
-	class ExproCherry : public Cherry {
-	private:
-		Timer attackTimer{ 0.4s,StartImmediately::No };
-		double startSpeed = 0.0;
-		int32 step = 0;
-	public:
-		ExproCherry(Vec2 startPos, double scale);
-		void barrageUpdate() override;
-	};
-
 	class FadeCherry : public Cherry {
 	private:
 		Timer fadeTimer;
 		double fadeTime;
 	public:
 		FadeCherry(Vec2 startPos, double scale,String name, CherryColorType colorType,double duration);
+		void barrageUpdate() override;
+	};
+
+	class WarpCurtainCherry : public Cherry {
+	private:
+		Timer fadeTimer;
+		Timer waitTimer;
+		int32 effectStep = 0;
+	public:
+		Vec2 startPos, endPos;
+
+		WarpCurtainCherry(double scale);
 		void barrageUpdate() override;
 	};
 }

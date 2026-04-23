@@ -138,5 +138,6 @@ namespace Iwanna {
 		// ----- ExBoss用 ----- //
 		//void createSordCherry(Vec2 startPos, const std::function<std::shared_ptr<BossSordCherry>()>& factory);
 		void createSordExproCherry(Vec2 startPos, bool isEffect, const std::function<std::shared_ptr<Cherry>()>& factory);
+		void createWarpCurtainCherry(Vec2 basePos, const std::function<std::shared_ptr<WarpCurtainCherry>()>& factory);
 	};
 }

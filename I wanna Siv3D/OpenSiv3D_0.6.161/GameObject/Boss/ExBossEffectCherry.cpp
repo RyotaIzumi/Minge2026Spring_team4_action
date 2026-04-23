@@ -81,4 +81,56 @@ namespace Iwanna {
 
 		setTypeColor();
 	}
+
+	// --- ワープカーテンりんご --- //
+	WarpCurtainCherry::WarpCurtainCherry(double scale) : Cherry(startPos, scale) {
+		pos = startPos;
+		hitBox = std::make_shared<CircleHitBox>(pos, hitBoxSize * scaleMag);
+
+		canPlayerKill = false;
+		isDeleteOutOfScreen = false;
+		alpha = 0.0;
+		hasAnimation = false;
+		cherryTextureName = U"sprCherryLowAllWhite";
+		cherryColorType = CherryColorType::White;
+		depth = 70;
+
+		fadeTimer = Timer{ 0.3s, StartImmediately::No };
+		waitTimer = Timer{ 0.1s, StartImmediately::No };
+
+		setTypeColor();
+	}
+
+	void WarpCurtainCherry::barrageUpdate() {
+
+		switch (effectStep) {
+		case 0:
+			fadeTimer.start();
+			pos = startPos;
+			movePosition(endPos, 0.5);
+			effectStep++;
+			break;
+		case 1://フェードイン
+			alpha = fadeTimer.progress0_1();
+			if (fadeTimer.reachedZero()) {
+				waitTimer.start();
+				effectStep++;
+			}
+			break;
+		case 2:
+			if (waitTimer.reachedZero()) {
+				fadeTimer.restart();
+				effectStep++;
+			}
+			break;
+		case 3://フェードアウト
+			alpha = fadeTimer.progress1_0();
+			if (fadeTimer.reachedZero()) {
+				isDelete = true;
+			}
+			break;
+		}
+
+		setTypeColor();
+	}
 }

@@ -41,6 +41,7 @@ namespace Iwanna {
 			registerAudio(SPARK, SPARK_PATH);
 			registerAudio(SORD_WEAK, SORD_WEAK_PATH);
 			registerAudio(SORD_STRONG, SORD_STRONG_PATH);
+			registerAudio(BOSS_WARP, BOSS_WARP_PATH);
 		}
 
 		/**
