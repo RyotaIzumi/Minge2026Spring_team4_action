@@ -22,6 +22,10 @@ namespace Iwanna {
 			stageType = StageType::Normal;
 		}
 
+		if (Global::isChangeRoom) {
+			if (Global::nowRoomName == U"secret1")playBgm(U"secret_stage");
+		}
+
 		switch (stageType) {
 		case StageType::Normal:stageManager.setUpObjects(chapter); break;
 		case StageType::Boss:bossStageManager.setUpObjects(chapter); break;

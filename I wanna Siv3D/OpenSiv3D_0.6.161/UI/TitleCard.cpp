@@ -56,6 +56,10 @@ namespace Iwanna {
 			titleCardText = U"Gardian Cherry";
 			titleCardTexture = U"sprTitleCard_boss";
 		}
+		if (roomName == U"secret1") {
+			titleCardText = U"Secret Item Room";
+			titleCardTexture = U"sprTitleCard_secret";
+		}
 		moveStep = 0;
 	}
 

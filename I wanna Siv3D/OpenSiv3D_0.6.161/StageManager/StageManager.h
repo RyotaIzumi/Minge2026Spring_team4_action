@@ -13,6 +13,8 @@
 #include "../GameObject/Blood.h"
 #include "../GameObject/Warp.h"
 #include "../GameObject/Sign.h"
+#include "../GameObject/Item.h"
+#include "../UI/TitleCard.h"
 #include "CameraShake.h"
 #include "../Global.h"
 
@@ -31,6 +33,7 @@ namespace Iwanna {
 		Array<std::shared_ptr<Blood>> bloods;
 		Array<std::shared_ptr<Warp>> warps;
 		Array<std::shared_ptr<Sign>> signs;
+		Array<std::shared_ptr<Item>> items;
 	};
 
 	class StageManager {
@@ -73,6 +76,9 @@ namespace Iwanna {
 
 		//背景
 		String backgroundName;
+
+		//タイトルカード(画面右上に表示するやつ)
+		TitleCard titleCard;
 
 		//暗転演出関連
 		double darkAlpha = 0.8;

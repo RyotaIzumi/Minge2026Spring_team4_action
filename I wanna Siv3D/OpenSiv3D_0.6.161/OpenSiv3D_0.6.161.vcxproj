@@ -117,6 +117,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GameObject\Item.cpp" />
     <ClCompile Include="UI\TitleCard.cpp" />
     <ClCompile Include="Audio\AudioAsset.cpp" />
     <ClCompile Include="AvoidanceManager\AvoidanceManager.cpp" />
@@ -379,6 +380,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="60FPSwithAutoFrameSkip.h" />
+    <ClInclude Include="GameObject\Item.h" />
     <ClInclude Include="UI\TitleCard.h" />
     <ClInclude Include="Audio\AudioAsset.h" />
     <ClInclude Include="AvoidanceManager\AvoidanceManager.h" />

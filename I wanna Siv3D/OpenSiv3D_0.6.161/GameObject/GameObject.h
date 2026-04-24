@@ -16,7 +16,8 @@ namespace Iwanna {
 		Blood,
 		Miku,
 		Warp,
-		Sign
+		Sign,
+		Item
 	};
 
 	class GameObject {

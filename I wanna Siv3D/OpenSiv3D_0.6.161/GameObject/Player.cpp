@@ -5,6 +5,7 @@
 #include "../GameObject/Warp.h"
 #include "../GameObject/SavePoint.h"
 #include "../GameObject/Sign.h"
+#include "../GameObject/Item.h"
 
 namespace Iwanna {
 	Player::Player() {
@@ -319,6 +320,14 @@ namespace Iwanna {
 		if (other.type == ObjectType::Sign) {
 			 auto* sign = dynamic_cast<Sign*>(&other);
 			 sign->isPlayerTouching = this->intersects(other);
+		}
+
+		// アイテムとの衝突
+		if (other.type == ObjectType::Item) {
+			auto* item = dynamic_cast<Item*>(&other);
+			if (!item->isPlayerTouching && this->intersects(other)) {
+				item->isPlayerTouching = true;
+			}
 		}
 	}
 

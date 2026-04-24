@@ -23,6 +23,7 @@ namespace Iwanna {
 		gameObjects.bloods.clear();
 		gameObjects.warps.clear();
 		gameObjects.signs.clear();
+		gameObjects.items.clear();
 
 		// 一部変数の初期化
 		isGenerateBloods = false;
@@ -36,8 +37,16 @@ namespace Iwanna {
 		gameoverTimer.reset();
 		isShowGameOver = false;
 
-		if(Global::isChangeRoom)loadGameObjects(Global::nowRoomName);
-		else loadGameObjects(Global::savedRoomName);
+		titleCard.reset();
+
+		if (Global::isChangeRoom) {
+			loadGameObjects(Global::nowRoomName);
+			//隠しアイテムマップ時のみタイトルカード表示
+			if(Global::nowRoomName == U"secret1") titleCard.startShowTitleCard(U"secret1");
+		}
+		else {
+			loadGameObjects(Global::savedRoomName);
+		}
 		Global::isChangeRoom = false;
 	}
 
@@ -64,6 +73,7 @@ namespace Iwanna {
 		auto& bloods = gameObjects.bloods;
 		auto& warps = gameObjects.warps;
 		auto& signs = gameObjects.signs;
+		auto& items = gameObjects.items;
 
 		if (player->getIsDead()) {
 			gameoverTimer.start();
@@ -84,6 +94,9 @@ namespace Iwanna {
 				cameraScale = 1.0;
 			}
 		}
+
+		//タイトルカード処理
+		titleCard.update();
 
 		camera.setTargetScale(cameraScale);
 		camera.update(); {
@@ -225,6 +238,12 @@ namespace Iwanna {
 				stockNearGameObjects.add(s.get());
 			}
 
+			//アイテム
+			for (auto& i : items) {
+				i->update();
+				stockNearGameObjects.add(i.get());
+			}
+
 			//playerの近くのオブジェクトのみを取得して当たり判定確認
 			auto near = stockNearGameObjects.query(player->getBroadRect());
 			for (auto* obj : near) {
@@ -328,11 +347,11 @@ namespace Iwanna {
 
 		
 		ClearPrint();
-		Print << U" Stage Step : " << step;
-		Print << U" Player Pos : " << player->pos;
-		Print << U" Player Muteki : " << player->getIsMuteki();
+		//Print << U" Stage Step : " << step;
+		//Print << U" Player Pos : " << player->pos;
+		//Print << U" Player Muteki : " << player->getIsMuteki();
 		//Print << U" Camera Pos : " << executeCameraPos();
-		Print << U" Cherries Num : " << gameObjects.cherries.size();
+		//Print << U" Cherries Num : " << gameObjects.cherries.size();
 		//Print << U" Bullets Num : " << gameObjects.bullets.size();
 		//Print << U" Spikes Num : " << gameObjects.spikes.size();
 		//Print << U" Special Num : " << gameObjects.specialTraps[0]->pos;
@@ -359,6 +378,8 @@ namespace Iwanna {
 			for (auto w : gameObjects.warps) w->draw();
 			//看板描画
 			for (auto s : gameObjects.signs) s->draw();
+			//アイテム描画
+			for (auto i : gameObjects.items) i->draw();
 			//kid君描画
 			gameObjects.player->draw();
 			//ブロック描画
@@ -376,17 +397,21 @@ namespace Iwanna {
 			if (darkEffectStages.includes(stageName))Rect(0, 0, 800, 608).draw(ColorF(0.0, 0.0, 0.0, darkAlpha));
 
 			//GAMEOVER描画
-			if(isShowGameOver)
+			if (isShowGameOver) {
 				if (Global::trapCameraActivatedInTrap2Map) {
 					TextureAsset(U"sprGAMEOVER").scaled(1 / cameraScale).drawAt(saveTrapCameraPos);
 				}
-				else if(Global::isLoopStage)
+				else if (Global::isLoopStage)
 				{
-					TextureAsset(U"sprGAMEOVER").drawAt(Global::stageWidth / 2,Global::stageHeight / 2);
+					TextureAsset(U"sprGAMEOVER").drawAt(Global::stageWidth / 2, Global::stageHeight / 2);
 				}
 				else {
 					TextureAsset(U"sprGAMEOVER").drawAt(executeCameraPos());
 				}
+			}
+
+			//タイトルカード
+			titleCard.draw();
 		}
 	}
 

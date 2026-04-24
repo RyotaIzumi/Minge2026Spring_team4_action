@@ -84,8 +84,10 @@ namespace Iwanna {
 		registerTexture(U"sprGAMEOVER", OtherPath + U"sprGAMEOVER.png");
 		registerTexture(U"hideLine", OtherPath + U"hideLine.png");
 		registerTexture(U"sprSign", OtherPath + U"sprSign.png");
+		registerTexture(U"heart", OtherPath + U"heart.png");
 
 		registerTexture(U"sprTitleCard_boss", OtherPath + U"sprTitleCard_boss.png");
+		registerTexture(U"sprTitleCard_secret", OtherPath + U"sprTitleCard_secret.png");
 	}
 
 	void registerTexturesSync() {
