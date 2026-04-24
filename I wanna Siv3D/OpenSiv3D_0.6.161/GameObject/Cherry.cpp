@@ -311,8 +311,9 @@ namespace Iwanna {
 		case CherryColorType::Sky:    startTime = 2.2; break;
 		}
 
+		// 攻撃間隔設定
 		switch (cherryColorType) {
-		case CherryColorType::Red:    attackInterval = 1.0; break;
+		case CherryColorType::Red:    attackInterval = 1.5; break;
 		case CherryColorType::Blue:   attackInterval = 2.0; break;
 		case CherryColorType::Yellow: break;
 		case CherryColorType::Green:  attackInterval = 3.8; break;
@@ -338,7 +339,7 @@ namespace Iwanna {
 	void GimmikBigCherry::generateAttack() {
 			switch (cherryColorType) {
 			case CherryColorType::Red:
-				stageManager->createCherrySpread(20, 4, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0,cherryColorType); });
+				stageManager->createCherrySpread(12, 4, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0,cherryColorType); });
 				break;
 			case CherryColorType::Blue:
 				stageManager->createBlueLineCherry([this]() { return std::make_shared<BarrageGimmikBlueCherry>(pos, 1.0, cherryColorType); });

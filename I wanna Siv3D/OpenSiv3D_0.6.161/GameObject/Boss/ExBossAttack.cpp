@@ -9,7 +9,7 @@ namespace Iwanna {
 			if (waitStopwatch.isRunning()) {
 				if (waitStopwatch.s() >= waitTime) {
 					waitStopwatch.reset();
-					nowAttackType = ExBossAttackType::Warp;
+					nowAttackType = ExBossAttackType::Fall;
 				}
 			}
 			break;
@@ -136,7 +136,7 @@ namespace Iwanna {
 				if (getIsMoveFinished()) {
 					AudioAsset(Sound::BLOCKBREAK).playOneShot();
 					bossStageManager->getCameraShake().shake(0.7, 30.0);
-					movePosition(pos, 1.2, true);
+					movePosition(pos, 1.0, true);
 					rotateDirection(0, 0.1, true);//攻撃判定出現時間
 					attackStep++;
 				}
@@ -144,6 +144,65 @@ namespace Iwanna {
 			case 3://戻る
 				if (getIsRotateFinished()) sordCherriesManager->setSordCanPlayerKill(false);
 				if (getIsMoveFinished()) {
+
+					// 第二形態以降は振り上げに派生
+					if (bossForm >= BossForm::Second && getRandomChance(1) && playerDistance > 160) {
+						nowAttackType = ExBossAttackType::FallSwing;
+						attackStep = 0;
+						break;
+					}
+
+					movePosition(Vec2{ pos.x, baseY }, 1.0, false);
+					rotateDirection(getBaseAngleDiff(), 1.2, false);
+					attackStep++;
+				}
+				break;
+			case 4:
+				if (getIsRotateFinished()) {
+					startWait();
+				}
+				break;
+			}
+			break;
+
+		case ExBossAttackType::FallSwing: // --- 落下攻撃後の振り上げ攻撃 --- //
+			switch (attackStep) {
+			case 0://プレイヤーの位置に応じて、右か左に振りかぶる
+				if (isPlayerInRightSide) {
+					rotateDirection(20, 0.6, false);
+					movePosition(Vec2{ playerPos.x - 115, pos.y + 30 }, 0.7, false);
+				}
+				else {
+					rotateDirection(-20, 0.6, false);
+					movePosition(Vec2{ playerPos.x + 115, pos.y + 30 }, 0.7, false);
+				}
+
+				attackStep++;
+				break;
+			case 1://振り上げ開始
+				if (getIsRotateFinished() && getIsMoveFinished()) {
+					AudioAsset(Sound::SORD_STRONG).playOneShot();
+					if (isPlayerInRightSide) {
+						rotateDirection(-220, 0.3, false);
+					}
+					else {
+						rotateDirection(220, 0.3, false);
+					}
+					sordCherriesManager->setSordCanPlayerKill(true);
+					if(isPlayerInRightSide) bossStageManager->createSordFallSwingShockWaveCherry(Vec2{ pos.x, pos.y + 150 }, 0, [this]() { return std::make_shared<ExproCherry>(pos, 1.0); });
+					else bossStageManager->createSordFallSwingShockWaveCherry(Vec2{ pos.x, pos.y + 150 }, 180, [this]() { return std::make_shared<ExproCherry>(pos, 1.0); });
+					attackStep++;
+				}
+				break;
+			case 2://振り上げた後の待機時間
+				if (getIsRotateFinished()) {
+					rotateDirection(0, 0.7, true);
+					sordCherriesManager->setSordCanPlayerKill(false);
+					attackStep++;
+				}
+				break;
+			case 3://戻る
+				if (getIsRotateFinished()) {
 					movePosition(Vec2{ pos.x, baseY }, 1.0, false);
 					rotateDirection(getBaseAngleDiff(), 1.2, false);
 					attackStep++;

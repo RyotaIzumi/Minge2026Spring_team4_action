@@ -294,7 +294,15 @@ namespace Iwanna {
 		// ----- 以下通常ステージのギミック ----- //
 
 		if (fileName == U"tutorial") {
-			//gameObjects.signs << std::make_shared<Sign>(Vec2{ 23,7 }, SignType::Tutorial_Jump);
+			gameObjects.signs << std::make_shared<Sign>(Vec2{ 3,17 }, SignType::Tutorial_Move);
+			gameObjects.signs << std::make_shared<Sign>(Vec2{ 8,17 }, SignType::Tutorial_Jump);
+			gameObjects.signs << std::make_shared<Sign>(Vec2{ 12,16 }, SignType::Tutorial_DoubleJump);
+			gameObjects.signs << std::make_shared<Sign>(Vec2{ 18,15 }, SignType::Tutorial_AdjustJump);
+			gameObjects.signs << std::make_shared<Sign>(Vec2{ 27,17 }, SignType::Tutorial_Shoot);
+			gameObjects.signs << std::make_shared<Sign>(Vec2{ 30,16 }, SignType::Tutorial_Save);
+			gameObjects.signs << std::make_shared<Sign>(Vec2{ 37,17 }, SignType::Tutorial_Spike);
+			gameObjects.signs << std::make_shared<Sign>(Vec2{ 61,7 }, SignType::Tutorial_Water);
+			gameObjects.signs << std::make_shared<Sign>(Vec2{ 62,17 }, SignType::Tutorial_Item);
 		}
 
 		if (fileName == U"normal2")gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{400,304},3.0,CherryColorType::Red,*this);

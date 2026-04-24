@@ -52,4 +52,25 @@ namespace Iwanna {
 			}
 		}
 	}
+
+	void BossStageManager::createSordFallSwingShockWaveCherry(Vec2 startPos, double baseDir, const std::function<std::shared_ptr<Cherry>()>& factory) {
+		const int32 lineNum = 5;
+		const int32 inLineNum = 16;
+		const double dirInterval = 5;
+		const double spdInterval = 2;
+
+		const double baseDirection = baseDir - (dirInterval * (lineNum - 1) / 2);
+		const double baseSpeed = 1;
+
+		for (int j = 0; j < lineNum; j++) {
+			for (int i = 0; i < inLineNum; i++) {
+				auto cherry = factory();
+				cherry->pos = startPos;
+				cherry->direction = baseDirection + j * dirInterval;
+				cherry->speed = baseSpeed + i * spdInterval;
+				createCherry(cherry);
+			}
+		}
+		cameraShake.shake(0.7, 30.0);
+	}
 }

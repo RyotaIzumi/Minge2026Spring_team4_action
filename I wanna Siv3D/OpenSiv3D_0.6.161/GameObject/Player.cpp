@@ -4,6 +4,7 @@
 #include "../GameObject/Block.h"
 #include "../GameObject/Warp.h"
 #include "../GameObject/SavePoint.h"
+#include "../GameObject/Sign.h"
 
 namespace Iwanna {
 	Player::Player() {
@@ -117,7 +118,7 @@ namespace Iwanna {
 		TextureRegion texture = spriteSystem.getTextureRegion(direction);
 		if(!isDead)texture.scaled(1.0).drawAt(pos.x,pos.y - 6);
 		else texture.scaled(1.0).drawAt(pos.x, pos.y - 6, ColorF(0.8,0,0, 0.8));
-		hitBox->draw(Palette::Red);
+		//hitBox->draw(Palette::Red);
 	}
 
 	void Player::playerMoveLeft() {
@@ -312,6 +313,12 @@ namespace Iwanna {
 					Global::isChangeRoom = true;
 				}
 			}
+		}
+
+		// 看板との衝突
+		if (other.type == ObjectType::Sign) {
+			 auto* sign = dynamic_cast<Sign*>(&other);
+			 sign->isPlayerTouching = this->intersects(other);
 		}
 	}
 

@@ -357,10 +357,10 @@ namespace Iwanna {
 			for (auto s : gameObjects.savePoints) s->draw();
 			//ワープの描画
 			for (auto w : gameObjects.warps) w->draw();
-			//kid君描画
-			gameObjects.player->draw();
 			//看板描画
 			for (auto s : gameObjects.signs) s->draw();
+			//kid君描画
+			gameObjects.player->draw();
 			//ブロック描画
 			for (auto b : gameObjects.blocks) b->draw();
 			//血の描画

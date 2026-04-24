@@ -139,5 +139,6 @@ namespace Iwanna {
 		//void createSordCherry(Vec2 startPos, const std::function<std::shared_ptr<BossSordCherry>()>& factory);
 		void createSordExproCherry(Vec2 startPos, bool isEffect, const std::function<std::shared_ptr<Cherry>()>& factory);
 		void createWarpCurtainCherry(Vec2 basePos, const std::function<std::shared_ptr<WarpCurtainCherry>()>& factory);
+		void createSordFallSwingShockWaveCherry(Vec2 startPos,double baseDir, const std::function<std::shared_ptr<Cherry>()>& factory);
 	};
 }

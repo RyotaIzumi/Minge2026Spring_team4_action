@@ -96,6 +96,7 @@ namespace Iwanna {
 		SparkExpro,
 		SwingOne,
 		Fall,
+		FallSwing,
 		Slide,
 		Warp
 	};
@@ -125,6 +126,16 @@ namespace Iwanna {
 		bool isPlayerInRightSide = false;
 		double playerDistance = 0.0;
 
+		//ボス自身のステータス
+		enum class BossForm {
+			First,
+			Second,
+			Third,
+			Forth
+		};
+
+		BossForm bossForm = BossForm::First;
+
 	protected:
 		BossStageManager* bossStageManager = nullptr;
 		SordCherriesManager* sordCherriesManager = nullptr;
@@ -134,6 +145,9 @@ namespace Iwanna {
 
 		void barrageUpdate() override;
 		void draw() const override;
+
+		void updateBossForm();
+		bool getRandomChance(double p);
 
 		// ExBossAttack.cppで定義
 		void attack();

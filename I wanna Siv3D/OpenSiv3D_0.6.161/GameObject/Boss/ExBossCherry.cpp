@@ -23,6 +23,7 @@ namespace Iwanna {
 		hasHp = true;
 		maxHp = 60;
 		hp = maxHp;
+		bossForm = BossForm::First;
 
 		baseCenterPos = Vec2{ 800, 330 };
 		speed = 20;
@@ -84,6 +85,8 @@ namespace Iwanna {
 		isPlayerInRightSide = playerPos.x > pos.x;
 		playerDistance = calculateDistance(pos, playerPos);
 
+		updateBossForm();
+
 		//攻撃処理
 		attack();
 
@@ -100,6 +103,20 @@ namespace Iwanna {
 
 	double ExBossCherry::getBaseAngleDiff() const {
 		return baseAngle - textureAngle;
+	}
+
+	//bossの攻撃形態を設定
+	void ExBossCherry::updateBossForm() {
+		if (hp > 50)bossForm = BossForm::First;
+		else if (hp > 35)bossForm = BossForm::Second;
+		else if (hp > 15)bossForm = BossForm::Third;
+		else bossForm = BossForm::Forth;
+	}
+
+	//引数の確率でtrueを返す関数
+	bool ExBossCherry::getRandomChance(double p) {
+		p = Clamp(p, 0.0, 1.0);
+		return Random() < p;
 	}
 
 	// --- 剣を構成するりんご --- //
@@ -323,8 +340,8 @@ namespace Iwanna {
 		}
 
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
-		TextureAsset(cherryTextureName)(0, 0, textureEdge, textureEdge).scaled(scaleMag).drawAt(pos.x, pos.y - 1, typeColor);
-		hitBox->draw(ColorF(0.7, 0.7));//判定の可視化
+		//TextureAsset(cherryTextureName)(0, 0, textureEdge, textureEdge).scaled(scaleMag).drawAt(pos.x, pos.y - 1, typeColor);
+		//hitBox->draw(ColorF(0.7, 0.7));//判定の可視化
 	}
 
 	void SordCherriesManager::sparkSordBlade() {
