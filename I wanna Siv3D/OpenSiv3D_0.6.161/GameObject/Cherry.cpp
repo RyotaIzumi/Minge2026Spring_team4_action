@@ -352,6 +352,7 @@ namespace Iwanna {
 				break;
 			case CherryColorType::Orange:
 				stageManager->createOrangeStopCherry(true, [this]() { return std::make_shared<BarrageGimmikOrangeCherry>(pos, 1.0, cherryColorType); });
+				AudioAsset(Sound::SPIKETRAP).playOneShot();
 				break;
 			case CherryColorType::Sky:
 				stageManager->createSkyTargetCherry(7, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0, cherryColorType); });

@@ -18,6 +18,7 @@ namespace Iwanna {
 		registerTexture(U"sprBullet", PlayerPath + U"bullet.png");
 
 		registerTexture(U"sprIdle_normal", PlayerPath + U"sprIdle_normal.png");
+		registerTexture(U"sprRunning_normal", PlayerPath + U"sprRunning_normal.png");
 		registerTexture(U"sprFall_normal", PlayerPath + U"sprFall_normal.png");
 		registerTexture(U"sprJump_normal", PlayerPath + U"sprJump_normal.png");
 
@@ -67,6 +68,8 @@ namespace Iwanna {
 		static const FilePath BackgroundPath = U"Texture/Background/";
 		registerTexture(U"background_sample", BackgroundPath + U"sample.png");
 		registerTexture(U"background_black", BackgroundPath + U"black.png");
+		registerTexture(U"background_cave", BackgroundPath + U"cave.png");
+		registerTexture(U"background_caveLong", BackgroundPath + U"caveLong.png");
 
 		//その他テクスチャ登録
 		static const FilePath OtherPath = U"Texture/Other/";
@@ -85,6 +88,7 @@ namespace Iwanna {
 		registerTexture(U"hideLine", OtherPath + U"hideLine.png");
 		registerTexture(U"sprSign", OtherPath + U"sprSign.png");
 		registerTexture(U"heart", OtherPath + U"heart.png");
+		registerTexture(U"achieveFrame", OtherPath + U"achieveFrame.png");
 
 		registerTexture(U"sprTitleCard_boss", OtherPath + U"sprTitleCard_boss.png");
 		registerTexture(U"sprTitleCard_secret", OtherPath + U"sprTitleCard_secret.png");

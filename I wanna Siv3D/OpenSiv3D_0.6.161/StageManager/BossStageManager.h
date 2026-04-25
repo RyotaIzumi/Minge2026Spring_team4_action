@@ -76,7 +76,11 @@ namespace Iwanna {
 
 		//暗転演出関連
 		double darkAlpha = 0.8;
-		Timer darkAlphaTimer{2.1s,StartImmediately::Yes};
+		Timer darkAlphaTimer{0.5s,StartImmediately::Yes};
+
+		//player hp UI関連
+		Vec2 playerHpBasePos{0,576};
+		double hpInterbalX = 32;
 
 	public:
 		BossStageManager();

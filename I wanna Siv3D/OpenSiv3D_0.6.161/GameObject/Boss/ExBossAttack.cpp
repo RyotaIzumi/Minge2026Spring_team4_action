@@ -9,6 +9,7 @@ namespace Iwanna {
 			if (waitStopwatch.isRunning()) {
 				if (waitStopwatch.s() >= waitTime) {
 					waitStopwatch.reset();
+					//decideAttack();
 					nowAttackType = ExBossAttackType::Fall;
 				}
 			}
@@ -17,10 +18,11 @@ namespace Iwanna {
 		case ExBossAttackType::SparkExpro: // --- ✨爆発攻撃 --- //
 			switch (attackStep) {
 			case 0://上向きへ回転
+				movePosition(pos, 0.1, false);
 				attackStep++;
 				break;
 			case 1://回転が終わったら、剣を光らせるエフェクトと攻撃の出す
-				if (getIsRotateFinished()) {
+				if (getIsMoveFinished()) {
 					sordCherriesManager->sparkSordBlade();
 					rotateDirection(0, 0.6, false);
 					attackStep++;
@@ -31,7 +33,7 @@ namespace Iwanna {
 					//✨と予備攻撃範囲を出す
 					AudioAsset(Sound::SPARK).playOneShot();
 					const std::function<std::shared_ptr<Cherry>()>& spark1 = [&]() {
-						return std::make_shared<EffectCherrySpark>(Vec2{ sordCherriesManager->pos.x, sordCherriesManager->pos.y - 160 }, 0.3);
+						return std::make_shared<EffectCherrySpark>(sordCherriesManager->getSordEdgePos(), 0.3);
 					};
 					const std::function<std::shared_ptr<Cherry>()>& spark2 = [&]() {
 						return std::make_shared<EffectCherrySpark>(Vec2{ sordCherriesManager->pos.x, sordCherriesManager->pos.y - 160 }, 0.02);
@@ -56,6 +58,7 @@ namespace Iwanna {
 			case 4://基本位置に移動
 				if (getIsRotateFinished()) {
 					movePosition(Vec2{ pos.x, baseY }, 1.0, false);
+					rotateDirection(getBaseAngleDiff(), 1.0, false);
 					attackStep++;
 				}
 				break;
@@ -104,6 +107,130 @@ namespace Iwanna {
 				break;
 			case 3://戻る
 				if (getIsRotateFinished()) {
+
+					// 第二形態以降は振り上げに派生
+					if (bossForm >= BossForm::Second && getRandomChance(0.8)) {
+						nowAttackType = ExBossAttackType::SwingTwo;
+						attackStep = 0;
+						break;
+					}
+
+					movePosition(Vec2{ pos.x, baseY }, 1.0, false);
+					rotateDirection(getBaseAngleDiff(), 1.2, false);
+					attackStep++;
+				}
+				break;
+			case 4:
+				if (getIsRotateFinished()) {
+					startWait();
+				}
+				break;
+			}
+			break;
+
+		case ExBossAttackType::SwingTwo: // --- 振り下ろし派生攻撃2 --- //
+			switch (attackStep) {
+			case 0:
+				attackStep++;
+				break;
+			case 1://振り上げ開始
+				if (getIsRotateFinished() && getIsMoveFinished()) {
+					AudioAsset(Sound::SORD_STRONG).playOneShot();
+					if (isPlayerInRightSide) {
+						movePosition(Vec2{pos.x + 50, pos.y - 30}, 0.5, false);
+						rotateDirection(-220, 0.3, false);
+					}
+					else {
+						movePosition(Vec2{ pos.x - 50, pos.y - 30}, 0.5, false);
+						rotateDirection(220, 0.3, false);
+					}
+					sordCherriesManager->setSordCanPlayerKill(true);
+					if (isPlayerInRightSide) bossStageManager->createSordFallSwingShockWaveCherry(Vec2{ pos.x, 528}, 0, [this]() { return std::make_shared<ExproCherry>(pos, 1.0); });
+					else bossStageManager->createSordFallSwingShockWaveCherry(Vec2{ pos.x, 528 }, 180, [this]() { return std::make_shared<ExproCherry>(pos, 1.0); });
+					attackStep++;
+				}
+				break;
+			case 2://振り上げた後の待機時間
+				if (getIsRotateFinished() && getIsMoveFinished()) {
+					rotateDirection(0, 0.07, true);
+					sordCherriesManager->setSordCanPlayerKill(false);
+					attackStep++;
+				}
+				break;
+			case 3://戻る
+				if (getIsRotateFinished()) {
+
+					// 第二形態以降は爆破に派生
+					if (bossForm >= BossForm::Second && getRandomChance(0.4)) {
+						nowAttackType = ExBossAttackType::SparkExpro;
+						attackStep = 0;
+						break;
+					}
+
+					// 第二形態以降はさらに振り上げに派生
+					if (bossForm >= BossForm::Second && getRandomChance(0.5)) {
+						nowAttackType = ExBossAttackType::SwingThree;
+						attackStep = 0;
+						break;
+					}
+
+					// 第二形態以降はワープに派生
+					if (bossForm >= BossForm::Second && getRandomChance(0.6) && playerDistance > 100) {
+						nowAttackType = ExBossAttackType::Warp;
+						attackStep = 0;
+						break;
+					}
+
+					movePosition(Vec2{ pos.x, baseY }, 1.0, false);
+					rotateDirection(getBaseAngleDiff(), 1.2, false);
+					attackStep++;
+				}
+				break;
+			case 4:
+				if (getIsRotateFinished()) {
+					startWait();
+				}
+				break;
+			}
+			break;
+
+		case ExBossAttackType::SwingThree: // --- 振り下ろし派生攻撃3 --- //
+			switch (attackStep) {
+			case 0:
+				attackStep++;
+				break;
+			case 1://振り上げ開始
+				if (getIsRotateFinished() && getIsMoveFinished()) {
+					AudioAsset(Sound::SORD_STRONG).playOneShot();
+					if (isPlayerInRightSide) {
+						movePosition(Vec2{ pos.x + 160, pos.y }, 0.5, false);
+						rotateDirection(360, 1.0, false);
+					}
+					else {
+						movePosition(Vec2{ pos.x - 160, pos.y }, 0.5, false);
+						rotateDirection(-360, 1.0, false);
+					}
+					sordCherriesManager->setSordCanPlayerKill(true);
+					attackStep++;
+				}
+				break;
+			case 2://振り上げた後の待機時間
+				if (getIsRotateFinished() && getIsMoveFinished()) {
+					rotateDirection(0, 0.2, true);
+					sordCherriesManager->setSordCanPlayerKill(false);
+					attackStep++;
+				}
+				break;
+			case 3://戻る
+				if (getIsRotateFinished()) {
+
+					// 第二形態以降は爆破に派生
+					if (bossForm >= BossForm::Second && getRandomChance(0.5)) {
+						nowAttackType = ExBossAttackType::SparkExpro;
+						attackStep = 0;
+						break;
+					}
+
 					movePosition(Vec2{ pos.x, baseY }, 1.0, false);
 					rotateDirection(getBaseAngleDiff(), 1.2, false);
 					attackStep++;
@@ -135,6 +262,12 @@ namespace Iwanna {
 			case 2://突き刺さった状態からの待機
 				if (getIsMoveFinished()) {
 					AudioAsset(Sound::BLOCKBREAK).playOneShot();
+
+					//弾幕作成
+					if (bossForm >= BossForm::Third) {
+						barrageAttack(CherryColorType::Blue);
+					}
+
 					bossStageManager->getCameraShake().shake(0.7, 30.0);
 					movePosition(pos, 1.0, true);
 					rotateDirection(0, 0.1, true);//攻撃判定出現時間
@@ -146,7 +279,7 @@ namespace Iwanna {
 				if (getIsMoveFinished()) {
 
 					// 第二形態以降は振り上げに派生
-					if (bossForm >= BossForm::Second && getRandomChance(1) && playerDistance > 160) {
+					if (bossForm >= BossForm::Second && getRandomChance(0.7) && playerDistance > 160) {
 						nowAttackType = ExBossAttackType::FallSwing;
 						attackStep = 0;
 						break;
@@ -196,13 +329,35 @@ namespace Iwanna {
 				break;
 			case 2://振り上げた後の待機時間
 				if (getIsRotateFinished()) {
-					rotateDirection(0, 0.7, true);
+					rotateDirection(0, 0.3, true);
 					sordCherriesManager->setSordCanPlayerKill(false);
 					attackStep++;
 				}
 				break;
 			case 3://戻る
 				if (getIsRotateFinished()) {
+
+					// 第二形態以降は爆破に派生
+					if (bossForm >= BossForm::Second && getRandomChance(0.4)) {
+						nowAttackType = ExBossAttackType::SparkExpro;
+						attackStep = 0;
+						break;
+					}
+
+					// 第二形態以降はワープに派生
+					if (bossForm >= BossForm::Second && getRandomChance(0.6) && playerDistance > 200) {
+						nowAttackType = ExBossAttackType::Warp;
+						attackStep = 0;
+						break;
+					}
+
+					// 第二形態以降は回転切りに派生
+					if (bossForm >= BossForm::Second && getRandomChance(0.6) && playerDistance > 160) {
+						nowAttackType = ExBossAttackType::SwingThree;
+						attackStep = 0;
+						break;
+					}
+
 					movePosition(Vec2{ pos.x, baseY }, 1.0, false);
 					rotateDirection(getBaseAngleDiff(), 1.2, false);
 					attackStep++;
@@ -287,7 +442,7 @@ namespace Iwanna {
 				}
 				break;
 			case 6:
-				if (getIsRotateFinished()) {
+				if (getIsMoveFinished()) {
 					startWait();
 				}
 				break;
@@ -362,6 +517,13 @@ namespace Iwanna {
 				break;
 			case 7://戻る
 				if (getIsRotateFinished()) {
+					// 第二形態以降は振り上げに派生
+					if (bossForm >= BossForm::Second && getRandomChance(0.5) && playerDistance > 100) {
+						nowAttackType = ExBossAttackType::SwingTwo;
+						attackStep = 0;
+						break;
+					}
+
 					movePosition(Vec2{ pos.x, baseY }, 1.0, false);
 					rotateDirection(getBaseAngleDiff(), 1.2, false);
 					attackStep++;
@@ -384,5 +546,41 @@ namespace Iwanna {
 		nowAttackType = ExBossAttackType::Wait;
 		waitStopwatch.start();
 		isNowAttacking = false;
+	}
+
+	void ExBossCherry::barrageAttack(CherryColorType type) {
+		// 攻撃を呼び出す
+			double throwDir, throwSpd;
+				switch (type) {
+				case CherryColorType::Red:
+					throwDir = 60 + Random(60);
+					throwSpd = 9 + Random(3);
+					bossStageManager->createSubThrowCherry(throwDir, throwSpd, [this]() { return std::make_shared<BossSubThrowCherry>(pos, 2.0, BossCherryType::Red, *bossStageManager); });
+					break;
+				case CherryColorType::Blue:
+					bossStageManager->createBlueLineCherry(30, 80, [this]() { return std::make_shared<BossFallBlueCherry>(pos, 1.0, BossCherryType::Blue); });
+					AudioAsset(Sound::CHERRYFALL).playOneShot();
+					break;
+				case CherryColorType::Yellow:
+					throwDir = 60 + Random(60);
+					throwSpd = 9 + Random(3);
+					bossStageManager->createSubThrowCherry(throwDir, throwSpd, [this]() { return std::make_shared<BossSubThrowCherry>(pos, 2.0, BossCherryType::Yellow, *bossStageManager); });
+					break;
+				case CherryColorType::Green:
+					throwDir = 75 + Random(30);
+					throwSpd = 9 + Random(3);
+					bossStageManager->createSubThrowCherry(throwDir, throwSpd, [this]() { return std::make_shared<BossSubThrowCherry>(pos, 2.0, BossCherryType::Green, *bossStageManager); });
+					break;
+				case CherryColorType::Orange:
+					throwDir = 90;
+					throwSpd = 12;
+					bossStageManager->createSubThrowCherry(throwDir, throwSpd, [this]() { return std::make_shared<BossSubThrowCherry>(pos, 2.0, BossCherryType::Orange, *bossStageManager); });
+					break;
+				case CherryColorType::Sky:
+					throwDir = 60 + Random(60);
+					throwSpd = 11 + Random(3);
+					bossStageManager->createSubThrowCherry(throwDir, throwSpd, [this]() { return std::make_shared<BossSubThrowCherry>(pos, 2.0, BossCherryType::Sky, *bossStageManager); });
+					break;
+				}
 	}
 }

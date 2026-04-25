@@ -24,7 +24,7 @@ namespace Iwanna {
 		// 一部変数の初期化
 		isGenerateBloods = false;
 
-		Global::bgmStop = false;
+		Global::trap2MapBgmStop = false;
 		Global::trapActivatedId30InTrap2Map = false;
 		Global::trapCameraActivatedInTrap2Map = false;
 		Global::isPlayerFrozen = false;
@@ -341,12 +341,12 @@ namespace Iwanna {
 			}
 
 			//暗転演出の透明度を変更
-			if (darkAlpha > 0.1) {
+			if (darkAlpha > 0.2) {
 				darkAlpha -= 0.08;
 			}
 			else {
 				if (darkAlphaTimer.reachedZero()) {
-					darkAlpha = 0.05 + Random(0.05);
+					darkAlpha = 0.05 + Random(0.15);
 					darkAlphaTimer.restart();
 				}
 			}
@@ -428,6 +428,10 @@ namespace Iwanna {
 		camera.update(); {
 			const auto t = camera.createTransformer();
 
+			if (Global::nowRoomName == U"ExBoss") {
+				TextureAsset(backgroundName).draw();
+			}
+
 			// 描画
 			for (auto& obj : drawList) obj->draw();
 
@@ -439,6 +443,17 @@ namespace Iwanna {
 		}
 
 		titleCard.draw();
+
+		if (Global::nowRoomName == U"ExBoss") {
+			Rect(0, 544, 800, 64).draw(ColorF(Palette::Black));
+		}
+
+		if (Global::getItem1) {
+			int32 nowPlayerHp = gameObjects.player->getHp();
+			for (int i = 0; i < nowPlayerHp; i++) {
+				TextureAsset(U"heart").draw(playerHpBasePos.x + i * hpInterbalX, playerHpBasePos.y);
+			}
+		}
 	}
 
 	void BossStageManager::setStep(int32 newStep) {

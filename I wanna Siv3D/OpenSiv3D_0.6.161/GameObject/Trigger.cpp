@@ -68,7 +68,10 @@ namespace Iwanna {
 
 	void SecretTrigger::triggerActivate() {
 		if (!Global::isSecretTriggerActivated) {
-			AudioAsset(Sound::BLOCKCHANGE).playOneShot();
+			//部屋によって取得音を変える
+			if(Global::nowRoomName == U"normal4") AudioAsset(Sound::BLOCKCHANGE).playOneShot();
+			if(Global::nowRoomName == U"secret1") AudioAsset(Sound::ITEM_GET).playOneShot();
+
 			Global::isSecretTriggerActivated = true;
 		}
 	}

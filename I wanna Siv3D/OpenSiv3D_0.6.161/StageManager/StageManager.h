@@ -15,6 +15,7 @@
 #include "../GameObject/Sign.h"
 #include "../GameObject/Item.h"
 #include "../UI/TitleCard.h"
+#include "../UI/Achieve.h"
 #include "CameraShake.h"
 #include "../Global.h"
 
@@ -79,6 +80,9 @@ namespace Iwanna {
 
 		//タイトルカード(画面右上に表示するやつ)
 		TitleCard titleCard;
+
+		//Achievement表示
+		Achieve achive;
 
 		//暗転演出関連
 		double darkAlpha = 0.8;

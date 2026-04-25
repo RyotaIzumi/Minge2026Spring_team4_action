@@ -141,7 +141,7 @@ namespace Iwanna {
 			switch (trapStep) {
 			case 0:
 				Global::isPlayerFrozen = true;
-				Global::bgmStop = true;
+				Global::trap2MapBgmStop = true;
 				trapIntervalTimer.restart();
 
 				trapStep++;

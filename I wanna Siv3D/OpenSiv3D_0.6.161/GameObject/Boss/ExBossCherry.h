@@ -71,6 +71,8 @@ namespace Iwanna {
 
 		Vec2 hitBoxSize;
 
+		Vec2 sordEdgePos;
+
 		Timer generateEffectTimer{ 0.001s,StartImmediately::No };
 
 	public:
@@ -84,6 +86,8 @@ namespace Iwanna {
 		void setExBossAngle(double);
 		void setSordCanPlayerKill(bool bl);
 
+		Vec2 getSordEdgePos();
+
 		//状態設定関数
 		void createSordCherries(); //剣型の生成
 		void startFollowBoss(); //bossの移動についていくようにする関数
@@ -95,6 +99,8 @@ namespace Iwanna {
 		Wait,
 		SparkExpro,
 		SwingOne,
+		SwingTwo,
+		SwingThree,
 		Fall,
 		FallSwing,
 		Slide,
@@ -108,7 +114,7 @@ namespace Iwanna {
 		bool isFollowBoss = false;
 		bool isNowAttacking = false;
 
-		double baseY = 410;//基本位置となるY座標
+		double baseY = 390;//基本位置となるY座標
 		double baseAngle = 0.0;//基本の角度
 
 		ExBossAttackType nowAttackType = ExBossAttackType::None;
@@ -136,6 +142,8 @@ namespace Iwanna {
 
 		BossForm bossForm = BossForm::First;
 
+		Array<ExBossAttackType> canAttackTypes{ ExBossAttackType::SwingOne, ExBossAttackType::Fall, ExBossAttackType::Slide, ExBossAttackType::SparkExpro, ExBossAttackType::Warp };
+
 	protected:
 		BossStageManager* bossStageManager = nullptr;
 		SordCherriesManager* sordCherriesManager = nullptr;
@@ -149,8 +157,11 @@ namespace Iwanna {
 		void updateBossForm();
 		bool getRandomChance(double p);
 
+		void decideAttack();
+
 		// ExBossAttack.cppで定義
 		void attack();
+		void barrageAttack(CherryColorType type);
 		void startWait();
 
 		double getBaseAngleDiff() const;

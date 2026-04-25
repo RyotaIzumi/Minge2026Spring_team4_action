@@ -35,15 +35,19 @@ namespace Iwanna {
 		static const String BLOCKBREAK = U"sndBreak";
 		static const String BLOCKBREAK_PATH = SE_PATH + BLOCKBREAK + U".mp3";
 		static const String SPIKETRAP = U"sndSpikeTrap";
-		static const String SPIKETRAP_PATH = SE_PATH + SPIKETRAP + U".wav";
+		static const String SPIKETRAP_PATH = SE_PATH + SPIKETRAP + U".mp3";
 		static const String BOSSHIT = U"sndBossHit";
-		static const String BOSSHIT_PATH = SE_PATH + BOSSHIT + U".wav";
+		static const String BOSSHIT_PATH = SE_PATH + BOSSHIT + U".mp3";
 		static const String ERROR = U"sndWindowsError";
 		static const String ERROR_PATH = SE_PATH + ERROR + U".wav";
 		static const String DISCORD = U"sndDiscord";
 		static const String DISCORD_PATH = SE_PATH + DISCORD + U".mp3";
 		static const String TITLECARD = U"sndTitleCard";
-		static const String TITLECARD_PATH = SE_PATH + TITLECARD + U".wav";
+		static const String TITLECARD_PATH = SE_PATH + TITLECARD + U".mp3";
+		static const String ITEM_GET = U"sndItem";
+		static const String ITEM_GET_PATH = SE_PATH + ITEM_GET + U".wav";
+		static const String ACHIEVE = U"sndAchieve";
+		static const String ACHIEVE_PATH = SE_PATH + ACHIEVE + U".wav";
 
 		//EXボスSE
 		static const String EXPRO= U"sndExpro";

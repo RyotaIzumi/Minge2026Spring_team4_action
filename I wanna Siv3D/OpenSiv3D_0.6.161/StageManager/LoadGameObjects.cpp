@@ -50,6 +50,7 @@ namespace Iwanna {
 					}
 
 					Global::isLoopStage = true;
+					Global::doNotStopBgm = true;
 				}
 				else {
 					// value に応じて配置
@@ -77,6 +78,7 @@ namespace Iwanna {
 					}
 
 					Global::isLoopStage = false;
+					Global::doNotStopBgm = false;
 				}
 			}
 		}

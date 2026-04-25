@@ -13,6 +13,8 @@ namespace Iwanna {
 			Global::nowRoomName = Global::startRoomName;
 		}
 
+		if(!Global::isChangeRoom) Global::nowRoomName = Global::savedRoomName;
+
 		//ステージの名称から種類を決定
 		if (Global::nowRoomName == U"boss" || Global::nowRoomName == U"ExBoss") {
 			stageType = StageType::Boss;
@@ -22,8 +24,21 @@ namespace Iwanna {
 			stageType = StageType::Normal;
 		}
 
-		if (Global::isChangeRoom) {
-			if (Global::nowRoomName == U"secret1")playBgm(U"secret_stage");
+		if (stageType != StageType::Boss) {
+			//BGM再生関連
+			if (!audio.isPlaying()) {
+				if (audio.isPaused())audio.play();
+				else playBgm(U"main_normal");
+			}
+
+			if (Global::isChangeRoom) {
+				if (Global::nowRoomName == U"secret1" && nowSoundName != U"secret_stage")playBgm(U"secret_stage");
+				if (Global::nowRoomName != U"secret1" && nowSoundName != U"main_normal")playBgm(U"main_normal");
+			}
+			else {
+				if (Global::savedRoomName == U"secret1" && nowSoundName != U"secret_stage")playBgm(U"secret_stage");
+				if (Global::savedRoomName != U"secret1" && nowSoundName != U"main_normal")playBgm(U"main_normal");
+			}
 		}
 
 		switch (stageType) {
@@ -34,13 +49,9 @@ namespace Iwanna {
 		playGameoverBgmOne = true;
 		gameoverAudio.stop();
 
-		if (stageType == StageType::Boss)return;
+		
 
-		//BGM再生関連
-		if (!audio.isPlaying()) {
-			if (audio.isPaused())audio.play();
-			else playBgm(U"main_normal");
-		}
+		
 	}
 
 	void MainGame::updateGame() {
@@ -54,13 +65,13 @@ namespace Iwanna {
 				stageManager.getWarningWindowTrap()->trapUpdate();
 			}
 
-			if (Global::bgmStop) {
+			if (Global::trap2MapBgmStop) {
 				pauseBgm();
 			}
 
 			//playerが死亡していたらBGM一時停止
 			if (stageManager.getPlayer()->getIsDead()) {
-				if (playGameoverBgmOne) {
+				if (playGameoverBgmOne && !Global::doNotStopBgm) {
 					playGameoverBgm();
 					playGameoverBgmOne = false;
 				}
@@ -72,7 +83,7 @@ namespace Iwanna {
 		case StageType::Boss:
 			bossStageManager.update();
 			//playerが死亡していたらBGM一時停止
-			if (bossStageManager.getPlayer()->getIsDead()) {
+			if (bossStageManager.getPlayer()->getIsDead() && !Global::doNotStopBgm) {
 				if (playGameoverBgmOne) {
 					playGameoverBgm();
 					playGameoverBgmOne = false;
@@ -114,6 +125,7 @@ namespace Iwanna {
 		stopBgm();
 		
 		audio = AudioAsset{bgm};
+		nowSoundName = bgm;
 		/*
 		SecondsF startTime = 0.0s;
 		int32 startStep = 0;

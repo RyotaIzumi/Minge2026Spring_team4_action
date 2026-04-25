@@ -15,13 +15,15 @@ namespace Iwanna {
 	}
 
 	void Item::update() {
-		if (isPlayerTouching) alpha -= 0.1;
-
+		if (isPlayerTouching) {
+			Global::prepareGetItem1 = true;
+			alpha -= 0.1;
+		}
 		if (alpha < 0) isDelete = true;
 	}
 
 	void Item::draw() const {
-		TextureAsset(U"heart").draw(pos);
+		TextureAsset(U"heart").draw(pos,ColorF(1.0,alpha));
 	}
 
 	void Item::onCollision(GameObject& other) {

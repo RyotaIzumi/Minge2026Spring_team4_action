@@ -40,7 +40,8 @@ namespace Global {
 	inline int32 stageWidth = 800;
 	inline int32 stageHeight = 608;
 	inline bool isChangeRoom = false;
-	inline String startRoomName = U"tutorial";
+	inline String startRoomName = U"ExBoss";
+	inline String prevRoomName = U"";
 	inline String nowRoomName = U"";
 	inline bool isLoopStage = false;
 	inline bool isSecretTriggerActivated = false;
@@ -51,7 +52,7 @@ namespace Global {
 	inline bool trapActivatedInTrap2Map = false;
 	inline bool trapActivatedId30InTrap2Map = false;
 	inline bool trapCameraActivatedInTrap2Map = false;
-	inline bool bgmStop = false;
+	inline bool trap2MapBgmStop = false;
 
 	// --- player関連 ---
 	inline bool isPlayerFrozen = false;
@@ -61,6 +62,13 @@ namespace Global {
 
 	// --- カメラ関連 ---
 	inline bool isCameraFollowMode = false;
+
+	// --- BGM関連 --- ///
+	inline bool doNotStopBgm = false;
+
+	// --- 入手アイテム関連 --- //
+	inline bool prepareGetItem1 = false;
+	inline bool getItem1 = true;
 
 	 // ======================
 	// 定数

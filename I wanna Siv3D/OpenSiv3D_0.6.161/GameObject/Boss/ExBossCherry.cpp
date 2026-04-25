@@ -23,7 +23,7 @@ namespace Iwanna {
 		hasHp = true;
 		maxHp = 60;
 		hp = maxHp;
-		bossForm = BossForm::First;
+		bossForm = BossForm::Third;
 
 		baseCenterPos = Vec2{ 800, 330 };
 		speed = 20;
@@ -85,8 +85,8 @@ namespace Iwanna {
 		isPlayerInRightSide = playerPos.x > pos.x;
 		playerDistance = calculateDistance(pos, playerPos);
 
-		updateBossForm();
-
+		//updateBossForm();
+		
 		//攻撃処理
 		attack();
 
@@ -103,6 +103,11 @@ namespace Iwanna {
 
 	double ExBossCherry::getBaseAngleDiff() const {
 		return baseAngle - textureAngle;
+	}
+
+	//bossの攻撃を設定
+	void ExBossCherry::decideAttack() {
+		nowAttackType = canAttackTypes.choice();
 	}
 
 	//bossの攻撃形態を設定
@@ -216,6 +221,7 @@ namespace Iwanna {
 	void SordCherry::initSparking(double time) {
 		startSparkTime = time;
 		canSpark = true;
+		sparkStep = 0;
 		sparkStopwatch.restart();
 	}
 
@@ -262,6 +268,10 @@ namespace Iwanna {
 		if (isFollowBoss) {
 			pos.x = r * cos(Math::ToRadians(c + exBossAngle)) + exBossPos.x;
 			pos.y = r * sin(Math::ToRadians(c + exBossAngle)) + exBossPos.y;
+
+			sordEdgePos.x = (r + 160) * cos(Math::ToRadians(c + exBossAngle)) + exBossPos.x;
+			sordEdgePos.y = (r + 160) * sin(Math::ToRadians(c + exBossAngle)) + exBossPos.y;
+
 			for (const auto& cherry : sordCherries) {
 
 				//剣に攻撃判定がある場合は残像エフェクトを生成
@@ -314,6 +324,11 @@ namespace Iwanna {
 
 		if(bl) generateEffectTimer.restart();
 		else generateEffectTimer.reset();
+	}
+
+	//剣の先端座標を取得する
+	Vec2 SordCherriesManager::getSordEdgePos() {
+		return sordEdgePos;
 	}
 
 	// 呼び出されると、ExBossへの追従を開始する

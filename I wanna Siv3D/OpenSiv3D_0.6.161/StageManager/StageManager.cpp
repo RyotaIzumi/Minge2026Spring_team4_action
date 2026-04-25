@@ -28,7 +28,7 @@ namespace Iwanna {
 		// 一部変数の初期化
 		isGenerateBloods = false;
 
-		Global::bgmStop = false;
+		Global::trap2MapBgmStop = false;
 		Global::trapActivatedId30InTrap2Map = false;
 		Global::trapCameraActivatedInTrap2Map = false;
 		Global::isPlayerFrozen = false;
@@ -43,11 +43,20 @@ namespace Iwanna {
 			loadGameObjects(Global::nowRoomName);
 			//隠しアイテムマップ時のみタイトルカード表示
 			if(Global::nowRoomName == U"secret1") titleCard.startShowTitleCard(U"secret1");
+
+			if (Global::prepareGetItem1) {
+				achive.startShowAchieve(AchieveType::ItemGet_Heart);
+				Global::prepareGetItem1 = false;
+				Global::getItem1 = true;
+			}
 		}
 		else {
 			loadGameObjects(Global::savedRoomName);
 		}
 		Global::isChangeRoom = false;
+
+		//アイテム入手関連
+		Global::prepareGetItem1 = false;
 	}
 
 	Vec2 StageManager::parsePos(const JSON& json) {
@@ -97,6 +106,7 @@ namespace Iwanna {
 
 		//タイトルカード処理
 		titleCard.update();
+		achive.update();
 
 		camera.setTargetScale(cameraScale);
 		camera.update(); {
@@ -412,6 +422,7 @@ namespace Iwanna {
 
 			//タイトルカード
 			titleCard.draw();
+			achive.draw();
 		}
 	}
 
