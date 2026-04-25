@@ -41,6 +41,12 @@ namespace Iwanna {
 		registerTexture(U"sprBlock_low1", BlockPath + U"sprBlock_low1.png");
 		registerTexture(U"sprBlock_low2", BlockPath + U"sprBlock_low2.png");
 		registerTexture(U"sprBlock_low3", BlockPath + U"sprBlock_low3.png");
+
+		registerTexture(U"sprBlock_normal1", BlockPath + U"sprBlock_normal1.png");
+		registerTexture(U"sprBlock_normal2", BlockPath + U"sprBlock_normal2.png");
+		registerTexture(U"sprBlock_normal3", BlockPath + U"sprBlock_normal3.png");
+
+
 		registerTexture(U"sprWater", BlockPath + U"sprWater.png");
 		registerTexture(U"sprBlockShootTrough", BlockPath + U"sprBlockShootTrough.png");
 
@@ -58,6 +64,11 @@ namespace Iwanna {
 		registerTexture(U"sprSpikeLeft_low", SpikePath + U"sprSpikeLeft_low.png");
 		registerTexture(U"sprSpikeDown_low", SpikePath + U"sprSpikeDown_low.png");
 		registerTexture(U"sprSpikeRight_low", SpikePath + U"sprSpikeRight_low.png");
+
+		registerTexture(U"sprSpikeUp_normal", SpikePath + U"sprSpikeUp_normal.png");
+		registerTexture(U"sprSpikeLeft_normal", SpikePath + U"sprSpikeLeft_normal.png");
+		registerTexture(U"sprSpikeDown_normal", SpikePath + U"sprSpikeDown_normal.png");
+		registerTexture(U"sprSpikeRight_normal", SpikePath + U"sprSpikeRight_normal.png");
 
 		registerTexture(U"sprSpikeUp_secret", SpikePath + U"sprSpikeUp_secret.png");
 		registerTexture(U"sprSpikeLeft_secret", SpikePath + U"sprSpikeLeft_secret.png");

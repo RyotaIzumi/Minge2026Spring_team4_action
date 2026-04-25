@@ -132,6 +132,8 @@ namespace Iwanna {
 		bool isPlayerInRightSide = false;
 		double playerDistance = 0.0;
 
+		double hpBarAlpha = 0.0;
+
 		//ボス自身のステータス
 		enum class BossForm {
 			First,
@@ -143,6 +145,10 @@ namespace Iwanna {
 		BossForm bossForm = BossForm::First;
 
 		Array<ExBossAttackType> canAttackTypes{ ExBossAttackType::SwingOne, ExBossAttackType::Fall, ExBossAttackType::Slide, ExBossAttackType::SparkExpro, ExBossAttackType::Warp };
+		Array<CherryColorType> randomChoiceBarrageAttacks{ CherryColorType::Red,CherryColorType::Yellow };
+
+		Timer generateBarrageCherryTimer{ 0.3s ,StartImmediately::No};
+		CherryColorType continueGenerateColor;
 
 	protected:
 		BossStageManager* bossStageManager = nullptr;
@@ -159,9 +165,12 @@ namespace Iwanna {
 
 		void decideAttack();
 
+		void hited() override;
+
 		// ExBossAttack.cppで定義
 		void attack();
 		void barrageAttack(CherryColorType type);
+		void slideBarrageAttack(CherryColorType type);
 		void startWait();
 
 		double getBaseAngleDiff() const;

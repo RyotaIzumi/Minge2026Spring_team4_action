@@ -23,14 +23,14 @@ namespace Iwanna {
 		hasHp = true;
 		maxHp = 60;
 		hp = maxHp;
-		bossForm = BossForm::Third;
+		bossForm = BossForm::First;
 
 		baseCenterPos = Vec2{ 800, 330 };
 		speed = 20;
 		direction = 90;
 		gravity = 0;
 
-		depth = 11;
+		depth = 100;
 
 		c = 0;
 		r = 20;
@@ -85,7 +85,10 @@ namespace Iwanna {
 		isPlayerInRightSide = playerPos.x > pos.x;
 		playerDistance = calculateDistance(pos, playerPos);
 
-		//updateBossForm();
+		//hp表示のフェードイン
+		if (hpBarAlpha < 1)hpBarAlpha += 0.05;
+
+		updateBossForm();
 		
 		//攻撃処理
 		attack();
@@ -98,6 +101,32 @@ namespace Iwanna {
 	void ExBossCherry::draw() const {
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
 		TextureAsset(U"sprCherryLowBoss").scaled(scaleMag).rotated(Math::ToRadians(textureAngle)).drawAt(pos.x - 1, pos.y - 1, ColorF(1.0, isMuteki ? 0.6 : 1.0));
+
+		// ===== HPバー =====
+		if (hasHp) {
+			double width = Global::windowWidth;   // 横幅
+			double height = 20;              // 高さ
+			Vec2 barPos = Vec2{ bossStageManager->executeCameraPos().x,0 };
+
+			// 最大HP（赤）
+			RectF(barPos.x - width / 2, barPos.y, width, height)
+				.draw(ColorF(1.0, 0.2, 0.2, hpBarAlpha));
+
+			// 現在HP（緑）
+			double hpRate = static_cast<double>(hp) / maxHp;
+			RectF(barPos.x - width / 2, barPos.y, width * hpRate, height)
+				.draw(ColorF(0.2, 1.0, 0.2, hpBarAlpha));
+
+			// 文字表示
+			Vec2 textBasePos = barPos + Vec2(-380, 18);
+			FontAsset(U"BossHp")(U"Guardian Cherry , the Sword Saint").draw(textBasePos.x - 1, textBasePos.y, ColorF(0, 0, 0, hpBarAlpha));
+			FontAsset(U"BossHp")(U"Guardian Cherry , the Sword Saint").draw(textBasePos.x + 1, textBasePos.y, ColorF(0, 0, 0, hpBarAlpha));
+			FontAsset(U"BossHp")(U"Guardian Cherry , the Sword Saint").draw(textBasePos.x, textBasePos.y - 1, ColorF(0, 0, 0, hpBarAlpha));
+			FontAsset(U"BossHp")(U"Guardian Cherry , the Sword Saint").draw(textBasePos.x, textBasePos.y + 1, ColorF(0, 0, 0, hpBarAlpha));
+
+			// 本体（白）
+			FontAsset(U"BossHp")(U"Guardian Cherry , the Sword Saint").draw(textBasePos.x, textBasePos.y, ColorF(1.0, 1.0, 1.0, hpBarAlpha));
+		}
 		//hitBox->draw(ColorF(0.7,0.7));//判定の可視化
 	}
 
@@ -108,6 +137,23 @@ namespace Iwanna {
 	//bossの攻撃を設定
 	void ExBossCherry::decideAttack() {
 		nowAttackType = canAttackTypes.choice();
+	}
+
+	//ダメージを受けた際の処理
+	void ExBossCherry::hited() {
+		if (hp > 0) {
+			AudioAsset(Sound::BOSSHIT).playOneShot();
+			hp--;
+		}
+
+		if (hp <= 0) {
+			AudioAsset(Sound::DEATH).playOneShot();
+			throw Error{ U"おめでとう！君はボスを撃破した！" };
+			Global::isBossDefeated = true;
+		}
+
+		isMuteki = true;
+		mutekiInterval.restart();
 	}
 
 	//bossの攻撃形態を設定

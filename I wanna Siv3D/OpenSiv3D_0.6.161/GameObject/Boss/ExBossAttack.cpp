@@ -9,8 +9,8 @@ namespace Iwanna {
 			if (waitStopwatch.isRunning()) {
 				if (waitStopwatch.s() >= waitTime) {
 					waitStopwatch.reset();
-					//decideAttack();
-					nowAttackType = ExBossAttackType::Fall;
+					decideAttack();
+					nowAttackType = ExBossAttackType::Slide;
 				}
 			}
 			break;
@@ -50,6 +50,11 @@ namespace Iwanna {
 					//攻撃を出す
 					AudioAsset(Sound::EXPRO).playOneShot();
 					bossStageManager->createSordExproCherry(attackStartPos, false, [this]() { return std::make_shared<ExproCherry>(pos, 1.0);});
+
+					//弾幕作成
+					if (bossForm >= BossForm::Third) {
+						for(int i=0;i < 2;i++) barrageAttack(CherryColorType::Sky);
+					}
 
 					rotateDirection(0, 1.2, true);//攻撃終わりまで待ち
 					attackStep++;
@@ -201,6 +206,12 @@ namespace Iwanna {
 				break;
 			case 1://振り上げ開始
 				if (getIsRotateFinished() && getIsMoveFinished()) {
+
+					//弾幕作成
+					if (bossForm >= BossForm::Third) {
+						barrageAttack(CherryColorType::Orange);
+					}
+
 					AudioAsset(Sound::SORD_STRONG).playOneShot();
 					if (isPlayerInRightSide) {
 						movePosition(Vec2{ pos.x + 160, pos.y }, 0.5, false);
@@ -399,6 +410,11 @@ namespace Iwanna {
 					pos.y = targetY;
 					textureAngle += 180;
 
+					if (bossForm >= BossForm::Third) {
+						continueGenerateColor = randomChoiceBarrageAttacks.choice();
+						generateBarrageCherryTimer.restart();
+					}
+
 					if (isPlayerInRightSide) {		
 						movePosition(Vec2{ Global::stageWidth + 400, targetY }, 1.4, true);
 					}
@@ -409,10 +425,18 @@ namespace Iwanna {
 				}
 				break;
 			case 3://画面下部を移動
+
+				if (bossForm >= BossForm::Third && generateBarrageCherryTimer.reachedZero() && 0 < pos.x && pos.x < Global::stageWidth) {
+					slideBarrageAttack(continueGenerateColor);
+					generateBarrageCherryTimer.restart();
+				}
+
 				if (getIsMoveFinished()) {
 					double targetY = 480;
 					pos.y = targetY;
 					textureAngle += 180;
+
+					generateBarrageCherryTimer.pause();
 
 					if (isPlayerInRightSide) {					
 						movePosition(Vec2{ Global::stageWidth + 400, targetY }, 0.9, true);
@@ -472,6 +496,12 @@ namespace Iwanna {
 				break;
 			case 2://画面外上部へ移動する
 				if (getIsRotateFinished()) {
+
+					//弾幕作成
+					if (bossForm >= BossForm::Third) {
+						barrageAttack(CherryColorType::Green);
+					}
+
 					pos.y = -300;
 					movePosition(pos, 0.4, false);
 					attackStep++;
@@ -567,8 +597,8 @@ namespace Iwanna {
 					bossStageManager->createSubThrowCherry(throwDir, throwSpd, [this]() { return std::make_shared<BossSubThrowCherry>(pos, 2.0, BossCherryType::Yellow, *bossStageManager); });
 					break;
 				case CherryColorType::Green:
-					throwDir = 75 + Random(30);
-					throwSpd = 9 + Random(3);
+					throwDir = 90;
+					throwSpd = 1;
 					bossStageManager->createSubThrowCherry(throwDir, throwSpd, [this]() { return std::make_shared<BossSubThrowCherry>(pos, 2.0, BossCherryType::Green, *bossStageManager); });
 					break;
 				case CherryColorType::Orange:
@@ -578,9 +608,45 @@ namespace Iwanna {
 					break;
 				case CherryColorType::Sky:
 					throwDir = 60 + Random(60);
-					throwSpd = 11 + Random(3);
+					throwSpd = 9 + Random(3);
 					bossStageManager->createSubThrowCherry(throwDir, throwSpd, [this]() { return std::make_shared<BossSubThrowCherry>(pos, 2.0, BossCherryType::Sky, *bossStageManager); });
 					break;
 				}
+	}
+
+	void ExBossCherry::slideBarrageAttack(CherryColorType type) {
+		// 攻撃を呼び出す
+		double throwDir, throwSpd;
+		switch (type) {
+		case CherryColorType::Red:
+			throwDir = 60 + Random(60);
+			throwSpd = 3 + Random(3);
+			bossStageManager->createSubThrowCherry(throwDir, throwSpd, [this]() { return std::make_shared<BossSubThrowCherry>(pos, 2.0, BossCherryType::Red, *bossStageManager); });
+			break;
+		case CherryColorType::Blue:
+			bossStageManager->createBlueLineCherry(30, 80, [this]() { return std::make_shared<BossFallBlueCherry>(pos, 1.0, BossCherryType::Blue); });
+			AudioAsset(Sound::CHERRYFALL).playOneShot();
+			break;
+		case CherryColorType::Yellow:
+			throwDir = 60 + Random(60);
+			throwSpd = 3 + Random(3);
+			bossStageManager->createSubThrowCherry(throwDir, throwSpd, [this]() { return std::make_shared<BossSubThrowCherry>(pos, 2.0, BossCherryType::Yellow, *bossStageManager); });
+			break;
+		case CherryColorType::Green:
+			throwDir = 90;
+			throwSpd = 1;
+			bossStageManager->createSubThrowCherry(throwDir, throwSpd, [this]() { return std::make_shared<BossSubThrowCherry>(pos, 2.0, BossCherryType::Green, *bossStageManager); });
+			break;
+		case CherryColorType::Orange:
+			throwDir = 90;
+			throwSpd = 12;
+			bossStageManager->createSubThrowCherry(throwDir, throwSpd, [this]() { return std::make_shared<BossSubThrowCherry>(pos, 2.0, BossCherryType::Orange, *bossStageManager); });
+			break;
+		case CherryColorType::Sky:
+			throwDir = 60 + Random(60);
+			throwSpd = 3 + Random(3);
+			bossStageManager->createSubThrowCherry(throwDir, throwSpd, [this]() { return std::make_shared<BossSubThrowCherry>(pos, 2.0, BossCherryType::Sky, *bossStageManager); });
+			break;
+		}
 	}
 }

@@ -24,20 +24,27 @@ namespace Iwanna {
 			stageType = StageType::Normal;
 		}
 
+		String mainBgmName;
+		switch (Global::mainBgmNumber) {
+		case 0:mainBgmName = U"main_low"; break;
+		case 1:mainBgmName = U"main_normal"; break;
+		case 2:mainBgmName = U"main_high"; break;
+		}
+
 		if (stageType != StageType::Boss) {
 			//BGM再生関連
 			if (!audio.isPlaying()) {
 				if (audio.isPaused())audio.play();
-				else playBgm(U"main_normal");
+				else playBgm(mainBgmName);
 			}
 
 			if (Global::isChangeRoom) {
 				if (Global::nowRoomName == U"secret1" && nowSoundName != U"secret_stage")playBgm(U"secret_stage");
-				if (Global::nowRoomName != U"secret1" && nowSoundName != U"main_normal")playBgm(U"main_normal");
+				if (Global::nowRoomName != U"secret1" && nowSoundName != mainBgmName)playBgm(mainBgmName);
 			}
 			else {
 				if (Global::savedRoomName == U"secret1" && nowSoundName != U"secret_stage")playBgm(U"secret_stage");
-				if (Global::savedRoomName != U"secret1" && nowSoundName != U"main_normal")playBgm(U"main_normal");
+				if (Global::savedRoomName != U"secret1" && nowSoundName != mainBgmName)playBgm(mainBgmName);
 			}
 		}
 
@@ -96,6 +103,8 @@ namespace Iwanna {
 				if(Global::nowRoomName == U"ExBoss") playBgm(U"ex_boss");
 				bossStageManager.bossBgmStart = false;
 			}
+
+			if (Global::isBossDefeated)stopBgm();
 			break;
 		}
 	}
@@ -103,7 +112,7 @@ namespace Iwanna {
 	void MainGame::debugGame() {
 		switch (stageType) {
 		case StageType::Normal:
-			stageManager.debug();
+			//stageManager.debug();
 			break;
 		case StageType::Boss:
 			//bossStageManager.debug();

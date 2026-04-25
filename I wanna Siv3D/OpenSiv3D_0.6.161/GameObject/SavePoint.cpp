@@ -78,7 +78,7 @@ namespace Iwanna {
 		}
 	}
 	void BossSavePoint::draw() const {
-		hitBox->draw(ColorF(0.7,0.7));
+		//hitBox->draw(ColorF(0.7,0.7));
 		TextureAsset(U"sprSave")(isSaving ? side : 0, 0, side, side).scaled(saveScale).rotated(saveRotate).drawAt(pos, ColorF(1.0, saveAlpha));
 	}
 

@@ -21,7 +21,17 @@ void MainGameSerializer::LoadCharactersMoraleValue() {
 
 void MainGameSerializer::defineGlobalStatuses() {
 	if (moraleValue2 > 90)Global::startRoomName = U"trap1";
-	else Global::startRoomName = U"normal2";
+	else if(moraleValue1 <= 30) Global::startRoomName = U"normal1";
+	else Global::startRoomName = U"tutorial";
+
+	//Texture
+	if (moraleValue3 < 40) Global::mainTextureNumber = 0;
+	else if (moraleValue3 <= 100) Global::mainTextureNumber = 1;
+
+	//BGM
+	if (moraleValue4 < 30) Global::mainBgmNumber = 0;
+	else if (moraleValue4 < 70) Global::mainBgmNumber = 1;
+	else if (moraleValue4 <= 100) Global::mainBgmNumber = 2;
 }
 
 // エンディング種類値を保存する処理をここに実装

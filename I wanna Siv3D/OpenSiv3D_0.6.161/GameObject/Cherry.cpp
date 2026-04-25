@@ -225,7 +225,7 @@ namespace Iwanna {
 		const double side = 32;
 		pos = { startPos.x * side, startPos.y * side };
 		//描画関連の決定
-		hasAnimation = true;
+		hasAnimation = false;
 		cherryTextureName = name;
 		cherryColorType = CherryColorType::None;
 	}

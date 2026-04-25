@@ -42,7 +42,7 @@ namespace Iwanna {
 
 		//カメラ関連
 		Vec2 cameraBasePos{ 400, 304 };
-		Camera2D camera{ cameraBasePos, 1.0};
+		Camera2D camera{ cameraBasePos, 1.0,CameraControl::None_ };
 		double cameraScale = 1.0;
 		CameraShake cameraShake;
 

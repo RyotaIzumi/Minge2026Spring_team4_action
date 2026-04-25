@@ -16,6 +16,7 @@ namespace Iwanna {
 		void registerBGMs() {
 			registerAudio(MAIN_LOW, Path_MAIN_LOW, Loop::Yes);
 			registerAudio(MAIN_NORMAL, Path_MAIN_NORMAL, Loop::Yes);
+			registerAudio(MAIN_HIGH, Path_MAIN_HIGH, Loop::Yes);
 			registerAudio(SECRET, Path_SECRET, Loop::Yes);
 			registerAudio(BOSS_NORMAL, Path_BOSS_NORMAL, Loop::Yes);
 			registerAudio(GAMEOVER_NORMAL, Path_GAMEOVER_NORMAL, Loop::No);

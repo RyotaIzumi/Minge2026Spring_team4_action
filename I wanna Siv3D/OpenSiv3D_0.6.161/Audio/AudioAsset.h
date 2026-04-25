@@ -8,6 +8,8 @@ namespace Iwanna {
 		const FilePath Path_MAIN_LOW{ U"Sound/Bgm/main_low.mp3" };
 		const String MAIN_NORMAL{ U"main_normal" };
 		const FilePath Path_MAIN_NORMAL{ U"Sound/Bgm/main_normal.mp3" };
+		const String MAIN_HIGH{ U"main_high" };
+		const FilePath Path_MAIN_HIGH{ U"Sound/Bgm/main_high.mp3" };
 		const String SECRET{ U"secret_stage" };
 		const FilePath Path_SECRET{ U"Sound/Bgm/secret_stage.mp3" };
 		const String BOSS_NORMAL{ U"boss_normal" };

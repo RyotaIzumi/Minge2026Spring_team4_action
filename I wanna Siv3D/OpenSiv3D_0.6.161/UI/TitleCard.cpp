@@ -53,7 +53,11 @@ namespace Iwanna {
 	//カード表示を開始させる
 	void TitleCard::startShowTitleCard(String roomName) {
 		if (roomName == U"boss") {
-			titleCardText = U"Gardian Cherry";
+			titleCardText = U"Gardian Gate";
+			titleCardTexture = U"sprTitleCard_boss";
+		}
+		if (roomName == U"ExBoss") {
+			titleCardText = U"Treasure House";
 			titleCardTexture = U"sprTitleCard_boss";
 		}
 		if (roomName == U"secret1") {
