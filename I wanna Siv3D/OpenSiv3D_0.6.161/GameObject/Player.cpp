@@ -348,7 +348,7 @@ namespace Iwanna {
 		// 看板との衝突
 		if (other.type == ObjectType::Sign) {
 			 auto* sign = dynamic_cast<Sign*>(&other);
-			 sign->isPlayerTouching = this->intersects(other);
+			 sign->isPlayerTouching = this->intersects(*sign);
 		}
 
 		// アイテムとの衝突
