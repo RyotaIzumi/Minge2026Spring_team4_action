@@ -18,6 +18,7 @@ namespace Iwanna {
 		registerTexture(U"sprBullet", PlayerPath + U"bullet.png");
 
 		registerTexture(U"sprIdle_normal", PlayerPath + U"sprIdle_normal.png");
+		registerTexture(U"sprRunning_normal", PlayerPath + U"sprRunning_normal.png");
 		registerTexture(U"sprFall_normal", PlayerPath + U"sprFall_normal.png");
 		registerTexture(U"sprJump_normal", PlayerPath + U"sprJump_normal.png");
 
@@ -31,13 +32,21 @@ namespace Iwanna {
 		registerTexture(U"sprCherryLowWhite", CherryPath + U"sprCherryLowWhite.png");
 		registerTexture(U"sprCherryLowWhiteLine", CherryPath + U"sprCherryLowWhiteLine.png");
 		registerTexture(U"sprCherryLowBarrageWhite", CherryPath + U"sprCherryLowBarrageWhite.png");
+		registerTexture(U"sprCherryLowAllWhite", CherryPath + U"sprCherryLowAllWhite.png");
 		registerTexture(U"sprCherryLowBoss", CherryPath + U"sprCherryLowBoss.png");
+		registerTexture(U"sprSparkCherry", CherryPath + U"sparkCherry.png");
 
 		//ブロックテクスチャ登録
 		static const FilePath BlockPath = U"Texture/Block/";
 		registerTexture(U"sprBlock_low1", BlockPath + U"sprBlock_low1.png");
 		registerTexture(U"sprBlock_low2", BlockPath + U"sprBlock_low2.png");
 		registerTexture(U"sprBlock_low3", BlockPath + U"sprBlock_low3.png");
+
+		registerTexture(U"sprBlock_normal1", BlockPath + U"sprBlock_normal1.png");
+		registerTexture(U"sprBlock_normal2", BlockPath + U"sprBlock_normal2.png");
+		registerTexture(U"sprBlock_normal3", BlockPath + U"sprBlock_normal3.png");
+
+
 		registerTexture(U"sprWater", BlockPath + U"sprWater.png");
 		registerTexture(U"sprBlockShootTrough", BlockPath + U"sprBlockShootTrough.png");
 
@@ -56,6 +65,11 @@ namespace Iwanna {
 		registerTexture(U"sprSpikeDown_low", SpikePath + U"sprSpikeDown_low.png");
 		registerTexture(U"sprSpikeRight_low", SpikePath + U"sprSpikeRight_low.png");
 
+		registerTexture(U"sprSpikeUp_normal", SpikePath + U"sprSpikeUp_normal.png");
+		registerTexture(U"sprSpikeLeft_normal", SpikePath + U"sprSpikeLeft_normal.png");
+		registerTexture(U"sprSpikeDown_normal", SpikePath + U"sprSpikeDown_normal.png");
+		registerTexture(U"sprSpikeRight_normal", SpikePath + U"sprSpikeRight_normal.png");
+
 		registerTexture(U"sprSpikeUp_secret", SpikePath + U"sprSpikeUp_secret.png");
 		registerTexture(U"sprSpikeLeft_secret", SpikePath + U"sprSpikeLeft_secret.png");
 		registerTexture(U"sprSpikeDown_secret", SpikePath + U"sprSpikeDown_secret.png");
@@ -65,6 +79,8 @@ namespace Iwanna {
 		static const FilePath BackgroundPath = U"Texture/Background/";
 		registerTexture(U"background_sample", BackgroundPath + U"sample.png");
 		registerTexture(U"background_black", BackgroundPath + U"black.png");
+		registerTexture(U"background_cave", BackgroundPath + U"cave.png");
+		registerTexture(U"background_caveLong", BackgroundPath + U"caveLong.png");
 
 		//その他テクスチャ登録
 		static const FilePath OtherPath = U"Texture/Other/";
@@ -81,6 +97,12 @@ namespace Iwanna {
 		registerTexture(U"transParentTreeTrap", OtherPath + U"transParentTree.png");
 		registerTexture(U"sprGAMEOVER", OtherPath + U"sprGAMEOVER.png");
 		registerTexture(U"hideLine", OtherPath + U"hideLine.png");
+		registerTexture(U"sprSign", OtherPath + U"sprSign.png");
+		registerTexture(U"heart", OtherPath + U"heart.png");
+		registerTexture(U"achieveFrame", OtherPath + U"achieveFrame.png");
+
+		registerTexture(U"sprTitleCard_boss", OtherPath + U"sprTitleCard_boss.png");
+		registerTexture(U"sprTitleCard_secret", OtherPath + U"sprTitleCard_secret.png");
 	}
 
 	void registerTexturesSync() {

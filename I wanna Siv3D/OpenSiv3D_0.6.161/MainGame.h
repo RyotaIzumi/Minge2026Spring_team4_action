@@ -17,6 +17,7 @@ namespace Iwanna {
 
 		Audio audio;
 		Audio gameoverAudio;
+		String nowSoundName;
 
 		AvoidanceManager avoidanceManager;
 		StageManager stageManager;

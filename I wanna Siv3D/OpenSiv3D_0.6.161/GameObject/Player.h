@@ -14,16 +14,21 @@ namespace Iwanna {
 		double maxSpeed = 3; //横方向速度の最大値
 		double maxVspeed = 9; //縦方向速度(主に落下速度)の最大値
 		double image_speed = 0.2; //アニメーション再生速度
-		bool isMuteki = false; //無敵状態かどうか
 		bool roomOutTrue = false;//kid君をroom外にいけるようにする
 		bool isDead = false; //死亡状態かどうか
 		bool isGenerateBullet = false; //弾生成フラグ
 		bool isOutOfScreen = false;//画面外判定用フラグ
 
+		//hp関連
+		int32 maxHp;
+		int32 hp;
+		bool isMuteki = false;
+		Timer mutekiInterval{ 2.0s };
+
 		int32 nowTrapID = 0;
 
 		//player当たり判定サイズ
-		SizeF hitBoxSize{ 11,21 };
+		SizeF hitBoxSize{ 15,26 };
 
 		//アニメーション管理用変数
 		SpriteSystem spriteSystem;
@@ -47,6 +52,7 @@ namespace Iwanna {
 		void playerJump();
 		void playerVJump();
 		void playerShoot();
+		void playerHited();
 		void playerDead();
 
 		Vec2 snappedPos(Vec2 p);
@@ -60,6 +66,8 @@ namespace Iwanna {
 		Global::Direction getDirection() const;
 		void setIsMuteki(bool value);
 		bool getIsMuteki() const;
+		int32 getHp() const;
+
 		void setStopOrPlayAnimation(bool isPlay);
 
 		void setNowTrapID(int32 id);

@@ -17,6 +17,8 @@ namespace Iwanna {
 
 		hspeed = hs;
 		vspeed = 0;
+
+		depth = 42;
 	}
 
 	void Bullet::update() {

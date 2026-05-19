@@ -20,6 +20,8 @@ namespace Iwanna {
 		gravity = 0;
 		direction = 0;
 
+		depth = 50;
+
 		//描画関連の決定
 		hasAnimation = true;
 		cherryTextureName = U"sprCherryLow";
@@ -29,6 +31,7 @@ namespace Iwanna {
 	void Cherry::update() {
 		checkOutOfScreen();
 		updateForMoveTargetPos();
+		updateForRotateTargetAngle();
 		barrageUpdate();
 
 		if(isChangedDirOrSpd()) calculateSpeed();
@@ -71,7 +74,9 @@ namespace Iwanna {
 		case CherryColorType::Green:  typeColor = ColorF(Palette::Lawngreen, alpha); break;
 		case CherryColorType::Orange: typeColor = ColorF(Palette::Orange, alpha); break;
 		case CherryColorType::Sky:    typeColor = ColorF(Palette::Skyblue, alpha); break;
-			//case CherryColorType::Gray:   typeColor = ColorF(Palette::Gray, alpha); break;
+		case CherryColorType::Gray:   typeColor = ColorF(Palette::Gray, alpha); break;
+		case CherryColorType::White:   typeColor = ColorF(Palette::White, alpha); break;
+		case CherryColorType::Black:   typeColor = ColorF(Palette::Black, alpha); break;
 		}
 	}
 
@@ -130,6 +135,43 @@ namespace Iwanna {
 		return !isMoving;
 	}
 
+	void Cherry::rotateDirection(double deltaAngle, double timeSec, bool accele) {
+		startAngle = textureAngle;
+		targetAngle = textureAngle + deltaAngle;
+
+		rotateDuration = Math::Max(timeSec, 0.001);
+		rotateElapsed = 0.0;
+
+		isRotating = true;
+		isRotateAcceleration = accele;
+	}
+
+	void Cherry::updateForRotateTargetAngle() {
+		double dt = Scene::DeltaTime();
+		if (!isRotating)return;
+
+		rotateElapsed += dt;
+		double t = rotateElapsed / rotateDuration;
+		t = Min(t, 1.0);
+		double easedT = 0.0;
+		if (isRotateAcceleration) {
+			easedT = t * t;
+		}
+		else {
+			easedT = 1.0 - (1.0 - t) * (1.0 - t);
+		}
+		textureAngle = Math::Lerp(startAngle, targetAngle, easedT);
+		if (t >= 1.0)
+		{
+			textureAngle = targetAngle;
+			isRotating = false;
+		}
+	}
+
+	bool Cherry::getIsRotateFinished() const {
+		return !isRotating;
+	}
+
 	//画面外判定
 	void Cherry::checkOutOfScreen() {
 		const int32 excess = hitBoxSize * 2;//画面端からの余白
@@ -183,7 +225,7 @@ namespace Iwanna {
 		const double side = 32;
 		pos = { startPos.x * side, startPos.y * side };
 		//描画関連の決定
-		hasAnimation = true;
+		hasAnimation = false;
 		cherryTextureName = name;
 		cherryColorType = CherryColorType::None;
 	}
@@ -269,8 +311,9 @@ namespace Iwanna {
 		case CherryColorType::Sky:    startTime = 2.2; break;
 		}
 
+		// 攻撃間隔設定
 		switch (cherryColorType) {
-		case CherryColorType::Red:    attackInterval = 1.0; break;
+		case CherryColorType::Red:    attackInterval = 1.5; break;
 		case CherryColorType::Blue:   attackInterval = 2.0; break;
 		case CherryColorType::Yellow: break;
 		case CherryColorType::Green:  attackInterval = 3.8; break;
@@ -296,7 +339,7 @@ namespace Iwanna {
 	void GimmikBigCherry::generateAttack() {
 			switch (cherryColorType) {
 			case CherryColorType::Red:
-				stageManager->createCherrySpread(20, 4, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0,cherryColorType); });
+				stageManager->createCherrySpread(12, 4, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0,cherryColorType); });
 				break;
 			case CherryColorType::Blue:
 				stageManager->createBlueLineCherry([this]() { return std::make_shared<BarrageGimmikBlueCherry>(pos, 1.0, cherryColorType); });
@@ -309,6 +352,7 @@ namespace Iwanna {
 				break;
 			case CherryColorType::Orange:
 				stageManager->createOrangeStopCherry(true, [this]() { return std::make_shared<BarrageGimmikOrangeCherry>(pos, 1.0, cherryColorType); });
+				AudioAsset(Sound::SPIKETRAP).playOneShot();
 				break;
 			case CherryColorType::Sky:
 				stageManager->createSkyTargetCherry(7, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0, cherryColorType); });

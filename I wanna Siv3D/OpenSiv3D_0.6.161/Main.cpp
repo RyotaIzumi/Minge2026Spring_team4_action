@@ -11,7 +11,7 @@ void Main()
 {
 	System60::SetDisplaySize(Size{800,608});
 
-	Window::SetTitle(U"I wanna Siv3D (Debug Build)");
+	Window::SetTitle(U"I wanna continue Siv3D");
 
 	MainGameSerializer mainGameSerializer;
 
@@ -21,6 +21,8 @@ void Main()
 	FontAsset::Register(U"Button", FontMethod::MSDF, 20, Typeface::Medium);
 	FontAsset::Register(U"TitleTrap", FontMethod::MSDF, 10, Typeface::Medium);
 	FontAsset::Register(U"PlayerMessage", FontMethod::MSDF, 12, Typeface::Medium);
+	FontAsset::Register(U"TitleCard", FontMethod::MSDF, 20, Typeface::Medium);
+	FontAsset::Register(U"Achieve", FontMethod::MSDF, 16, Typeface::Medium);
 
 	//カーソル設定
 	Image cursorImage{ U"✌"_emoji };

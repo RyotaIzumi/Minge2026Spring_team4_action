@@ -12,6 +12,10 @@
 #include "../GameObject/SpecialTrap.h"
 #include "../GameObject/Blood.h"
 #include "../GameObject/Warp.h"
+#include "../GameObject/Sign.h"
+#include "../GameObject/Item.h"
+#include "../UI/TitleCard.h"
+#include "../UI/Achieve.h"
 #include "CameraShake.h"
 #include "../Global.h"
 
@@ -29,6 +33,8 @@ namespace Iwanna {
 		Array<std::shared_ptr<SpecialTrap>> specialBackTraps;//↑と違い、背景側のレイヤー配置用
 		Array<std::shared_ptr<Blood>> bloods;
 		Array<std::shared_ptr<Warp>> warps;
+		Array<std::shared_ptr<Sign>> signs;
+		Array<std::shared_ptr<Item>> items;
 	};
 
 	class StageManager {
@@ -71,6 +77,12 @@ namespace Iwanna {
 
 		//背景
 		String backgroundName;
+
+		//タイトルカード(画面右上に表示するやつ)
+		TitleCard titleCard;
+
+		//Achievement表示
+		Achieve achive;
 
 		//暗転演出関連
 		double darkAlpha = 0.8;

@@ -139,30 +139,30 @@ namespace Iwanna {
 			switch (spikeDir) {
 			case 0://上向き
 				triangle.set({
-					Vec2{ pos.x + 16,  pos.y },
-					Vec2{ pos.x + 31, pos.y + 32 },
-					Vec2{ pos.x + 1, pos.y + 32  }
+					Vec2{ pos.x + 16,  pos.y + 1},
+					Vec2{ pos.x + 31, pos.y + 31 },
+					Vec2{ pos.x + 1, pos.y + 31  }
 				});
 				break;
 			case 1://左向き
 				triangle.set({
-					Vec2{ pos.x + 32,  pos.y + 1 },
-					Vec2{ pos.x + 32, pos.y + 31 },
-					Vec2{ pos.x, pos.y + 16  }
+					Vec2{ pos.x + 31,  pos.y + 1 },
+					Vec2{ pos.x + 31, pos.y + 31 },
+					Vec2{ pos.x + 1, pos.y + 16  }
 				});
 				break;
 			case 2://下向き
 				triangle.set({
-					Vec2{ pos.x + 1,  pos.y },
-					Vec2{ pos.x + 31, pos.y },
-					Vec2{ pos.x + 16, pos.y + 32  }
+					Vec2{ pos.x + 1,  pos.y + 1 },
+					Vec2{ pos.x + 31, pos.y + 1 },
+					Vec2{ pos.x + 16, pos.y + 31  }
 				});
 				break;
 			case 3://右向き
 				triangle.set({
-					Vec2{ pos.x,  pos.y + 1 },
-					Vec2{ pos.x + 32, pos.y + 16 },
-					Vec2{ pos.x, pos.y + 31}
+					Vec2{ pos.x + 1,  pos.y + 1 },
+					Vec2{ pos.x + 31, pos.y + 16 },
+					Vec2{ pos.x + 1, pos.y + 31}
 				});
 				break;
 			}

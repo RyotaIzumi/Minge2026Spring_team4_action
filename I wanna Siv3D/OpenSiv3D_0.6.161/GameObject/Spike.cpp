@@ -11,6 +11,8 @@ namespace Iwanna {
 		type = ObjectType::Spike;
 		canPlayerKill = true;
 		alpha = 1.0;
+
+		depth = 0;
 	}
 
 	void Spike::update() {

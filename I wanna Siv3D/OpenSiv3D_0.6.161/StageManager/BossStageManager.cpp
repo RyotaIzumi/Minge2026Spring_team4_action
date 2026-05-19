@@ -4,7 +4,7 @@
 namespace Iwanna {
 	BossStageManager::BossStageManager() {
 		stockNearGameObjects.cellSize = 96;
-		stockBulletsNearGameObjects.cellSize = 160;
+		stockBulletsNearGameObjects.cellSize = 320;
 		stockLargeNearGameObjects.cellSize = 800;
 	}
 
@@ -24,14 +24,18 @@ namespace Iwanna {
 		// 一部変数の初期化
 		isGenerateBloods = false;
 
-		Global::bgmStop = false;
+		Global::trap2MapBgmStop = false;
 		Global::trapActivatedId30InTrap2Map = false;
 		Global::trapCameraActivatedInTrap2Map = false;
 		Global::isPlayerFrozen = false;
 		Global::isBossAttackPowerUp = false;
+		Global::isBossExBarrageAttack = false;
+		Global::isBossDefeated = false;
 
 		gameoverTimer.reset();
 		isShowGameOver = false;
+
+		titleCard.reset();
 
 		if(Global::isChangeRoom)loadGameObjects(Global::nowRoomName);
 		else loadGameObjects(Global::savedRoomName);
@@ -39,6 +43,14 @@ namespace Iwanna {
 	}
 
 	void BossStageManager::loadGameObjects(String fileName) {
+
+		String quarity;
+
+		switch (Global::mainTextureNumber) {
+		case 0: quarity = U"low"; break;
+		case 1: quarity = U"normal"; break;
+		}
+
 		//ステージデータの読み込みとオブジェクト生成
 		CSV csv{ U"MapData/" + fileName + U".csv"};
 
@@ -64,17 +76,17 @@ namespace Iwanna {
 
 				// value に応じて配置
 				switch (value) {
-				case 1: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_low1", pos); break;
-				case 6: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_low2", pos); break;
-				case 7: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_low3", pos); break;
-				case 21: gameObjects.spikes << std::make_shared<Spike>(U"low", pos, 0); break;
-				case 22: gameObjects.spikes << std::make_shared<Spike>(U"low", pos, 1); break;
-				case 23: gameObjects.spikes << std::make_shared<Spike>(U"low", pos, 2); break;
-				case 24: gameObjects.spikes << std::make_shared<Spike>(U"low", pos, 3); break;
+				case 1: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_" + quarity + U"1", pos); break;
+				case 6: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_" + quarity + U"2", pos); break;
+				case 7: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_" + quarity + U"3", pos); break;
+				case 21: gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 0); break;
+				case 22: gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 1); break;
+				case 23: gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 2); break;
+				case 24: gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 3); break;
 				//case 25: gameObjects.savePoints << std::make_shared<SavePoint>(pos); break;
-				case 26: gameObjects.blocks << std::make_shared<HideBlock>(U"sprBlock_low1", pos); break;
+				case 26: gameObjects.blocks << std::make_shared<HideBlock>(U"sprBlock_" + quarity + U"1", pos); break;
 				case 27: gameObjects.blocks << std::make_shared<ShootTroughBlock>(U"sprBlockShootTrough", pos); break;
-				case 28: gameObjects.blocks << std::make_shared<FakeBlock>(U"sprBlock_low2", pos); break;
+				case 28: gameObjects.blocks << std::make_shared<FakeBlock>(U"sprBlock_" + quarity + U"2", pos); break;
 				}
 			}
 		}
@@ -117,6 +129,7 @@ namespace Iwanna {
 			double gimmikValue1;
 			double gimmikValue2;
 			double gimmikValue3;
+			double gimmikValue4;
 			String gimmikString;
 
 			if (stage.contains(U"Gimmiks")) {
@@ -125,17 +138,17 @@ namespace Iwanna {
 					gimmikParsePos = parsePos(gimmik[U"gimmikPos"]);
 					gimmikIntactPos = parseIntactPos(gimmik[U"gimmikPos"]);
 
-					if (gimmikName == U"ワープ") {
+					if (gimmikName == U"ワープ" || gimmikName == U"特殊ワープ") {
 						gimmikString = gimmik[U"value1"].getString();
-						gimmikValue2 = gimmik[U"value2"].get<double>();
-						gimmikValue3 = gimmik[U"value3"].get<double>();
 					}
 					else {
-						gimmikValue1 = gimmik[U"value1"].get<double>();
-						gimmikValue2 = gimmik[U"value2"].get<double>();
-						gimmikValue3 = gimmik[U"value3"].get<double>();
+						if (gimmik.contains(U"value1")) gimmikValue1 = gimmik[U"value1"].get<double>();
+						if (gimmik.contains(U"value2")) gimmikValue2 = gimmik[U"value2"].get<double>();
+						if (gimmik.contains(U"value3")) gimmikValue3 = gimmik[U"value3"].get<double>();
+						if (gimmik.contains(U"value4")) gimmikValue4 = gimmik[U"value4"].get<double>();
 					}
 
+					if (gimmikName == U"罠ブロック") gameObjects.blocks << std::make_shared<BreakBlock>(U"sprBlock_" + quarity + U"3", gimmikParsePos, static_cast<int32>(gimmikValue1));
 					if (gimmikName == U"ワープ") gameObjects.warps << std::make_shared<Warp>(gimmikIntactPos, gimmikString);
 				}
 			}
@@ -151,6 +164,12 @@ namespace Iwanna {
 
 		if (stageName == U"boss") {
 			gameObjects.savePoints << std::make_shared<BossSavePoint>(Vec2{400,500},1);
+		}
+		if (stageName == U"ExBoss") {
+			gameObjects.savePoints << std::make_shared<BossSavePoint>(Vec2{ 800,450 }, 2);
+			gameObjects.bossCherries << std::make_shared<SordCherriesManager>(Vec2{ 800,430 }, 2.0, *this);
+			Global::isCameraFollowMode = true;
+			Global::isBossExBarrageAttack = true;
 		}
 	}
 
@@ -175,12 +194,16 @@ namespace Iwanna {
 		auto& bloods = gameObjects.bloods;
 		auto& warps = gameObjects.warps;
 
+		//死亡判定
 		if (player->getIsDead()) {
 			gameoverTimer.start();
 			if (gameoverTimer.reachedZero()) {
 				isShowGameOver = true;
 			}
 		}
+
+		//タイトルカード処理
+		titleCard.update();
 
 		// 揺れ更新
 		cameraShake.update();
@@ -229,6 +252,7 @@ namespace Iwanna {
 			for (auto& b : blocks) {
 				stockNearGameObjects.add(b.get());
 				stockBulletsNearGameObjects.add(b.get());
+				if (b->isTriggerTrap)b->trapUpdate(Global::isBossDefeated ? 0 : -1);
 			}
 
 			// 針の更新と、起動しているトリガーIDの反映
@@ -330,12 +354,12 @@ namespace Iwanna {
 			}
 
 			//暗転演出の透明度を変更
-			if (darkAlpha > 0.1) {
+			if (darkAlpha > 0.2) {
 				darkAlpha -= 0.08;
 			}
 			else {
 				if (darkAlphaTimer.reachedZero()) {
-					darkAlpha = 0.05 + Random(0.05);
+					darkAlpha = 0.05 + Random(0.15);
 					darkAlphaTimer.restart();
 				}
 			}
@@ -396,35 +420,52 @@ namespace Iwanna {
 		//背景描画
 		TextureAsset(backgroundName).draw();
 
+		Array<std::shared_ptr<GameObject>> drawList;
+
+		// 全部突っ込む
+		for (auto& s : gameObjects.spikes) drawList << s;
+		for (auto& b : gameObjects.blocks) drawList << b;
+		for (auto& s : gameObjects.savePoints) drawList << s;
+		for (auto& w : gameObjects.warps) drawList << w;
+		for (auto& c : gameObjects.cherries) drawList << c;
+		for (auto& c : gameObjects.bossCherries) drawList << c;
+		for (auto& b : gameObjects.bloods) drawList << b;
+		for (auto& b : gameObjects.bullets) drawList << b;
+		drawList << gameObjects.player;
+
+		// ソート
+		drawList.sort_by([](const auto& a, const auto& b) {
+			return a->depth < b->depth;
+		});
+
 		camera.update(); {
 			const auto t = camera.createTransformer();
 
-			//針描画
-			for (auto s : gameObjects.spikes) s->draw();
-			//ブロック描画
-			for (auto b : gameObjects.blocks) b->draw();
-			//セーブポイント描画
-			for (auto s : gameObjects.savePoints) s->draw();
-			//ワープの描画
-			for (auto w : gameObjects.warps) w->draw();
-			//ボスりんご描画
-			for (auto it = gameObjects.bossCherries.rbegin(); it != gameObjects.bossCherries.rend(); ++it) {
-				(*it)->draw();
+			if (Global::nowRoomName == U"ExBoss") {
+				TextureAsset(backgroundName).draw();
 			}
-			//りんご描画
-			for (auto c : gameObjects.cherries) c->draw();
-			//kid君描画
-			gameObjects.player->draw();
-			//血の描画
-			for (auto b : gameObjects.bloods) b->draw();
-			//弾丸描画
-			for (auto b : gameObjects.bullets) b->draw();
+
+			// 描画
+			for (auto& obj : drawList) obj->draw();
 
 			//暗転演出
-			Rect(0, 0, 800, 608).draw(ColorF(0.0, 0.0, 0.0, darkAlpha));
+			Rect(0, 0, 1600, 608).draw(ColorF(0.0, 0.0, 0.0, darkAlpha));
 
 			//GAMEOVER描画
 			if(isShowGameOver) TextureAsset(U"sprGAMEOVER").drawAt(executeCameraPos());
+		}
+
+		titleCard.draw();
+
+		if (Global::nowRoomName == U"ExBoss") {
+			Rect(0, 544, 800, 64).draw(ColorF(Palette::Black));
+		}
+
+		if (Global::getItem1) {
+			int32 nowPlayerHp = gameObjects.player->getHp();
+			for (int i = 0; i < nowPlayerHp; i++) {
+				TextureAsset(U"heart").draw(playerHpBasePos.x + i * hpInterbalX, playerHpBasePos.y);
+			}
 		}
 	}
 
@@ -443,6 +484,17 @@ namespace Iwanna {
 	// カメラの位置をプレイヤーのいるエリアの中心に設定
 	Vec2 BossStageManager::executeCameraPos() {
 		Vec2 nextPos;
+
+		if (Global::isCameraFollowMode) {
+			nextPos.x = static_cast<int32>(gameObjects.player->pos.x);
+			nextPos.y = Global::stageHeight / 2;
+
+			if (nextPos.x < Global::windowWidth / 2) nextPos.x = Global::windowWidth / 2;
+			else if (nextPos.x > Global::stageWidth - Global::windowWidth / 2) nextPos.x = Global::stageWidth - Global::windowWidth / 2;
+
+			return nextPos;
+		}
+
 		int32 playerAreaX = static_cast<int32>(gameObjects.player->pos.x) / Global::windowWidth;
 		int32 playerAreaY = static_cast<int32>(gameObjects.player->pos.y) / Global::windowHeight;
 		nextPos.x = playerAreaX * Global::windowWidth + Global::windowWidth / 2;
@@ -464,6 +516,14 @@ namespace Iwanna {
 			bossBgmStart = true;
 			darkAlpha = 0.9;
 			cameraShake.shake(0.4, 20.0);
+			titleCard.startShowTitleCard(U"boss");
+			break;
+		case 2://Exボス召喚
+			gameObjects.bossCherries << std::make_shared<ExBossCherry>(Vec2{ 800,-300 }, 5.0, *this);
+			bossBgmStart = true;
+			darkAlpha = 0.9;
+			cameraShake.shake(0.4, 20.0);
+			titleCard.startShowTitleCard(U"ExBoss");
 			break;
 		}
 	}
@@ -478,6 +538,13 @@ namespace Iwanna {
 
 	Array<std::shared_ptr<Block>> BossStageManager::getBlocks() {
 		return gameObjects.blocks;
+	}
+
+	std::shared_ptr<SordCherriesManager> BossStageManager::getExBossSordManagerCherry() {
+		if (stageName == U"ExBoss") {
+			return std::dynamic_pointer_cast<SordCherriesManager>(gameObjects.bossCherries.front());
+		}
+		return nullptr;
 	}
 
 	String BossStageManager::getStageName() const {

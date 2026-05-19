@@ -22,11 +22,13 @@ namespace Iwanna {
 		gameObjects.specialBackTraps.clear();
 		gameObjects.bloods.clear();
 		gameObjects.warps.clear();
+		gameObjects.signs.clear();
+		gameObjects.items.clear();
 
 		// 一部変数の初期化
 		isGenerateBloods = false;
 
-		Global::bgmStop = false;
+		Global::trap2MapBgmStop = false;
 		Global::trapActivatedId30InTrap2Map = false;
 		Global::trapCameraActivatedInTrap2Map = false;
 		Global::isPlayerFrozen = false;
@@ -35,9 +37,26 @@ namespace Iwanna {
 		gameoverTimer.reset();
 		isShowGameOver = false;
 
-		if(Global::isChangeRoom)loadGameObjects(Global::nowRoomName);
-		else loadGameObjects(Global::savedRoomName);
+		titleCard.reset();
+
+		if (Global::isChangeRoom) {
+			loadGameObjects(Global::nowRoomName);
+			//隠しアイテムマップ時のみタイトルカード表示
+			if(Global::nowRoomName == U"secret1") titleCard.startShowTitleCard(U"secret1");
+
+			if (Global::prepareGetItem1) {
+				achive.startShowAchieve(AchieveType::ItemGet_Heart);
+				Global::prepareGetItem1 = false;
+				Global::getItem1 = true;
+			}
+		}
+		else {
+			loadGameObjects(Global::savedRoomName);
+		}
 		Global::isChangeRoom = false;
+
+		//アイテム入手関連
+		Global::prepareGetItem1 = false;
 	}
 
 	Vec2 StageManager::parsePos(const JSON& json) {
@@ -62,6 +81,8 @@ namespace Iwanna {
 		auto& specialBackTraps = gameObjects.specialBackTraps;
 		auto& bloods = gameObjects.bloods;
 		auto& warps = gameObjects.warps;
+		auto& signs = gameObjects.signs;
+		auto& items = gameObjects.items;
 
 		if (player->getIsDead()) {
 			gameoverTimer.start();
@@ -82,6 +103,10 @@ namespace Iwanna {
 				cameraScale = 1.0;
 			}
 		}
+
+		//タイトルカード処理
+		titleCard.update();
+		achive.update();
 
 		camera.setTargetScale(cameraScale);
 		camera.update(); {
@@ -142,7 +167,6 @@ namespace Iwanna {
 						}
 					break;
 				}
-				
 			}
 
 			// 特殊罠用にトリガー再設定
@@ -213,9 +237,21 @@ namespace Iwanna {
 				stockNearGameObjects.add(s.get());
 				stockBulletsNearGameObjects.add(s.get());
 			}
+			//ワープ
 			for (auto& w : warps) {
 				w->update();
 				stockNearGameObjects.add(w.get());
+			}
+			//看板
+			for (auto& s : signs) {
+				s->update();
+				stockNearGameObjects.add(s.get());
+			}
+
+			//アイテム
+			for (auto& i : items) {
+				i->update();
+				stockNearGameObjects.add(i.get());
 			}
 
 			//playerの近くのオブジェクトのみを取得して当たり判定確認
@@ -321,11 +357,11 @@ namespace Iwanna {
 
 		
 		ClearPrint();
-		Print << U" Stage Step : " << step;
-		Print << U" Player Pos : " << player->pos;
-		Print << U" Player Muteki : " << player->getIsMuteki();
+		//Print << U" Stage Step : " << step;
+		//Print << U" Player Pos : " << player->pos;
+		//Print << U" Player Muteki : " << player->getIsMuteki();
 		//Print << U" Camera Pos : " << executeCameraPos();
-		Print << U" Cherries Num : " << gameObjects.cherries.size();
+		//Print << U" Cherries Num : " << gameObjects.cherries.size();
 		//Print << U" Bullets Num : " << gameObjects.bullets.size();
 		//Print << U" Spikes Num : " << gameObjects.spikes.size();
 		//Print << U" Special Num : " << gameObjects.specialTraps[0]->pos;
@@ -350,6 +386,10 @@ namespace Iwanna {
 			for (auto s : gameObjects.savePoints) s->draw();
 			//ワープの描画
 			for (auto w : gameObjects.warps) w->draw();
+			//看板描画
+			for (auto s : gameObjects.signs) s->draw();
+			//アイテム描画
+			for (auto i : gameObjects.items) i->draw();
 			//kid君描画
 			gameObjects.player->draw();
 			//ブロック描画
@@ -367,17 +407,22 @@ namespace Iwanna {
 			if (darkEffectStages.includes(stageName))Rect(0, 0, 800, 608).draw(ColorF(0.0, 0.0, 0.0, darkAlpha));
 
 			//GAMEOVER描画
-			if(isShowGameOver)
+			if (isShowGameOver) {
 				if (Global::trapCameraActivatedInTrap2Map) {
 					TextureAsset(U"sprGAMEOVER").scaled(1 / cameraScale).drawAt(saveTrapCameraPos);
 				}
-				else if(Global::isLoopStage)
+				else if (Global::isLoopStage)
 				{
-					TextureAsset(U"sprGAMEOVER").drawAt(Global::stageWidth / 2,Global::stageHeight / 2);
+					TextureAsset(U"sprGAMEOVER").drawAt(Global::stageWidth / 2, Global::stageHeight / 2);
 				}
 				else {
 					TextureAsset(U"sprGAMEOVER").drawAt(executeCameraPos());
 				}
+			}
+
+			//タイトルカード
+			titleCard.draw();
+			achive.draw();
 		}
 	}
 

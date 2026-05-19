@@ -4,6 +4,8 @@
 #include "../GameObject/Block.h"
 #include "../GameObject/Warp.h"
 #include "../GameObject/SavePoint.h"
+#include "../GameObject/Sign.h"
+#include "../GameObject/Item.h"
 
 namespace Iwanna {
 	Player::Player() {
@@ -28,32 +30,44 @@ namespace Iwanna {
 
 		//アニメーションデータの登録
 		//(アクション名,フレーム数,各フレーム再生時間,ループするかどうか(省略可), 左右差分があるか(省略可))
-		/*
 		spriteSystem = SpriteSystem(32, 32);
 		spriteSystem.addSprite(SpriteAction::PLAYER_WAIT, SpriteData(U"sprIdle_normal", 4, 0.15,true,false));
-		spriteSystem.addSprite(SpriteAction::PLAYER_RUN, SpriteData(U"sprPlayerRunning", 4, 0.1,true,false));
+		spriteSystem.addSprite(SpriteAction::PLAYER_RUN, SpriteData(U"sprRunning_normal", 6, 0.1,true,false));
 		spriteSystem.addSprite(SpriteAction::PLAYER_JUMP, SpriteData(U"sprJump_normal", 1, 0.1,true,false));
 		spriteSystem.addSprite(SpriteAction::PLAYER_FALL, SpriteData(U"sprFall_normal", 1, 0.1,true,false));
-		*/
+		
 		//アニメーションデータの登録
 		//(アクション名,フレーム数,各フレーム再生時間,ループするかどうか(省略可), 左右差分があるか(省略可))
+		/*
 		spriteSystem = SpriteSystem(32, 32);
 		spriteSystem.addSprite(SpriteAction::PLAYER_WAIT, SpriteData(U"sprPlayerIdle", 4, 0.15, true, false));
 		spriteSystem.addSprite(SpriteAction::PLAYER_RUN, SpriteData(U"sprPlayerRunning", 4, 0.1, true, false));
 		spriteSystem.addSprite(SpriteAction::PLAYER_JUMP, SpriteData(U"sprPlayerJump", 2, 0.1, true, false));
 		spriteSystem.addSprite(SpriteAction::PLAYER_FALL, SpriteData(U"sprPlayerFall", 2, 0.1, true, false));
+		*/
+
+		//hp関連
+		maxHp = 2;
+		hp = maxHp;
 
 		//初期の向き
 		direction = Global::Direction::RIGHT;
 
 		hspeed = 0.0;
 		vspeed = 0.0;
+
+		depth = 30;
 	}
 
 	void Player::update() {
 
 		hspeed = 0.0;
 		isChanedActionWait = false;
+
+		//hp関連の処理
+		if (mutekiInterval.reachedZero()) {
+			isMuteki = false;
+		}
 
 		if (isDead) return;
 
@@ -113,9 +127,9 @@ namespace Iwanna {
 	void Player::draw() const {
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
 		TextureRegion texture = spriteSystem.getTextureRegion(direction);
-		if(!isDead)texture.scaled(1.0).drawAt(pos.x,pos.y - 6);
-		else texture.scaled(1.0).drawAt(pos.x, pos.y - 6, ColorF(0.8,0,0, 0.8));
-		hitBox->draw(Palette::Red);
+		if(!isDead)texture.scaled(1.0).drawAt(pos.x,pos.y - 3, ColorF(1.0, isMuteki ? 0.5 : 1.0));
+		else texture.scaled(1.0).drawAt(pos.x, pos.y - 3, ColorF(0.8,0,0,0.8));
+		hitBox->draw(ColorF(Palette::Red,0.6));
 	}
 
 	void Player::playerMoveLeft() {
@@ -154,6 +168,22 @@ namespace Iwanna {
 
 	void Player::playerShoot() {
 		isGenerateBullet = true;
+	}
+
+	//ダメージを受けた際の処理
+	void Player::playerHited() {
+		if (hp > 0) {
+			AudioAsset(Sound::DEATH).playOneShot();
+			hp--;
+		}
+
+		if (hp <= 0) {
+			AudioAsset(Sound::DEATH).playOneShot();
+			playerDead();
+		}
+
+		isMuteki = true;
+		mutekiInterval.restart();
 	}
 
 	void Player::playerDead() {
@@ -220,10 +250,10 @@ namespace Iwanna {
 				if (nextHitBox.intersects(*other.hitBox->getRect()))
 				{
 					if (hspeed > 0) {
-						pos.x = other.hitBox->left().x - 5;
+						pos.x = other.hitBox->left().x - 7;
 					}
 					else {
-						pos.x = other.hitBox->right().x + 5;
+						pos.x = other.hitBox->right().x + 7;
 					}
 
 					hspeed = 0;
@@ -240,7 +270,7 @@ namespace Iwanna {
 				if (nextHitBox.intersects(*other.hitBox->getRect()))
 				{
 					if (vspeed > 0) {
-						pos.y = other.hitBox->top().y - 10;
+						pos.y = other.hitBox->top().y - 13;
 						djump = true;
 						isOnGround = true;
 					}
@@ -261,7 +291,8 @@ namespace Iwanna {
 		// PlayerKill属性を持つオブジェクトとの衝突
 		if (other.canPlayerKill) {
 			if (this->intersects(other) && !isDead && !isMuteki) {
-				playerDead();
+				if (Global::getItem1 && (Global::nowRoomName == U"boss" || Global::nowRoomName == U"ExBoss")) playerHited();
+				else playerDead();
 			}
 		}
 
@@ -292,6 +323,7 @@ namespace Iwanna {
 			if (this->intersects(other)) {
 				auto* warp = dynamic_cast<Warp*>(&other);
 				if (warp->getCanWarp()) {
+					Global::prevRoomName = Global::nowRoomName;
 					Global::nowRoomName = warp->getNextRoomName();
 					Global::isChangeRoom = true;
 				}
@@ -305,10 +337,25 @@ namespace Iwanna {
 				auto* secretSave = dynamic_cast<SecretSavePoint*>(save);
 				secretSave->isPlayerTouching = this->intersects(*secretSave);
 				// セーブポイントに触れている状態で、特定のキーを押すと脱出
-				if (secretSave->isPlayerTouching && Global::inputEscape.down()) {
+				if (!Global::prepareGetItem1 && secretSave->isPlayerTouching && Global::inputEscape.down()) {
+					Global::prevRoomName = Global::nowRoomName;
 					Global::nowRoomName = secretSave->getEscapeRoomName();
 					Global::isChangeRoom = true;
 				}
+			}
+		}
+
+		// 看板との衝突
+		if (other.type == ObjectType::Sign) {
+			 auto* sign = dynamic_cast<Sign*>(&other);
+			 sign->isPlayerTouching = this->intersects(other);
+		}
+
+		// アイテムとの衝突
+		if (other.type == ObjectType::Item) {
+			auto* item = dynamic_cast<Item*>(&other);
+			if (!item->isPlayerTouching && this->intersects(other)) {
+				item->isPlayerTouching = true;
 			}
 		}
 	}
@@ -346,6 +393,11 @@ namespace Iwanna {
 	// 無敵状態かどうかを取得
 	bool Player::getIsMuteki() const {
 		return isMuteki;
+	}
+
+	//hpを取得
+	int32 Player::getHp() const {
+		return hp;
 	}
 
 	// アニメーションの再生と停止を切り替える

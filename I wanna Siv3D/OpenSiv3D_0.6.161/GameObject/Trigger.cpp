@@ -12,6 +12,8 @@ namespace Iwanna {
 		canPlayerKill = false;
 		triggerType = TriggerType::Normal;
 		trapID = id;
+
+		depth = 1;
 	}
 	Trigger::Trigger(Vec2 startPos, int32 id, double sizeX, double sizeY, std::function<bool()> checkOtherConditionFunc) {
 		//GameObject.hの値初期化
@@ -24,6 +26,8 @@ namespace Iwanna {
 		triggerType = TriggerType::OtherCondition;
 		this->checkOtherConditionFunc = checkOtherConditionFunc;
 		trapID = id;
+
+		depth = 1;
 	}
 	void Trigger::update() {
 	}
@@ -64,7 +68,10 @@ namespace Iwanna {
 
 	void SecretTrigger::triggerActivate() {
 		if (!Global::isSecretTriggerActivated) {
-			AudioAsset(Sound::BLOCKCHANGE).playOneShot();
+			//部屋によって取得音を変える
+			if(Global::nowRoomName == U"normal4") AudioAsset(Sound::BLOCKCHANGE).playOneShot();
+			if(Global::nowRoomName == U"secret1") AudioAsset(Sound::ITEM_GET).playOneShot();
+
 			Global::isSecretTriggerActivated = true;
 		}
 	}

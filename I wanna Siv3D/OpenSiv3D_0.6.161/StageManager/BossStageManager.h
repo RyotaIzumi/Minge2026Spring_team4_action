@@ -5,11 +5,13 @@
 #include "../GameObject/Bullet.h"
 #include "../GameObject/Cherry.h"
 #include "../GameObject/Boss/BossCherry.h"
+#include "../GameObject/Boss/ExBossCherry.h"
 #include "../GameObject/Block.h"
 #include "../GameObject/Spike.h"
 #include "../GameObject/SavePoint.h"
 #include "../GameObject/Blood.h"
 #include "../GameObject/Warp.h"
+#include "../UI/TitleCard.h"
 #include "CameraShake.h"
 #include "../Global.h"
 
@@ -40,9 +42,12 @@ namespace Iwanna {
 
 		//カメラ関連
 		Vec2 cameraBasePos{ 400, 304 };
-		Camera2D camera{ cameraBasePos, 1.0};
+		Camera2D camera{ cameraBasePos, 1.0,CameraControl::None_ };
 		double cameraScale = 1.0;
 		CameraShake cameraShake;
+
+		//タイトルカード(画面右上に表示するやつ)
+		TitleCard titleCard;
 
 		//背景用
 		String backgroundName;
@@ -71,7 +76,11 @@ namespace Iwanna {
 
 		//暗転演出関連
 		double darkAlpha = 0.8;
-		Timer darkAlphaTimer{2.1s,StartImmediately::Yes};
+		Timer darkAlphaTimer{0.5s,StartImmediately::Yes};
+
+		//player hp UI関連
+		Vec2 playerHpBasePos{0,576};
+		double hpInterbalX = 32;
 
 	public:
 		BossStageManager();
@@ -96,6 +105,10 @@ namespace Iwanna {
 		std::shared_ptr<Player> getPlayer();
 		Array<std::shared_ptr<Cherry>> getCherries();
 		Array<std::shared_ptr<Block>> getBlocks();
+		CameraShake& getCameraShake() { return cameraShake; }
+
+		//ExBoss用の取得関数
+		std::shared_ptr<SordCherriesManager> getExBossSordManagerCherry();
 
 		String getStageName() const;
 
@@ -125,5 +138,11 @@ namespace Iwanna {
 		void createOrangeStopCherry(bool isAddUpDown, const std::function<std::shared_ptr<BossOrangeStopCherry>()>& factory);
 		void createSkyTargetCherry(int32 lineNum, bool isAddLine, const std::function<std::shared_ptr<BossSkyTargetCherry>()>& factory);
 		void createGrayLatticeCherry(double interval,const std::function<std::shared_ptr<BossGrayLatticeCherry>()>& factory);
+
+		// ----- ExBoss用 ----- //
+		//void createSordCherry(Vec2 startPos, const std::function<std::shared_ptr<BossSordCherry>()>& factory);
+		void createSordExproCherry(Vec2 startPos, bool isEffect, const std::function<std::shared_ptr<Cherry>()>& factory);
+		void createWarpCurtainCherry(Vec2 basePos, const std::function<std::shared_ptr<WarpCurtainCherry>()>& factory);
+		void createSordFallSwingShockWaveCherry(Vec2 startPos,double baseDir, const std::function<std::shared_ptr<Cherry>()>& factory);
 	};
 }

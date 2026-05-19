@@ -30,6 +30,10 @@ namespace Iwanna {
 
 		//hpバー用
 		double hpBarAlpha = 0.0;
+
+		Stopwatch specialAttackStopwatch{ StartImmediately::No };
+		double specialAttackIntervalTime = 8.0;
+		int32 specialAttackCount = 0;
 		
 	protected:
 		BossStageManager* bossStageManager = nullptr;
@@ -48,6 +52,8 @@ namespace Iwanna {
 		void removeDefeatedAttackType(BossCherryType type);
 		int32 getDefeatedBossNum() const;
 		bool reachedAttackTime(double time);
+
+		void hited() override;
 	};
 
 	class BossSubCherry : public Cherry {
