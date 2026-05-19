@@ -127,9 +127,9 @@ namespace Iwanna {
 	void Player::draw() const {
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
 		TextureRegion texture = spriteSystem.getTextureRegion(direction);
-		if(!isDead)texture.scaled(0.8).drawAt(pos.x,pos.y - 3, ColorF(1.0, isMuteki ? 0.5 : 1.0));
-		else texture.scaled(0.8).drawAt(pos.x, pos.y - 3, ColorF(0.8,0,0,0.8));
-		//hitBox->draw(Palette::Red);
+		if(!isDead)texture.scaled(1.0).drawAt(pos.x,pos.y - 6, ColorF(1.0, isMuteki ? 0.5 : 1.0));
+		else texture.scaled(1.0).drawAt(pos.x, pos.y - 6, ColorF(0.8,0,0,0.8));
+		hitBox->draw(Palette::Red);
 	}
 
 	void Player::playerMoveLeft() {

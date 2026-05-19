@@ -40,7 +40,7 @@ namespace Global {
 	inline int32 stageWidth = 800;
 	inline int32 stageHeight = 608;
 	inline bool isChangeRoom = false;
-	inline String startRoomName = U"";
+	inline String startRoomName = U"ExBoss";
 	inline String prevRoomName = U"";
 	inline String nowRoomName = U"";
 	inline bool isLoopStage = false;
@@ -70,9 +70,7 @@ namespace Global {
 
 	// --- 入手アイテム関連 --- //
 	inline bool prepareGetItem1 = false;
-	inline bool getItem1 = false;
-
-
+	inline bool getItem1 = true;
 
 	inline int32 mainBgmNumber = 0;
 	inline int32 mainTextureNumber = 0;

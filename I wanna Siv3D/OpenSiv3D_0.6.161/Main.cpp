@@ -11,7 +11,7 @@ void Main()
 {
 	System60::SetDisplaySize(Size{800,608});
 
-	Window::SetTitle(U"I wanna Siv3D (Debug Build)");
+	Window::SetTitle(U"I wanna continue Siv3D");
 
 	MainGameSerializer mainGameSerializer;
 
@@ -43,7 +43,7 @@ void Main()
 	app.init(Iwanna::SceneType::START_MENU, 0s);
 
 	mainGameSerializer.LoadCharactersMoraleValue();
-	mainGameSerializer.defineGlobalStatuses();
+	//mainGameSerializer.defineGlobalStatuses();
 
 	while (System60::Update()) {
 		if (not app.update()) {

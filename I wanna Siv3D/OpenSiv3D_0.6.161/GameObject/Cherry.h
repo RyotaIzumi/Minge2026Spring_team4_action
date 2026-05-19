@@ -63,7 +63,7 @@ namespace Iwanna {
 		int32 maxHp;
 		int32 hp;
 		bool isMuteki = false;
-		Timer mutekiInterval{0.5s};
+		Timer mutekiInterval{0.2s};
 
 		//描画,アニメーション関連
 		bool hasAnimation = false;

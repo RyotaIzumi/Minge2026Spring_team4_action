@@ -20,9 +20,15 @@ void MainGameSerializer::LoadCharactersMoraleValue() {
 }
 
 void MainGameSerializer::defineGlobalStatuses() {
+
+	// 開始room
 	if (moraleValue2 > 90)Global::startRoomName = U"trap1";
 	else if(moraleValue1 <= 30) Global::startRoomName = U"normal1";
 	else Global::startRoomName = U"tutorial";
+
+	// ゲームタイトル
+	if (moraleValue2 > 90) Window::SetTitle(U"I wanna Siv3D (Debug Build)");
+	else Window::SetTitle(U"I wanna continue Siv3D");
 
 	//Texture
 	if (moraleValue3 < 40) Global::mainTextureNumber = 0;

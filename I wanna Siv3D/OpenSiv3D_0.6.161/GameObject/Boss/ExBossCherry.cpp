@@ -30,7 +30,7 @@ namespace Iwanna {
 		direction = 90;
 		gravity = 0;
 
-		depth = 100;
+		depth = 50;
 
 		c = 0;
 		r = 20;

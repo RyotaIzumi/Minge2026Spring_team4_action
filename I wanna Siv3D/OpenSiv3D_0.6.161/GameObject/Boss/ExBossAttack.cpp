@@ -10,7 +10,7 @@ namespace Iwanna {
 				if (waitStopwatch.s() >= waitTime) {
 					waitStopwatch.reset();
 					decideAttack();
-					nowAttackType = ExBossAttackType::Slide;
+					//nowAttackType = ExBossAttackType::Slide;
 				}
 			}
 			break;
@@ -639,7 +639,7 @@ namespace Iwanna {
 			break;
 		case CherryColorType::Orange:
 			throwDir = 90;
-			throwSpd = 12;
+			throwSpd = 13;
 			bossStageManager->createSubThrowCherry(throwDir, throwSpd, [this]() { return std::make_shared<BossSubThrowCherry>(pos, 2.0, BossCherryType::Orange, *bossStageManager); });
 			break;
 		case CherryColorType::Sky:
