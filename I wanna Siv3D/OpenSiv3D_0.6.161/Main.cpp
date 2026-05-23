@@ -43,7 +43,7 @@ void Main()
 	app.init(Iwanna::SceneType::START_MENU, 0s);
 
 	mainGameSerializer.LoadCharactersMoraleValue();
-	mainGameSerializer.defineGlobalStatuses();
+	//mainGameSerializer.defineGlobalStatuses();
 
 	while (System60::Update()) {
 		if (not app.update()) {

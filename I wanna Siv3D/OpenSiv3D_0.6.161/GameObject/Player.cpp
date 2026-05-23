@@ -129,7 +129,7 @@ namespace Iwanna {
 		TextureRegion texture = spriteSystem.getTextureRegion(direction);
 		if(!isDead)texture.scaled(1.0).drawAt(pos.x,pos.y - 3, ColorF(1.0, isMuteki ? 0.5 : 1.0));
 		else texture.scaled(1.0).drawAt(pos.x, pos.y - 3, ColorF(0.8,0,0,0.8));
-		hitBox->draw(ColorF(Palette::Red,0.6));
+		//hitBox->draw(ColorF(Palette::Red,0.6));
 	}
 
 	void Player::playerMoveLeft() {

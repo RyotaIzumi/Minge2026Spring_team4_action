@@ -52,6 +52,9 @@ namespace Iwanna {
 	SpikeTrap::SpikeTrap(String typeName, Vec2 startPos, int32 dir, int32 id, double direction, double speed) : Spike(typeName, { startPos.x, startPos.y }, dir), trapID(id), direction(direction), speed(speed) {
 		hspeed = 0;
 		vspeed = 0;
+
+		pos.x = startPos.x;
+		pos.y = startPos.y;
 	}
 
 	void SpikeTrap::trapUpdate(int32 id) {
@@ -146,6 +149,7 @@ namespace Iwanna {
 	SpikeUpDown::SpikeUpDown(String typeName, Vec2 startPos, int32 dir, double time) : Spike(typeName, startPos, dir) {
 		pos = startPos;
 		basePos = pos;
+		this->startPos = pos;
 		hitBox = std::make_shared<SpikeHitBox>(pos, dir);
 		moveTime = time;
 	}
@@ -179,7 +183,7 @@ namespace Iwanna {
 
 			if (moveTimer.sF() >= moveTime) {
 				moveAmount = 0;
-				basePos = pos;
+				basePos = startPos;
 				moveTimer.restart();
 				moveStep = 0;
 			}

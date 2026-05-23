@@ -112,7 +112,7 @@ namespace Iwanna {
 	void MainGame::debugGame() {
 		switch (stageType) {
 		case StageType::Normal:
-			//stageManager.debug();
+			stageManager.debug();
 			break;
 		case StageType::Boss:
 			//bossStageManager.debug();
