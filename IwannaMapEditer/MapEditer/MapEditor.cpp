@@ -398,7 +398,10 @@ void MapEditor::drawMapSizeUI()
 
 void MapEditor::drawPlayerUI()
 {
-	Vec2 basePos{ 1100, 400 };
+	Vec2 basePos{ 1100, 350 };
+	const int32 tileSize = autoTiles[0].getTileSize();
+	const double stageWidth = static_cast<double>(state.mapSize.x * tileSize);
+	const double stageHeight = static_cast<double>(state.mapSize.y * tileSize);
 
 	FontAsset(U"Font")(U"Player初期座標").draw(basePos);
 
@@ -410,7 +413,7 @@ void MapEditor::drawPlayerUI()
 	{
 		if (const auto v = ParseIntOpt<int32>(playerXText.text))
 		{
-			startPlayerPos.x = *v;
+			startPlayerPos.x = Clamp(static_cast<double>(*v), 0.0, stageWidth);
 		}
 	}
 
@@ -419,8 +422,19 @@ void MapEditor::drawPlayerUI()
 	{
 		if (const auto v = ParseIntOpt<int32>(playerYText.text))
 		{
-			startPlayerPos.y = *v;
+			startPlayerPos.y = Clamp(static_cast<double>(*v), 0.0, stageHeight);
 		}
+	}
+
+	// 入力欄の下に、ステージの幅・高さを範囲とした座標調整スライダーを表示
+	if (SimpleGUI::Slider(startPlayerPos.x, 0.0, stageWidth, Vec2{ basePos.x + 20, basePos.y + 80 }, 60))
+	{
+		playerXText.text = Format(static_cast<int32>(startPlayerPos.x));
+	}
+
+	if (SimpleGUI::Slider(startPlayerPos.y, 0.0, stageHeight, Vec2{ basePos.x + 100, basePos.y + 80 }, 60))
+	{
+		playerYText.text = Format(static_cast<int32>(startPlayerPos.y));
 	}
 }
 
