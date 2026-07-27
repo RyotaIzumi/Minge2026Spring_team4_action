@@ -30,6 +30,7 @@ namespace Iwanna {
 	public:
 		MainGame();
 
+		void startNewGame();
 		void startGame();
 		void updateGame();
 		void debugGame();

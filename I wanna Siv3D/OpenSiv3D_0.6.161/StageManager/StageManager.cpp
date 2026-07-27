@@ -360,6 +360,10 @@ namespace Iwanna {
 
 		
 		ClearPrint();
+		Print << Global::nowRoomName;
+		Print << Global::savedRoomName;
+		Print << Global::prevRoomName;
+		Print << Global::startRoomName;
 		//Print << U" Stage Step : " << step;
 		//Print << U" Player Pos : " << player->pos;
 		//Print << U" Player Muteki : " << player->getIsMuteki();

@@ -9,7 +9,7 @@ namespace Iwanna {
 		auto& data = getData().game;
 
 		if (Global::inputStart.down()) {
-			data.startGame();
+			data.startNewGame();
 			changeScene(SceneType::IN_GAME, 0.0s);
 		}
 	}
