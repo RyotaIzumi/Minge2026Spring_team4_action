@@ -4,6 +4,19 @@ namespace Iwanna {
 	MainGame::MainGame() {
 	}
 
+	void MainGame::startNewGame() {
+		// タイトル画面からの開始時は、以前のプレイ中に保持された
+		// セーブ先や遷移先ではなく、設定された開始ルームを必ず使用する
+		Global::isExistSaveData = false;
+		Global::savedStartPlayerPos = Vec2{ -100, -100 };
+		Global::savedRoomName = Global::startRoomName;
+		Global::prevRoomName = U"";
+		Global::nowRoomName = Global::startRoomName;
+		Global::isChangeRoom = false;
+
+		startGame();
+	}
+
 	void MainGame::startGame() {
 		int32 chapter = 1;
 
