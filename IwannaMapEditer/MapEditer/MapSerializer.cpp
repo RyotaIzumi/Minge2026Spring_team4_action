@@ -69,7 +69,7 @@ void MapSerializer::SaveJSON(
 			obj[U"value1"] = g.value1;
 			obj[U"value2"] = g.value2;
 		}
-		else if (g.name == U"移動針_上" || g.name == U"移動針_左" || g.name == U"移動針_下" || g.name == U"移動針_右") {
+		else if (g.name == U"移動針_上" || g.name == U"移動針_左" || g.name == U"移動針_下" || g.name == U"移動針_右" || g.name == U"ループ移動針") {
 			obj[U"value1"] = g.value1;
 			obj[U"value2"] = g.value2;
 			obj[U"value3"] = g.value3;
@@ -145,7 +145,7 @@ void MapSerializer::LoadJSON(
 				obj.value2 = g[U"value2"].get<double>();
 				obj.valueNum = 2;
 			}
-			else if (obj.name == U"移動針_上" || obj.name == U"移動針_左" || obj.name == U"移動針_下" || obj.name == U"移動針_右") {
+			else if (obj.name == U"移動針_上" || obj.name == U"移動針_左" || obj.name == U"移動針_下" || obj.name == U"移動針_右" || obj.name == U"ループ移動針") {
 				obj.value1 = g[U"value1"].get<int32>();
 				obj.value2 = g[U"value2"].get<double>();
 				obj.value3 = g[U"value3"].get<double>();

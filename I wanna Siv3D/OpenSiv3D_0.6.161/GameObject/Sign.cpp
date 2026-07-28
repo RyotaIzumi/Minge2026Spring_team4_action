@@ -29,11 +29,17 @@ namespace Iwanna {
 	}
 
 	void Sign::update() {
-		if (isPlayerTouching) signAlpha += 0.1;
-		else signAlpha -= 0.1;
+		if (isPlayerTouching) {
+			signAlpha += 0.1;
+		}
+		else {
+			signAlpha -= 0.1;
+		}
 
 		if (signAlpha > 1.0) signAlpha = 1.0;
 		if (signAlpha < 0.0) signAlpha = 0.0;
+
+		isPlayerTouching = false;
 	}
 
 	void Sign::draw() const {

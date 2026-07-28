@@ -52,6 +52,9 @@ namespace Iwanna {
 	SpikeTrap::SpikeTrap(String typeName, Vec2 startPos, int32 dir, int32 id, double direction, double speed) : Spike(typeName, { startPos.x, startPos.y }, dir), trapID(id), direction(direction), speed(speed) {
 		hspeed = 0;
 		vspeed = 0;
+
+		pos.x = startPos.x;
+		pos.y = startPos.y;
 	}
 
 	void SpikeTrap::trapUpdate(int32 id) {
@@ -146,6 +149,7 @@ namespace Iwanna {
 	SpikeUpDown::SpikeUpDown(String typeName, Vec2 startPos, int32 dir, double time) : Spike(typeName, startPos, dir) {
 		pos = startPos;
 		basePos = pos;
+		this->startPos = pos;
 		hitBox = std::make_shared<SpikeHitBox>(pos, dir);
 		moveTime = time;
 	}
@@ -179,12 +183,41 @@ namespace Iwanna {
 
 			if (moveTimer.sF() >= moveTime) {
 				moveAmount = 0;
-				basePos = pos;
+				basePos = startPos;
 				moveTimer.restart();
 				moveStep = 0;
 			}
 			break;
 		}
+		hitBox->setPos(pos);
+	}
+
+	// ----- 指定した2点間を往復し続ける針 ----- //
+	SpikeLoopMove::SpikeLoopMove(String typeName, Vec2 startPos, int32 dir, Vec2 moveAmount, double time)
+		: Spike(typeName, startPos, dir) {
+		pos = startPos;
+		this->startPos = startPos;
+		goalPos = startPos + moveAmount * side;
+		moveTime = Max(time, 0.001);
+		hitBox = std::make_shared<SpikeHitBox>(pos, dir);
+	}
+
+	void SpikeLoopMove::update() {
+		elapsedTime += Scene::DeltaTime();
+
+		while (elapsedTime >= moveTime) {
+			elapsedTime -= moveTime;
+			movingToGoal = !movingToGoal;
+		}
+
+		const double t = (elapsedTime / moveTime);
+		if (movingToGoal) {
+			pos = startPos + (goalPos - startPos) * t;
+		}
+		else {
+			pos = goalPos + (startPos - goalPos) * t;
+		}
+
 		hitBox->setPos(pos);
 	}
 }

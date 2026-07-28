@@ -150,6 +150,7 @@ namespace Iwanna {
 
 					if (gimmikName == U"罠ブロック") gameObjects.blocks << std::make_shared<BreakBlock>(U"sprBlock_" + quarity + U"3", gimmikParsePos, static_cast<int32>(gimmikValue1));
 					if (gimmikName == U"ワープ") gameObjects.warps << std::make_shared<Warp>(gimmikIntactPos, gimmikString);
+					if (gimmikName == U"ループ移動針") gameObjects.spikes << std::make_shared<SpikeLoopMove>(quarity, gimmikIntactPos, static_cast<int32>(gimmikValue1), Vec2{ gimmikValue2, gimmikValue3 }, gimmikValue4);
 				}
 			}
 
@@ -257,6 +258,7 @@ namespace Iwanna {
 
 			// 針の更新と、起動しているトリガーIDの反映
 			for (auto& s : spikes) {
+				s->update();
 				stockNearGameObjects.add(s.get());
 			}
 

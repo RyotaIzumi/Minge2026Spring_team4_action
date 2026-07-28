@@ -248,10 +248,10 @@ namespace Iwanna {
 					}
 
 					// ギミックの種類に応じてオブジェクトを生成
-					if (gimmikName == U"罠針_上") gameObjects.spikes << std::make_shared<SpikeTrap>(quarity, gimmikParsePos, 0, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
-					if (gimmikName == U"罠針_左") gameObjects.spikes << std::make_shared<SpikeTrap>(quarity, gimmikParsePos, 1, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
-					if (gimmikName == U"罠針_下") gameObjects.spikes << std::make_shared<SpikeTrap>(quarity, gimmikParsePos, 2, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
-					if (gimmikName == U"罠針_右") gameObjects.spikes << std::make_shared<SpikeTrap>(quarity, gimmikParsePos, 3, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
+					if (gimmikName == U"罠針_上") gameObjects.spikes << std::make_shared<SpikeTrap>(quarity, gimmikIntactPos, 0, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
+					if (gimmikName == U"罠針_左") gameObjects.spikes << std::make_shared<SpikeTrap>(quarity, gimmikIntactPos, 1, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
+					if (gimmikName == U"罠針_下") gameObjects.spikes << std::make_shared<SpikeTrap>(quarity, gimmikIntactPos, 2, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
+					if (gimmikName == U"罠針_右") gameObjects.spikes << std::make_shared<SpikeTrap>(quarity, gimmikIntactPos, 3, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
 					if (gimmikName == U"移動針_上") gameObjects.spikes << std::make_shared<SpikePathTrap>(quarity, gimmikParsePos, 0, static_cast<int32>(gimmikValue1), Vec2{ gimmikValue2, gimmikValue3 }, gimmikValue4);
 					if (gimmikName == U"移動針_左") gameObjects.spikes << std::make_shared<SpikePathTrap>(quarity, gimmikParsePos, 1, static_cast<int32>(gimmikValue1), Vec2{ gimmikValue2, gimmikValue3 }, gimmikValue4);
 					if (gimmikName == U"移動針_下") gameObjects.spikes << std::make_shared<SpikePathTrap>(quarity, gimmikParsePos, 2, static_cast<int32>(gimmikValue1), Vec2{ gimmikValue2, gimmikValue3 }, gimmikValue4);
@@ -263,6 +263,7 @@ namespace Iwanna {
 					if (gimmikName == U"ワープ") gameObjects.warps << std::make_shared<Warp>(gimmikIntactPos, gimmikString);
 					if (gimmikName == U"特殊ワープ") gameObjects.warps << std::make_shared<SecretWarp>(gimmikIntactPos, gimmikString);
 					if (gimmikName == U"昇降針") gameObjects.spikes << std::make_shared<SpikeUpDown>(quarity, gimmikIntactPos,static_cast<int32>(gimmikValue1),gimmikValue2);
+					if (gimmikName == U"ループ移動針") gameObjects.spikes << std::make_shared<SpikeLoopMove>(quarity, gimmikIntactPos, static_cast<int32>(gimmikValue1), Vec2{ gimmikValue2, gimmikValue3 }, gimmikValue4);
 				}
 			}
 

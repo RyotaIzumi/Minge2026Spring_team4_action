@@ -71,10 +71,23 @@ namespace Iwanna {
 		double moveSide = 32;
 		double moveAmount = 0.0;//移動量を管理する変数
 		double moveTime = 1.0;
-		Vec2 basePos;
+		Vec2 basePos,startPos;
 		Stopwatch moveTimer{ StartImmediately::Yes };
 	public:
 		SpikeUpDown(String typeName, Vec2 startPos, int32 dir, double time);
+
+		void update() override;
+	};
+
+	class SpikeLoopMove : public Spike {
+	private:
+		Vec2 startPos;
+		Vec2 goalPos;
+		double moveTime = 1.0;
+		double elapsedTime = 0.0;
+		bool movingToGoal = true;
+	public:
+		SpikeLoopMove(String typeName, Vec2 startPos, int32 dir, Vec2 moveAmount, double time);
 
 		void update() override;
 	};

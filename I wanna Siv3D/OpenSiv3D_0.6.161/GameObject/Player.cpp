@@ -129,7 +129,7 @@ namespace Iwanna {
 		TextureRegion texture = spriteSystem.getTextureRegion(direction);
 		if(!isDead)texture.scaled(1.0).drawAt(pos.x,pos.y - 3, ColorF(1.0, isMuteki ? 0.5 : 1.0));
 		else texture.scaled(1.0).drawAt(pos.x, pos.y - 3, ColorF(0.8,0,0,0.8));
-		hitBox->draw(ColorF(Palette::Red,0.6));
+		//hitBox->draw(ColorF(Palette::Red,0.6));
 	}
 
 	void Player::playerMoveLeft() {
@@ -348,7 +348,7 @@ namespace Iwanna {
 		// 看板との衝突
 		if (other.type == ObjectType::Sign) {
 			 auto* sign = dynamic_cast<Sign*>(&other);
-			 sign->isPlayerTouching = this->intersects(other);
+			 sign->isPlayerTouching = this->intersects(*sign);
 		}
 
 		// アイテムとの衝突

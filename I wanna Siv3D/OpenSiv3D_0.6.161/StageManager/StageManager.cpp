@@ -41,6 +41,9 @@ namespace Iwanna {
 
 		if (Global::isChangeRoom) {
 			loadGameObjects(Global::nowRoomName);
+
+			camera.jumpTo(executeCameraPos(), 1.0);
+
 			//隠しアイテムマップ時のみタイトルカード表示
 			if(Global::nowRoomName == U"secret1") titleCard.startShowTitleCard(U"secret1");
 
