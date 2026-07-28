@@ -6,14 +6,14 @@ GimmikManager::GimmikManager()
 		U"罠針_上", U"罠針_左", U"罠針_下", U"罠針_右",
 		U"移動針_上", U"移動針_左", U"移動針_下", U"移動針_右",
 		U"罠トリガー", U"前トリガー", U"罠りんご", U"罠ブロック",
-		U"ワープ",U"特殊ワープ", U"昇降針"
+		U"ワープ",U"特殊ワープ", U"昇降針", U"ループ移動針"
 	};
 
 	valueNums = {
 		3, 3, 3, 3,
 		4, 4, 4, 4,
 		3, 3, 3, 1,
-		1, 1, 2
+		1, 1, 2, 4
 	};
 
 	const FilePath path = U"texture/gimmik/";
@@ -33,6 +33,7 @@ GimmikManager::GimmikManager()
 		Texture{ path + U"trapBlock.png" },
 		Texture{ path + U"sprWarp.png" },
 		Texture{ path + U"sprSecretWarp.png" },
+		Texture{ path + U"sprSpikeMove.png" },
 		Texture{ path + U"sprSpikeMove.png" }
 	};
 
@@ -68,6 +69,13 @@ void GimmikManager::placeGimmik(const Point& index, int tileSize)
 	if (g.name == U"ワープ" || g.name == U"特殊ワープ")
 	{
 		g.valueString = U"";
+	}
+
+	if (g.name == U"ループ移動針")
+	{
+		g.value2 = 0.0;
+		g.value3 = -1.0;
+		g.value4 = 1.0;
 	}
 
 	gimmiks << g;
@@ -116,12 +124,20 @@ void GimmikManager::drawGimmiks(int tileSize, double scrollX, double scrollY)
 			textures[idx].draw(nextPos, (placedListBox.selectedItemIndex && count == *placedListBox.selectedItemIndex) ? ColorF(1, 0, 0, 0.6) : ColorF(0, 0))
 				.drawFrame(1.0, (placedListBox.selectedItemIndex && count == *placedListBox.selectedItemIndex) ? ColorF(0, 1, 0) : ColorF(0, 0));
 		}
+		else if (g.name == U"ループ移動針") {
+			const double angle = Math::ToRadians(-90.0 * g.value1);
+			const Vec2 nextPos{ pos.x + tileSize * g.value2, pos.y + tileSize * g.value3 };
+			textures[idx].rotated(angle).draw(pos)
+				.drawFrame(1.0, (placedListBox.selectedItemIndex && count == *placedListBox.selectedItemIndex) ? ColorF(1, 0, 0) : ColorF(0, 0));
+			textures[idx].rotated(angle).draw(nextPos, ColorF{ 1.0, 0.5 })
+				.drawFrame(1.0, (placedListBox.selectedItemIndex && count == *placedListBox.selectedItemIndex) ? ColorF(0, 1, 0) : ColorF(0, 0));
+		}
 		if (g.name == U"昇降針") {
 			Vec2 rotatedOffset{ 0, 0 };
 			double angle = 90;
 			textures[idx].rotated( Math::ToRadians(-1 * g.value1 * angle)).draw(pos).drawFrame(1.0, (placedListBox.selectedItemIndex && count == *placedListBox.selectedItemIndex) ? ColorF(1, 0, 0) : ColorF(0, 0));
 		}
-		else
+		else if (g.name != U"ループ移動針")
 			textures[idx].draw(pos).drawFrame(1.0, (placedListBox.selectedItemIndex && count == *placedListBox.selectedItemIndex)? ColorF(1, 0, 0) : ColorF(0, 0));
 
 		count++;
@@ -195,6 +211,12 @@ void GimmikManager::drawUI()
 	else if (gimmiks[idx].name == U"昇降針") {
 		FontAsset(U"Font")(U"向き : ").draw(base.x, base.y + value1AddHeight);
 		FontAsset(U"Font")(U"移動時間").draw(base.x, base.y + value2AddHeight);
+	}
+	else if (gimmiks[idx].name == U"ループ移動針") {
+		FontAsset(U"Font")(U"向き : ").draw(base.x, base.y + value1AddHeight);
+		FontAsset(U"Font")(U"移動量x ").draw(base.x, base.y + value2AddHeight);
+		FontAsset(U"Font")(U"移動量y ").draw(base.x, base.y + value3AddHeight);
+		FontAsset(U"Font")(U"片道時間").draw(base.x, base.y + value4AddHeight);
 	}
 
 	// === 入力 ===

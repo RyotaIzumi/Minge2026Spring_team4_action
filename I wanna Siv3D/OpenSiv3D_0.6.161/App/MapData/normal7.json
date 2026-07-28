@@ -182,6 +182,17 @@
           544.0
         ],
         "value1": "normal8"
+      },
+      {
+        "gimmikName": "ループ移動針",
+        "gimmikPos": [
+          512.0,
+          320.0
+        ],
+        "value1": 0,
+        "value2": 0.0,
+        "value3": -7.0,
+        "value4": 2.0
       }
     ],
     "background": "cave",

@@ -78,4 +78,17 @@ namespace Iwanna {
 
 		void update() override;
 	};
+
+	class SpikeLoopMove : public Spike {
+	private:
+		Vec2 startPos;
+		Vec2 goalPos;
+		double moveTime = 1.0;
+		double elapsedTime = 0.0;
+		bool movingToGoal = true;
+	public:
+		SpikeLoopMove(String typeName, Vec2 startPos, int32 dir, Vec2 moveAmount, double time);
+
+		void update() override;
+	};
 }

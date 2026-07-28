@@ -191,4 +191,33 @@ namespace Iwanna {
 		}
 		hitBox->setPos(pos);
 	}
+
+	// ----- 指定した2点間を往復し続ける針 ----- //
+	SpikeLoopMove::SpikeLoopMove(String typeName, Vec2 startPos, int32 dir, Vec2 moveAmount, double time)
+		: Spike(typeName, startPos, dir) {
+		pos = startPos;
+		this->startPos = startPos;
+		goalPos = startPos + moveAmount * side;
+		moveTime = Max(time, 0.001);
+		hitBox = std::make_shared<SpikeHitBox>(pos, dir);
+	}
+
+	void SpikeLoopMove::update() {
+		elapsedTime += Scene::DeltaTime();
+
+		while (elapsedTime >= moveTime) {
+			elapsedTime -= moveTime;
+			movingToGoal = !movingToGoal;
+		}
+
+		const double t = (elapsedTime / moveTime);
+		if (movingToGoal) {
+			pos = startPos + (goalPos - startPos) * t;
+		}
+		else {
+			pos = goalPos + (startPos - goalPos) * t;
+		}
+
+		hitBox->setPos(pos);
+	}
 }
