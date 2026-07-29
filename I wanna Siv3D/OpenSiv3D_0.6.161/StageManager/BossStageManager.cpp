@@ -471,7 +471,10 @@ namespace Iwanna {
 			Rect(0, 0, 1600, 608).draw(ColorF(0.0, 0.0, 0.0, darkAlpha));
 
 			//GAMEOVER描画
-			if(isShowGameOver) TextureAsset(U"sprGAMEOVER").drawAt(executeCameraPos());
+			if (isShowGameOver) {
+				const StringView gameOverTextureName = (Global::mainTextureNumber == 0) ? U"sprGAMEOVER_low" : U"sprGAMEOVER_normal";
+				TextureAsset(gameOverTextureName).drawAt(executeCameraPos());
+			}
 		}
 
 		titleCard.draw();

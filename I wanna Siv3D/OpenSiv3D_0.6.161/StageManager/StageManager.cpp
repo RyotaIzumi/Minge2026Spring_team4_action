@@ -412,15 +412,16 @@ namespace Iwanna {
 
 			//GAMEOVER描画
 			if (isShowGameOver) {
+				const StringView gameOverTextureName = (Global::mainTextureNumber == 0) ? U"sprGAMEOVER_low" : U"sprGAMEOVER_normal";
 				if (Global::trapCameraActivatedInTrap2Map) {
-					TextureAsset(U"sprGAMEOVER_normal").scaled(1 / cameraScale).drawAt(saveTrapCameraPos);
+					TextureAsset(gameOverTextureName).scaled(1 / cameraScale).drawAt(saveTrapCameraPos);
 				}
 				else if (Global::isLoopStage)
 				{
-					TextureAsset(U"sprGAMEOVER_normal").drawAt(Global::stageWidth / 2, Global::stageHeight / 2);
+					TextureAsset(gameOverTextureName).drawAt(Global::stageWidth / 2, Global::stageHeight / 2);
 				}
 				else {
-					TextureAsset(U"sprGAMEOVER_normal").drawAt(executeCameraPos());
+					TextureAsset(gameOverTextureName).drawAt(executeCameraPos());
 				}
 			}
 

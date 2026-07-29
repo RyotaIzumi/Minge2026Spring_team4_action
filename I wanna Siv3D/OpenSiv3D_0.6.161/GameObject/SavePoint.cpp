@@ -21,7 +21,8 @@ namespace Iwanna {
 	}
 	void SavePoint::draw() const {
 		//hitBox->draw(Palette::Gray);
-		TextureAsset(U"sprSave_normal")(isSaving ? side : 0, 0, side, side).draw(pos);
+		const StringView textureName = (Global::mainTextureNumber == 0) ? U"sprSave_low" : U"sprSave_normal";
+		TextureAsset(textureName)(isSaving ? side : 0, 0, side, side).draw(pos);
 	}
 	// セーブされたときの処理
 	void SavePoint::saved() {
@@ -79,7 +80,8 @@ namespace Iwanna {
 	}
 	void BossSavePoint::draw() const {
 		//hitBox->draw(ColorF(0.7,0.7));
-		TextureAsset(U"sprSave")(isSaving ? side : 0, 0, side, side).scaled(saveScale).rotated(saveRotate).drawAt(pos, ColorF(1.0, saveAlpha));
+		const StringView textureName = (Global::mainTextureNumber == 0) ? U"sprSave_low" : U"sprSave_normal";
+		TextureAsset(textureName)(isSaving ? side : 0, 0, side, side).scaled(saveScale).rotated(saveRotate).drawAt(pos, ColorF(1.0, saveAlpha));
 	}
 
 	int32 BossSavePoint::getAppendBossId() const {
@@ -192,7 +194,8 @@ namespace Iwanna {
 	}
 
 	void SecretSavePoint::draw() const {
-		TextureAsset(U"sprSave_normal")(isSaving ? side : 0, 0, side, side).draw(pos,ColorF(1.0,alpha));
+		const StringView textureName = (Global::mainTextureNumber == 0) ? U"sprSave_low" : U"sprSave_normal";
+		TextureAsset(textureName)(isSaving ? side : 0, 0, side, side).draw(pos,ColorF(1.0,alpha));
 
 		// 文字表示
 		Vec2 textBasePos = Vec2(pos.x + 16, pos.y - 16);

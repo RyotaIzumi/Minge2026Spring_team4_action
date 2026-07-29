@@ -85,6 +85,7 @@ namespace Iwanna {
 		//その他テクスチャ登録
 		static const FilePath OtherPath = U"Texture/Other/";
 		registerTexture(U"sprSave", OtherPath + U"sprSave.png");
+		registerTexture(U"sprSave_low", OtherPath + U"sprSave_low.png");
 		registerTexture(U"sprSave_normal", OtherPath + U"sprSave_normal.png");
 		registerTexture(U"sprWarp", OtherPath + U"sprWarp.png");
 		registerTexture(U"sprSecretWarp", OtherPath + U"sprSecretWarp.png");
@@ -97,6 +98,7 @@ namespace Iwanna {
 		registerTexture(U"treeTrap", OtherPath + U"tree.png");
 		registerTexture(U"transParentTreeTrap", OtherPath + U"transParentTree.png");
 		registerTexture(U"sprGAMEOVER", OtherPath + U"sprGAMEOVER.png");
+		registerTexture(U"sprGAMEOVER_low", OtherPath + U"sprGAMEOVER_low.png");
 		registerTexture(U"sprGAMEOVER_normal", OtherPath + U"sprGAMEOVER_normal.png");
 		registerTexture(U"hideLine", OtherPath + U"hideLine.png");
 		registerTexture(U"sprSign", OtherPath + U"sprSign.png");
