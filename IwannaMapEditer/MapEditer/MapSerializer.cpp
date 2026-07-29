@@ -65,6 +65,10 @@ void MapSerializer::SaveJSON(
 		else if (g.name == U"罠ブロック") {
 			obj[U"value1"] = g.value1;
 		}
+		else if (g.name == U"時間罠ブロック") {
+			obj[U"value1"] = g.value1;
+			obj[U"value2"] = g.value2;
+		}
 		else if (g.name == U"昇降針") {
 			obj[U"value1"] = g.value1;
 			obj[U"value2"] = g.value2;
@@ -139,6 +143,11 @@ void MapSerializer::LoadJSON(
 			else if (obj.name == U"罠ブロック") {
 				obj.value1 = g[U"value1"].get<int32>();
 				obj.valueNum = 1;
+			}
+			else if (obj.name == U"時間罠ブロック") {
+				obj.value1 = g[U"value1"].get<int32>();
+				obj.value2 = g[U"value2"].get<double>();
+				obj.valueNum = 2;
 			}
 			else if (obj.name == U"昇降針") {
 				obj.value1 = g[U"value1"].get<int32>();

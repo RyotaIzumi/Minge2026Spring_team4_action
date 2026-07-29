@@ -260,6 +260,7 @@ namespace Iwanna {
 					if (gimmikName == U"前トリガー") gameObjects.triggers << std::make_shared<Trigger>(gimmikIntactPos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3, true);
 					if (gimmikName == U"罠りんご") gameObjects.cherries << std::make_shared<CherryTrap>(gimmikIntactPos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
 					if (gimmikName == U"罠ブロック") gameObjects.blocks << std::make_shared<BreakBlock>(U"sprBlock_" + quarity + U"3", gimmikParsePos, static_cast<int32>(gimmikValue1));
+					if (gimmikName == U"時間罠ブロック") gameObjects.blocks << std::make_shared<TimedBreakBlock>(U"sprBlock_" + quarity + U"3", gimmikParsePos, static_cast<int32>(gimmikValue1), gimmikValue2);
 					if (gimmikName == U"ワープ") gameObjects.warps << std::make_shared<Warp>(gimmikIntactPos, gimmikString);
 					if (gimmikName == U"特殊ワープ") gameObjects.warps << std::make_shared<SecretWarp>(gimmikIntactPos, gimmikString);
 					if (gimmikName == U"昇降針") gameObjects.spikes << std::make_shared<SpikeUpDown>(quarity, gimmikIntactPos,static_cast<int32>(gimmikValue1),gimmikValue2);
