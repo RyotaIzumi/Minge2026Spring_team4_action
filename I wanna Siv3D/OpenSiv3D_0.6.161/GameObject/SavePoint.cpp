@@ -21,7 +21,7 @@ namespace Iwanna {
 	}
 	void SavePoint::draw() const {
 		//hitBox->draw(Palette::Gray);
-		TextureAsset(U"sprSave")(isSaving ? side : 0, 0, side, side).draw(pos);
+		TextureAsset(U"sprSave_normal")(isSaving ? side : 0, 0, side, side).draw(pos);
 	}
 	// セーブされたときの処理
 	void SavePoint::saved() {
@@ -192,7 +192,7 @@ namespace Iwanna {
 	}
 
 	void SecretSavePoint::draw() const {
-		TextureAsset(U"sprSave")(isSaving ? side : 0, 0, side, side).draw(pos,ColorF(1.0,alpha));
+		TextureAsset(U"sprSave_normal")(isSaving ? side : 0, 0, side, side).draw(pos,ColorF(1.0,alpha));
 
 		// 文字表示
 		Vec2 textBasePos = Vec2(pos.x + 16, pos.y - 16);

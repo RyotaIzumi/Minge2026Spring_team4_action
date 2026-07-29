@@ -5,14 +5,14 @@ GimmikManager::GimmikManager()
 	names = {
 		U"罠針_上", U"罠針_左", U"罠針_下", U"罠針_右",
 		U"移動針_上", U"移動針_左", U"移動針_下", U"移動針_右",
-		U"罠トリガー", U"前トリガー", U"罠りんご", U"罠ブロック",
+		U"罠トリガー", U"前トリガー", U"罠りんご", U"罠ブロック", U"時間罠ブロック",
 		U"ワープ",U"特殊ワープ", U"昇降針", U"ループ移動針"
 	};
 
 	valueNums = {
 		3, 3, 3, 3,
 		4, 4, 4, 4,
-		3, 3, 3, 1,
+		3, 3, 3, 1, 2,
 		1, 1, 2, 4
 	};
 
@@ -30,6 +30,7 @@ GimmikManager::GimmikManager()
 		Texture{ path + U"trapTrigger.png" },
 		Texture{ path + U"trapTriggerPrev.png" },
 		Texture{ path + U"trapCherry.png" },
+		Texture{ path + U"trapBlock.png" },
 		Texture{ path + U"trapBlock.png" },
 		Texture{ path + U"sprWarp.png" },
 		Texture{ path + U"sprSecretWarp.png" },
@@ -76,6 +77,11 @@ void GimmikManager::placeGimmik(const Point& index, int tileSize)
 		g.value2 = 0.0;
 		g.value3 = -1.0;
 		g.value4 = 1.0;
+	}
+
+	if (g.name == U"時間罠ブロック")
+	{
+		g.value2 = 1.0;
 	}
 
 	gimmiks << g;
@@ -169,7 +175,8 @@ void GimmikManager::drawUI()
 	{
 		xText.text = Format(gimmiks[idx].pos.x);
 		yText.text = Format(gimmiks[idx].pos.y);
-		value1Text.text = Format(gimmiks[idx].value1);
+		const bool isWarp = (gimmiks[idx].name == U"ワープ" || gimmiks[idx].name == U"特殊ワープ");
+		value1Text.text = isWarp ? gimmiks[idx].valueString : Format(gimmiks[idx].value1);
 		value2Text.text = Format(gimmiks[idx].value2);
 		value3Text.text = Format(gimmiks[idx].value3);
 		value4Text.text = Format(gimmiks[idx].value4);
@@ -204,6 +211,10 @@ void GimmikManager::drawUI()
 	}
 	else if (gimmiks[idx].name == U"罠ブロック") {
 		FontAsset(U"Font")(U"id : ").draw(base.x, base.y + value1AddHeight);
+	}
+	else if (gimmiks[idx].name == U"時間罠ブロック") {
+		FontAsset(U"Font")(U"id : ").draw(base.x, base.y + value1AddHeight);
+		FontAsset(U"Font")(U"待機時間").draw(base.x, base.y + value2AddHeight);
 	}
 	else if (gimmiks[idx].name == U"ワープ" || gimmiks[idx].name == U"特殊ワープ") {
 		FontAsset(U"Font")(U"stage ").draw(base.x, base.y + value1AddHeight);
@@ -254,8 +265,12 @@ void GimmikManager::drawUI()
 	{
 		gimmiks[idx].pos.y = Parse<double>(yText.text);
 	}
-	if (value1Text.textChanged && gimmiks[idx].name == U"ワープ" || gimmiks[idx].name == U"特殊ワープ") gimmiks[idx].valueString = value1Text.text;
-	if (value1Text.textChanged && checkTextInput<int32>(value1Text.text))
+	const bool isWarp = (gimmiks[idx].name == U"ワープ" || gimmiks[idx].name == U"特殊ワープ");
+	if (value1Text.textChanged && isWarp)
+	{
+		gimmiks[idx].valueString = value1Text.text;
+	}
+	else if (value1Text.textChanged && checkTextInput<int32>(value1Text.text))
 	{
 		gimmiks[idx].value1 = Parse<int32>(value1Text.text);
 	}

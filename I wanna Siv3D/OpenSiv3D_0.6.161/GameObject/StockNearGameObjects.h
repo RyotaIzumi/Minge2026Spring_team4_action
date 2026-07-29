@@ -10,7 +10,10 @@ namespace Iwanna {
         HashTable<Point, Array<GameObject*>> cells;
 
         void clear() {
-            cells.clear();
+            // セルと各配列の確保領域は再利用し、毎フレームの再確保を避ける
+            for (auto& [cell, objects] : cells) {
+                objects.clear();
+            }
         }
 
         Point getCell(const Vec2& pos) const {

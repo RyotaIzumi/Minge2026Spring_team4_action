@@ -202,6 +202,22 @@ namespace Iwanna {
 		return triggerID;
 	}
 
+	// ----- トリガー起動から指定時間後に壊れるブロック ----- //
+	TimedBreakBlock::TimedBreakBlock(String name, Vec2 startPos, int32 id, double delay)
+		: BreakBlock(name, startPos, id), triggerID(id), delaySeconds(Max(delay, 0.0)) {
+	}
+
+	void TimedBreakBlock::trapUpdate(int32 id) {
+		if ((id == triggerID) && !isWaiting && !getIsBreak()) {
+			isWaiting = true;
+			delayTimer.start();
+		}
+
+		if (isWaiting && (delayTimer.sF() >= delaySeconds)) {
+			BreakBlock::trapUpdate(triggerID);
+		}
+	}
+
 	// ----- 水ブロック ----- //
 	WaterBlock::WaterBlock(String name, Vec2 startPos) : Block(name, startPos) {
 		blockType = BlockType::Water;

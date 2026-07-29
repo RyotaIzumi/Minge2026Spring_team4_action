@@ -40,6 +40,16 @@ namespace Iwanna {
 		if(Global::isChangeRoom)loadGameObjects(Global::nowRoomName);
 		else loadGameObjects(Global::savedRoomName);
 		Global::isChangeRoom = false;
+
+		// shared_ptr をコールバックへ取り込むと循環参照になるため、
+		// 生存期間が同じセーブポイントのポインタを一度だけ設定する
+		for (auto& savePoint : gameObjects.savePoints) {
+			auto* savePointPtr = savePoint.get();
+			savePoint->onSavedCallback = [this, savePointPtr]() {
+				generateBoss(savePointPtr->getAppendBossId());
+				saveGame();
+			};
+		}
 	}
 
 	void BossStageManager::loadGameObjects(String fileName) {
@@ -149,6 +159,7 @@ namespace Iwanna {
 					}
 
 					if (gimmikName == U"罠ブロック") gameObjects.blocks << std::make_shared<BreakBlock>(U"sprBlock_" + quarity + U"3", gimmikParsePos, static_cast<int32>(gimmikValue1));
+					if (gimmikName == U"時間罠ブロック") gameObjects.blocks << std::make_shared<TimedBreakBlock>(U"sprBlock_" + quarity + U"3", gimmikParsePos, static_cast<int32>(gimmikValue1), gimmikValue2);
 					if (gimmikName == U"ワープ") gameObjects.warps << std::make_shared<Warp>(gimmikIntactPos, gimmikString);
 					if (gimmikName == U"ループ移動針") gameObjects.spikes << std::make_shared<SpikeLoopMove>(quarity, gimmikIntactPos, static_cast<int32>(gimmikValue1), Vec2{ gimmikValue2, gimmikValue3 }, gimmikValue4);
 				}
@@ -302,10 +313,6 @@ namespace Iwanna {
 			//セーブ関連
 			for (auto& s : savePoints) {
 				s->update();
-				s->onSavedCallback = [this,s]() {
-					generateBoss(s->getAppendBossId());
-					saveGame();
-				};
 				stockBulletsNearGameObjects.add(s.get());
 			}
 			for (auto& w : warps) {
@@ -422,25 +429,35 @@ namespace Iwanna {
 		//背景描画
 		TextureAsset(backgroundName).draw();
 
-		Array<std::shared_ptr<GameObject>> drawList;
+		Array<GameObject*> drawList;
+		drawList.reserve(
+			gameObjects.spikes.size()
+			+ gameObjects.blocks.size()
+			+ gameObjects.savePoints.size()
+			+ gameObjects.warps.size()
+			+ gameObjects.cherries.size()
+			+ gameObjects.bossCherries.size()
+			+ gameObjects.bloods.size()
+			+ gameObjects.bullets.size()
+			+ 1);
 
-		// 全部突っ込む
-		for (auto& s : gameObjects.spikes) drawList << s;
-		for (auto& b : gameObjects.blocks) drawList << b;
-		for (auto& s : gameObjects.savePoints) drawList << s;
-		for (auto& w : gameObjects.warps) drawList << w;
-		for (auto& c : gameObjects.cherries) drawList << c;
-		for (auto& c : gameObjects.bossCherries) drawList << c;
-		for (auto& b : gameObjects.bloods) drawList << b;
-		for (auto& b : gameObjects.bullets) drawList << b;
-		drawList << gameObjects.player;
+		// 所有権のコピーを避け、描画中だけ有効なポインタを格納する
+		for (const auto& s : gameObjects.spikes) drawList << s.get();
+		for (const auto& b : gameObjects.blocks) drawList << b.get();
+		for (const auto& s : gameObjects.savePoints) drawList << s.get();
+		for (const auto& w : gameObjects.warps) drawList << w.get();
+		for (const auto& c : gameObjects.cherries) drawList << c.get();
+		for (const auto& c : gameObjects.bossCherries) drawList << c.get();
+		for (const auto& b : gameObjects.bloods) drawList << b.get();
+		for (const auto& b : gameObjects.bullets) drawList << b.get();
+		drawList << gameObjects.player.get();
 
 		// ソート
 		drawList.sort_by([](const auto& a, const auto& b) {
 			return a->depth < b->depth;
 		});
 
-		camera.update(); {
+		{
 			const auto t = camera.createTransformer();
 
 			if (Global::nowRoomName == U"ExBoss") {
