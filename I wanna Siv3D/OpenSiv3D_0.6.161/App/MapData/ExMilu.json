@@ -1,30 +1,9 @@
 ﻿[
   {
-    "Gimmiks": [
-      {
-        "gimmikName": "罠ブロック",
-        "gimmikPos": [
-          224.0,
-          544.0
-        ],
-        "value1": 0
-      },
-      {
-        "gimmikName": "移動針_左",
-        "gimmikPos": [
-          256.0,
-          512.0
-        ],
-        "value1": 0,
-        "value2": 0.0,
-        "value3": 0.0,
-        "value4": 0.0
-      }
-    ],
-    "background": "",
+    "background": "cave",
     "startPlayerPos": [
-      30.0,
-      30.0
+      50.0,
+      50.0
     ]
   }
 ]
