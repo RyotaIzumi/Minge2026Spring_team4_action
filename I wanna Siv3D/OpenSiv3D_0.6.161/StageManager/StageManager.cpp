@@ -58,6 +58,13 @@ namespace Iwanna {
 		}
 		Global::isChangeRoom = false;
 
+		// セーブ時コールバックは、生成直後に一度だけ設定する
+		for (auto& savePoint : gameObjects.savePoints) {
+			savePoint->onSavedCallback = [this]() {
+				saveGame();
+			};
+		}
+
 		//アイテム入手関連
 		Global::prepareGetItem1 = false;
 	}
@@ -139,7 +146,6 @@ namespace Iwanna {
 			}
 
 			for (auto& b : bloods) {
-				stockNearGameObjects.add(b.get());
 				b->update();
 			}
 
@@ -234,9 +240,6 @@ namespace Iwanna {
 				if (s->getIsTrap()) {
 					s->trapUpdate(latestActivatedTriggerID);
 				}
-				s->onSavedCallback = [this]() {
-					saveGame();
-				};
 				stockNearGameObjects.add(s.get());
 				stockBulletsNearGameObjects.add(s.get());
 			}
@@ -358,8 +361,6 @@ namespace Iwanna {
 			player->setIsMuteki(!player->getIsMuteki());
 		}
 
-		
-		ClearPrint();
 		//Print << U" Stage Step : " << step;
 		//Print << U" Player Pos : " << player->pos;
 		//Print << U" Player Muteki : " << player->getIsMuteki();
@@ -374,7 +375,7 @@ namespace Iwanna {
 		//背景描画
 		TextureAsset(backgroundName).draw();
 
-		camera.update(); {
+		{
 			const auto t = camera.createTransformer();
 
 			//特殊罠描画(後ろ側)
@@ -382,29 +383,29 @@ namespace Iwanna {
 				(*it)->draw();
 			}
 			//針描画
-			for (auto s : gameObjects.spikes) s->draw();
+			for (const auto& s : gameObjects.spikes) s->draw();
 			//トリガー描画
-			for (auto t : gameObjects.triggers) t->draw();
+			for (const auto& t : gameObjects.triggers) t->draw();
 			//セーブポイント描画
-			for (auto s : gameObjects.savePoints) s->draw();
+			for (const auto& s : gameObjects.savePoints) s->draw();
 			//ワープの描画
-			for (auto w : gameObjects.warps) w->draw();
+			for (const auto& w : gameObjects.warps) w->draw();
 			//看板描画
-			for (auto s : gameObjects.signs) s->draw();
+			for (const auto& s : gameObjects.signs) s->draw();
 			//アイテム描画
-			for (auto i : gameObjects.items) i->draw();
+			for (const auto& i : gameObjects.items) i->draw();
 			//kid君描画
 			gameObjects.player->draw();
 			//ブロック描画
-			for (auto b : gameObjects.blocks) b->draw();
+			for (const auto& b : gameObjects.blocks) b->draw();
 			//血の描画
-			for (auto b : gameObjects.bloods) b->draw();
+			for (const auto& b : gameObjects.bloods) b->draw();
 			//弾丸描画
-			for (auto b : gameObjects.bullets) b->draw();
+			for (const auto& b : gameObjects.bullets) b->draw();
 			//りんご描画
-			for (auto c : gameObjects.cherries) c->draw();
+			for (const auto& c : gameObjects.cherries) c->draw();
 			//特殊罠描画
-			for (auto st : gameObjects.specialTraps) st->draw();
+			for (const auto& st : gameObjects.specialTraps) st->draw();
 
 			//暗転演出
 			if (darkEffectStages.includes(stageName))Rect(0, 0, 800, 608).draw(ColorF(0.0, 0.0, 0.0, darkAlpha));
