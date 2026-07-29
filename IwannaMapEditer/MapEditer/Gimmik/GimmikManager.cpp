@@ -175,7 +175,8 @@ void GimmikManager::drawUI()
 	{
 		xText.text = Format(gimmiks[idx].pos.x);
 		yText.text = Format(gimmiks[idx].pos.y);
-		value1Text.text = Format(gimmiks[idx].value1);
+		const bool isWarp = (gimmiks[idx].name == U"ワープ" || gimmiks[idx].name == U"特殊ワープ");
+		value1Text.text = isWarp ? gimmiks[idx].valueString : Format(gimmiks[idx].value1);
 		value2Text.text = Format(gimmiks[idx].value2);
 		value3Text.text = Format(gimmiks[idx].value3);
 		value4Text.text = Format(gimmiks[idx].value4);
@@ -264,8 +265,12 @@ void GimmikManager::drawUI()
 	{
 		gimmiks[idx].pos.y = Parse<double>(yText.text);
 	}
-	if (value1Text.textChanged && gimmiks[idx].name == U"ワープ" || gimmiks[idx].name == U"特殊ワープ") gimmiks[idx].valueString = value1Text.text;
-	if (value1Text.textChanged && checkTextInput<int32>(value1Text.text))
+	const bool isWarp = (gimmiks[idx].name == U"ワープ" || gimmiks[idx].name == U"特殊ワープ");
+	if (value1Text.textChanged && isWarp)
+	{
+		gimmiks[idx].valueString = value1Text.text;
+	}
+	else if (value1Text.textChanged && checkTextInput<int32>(value1Text.text))
 	{
 		gimmiks[idx].value1 = Parse<int32>(value1Text.text);
 	}
