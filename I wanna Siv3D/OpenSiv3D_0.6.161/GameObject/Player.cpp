@@ -105,6 +105,11 @@ namespace Iwanna {
 	}
 
 	void Player::updateLate() {
+		if (isDead) {
+			hitBox->setPos(pos);
+			return;
+		}
+
 		// 移動
 		pos.x += hspeed;
 		pos.y += vspeed;
@@ -187,6 +192,10 @@ namespace Iwanna {
 	}
 
 	void Player::playerDead() {
+		if (isDead) {
+			return;
+		}
+
 		isDead = true;
 		hspeed = 0;
 		vspeed = 0;
