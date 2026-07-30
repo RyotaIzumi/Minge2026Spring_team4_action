@@ -10,8 +10,8 @@ void MainGameSerializer::LoadCharactersMoraleValue() {
 	const JSON json = JSON::Load(U"CharactersMoraleValue.json");
 
 	if (!json) {
-		std::cout << "Failed to load characters morale value" << std::endl;
-		std::cout << "Now using default values" << std::endl;
+		std::cerr << "Failed to load characters morale value" << std::endl;
+		std::cerr << "Now using default values" << std::endl;
 
 		moraleValue1 = 10;
 		moraleValue2 = 10;
@@ -29,8 +29,8 @@ void MainGameSerializer::defineGlobalStatuses() {
 
 	// 開始room
 	if (moraleValue2 > 90)Global::startRoomName = U"trap1";
-	else if(moraleValue1 <= 30) Global::startRoomName = U"normal1";
-	else Global::startRoomName = U"tutorial";
+	else if(moraleValue1 <= 30) Global::startRoomName = U"ExGotArea";
+	else Global::startRoomName = U"ExGotArea";
 
 	// ゲームタイトル
 	if (moraleValue2 > 90) Window::SetTitle(U"I wanna Siv3D (Debug Build)");
