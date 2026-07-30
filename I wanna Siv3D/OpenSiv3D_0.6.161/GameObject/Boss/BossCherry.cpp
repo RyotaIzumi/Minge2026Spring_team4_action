@@ -179,6 +179,76 @@ namespace Iwanna {
 		mutekiInterval.restart();
 	}
 
+		hitBox = std::make_shared<CircleHitBox>(pos, 120.0);
+		hitBox = std::make_shared<CircleHitBox>(pos, 80.0);
+		type = ObjectType::Cherry;
+		cherryType = CherryType::TrapBoss;
+
+		canPlayerKill = true;
+		isDelete = false;
+		isOutOfScreen = false;
+		isDeleteOutOfScreen = false;
+
+		hasHp = true;
+		maxHp = 30;
+		hp = maxHp;
+
+		gravity = 0;
+		speed = 0;
+		depth = 51;
+	}
+
+	void TayamaBoss::barrageUpdate() {
+		if (hpBarAlpha < 1.0) {
+			hpBarAlpha = Min(1.0, hpBarAlpha + 0.05);
+		}
+	}
+
+	void TayamaBoss::draw() const {
+		TextureAsset(U"tayama").scaled(0.35).drawAt(pos, ColorF(1.0, isMuteki ? 0.6 : 1.0));
+		hitBox->draw();
+
+		if (!hasHp) {
+			return;
+		}
+
+		const double width = Global::stageWidth;
+		const double height = 20.0;
+		const Vec2 barPos{ Global::stageWidth / 2.0, 0.0 };
+		const double hpRate = static_cast<double>(hp) / maxHp;
+
+		RectF{ barPos.x - width / 2.0, barPos.y, width, height }
+			.draw(ColorF{ 1.0, 0.2, 0.2, hpBarAlpha });
+		RectF{ barPos.x - width / 2.0, barPos.y, width * hpRate, height }
+			.draw(ColorF{ 0.2, 1.0, 0.2, hpBarAlpha });
+
+		const String bossName = U"Boss : Tayama";
+		const Vec2 textPos{ 6, 18 };
+		for (const Vec2 offset : { Vec2{-1, 0}, Vec2{1, 0}, Vec2{0, -1}, Vec2{0, 1} }) {
+			FontAsset(U"BossHp")(bossName).draw(textPos + offset, ColorF{ 0.0, 0.0, 0.0, hpBarAlpha });
+		}
+		FontAsset(U"BossHp")(bossName).draw(textPos, ColorF{ 1.0, 1.0, 1.0, hpBarAlpha });
+	}
+
+	void TayamaBoss::hited() {
+		if (isMuteki || hp <= 0) {
+			return;
+		}
+
+		AudioAsset(Sound::BOSSHIT).playOneShot();
+		--hp;
+
+		if (hp <= 0) {
+			AudioAsset(Sound::DEATH).playOneShot();
+			canPlayerKill = false;
+			isDelete = true;
+			Global::isBossDefeated = true;
+		}
+
+		isMuteki = true;
+		mutekiInterval.restart();
+	}
+
 	// 攻撃を呼び出す
 	void BossCherry::startAttack(BossCherryType type) {
 		double throwDir, throwSpd;
