@@ -31,6 +31,7 @@ namespace Iwanna {
 		Global::isBossAttackPowerUp = false;
 		Global::isBossExBarrageAttack = false;
 		Global::isBossDefeated = false;
+		Global::isCameraFollowMode = false;
 
 		gameoverTimer.reset();
 		isShowGameOver = false;
@@ -183,6 +184,9 @@ namespace Iwanna {
 			Global::isCameraFollowMode = true;
 			Global::isBossExBarrageAttack = true;
 		}
+		if (stageName == U"trapBoss") {
+			gameObjects.savePoints << std::make_shared<BossSavePoint>(Vec2{ 400,500 }, 3);
+		}
 	}
 
 	Vec2 BossStageManager::parsePos(const JSON& json) {
@@ -287,14 +291,12 @@ namespace Iwanna {
 			for (auto& bc : bossCherries) {
 				bc->update();
 
-				if (bc->getCherryType() == CherryType::Boss) {
-					auto* b = dynamic_cast<BossCherry*>(bc.get());
+				if (auto* b = dynamic_cast<BossCherry*>(bc.get())) {
 					bossCherryPos = b->pos;
 					defeatedBossNum = b->getDefeatedBossNum();
 					attackCherryType = b->getBossCherryAttackType();
 				}
-				else if (bc->getCherryType() == CherryType::BossSub) {
-					auto* bs = dynamic_cast<BossSubCherry*>(bc.get());
+				else if (auto* bs = dynamic_cast<BossSubCherry*>(bc.get())) {
 					bs->setCenterPos(bossCherryPos);
 					bs->setDefeatedBossNum(defeatedBossNum);
 					bs->generateAttack(attackCherryType);
@@ -354,10 +356,12 @@ namespace Iwanna {
 			// 倒されたボスりんごのサブりんご取得用処理
 			if (!bossCherries.empty()) {
 				auto* bossCherry = dynamic_cast<BossCherry*>(bossCherries.front().get());
-				for (auto& bc : bossCherries) {
-					if (bc->getCherryType() == CherryType::BossSub) {
+				if (bossCherry) {
+					for (auto& bc : bossCherries) {
 						auto* bs = dynamic_cast<BossSubCherry*>(bc.get());
-						if (bs->isDelete) bossCherry->removeDefeatedAttackType(bs->getBossCherrySubType());
+						if (bs && bs->isDelete) {
+							bossCherry->removeDefeatedAttackType(bs->getBossCherrySubType());
+						}
 					}
 				}
 			}
@@ -546,6 +550,12 @@ namespace Iwanna {
 			darkAlpha = 0.9;
 			cameraShake.shake(0.4, 20.0);
 			titleCard.startShowTitleCard(U"ExBoss");
+			break;
+		case 3://罠ボス召喚
+			gameObjects.bossCherries << std::make_shared<TayamaBoss>(
+				Vec2{ Global::stageWidth / 2.0, Global::stageHeight + 140.0 });
+			darkAlpha = 0.9;
+			cameraShake.shake(0.4, 20.0);
 			break;
 		}
 	}

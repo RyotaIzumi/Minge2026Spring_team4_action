@@ -56,6 +56,19 @@ namespace Iwanna {
 		void hited() override;
 	};
 
+	class TayamaBoss : public Cherry {
+	private:
+		double hpBarAlpha = 0.0;
+		int32 appearanceStep = 0;
+
+	public:
+		explicit TayamaBoss(Vec2 startPos);
+
+		void barrageUpdate() override;
+		void draw() const override;
+		void hited() override;
+	};
+
 	class BossSubCherry : public Cherry {
 	private:
 		BossStageManager* bossStageManager = nullptr;

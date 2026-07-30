@@ -179,8 +179,9 @@ namespace Iwanna {
 		mutekiInterval.restart();
 	}
 
-		hitBox = std::make_shared<CircleHitBox>(pos, 120.0);
-		hitBox = std::make_shared<CircleHitBox>(pos, 80.0);
+	TayamaBoss::TayamaBoss(Vec2 startPos) : Cherry(startPos, 1.0) {
+		pos = startPos;
+		hitBox = std::make_shared<CircleHitBox>(pos, 70.0);
 		type = ObjectType::Cherry;
 		cherryType = CherryType::TrapBoss;
 
@@ -196,17 +197,35 @@ namespace Iwanna {
 		gravity = 0;
 		speed = 0;
 		depth = 51;
+
+		const Vec2 centerPos{ Global::stageWidth / 2.0, Global::stageHeight / 2.0 };
+		movePosition(centerPos, 1.5, false);
 	}
 
 	void TayamaBoss::barrageUpdate() {
-		if (hpBarAlpha < 1.0) {
-			hpBarAlpha = Min(1.0, hpBarAlpha + 0.05);
+		switch (appearanceStep) {
+		case 0:
+			// 画面下から中央へ上昇している間は本体を回転させる
+			textureAngle += (540.0 * Scene::DeltaTime());
+			if (getIsMoveFinished()) {
+				textureAngle = 0.0;
+				appearanceStep = 1;
+			}
+			break;
+		case 1:
+			if (hpBarAlpha < 1.0) {
+				hpBarAlpha = Min(1.0, hpBarAlpha + 0.05);
+			}
+			break;
 		}
 	}
 
 	void TayamaBoss::draw() const {
-		TextureAsset(U"tayama").scaled(0.35).drawAt(pos, ColorF(1.0, isMuteki ? 0.6 : 1.0));
-		hitBox->draw();
+		TextureAsset(U"tayama")
+			.scaled(0.35)
+			.rotated(Math::ToRadians(textureAngle))
+			.drawAt(pos, ColorF(1.0, isMuteki ? 0.6 : 1.0));
+		hitBox->draw(ColorF(0.5,0.5));
 
 		if (!hasHp) {
 			return;

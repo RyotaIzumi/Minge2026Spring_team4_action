@@ -29,9 +29,9 @@ namespace Iwanna {
 		if(!Global::isChangeRoom) Global::nowRoomName = Global::savedRoomName;
 
 		//ステージの名称から種類を決定
-		if (Global::nowRoomName == U"boss" || Global::nowRoomName == U"ExBoss") {
+		if (Global::nowRoomName == U"boss" || Global::nowRoomName == U"ExBoss" || Global::nowRoomName == U"trapBoss") {
 			stageType = StageType::Boss;
-			if (Global::nowRoomName == U"boss" || Global::nowRoomName == U"ExBoss")pauseBgm();
+			pauseBgm();
 		}
 		else {
 			stageType = StageType::Normal;

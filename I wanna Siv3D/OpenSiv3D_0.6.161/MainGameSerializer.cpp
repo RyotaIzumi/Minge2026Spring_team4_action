@@ -22,7 +22,7 @@ void MainGameSerializer::LoadCharactersMoraleValue() {
 void MainGameSerializer::defineGlobalStatuses() {
 
 	// 開始room
-	if (moraleValue2 > 90)Global::startRoomName = U"trap1";
+	if (moraleValue2 > 90)Global::startRoomName = U"trapBoss";
 	else if(moraleValue1 <= 30) Global::startRoomName = U"normal1";
 	else Global::startRoomName = U"tutorial";
 

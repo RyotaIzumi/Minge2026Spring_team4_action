@@ -104,6 +104,7 @@ namespace Iwanna {
 		registerTexture(U"sprSign", OtherPath + U"sprSign.png");
 		registerTexture(U"heart", OtherPath + U"heart.png");
 		registerTexture(U"achieveFrame", OtherPath + U"achieveFrame.png");
+		registerTexture(U"tayama", OtherPath + U"tayama.png");
 
 		registerTexture(U"sprTitleCard_boss", OtherPath + U"sprTitleCard_boss.png");
 		registerTexture(U"sprTitleCard_secret", OtherPath + U"sprTitleCard_secret.png");
