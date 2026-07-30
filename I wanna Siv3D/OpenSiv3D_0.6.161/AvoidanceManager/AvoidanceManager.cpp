@@ -122,17 +122,17 @@ namespace Iwanna {
 		//ミク描画
 		gameObjects.miku->draw();
 		//ブロック描画
-		for (auto b : gameObjects.blocks) {
+		for (const auto& b : gameObjects.blocks) {
 			b->draw();
 		}
 		//kid君描画
 		gameObjects.player->draw();
 		//弾丸描画
-		for (auto b : gameObjects.bullets) {
+		for (const auto& b : gameObjects.bullets) {
 			b->draw();
 		}
 		//りんご描画
-		for (auto c : gameObjects.cherries) {
+		for (const auto& c : gameObjects.cherries) {
 			c->draw();
 		}
 	}

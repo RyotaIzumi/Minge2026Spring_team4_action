@@ -93,6 +93,17 @@ namespace Iwanna {
 		int32 getID();
 	};
 
+	class TimedBreakBlock : public BreakBlock {
+	private:
+		int32 triggerID = 0;
+		double delaySeconds = 0.0;
+		bool isWaiting = false;
+		Stopwatch delayTimer;
+	public:
+		TimedBreakBlock(String name, Vec2 startPos, int32 id, double delay);
+		void trapUpdate(int32 id) override;
+	};
+
 	class WaterBlock : public Block {
 	public:
 		WaterBlock(String name, Vec2 startPos);
