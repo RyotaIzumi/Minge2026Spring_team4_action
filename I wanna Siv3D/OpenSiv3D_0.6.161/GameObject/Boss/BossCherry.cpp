@@ -482,7 +482,7 @@ namespace Iwanna {
 	}
 
 	void TayamaBoss::hited() {
-		if (isMuteki || hp <= 0) {
+		if (isMuteki || hp <= 0 || isDefeatedFall) {
 			return;
 		}
 
