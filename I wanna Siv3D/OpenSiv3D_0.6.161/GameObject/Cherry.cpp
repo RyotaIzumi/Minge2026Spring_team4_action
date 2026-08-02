@@ -241,8 +241,8 @@ namespace Iwanna {
 
 		cherryType = CherryType::Trap;
 
-		cherryTextureName = U"sprCherryLowWhite";
-		cherryColorType = CherryColorType::Blue;
+		cherryTextureName = U"sprCherryTrap";
+		cherryColorType = CherryColorType::None;
 
 		soundPlayOne = false;
 	}

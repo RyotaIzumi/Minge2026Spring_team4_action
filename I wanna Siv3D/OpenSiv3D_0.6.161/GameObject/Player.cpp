@@ -300,7 +300,7 @@ namespace Iwanna {
 		// PlayerKill属性を持つオブジェクトとの衝突
 		if (other.canPlayerKill) {
 			if (this->intersects(other) && !isDead && !isMuteki) {
-				if (Global::getItem1 && (Global::nowRoomName == U"boss" || Global::nowRoomName == U"ExBoss")) playerHited();
+				if (Global::getItem1 && (Global::nowRoomName == U"boss" || Global::nowRoomName == U"ExBoss" || Global::nowRoomName == U"trapBoss")) playerHited();
 				else playerDead();
 			}
 		}

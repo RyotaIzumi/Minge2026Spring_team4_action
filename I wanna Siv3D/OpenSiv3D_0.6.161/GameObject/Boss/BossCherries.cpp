@@ -40,6 +40,58 @@ namespace Iwanna{
 		setTypeColor();
 	}
 
+	// ----- TayamaBoss用のライン弾幕 ----- //
+	TayamaLineCherry::TayamaLineCherry(Vec2 startPos, Vec2 targetPos, double scale, double duration)
+		: BossBarrageCherry(startPos, scale, BossCherryType::None), startPos(startPos), targetPos(targetPos) {
+		pos = startPos;
+		scaleMag = scale;
+		hitBox = std::make_shared<CircleHitBox>(pos, hitBoxSize * scaleMag);
+		type = ObjectType::Cherry;
+		cherryType = CherryType::Barrage;
+		cherrySubType = BossCherryType::None;
+
+		canPlayerKill = true;
+		isDelete = false;
+		isOutOfScreen = false;
+		isDeleteOutOfScreen = false;
+
+		alpha = 1.0;
+		speed = 0;
+		gravity = 0;
+		moveDuration = Max(0.1, duration);
+		moveElapsed = 0.0;
+		fallSpeed = 0.0;
+		attackStep = 0;
+	}
+
+	void TayamaLineCherry::barrageUpdate() {
+		switch (attackStep) {
+		case 0:
+			moveElapsed += Scene::DeltaTime();
+			{
+				const double t = Min(1.0, moveElapsed / moveDuration);
+				const double easedT = EaseOutQuad(t);
+
+				pos.x = Math::Lerp(startPos.x, targetPos.x, easedT);
+				pos.y = Math::Lerp(startPos.y, targetPos.y, easedT);
+
+				if (t >= 1.0) {
+					pos = targetPos;
+					attackStep = 1;
+				}
+			}
+			break;
+		case 1:
+			fallSpeed += fallAcceleration;
+			pos.y += fallSpeed;
+
+			if (pos.y > Global::stageHeight + 64.0) {
+				isDelete = true;
+			}
+			break;
+		}
+	}
+
 	// ----- 弾幕用黄りんご ----- //
 	BossYellowStarCherry::BossYellowStarCherry(Vec2 startPos, double scale, BossCherryType cType) : BossBarrageCherry(startPos, scale, cType) {
 

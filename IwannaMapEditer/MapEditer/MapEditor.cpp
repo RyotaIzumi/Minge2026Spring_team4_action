@@ -23,6 +23,7 @@ int32 GetAutoTileIndexById(const Array<AutoTile> tiles, int32 id) {
 MapEditor::MapEditor()
 {
 	const FilePath objectPath = U"texture/object/";
+	trapCherryTile = AutoTile{ Image{ objectPath + U"sprCherryTrap.png" }, 31 };
 
 	autoTiles =
 	{
@@ -347,6 +348,7 @@ void MapEditor::drawMap()
 {
 	const int tileSize = autoTiles[0].getTileSize();
 	const Vec2 crossOffset = Vec2{ tileSize, tileSize } / 2;
+	const bool isTrapMap = (saveFileName.text == U"trap1" || saveFileName.text == U"trap2" || saveFileName.text == U"trapBoss");
 
 	int startX = state.scrollX;
 	int startY = state.scrollY;
@@ -365,7 +367,9 @@ void MapEditor::drawMap()
 			if (state.grid[y][x])
 			{
 				//描画対象のタイルを取得する
-				const auto targetTile = autoTiles[GetAutoTileIndexById(autoTiles,state.grid[y][x])];
+				const auto& targetTile = (isTrapMap && state.grid[y][x] == 31)
+					? trapCherryTile
+					: autoTiles[GetAutoTileIndexById(autoTiles,state.grid[y][x])];
 				int32 targetId = targetTile.getTileId();
 
 				if(crossTileIds.contains(targetId)) targetTile.getTile(targetId, 0).draw(drawPos - crossOffset, state.settingMode == 0 ? ColorF{ 1.0, 1.0 } : ColorF{ 1.0, 0.5 });
@@ -490,6 +494,7 @@ void MapEditor::drawTileSelector(int32 tileSize)
 {
 	// タイル選択枠の位置を変えたい場合はこれを編集する
 	constexpr Point OFFSET{ 900, 140 };
+	const bool isTrapMap = (saveFileName.text == U"trap1" || saveFileName.text == U"trap2" || saveFileName.text == U"trapBoss");
 
 	int32 autoTilesValue = 0;
 	int32 tileCounter = 1;
@@ -503,7 +508,11 @@ void MapEditor::drawTileSelector(int32 tileSize)
 			if (autoTilesValue < autoTiles.size()
 				&& autoTiles[autoTilesValue].getTileId() == tileCounter)
 			{
-				autoTiles[autoTilesValue]
+				const auto& selectorTile = (isTrapMap && tileCounter == 31)
+					? trapCherryTile
+					: autoTiles[autoTilesValue];
+
+				selectorTile
 					.getTile(tileCounter, 0)
 					.draw(pos);
 

@@ -46,6 +46,17 @@ namespace Iwanna {
 			registerAudio(SORD_WEAK, SORD_WEAK_PATH);
 			registerAudio(SORD_STRONG, SORD_STRONG_PATH);
 			registerAudio(BOSS_WARP, BOSS_WARP_PATH);
+
+			//TayamaBoss VC
+			registerAudio(VC_BAAN, VC_BAAN_PATH);
+			registerAudio(VC_BAKANA, VC_BAKANA_PATH);
+			registerAudio(VC_BIKKURI, VC_BIKKURI_PATH);
+			registerAudio(VC_BUBUU, VC_BUBUU_PATH);
+			registerAudio(VC_HAKKYOU, VC_HAKKYOU_PATH);
+			registerAudio(VC_HOSO1, VC_HOSO1_PATH);
+			registerAudio(VC_HOSO2, VC_HOSO2_PATH);
+			registerAudio(VC_HOSO3, VC_HOSO3_PATH);
+			registerAudio(VC_PON, VC_PON_PATH);
 		}
 
 		/**

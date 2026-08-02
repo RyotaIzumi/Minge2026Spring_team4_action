@@ -112,7 +112,7 @@ namespace Iwanna {
 			}
 			//bossが出現したらBGM再生
 			if (bossStageManager.bossBgmStart) {
-				if(Global::nowRoomName == U"boss") playBgm(U"boss_normal");
+				if(Global::nowRoomName == U"boss" || Global::nowRoomName == U"trapBoss") playBgm(U"boss_normal");
 				if(Global::nowRoomName == U"ExBoss") playBgm(U"ex_boss");
 				bossStageManager.bossBgmStart = false;
 			}

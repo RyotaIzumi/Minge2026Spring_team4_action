@@ -3,6 +3,7 @@
 namespace Iwanna {
 	void StageManager::loadGameObjects(String fileName) {
 		String quarity;
+		const bool isTrapMap = (fileName == U"trap1" || fileName == U"trap2" || fileName == U"trapBoss");
 
 		switch (Global::mainTextureNumber) {
 		case 0: quarity = U"low"; break;
@@ -74,7 +75,7 @@ namespace Iwanna {
 					case 27: gameObjects.blocks << std::make_shared<ShootTroughBlock>(U"sprBlockShootTrough", pos); break;
 					case 28: gameObjects.blocks << std::make_shared<FakeBlock>(U"sprBlock_" + quarity + U"2", pos); break;
 					case 29: gameObjects.blocks << std::make_shared<WaterBlock>(U"sprWater", pos); break;
-					case 31: gameObjects.cherries << std::make_shared<SpriteCherry>(U"sprCherryLow", pos, 1); break;
+					case 31: gameObjects.cherries << std::make_shared<SpriteCherry>(isTrapMap ? U"sprCherryTrap" : U"sprCherryLow", pos, 1); break;
 					case 36: gameObjects.spikes << std::make_shared<AppendSpike>(quarity, pos, 0); break;
 					case 37: gameObjects.spikes << std::make_shared<AppendSpike>(quarity, pos, 2); break;
 					case 38: gameObjects.spikes << std::make_shared<DeleteSpike>(quarity, pos, 0); break;

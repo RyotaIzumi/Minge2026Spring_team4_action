@@ -553,7 +553,8 @@ namespace Iwanna {
 			break;
 		case 3://罠ボス召喚
 			gameObjects.bossCherries << std::make_shared<TayamaBoss>(
-				Vec2{ Global::stageWidth / 2.0, Global::stageHeight + 140.0 });
+				Vec2{ Global::stageWidth / 2.0, Global::stageHeight + 140.0 }, 1.5, *this);
+			bossBgmStart = true;
 			darkAlpha = 0.9;
 			cameraShake.shake(0.4, 20.0);
 			break;

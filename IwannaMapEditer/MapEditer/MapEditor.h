@@ -12,6 +12,7 @@ private:
 	EditorState state;
 
 	Array<AutoTile> autoTiles;
+	AutoTile trapCherryTile;
 	Texture baseTexture{ U"texture/object/none.png" };
 	Array<int32> crossTileIds{};//格子上に置きたいタイルのID
 
