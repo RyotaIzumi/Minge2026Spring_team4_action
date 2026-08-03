@@ -80,6 +80,12 @@ namespace Iwanna {
 			else if (Global::deathCount == 0) {
 				Global::endingValue = 8;
 			}
+			else if ((30 <= Global::moraleValue1 && Global::moraleValue1 <= 89)
+				&& (30 <= Global::moraleValue2 && Global::moraleValue2 <= 89)
+				&& (30 <= Global::moraleValue3 && Global::moraleValue3 <= 100)
+				&& (30 <= Global::moraleValue4 && Global::moraleValue4 <= 100)) {
+				Global::endingValue = 7;
+			}
 			else if (Global::endingValue == 4) {
 				Global::endingValue = 0;
 			}
