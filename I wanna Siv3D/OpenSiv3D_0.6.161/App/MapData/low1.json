@@ -18,8 +18,8 @@
           448.0
         ],
         "value1": 1,
-        "value2": 120.0,
-        "value3": 12.0
+        "value2": 105.0,
+        "value3": 10.0
       },
       {
         "gimmikName": "罠トリガー",
@@ -44,29 +44,13 @@
       {
         "gimmikName": "ワープ",
         "gimmikPos": [
-          2752.0,
-          608.0
-        ],
-        "value1": "bossLow"
-      },
-      {
-        "gimmikName": "ワープ",
-        "gimmikPos": [
           2784.0,
-          608.0
+          512.0
         ],
         "value1": "bossLow"
-      },
-      {
-        "gimmikName": "ワープ",
-        "gimmikPos": [
-          2816.0,
-          608.0
-        ],
-        "value1": "trapLow"
       }
     ],
-    "background": "",
+    "background": "sample",
     "startPlayerPos": [
       80.0,
       100.0

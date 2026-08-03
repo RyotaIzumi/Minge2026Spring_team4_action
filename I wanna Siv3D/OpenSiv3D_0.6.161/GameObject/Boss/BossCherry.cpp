@@ -646,6 +646,9 @@ namespace Iwanna {
 			defeatedFallSpeed = 0.0;
 			isMuteki = false;
 			Global::isBossDefeated = true;
+			if (Global::moraleValue1 < 30 && Global::moraleValue2 < 30) {
+				Global::endingValue = 1;
+			}
 			return;
 		}
 

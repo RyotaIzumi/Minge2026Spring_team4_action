@@ -37,12 +37,16 @@ void MainGameSerializer::LoadEndingValue() {
 }
 
 void MainGameSerializer::defineGlobalStatuses() {
+	Global::endingValue = 4;
 
 	// 開始room
-	if (moraleValue1 >= 90) {
+	if (moraleValue1 < 30 && moraleValue2 < 30) {
+		Global::startRoomName = U"tutorialLow";
+	}
+	else if (moraleValue1 >= 90) {
 		Global::remainingGenerateStageNames.clear();
 		Global::startRoomName = U"tutorialLow";
-		Global::endingValue = 4;
+		Global::endingValue = 3;
 	}
 	else if (moraleValue2 > 90)Global::startRoomName = U"trapBoss";
 	else if(moraleValue1 <= 30) Global::startRoomName = U"normal1";
