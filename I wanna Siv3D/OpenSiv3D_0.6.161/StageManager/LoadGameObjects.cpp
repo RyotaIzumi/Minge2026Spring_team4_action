@@ -355,6 +355,6 @@ namespace Iwanna {
 		if (fileName == U"normal4")gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{400,304},3.0,CherryColorType::Yellow,*this);
 		if (fileName == U"normal5")gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{80,80},3.0,CherryColorType::Sky,*this);
 		if (fileName == U"normal6")gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{80,528},3.0,CherryColorType::Green,*this);
-		if (fileName == U"normal7")gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{400,304},3.0,CherryColorType::Orange,*this);
+		if (fileName == U"normal7")gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{624,304},3.0,CherryColorType::Orange,*this);
 	}
 }

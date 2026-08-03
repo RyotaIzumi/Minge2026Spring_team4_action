@@ -339,7 +339,7 @@ namespace Iwanna {
 	void GimmikBigCherry::generateAttack() {
 			switch (cherryColorType) {
 			case CherryColorType::Red:
-				stageManager->createCherrySpread(12, 4, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0,cherryColorType); });
+				stageManager->createCherrySpread(12, 3.5, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0,cherryColorType); });
 				break;
 			case CherryColorType::Blue:
 				stageManager->createBlueLineCherry([this]() { return std::make_shared<BarrageGimmikBlueCherry>(pos, 1.0, cherryColorType); });
