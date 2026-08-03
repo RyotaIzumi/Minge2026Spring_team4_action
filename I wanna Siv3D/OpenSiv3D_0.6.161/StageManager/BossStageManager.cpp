@@ -194,6 +194,9 @@ namespace Iwanna {
 		if (stageName == U"boss") {
 			gameObjects.savePoints << std::make_shared<BossSavePoint>(Vec2{400,500},1);
 		}
+		if (stageName == U"bossLow") {
+			gameObjects.savePoints << std::make_shared<BossSavePoint>(Vec2{ 400,500 }, 4);
+		}
 		if (stageName == U"ExBoss") {
 			gameObjects.savePoints << std::make_shared<BossSavePoint>(Vec2{ 800,450 }, 2);
 			gameObjects.bossCherries << std::make_shared<SordCherriesManager>(Vec2{ 800,430 }, 2.0, *this);
@@ -847,6 +850,14 @@ namespace Iwanna {
 			bossBgmStart = true;
 			darkAlpha = 0.9;
 			cameraShake.shake(0.4, 20.0);
+			break;
+		case 4://簡易ボス召喚
+			gameObjects.bossCherries << std::make_shared<LowBossCherry>(
+				Vec2{ Global::stageWidth - 120, Global::stageHeight + 80.0 }, 5.0, *this);
+			bossBgmStart = true;
+			darkAlpha = 0.9;
+			cameraShake.shake(0.4, 20.0);
+			//titleCard.startShowTitleCard(U"boss");
 			break;
 		}
 	}

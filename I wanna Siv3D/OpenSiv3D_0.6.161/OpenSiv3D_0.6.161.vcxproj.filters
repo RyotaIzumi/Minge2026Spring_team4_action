@@ -329,6 +329,9 @@
     <Image Include="App\Texture\Cherry\sprCherryFrameWhite.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="App\Texture\Cherry\sprCherryLowWhite.png">
+      <Filter>Resource Files</Filter>
+    </Image>
     <Image Include="App\Texture\Cherry\sprCherryWhite.png">
       <Filter>Resource Files</Filter>
     </Image>

@@ -512,6 +512,156 @@ namespace Iwanna {
 		mutekiInterval.restart();
 	}
 
+	LowBossCherry::LowBossCherry(Vec2 startPos, double scale, BossStageManager& manager)
+		: bossStageManager(&manager), Cherry(startPos, scale) {
+		pos = startPos;
+		scaleMag = scale;
+		hitBox = std::make_shared<CircleHitBox>(pos, hitBoxSize * scaleMag);
+		type = ObjectType::Cherry;
+		cherryType = CherryType::Boss;
+
+		canPlayerKill = true;
+		isDelete = false;
+		isOutOfScreen = false;
+		isDeleteOutOfScreen = false;
+		hasHp = true;
+		maxHp = 25;
+		hp = maxHp;
+		speed = moveSpeed;
+		direction = 90;
+		depth = 51;
+		appearanceStep = 0;
+	}
+
+	void LowBossCherry::updateDefeatedFall() {
+		defeatedFallSpeed += defeatedFallAcceleration;
+		pos.y += defeatedFallSpeed;
+		textureAngle += defeatedRotateSpeed * Scene::DeltaTime();
+
+		if (pos.y > Global::stageHeight + 64.0 * scaleMag) {
+			isDelete = true;
+		}
+	}
+
+	void LowBossCherry::createSpreadAttack() {
+		if (!bossStageManager) {
+			return;
+		}
+
+		bossStageManager->createCherrySpread(spreadCherryNum, spreadCherrySpeed, [this]() { return createLowBossBarrageCherry(); });
+	}
+
+	void LowBossCherry::createTargetAttack() {
+		if (!bossStageManager) {
+			return;
+		}
+
+		bossStageManager->createSkyTargetCherry(targetLineNum, targetIsAddLine, [this]() { return createLowBossTargetCherry(); }, targetBaseSpeed, targetIntervalSpeed);
+	}
+
+	std::shared_ptr<BossBarrageCherry> LowBossCherry::createLowBossBarrageCherry() {
+		auto cherry = std::make_shared<BossBarrageCherry>(pos, 1.0, BossCherryType::None);
+		cherry->setCustomTexture(U"sprCherryLowWhite", 32, true);
+		cherry->setCustomTextureColor(ColorF{ 1.0, 0.15, 0.15 });
+		return cherry;
+	}
+
+	std::shared_ptr<BossSkyTargetCherry> LowBossCherry::createLowBossTargetCherry() {
+		auto cherry = std::make_shared<BossSkyTargetCherry>(pos, 1.0, BossCherryType::None);
+		cherry->setCustomTexture(U"sprCherryLowWhite", 32, true);
+		cherry->setCustomTextureColor(ColorF{ 1.0, 0.15, 0.15 });
+		return cherry;
+	}
+
+	void LowBossCherry::barrageUpdate() {
+		if (isDefeatedFall) {
+			updateDefeatedFall();
+			return;
+		}
+
+		switch (appearanceStep) {
+		case 0:
+			if (pos.y <= targetY) {
+				pos.y = targetY;
+				speed = 0.0;
+				appearanceStep = 1;
+				spreadStopwatch.restart();
+				targetStopwatch.restart();
+				createSpreadAttack();
+				createTargetAttack();
+			}
+			break;
+		case 1:
+			if (spreadStopwatch.sF() >= spreadInterval) {
+				createSpreadAttack();
+				spreadStopwatch.restart();
+			}
+			if (targetStopwatch.sF() >= targetInterval) {
+				createTargetAttack();
+				targetStopwatch.restart();
+			}
+			break;
+		}
+
+		if (hpBarAlpha < 1.0) {
+			hpBarAlpha = Min(1.0, hpBarAlpha + 0.05);
+		}
+	}
+
+	void LowBossCherry::draw() const {
+		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
+		const int32 texRange = static_cast<int32>(Periodic::Square0_1(0.5)) * 32;
+
+		TextureAsset(U"sprCherryLowWhite")(texRange, 0, 32, 32)
+			.scaled(scaleMag)
+			.rotated(Math::ToRadians(textureAngle))
+			.drawAt(pos, ColorF{ 1.0, 0.15, 0.15, isMuteki ? 0.6 : 1.0 });
+
+		if (!hasHp) {
+			return;
+		}
+
+		const double width = Global::stageWidth;
+		const double height = 20.0;
+		const Vec2 barPos{ Global::stageWidth / 2.0, 0.0 };
+		const double hpRate = static_cast<double>(hp) / maxHp;
+
+		RectF{ barPos.x - width / 2.0, barPos.y, width, height }
+			.draw(ColorF{ 1.0, 0.2, 0.2, hpBarAlpha });
+		RectF{ barPos.x - width / 2.0, barPos.y, width * hpRate, height }
+			.draw(ColorF{ 0.2, 1.0, 0.2, hpBarAlpha });
+
+		const String bossName = U"Boss";
+		const Vec2 textPos{ 6, 18 };
+		for (const Vec2 offset : { Vec2{-1, 0}, Vec2{1, 0}, Vec2{0, -1}, Vec2{0, 1} }) {
+			FontAsset(U"BossHp")(bossName).draw(textPos + offset, ColorF{ 0.0, 0.0, 0.0, hpBarAlpha });
+		}
+		FontAsset(U"BossHp")(bossName).draw(textPos, ColorF{ 1.0, 1.0, 1.0, hpBarAlpha });
+	}
+
+	void LowBossCherry::hited() {
+		if (isMuteki || hp <= 0 || isDefeatedFall) {
+			return;
+		}
+
+		AudioAsset(Sound::BOSSHIT).playOneShot();
+		--hp;
+
+		if (hp <= 0) {
+			AudioAsset(Sound::DEATH).playOneShot();
+			canPlayerKill = false;
+			hasHp = false;
+			isDefeatedFall = true;
+			defeatedFallSpeed = 0.0;
+			isMuteki = false;
+			Global::isBossDefeated = true;
+			return;
+		}
+
+		isMuteki = true;
+		mutekiInterval.restart();
+	}
+
 	// 攻撃を呼び出す
 	void BossCherry::startAttack(BossCherryType type) {
 		double throwDir, throwSpd;

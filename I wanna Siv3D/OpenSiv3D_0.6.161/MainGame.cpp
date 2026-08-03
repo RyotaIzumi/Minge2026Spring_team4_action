@@ -29,7 +29,7 @@ namespace Iwanna {
 		if(!Global::isChangeRoom) Global::nowRoomName = Global::savedRoomName;
 
 		//ステージの名称から種類を決定
-		if (Global::nowRoomName == U"boss" || Global::nowRoomName == U"ExBoss" || Global::nowRoomName == U"trapBoss") {
+		if (Global::nowRoomName == U"boss" || Global::nowRoomName == U"bossLow" || Global::nowRoomName == U"ExBoss" || Global::nowRoomName == U"trapBoss") {
 			stageType = StageType::Boss;
 			pauseBgm();
 		}
@@ -112,7 +112,7 @@ namespace Iwanna {
 			}
 			//bossが出現したらBGM再生
 			if (bossStageManager.bossBgmStart) {
-				if(Global::nowRoomName == U"boss" || Global::nowRoomName == U"trapBoss") playBgm(U"boss_normal");
+				if(Global::nowRoomName == U"boss" || Global::nowRoomName == U"bossLow" || Global::nowRoomName == U"trapBoss") playBgm(U"boss_normal");
 				if(Global::nowRoomName == U"ExBoss") playBgm(U"ex_boss");
 				bossStageManager.bossBgmStart = false;
 			}

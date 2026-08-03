@@ -126,6 +126,43 @@ namespace Iwanna {
 		void hited() override;
 	};
 
+	class LowBossCherry : public Cherry {
+	private:
+		BossStageManager* bossStageManager = nullptr;
+		double hpBarAlpha = 0.0;
+		bool isDefeatedFall = false;
+		int32 appearanceStep = 0;
+		Stopwatch spreadStopwatch{ StartImmediately::No };
+		Stopwatch targetStopwatch{ StartImmediately::No };
+
+		double targetY = 500.0;
+		double moveSpeed = 7.0;
+		double spreadInterval = 0.8;
+		int32 spreadCherryNum = 12;
+		double spreadCherrySpeed = 4.0;
+		double targetInterval = 2.0;
+		int32 targetLineNum = 3;
+		bool targetIsAddLine = false;
+		double targetBaseSpeed = 4.0;
+		double targetIntervalSpeed = 1.0;
+		double defeatedFallSpeed = 0.0;
+		double defeatedFallAcceleration = 0.25;
+		double defeatedRotateSpeed = 90.0;
+
+		void updateDefeatedFall();
+		void createSpreadAttack();
+		void createTargetAttack();
+		std::shared_ptr<BossBarrageCherry> createLowBossBarrageCherry();
+		std::shared_ptr<BossSkyTargetCherry> createLowBossTargetCherry();
+
+	public:
+		LowBossCherry(Vec2 startPos, double scale, BossStageManager& manager);
+
+		void barrageUpdate() override;
+		void draw() const override;
+		void hited() override;
+	};
+
 	class BossSubCherry : public Cherry {
 	private:
 		BossStageManager* bossStageManager = nullptr;

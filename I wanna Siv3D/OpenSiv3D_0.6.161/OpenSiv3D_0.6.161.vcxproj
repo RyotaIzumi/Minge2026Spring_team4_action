@@ -193,6 +193,7 @@
     <Image Include="App\Texture\Cherry\sprCherry.png" />
     <Image Include="App\Texture\Cherry\sprCherryAllWhite.png" />
     <Image Include="App\Texture\Cherry\sprCherryFrameWhite.png" />
+    <Image Include="App\Texture\Cherry\sprCherryLowWhite.png" />
     <Image Include="App\Texture\Cherry\sprCherryWhite.png" />
     <Image Include="App\Texture\Miku\sprMiku.png" />
   </ItemGroup>
