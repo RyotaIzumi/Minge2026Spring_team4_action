@@ -1,6 +1,8 @@
 ﻿# include "AudioAsset.h"
 # include <cassert>
 
+# include "../Global.h"
+
 namespace Iwanna {
 	namespace Sound {
 
@@ -18,6 +20,7 @@ namespace Iwanna {
 			registerAudio(MAIN_NORMAL, Path_MAIN_NORMAL, Loop::Yes);
 			registerAudio(MAIN_HIGH, Path_MAIN_HIGH, Loop::Yes);
 			registerAudio(SECRET, Path_SECRET, Loop::Yes);
+			registerAudio(BOSS_LOW, Path_BOSS_LOW, Loop::Yes);
 			registerAudio(BOSS_NORMAL, Path_BOSS_NORMAL, Loop::Yes);
 			registerAudio(GAMEOVER_NORMAL, Path_GAMEOVER_NORMAL, Loop::No);
 			registerAudio(EX_BOSS, Path_EX_BOSS, Loop::Yes);
@@ -30,6 +33,7 @@ namespace Iwanna {
 			registerAudio(DJUMP, DJUMP_PATH);
 			registerAudio(SHOOT, SHOOT_PATH);
 			registerAudio(CHERRYFALL, CHERRYFALL_PATH);
+			registerAudio(GUYGUN, GUYGUN_PATH);
 			registerAudio(BLOCKCHANGE, BLOCKCHANGE_PATH);
 			registerAudio(BLOCKBREAK, BLOCKBREAK_PATH);
 			registerAudio(SPIKETRAP, SPIKETRAP_PATH);
@@ -46,6 +50,17 @@ namespace Iwanna {
 			registerAudio(SORD_WEAK, SORD_WEAK_PATH);
 			registerAudio(SORD_STRONG, SORD_STRONG_PATH);
 			registerAudio(BOSS_WARP, BOSS_WARP_PATH);
+
+			//TayamaBoss VC
+			registerAudio(VC_BAAN, VC_BAAN_PATH);
+			registerAudio(VC_BAKANA, VC_BAKANA_PATH);
+			registerAudio(VC_BIKKURI, VC_BIKKURI_PATH);
+			registerAudio(VC_BUBUU, VC_BUBUU_PATH);
+			registerAudio(VC_HAKKYOU, VC_HAKKYOU_PATH);
+			registerAudio(VC_HOSO1, VC_HOSO1_PATH);
+			registerAudio(VC_HOSO2, VC_HOSO2_PATH);
+			registerAudio(VC_HOSO3, VC_HOSO3_PATH);
+			registerAudio(VC_PON, VC_PON_PATH);
 		}
 
 		/**
@@ -72,6 +87,22 @@ namespace Iwanna {
 			for (auto& r : registry) {
 				AudioAsset::Load(r.name);
 			}
+		}
+
+		void playOneShot(const String& name) {
+			if (Global::moraleValue4 < 30) {
+				return;
+			}
+
+			AudioAsset(name).playOneShot();
+		}
+
+		void playOneShot(const String& name, double volume) {
+			if (Global::moraleValue4 < 30) {
+				return;
+			}
+
+			AudioAsset(name).playOneShot(volume);
 		}
 	}
 }

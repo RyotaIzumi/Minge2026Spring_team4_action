@@ -26,17 +26,19 @@ namespace Iwanna {
 		StageType stageType;
 
 		bool playGameoverBgmOne = true;
+		double bossLowBgmVolume = 0.7;
 
 	public:
 		MainGame();
 
 		void startNewGame();
+		void resetGameToStartMenu();
 		void startGame();
 		void updateGame();
 		void debugGame();
 		void drawGame();
 
-		void playBgm(String);
+		void playBgm(String, double volume = 1.0);
 		void playGameoverBgm();
 		void stopBgm();
 

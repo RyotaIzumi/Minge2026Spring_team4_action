@@ -122,7 +122,7 @@ void GimmikManager::drawGimmiks(int tileSize, double scrollX, double scrollY)
 		if (g.name == U"罠トリガー" || g.name == U"前トリガー")
 			textures[idx].scaled({ g.value2,g.value3 }).draw(pos).drawFrame(1.0, (placedListBox.selectedItemIndex && count == *placedListBox.selectedItemIndex) ? ColorF(1, 0, 0) : ColorF(0, 0));
 		else if(g.name == U"罠りんご")
-			textures[idx].drawAt(pos).drawFrame(1.0, (placedListBox.selectedItemIndex && count == *placedListBox.selectedItemIndex) ? ColorF(1, 0, 0) : ColorF(0, 0));
+			textures[idx](0, 0, tileSize, tileSize).drawAt(pos).drawFrame(1.0, (placedListBox.selectedItemIndex && count == *placedListBox.selectedItemIndex) ? ColorF(1, 0, 0) : ColorF(0, 0));
 		else if (g.name == U"移動針_上" || g.name == U"移動針_左" || g.name == U"移動針_下" || g.name == U"移動針_右") {//移動先の針をうっすらと表示させる
 			textures[idx].draw(pos).drawFrame(1.0, (placedListBox.selectedItemIndex && count == *placedListBox.selectedItemIndex) ? ColorF(1, 0, 0) : ColorF(0, 0));
 			const double oneTileSide = 32;
@@ -143,7 +143,7 @@ void GimmikManager::drawGimmiks(int tileSize, double scrollX, double scrollY)
 			double angle = 90;
 			textures[idx].rotated( Math::ToRadians(-1 * g.value1 * angle)).draw(pos).drawFrame(1.0, (placedListBox.selectedItemIndex && count == *placedListBox.selectedItemIndex) ? ColorF(1, 0, 0) : ColorF(0, 0));
 		}
-		else if (g.name != U"ループ移動針")
+		else if (g.name != U"ループ移動針" && g.name != U"罠りんご")
 			textures[idx].draw(pos).drawFrame(1.0, (placedListBox.selectedItemIndex && count == *placedListBox.selectedItemIndex)? ColorF(1, 0, 0) : ColorF(0, 0));
 
 		count++;

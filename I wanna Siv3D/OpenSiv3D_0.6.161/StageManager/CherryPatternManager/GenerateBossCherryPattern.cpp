@@ -183,10 +183,8 @@ namespace Iwanna {
 		 * @param lineNum １線内の弾幕数
 		 * @param isAddLine 左右に弾幕を追加するかどうか
 		 */
-	void BossStageManager::createSkyTargetCherry(int32 lineNum, bool isAddLine, const std::function<std::shared_ptr<BossSkyTargetCherry>()>& factory) {
+	void BossStageManager::createSkyTargetCherry(int32 lineNum, bool isAddLine, const std::function<std::shared_ptr<BossSkyTargetCherry>()>& factory, double baseSpd, double interSpd) {
 		Vec2 targetPos = gameObjects.player->pos;
-		double baseSpd = 5;
-		double interSpd = 2;
 		double interAngle = 20;
 
 		for (int i = 0; i < lineNum; i++) {

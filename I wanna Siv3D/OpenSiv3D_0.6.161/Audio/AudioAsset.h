@@ -12,6 +12,8 @@ namespace Iwanna {
 		const FilePath Path_MAIN_HIGH{ U"Sound/Bgm/main_high.mp3" };
 		const String SECRET{ U"secret_stage" };
 		const FilePath Path_SECRET{ U"Sound/Bgm/secret_stage.mp3" };
+		const String BOSS_LOW{ U"boss_low" };
+		const FilePath Path_BOSS_LOW{ U"Sound/Bgm/boss_low.mp3" };
 		const String BOSS_NORMAL{ U"boss_normal" };
 		const FilePath Path_BOSS_NORMAL{ U"Sound/Bgm/boss_normal.mp3" };
 		const String GAMEOVER_NORMAL{ U"gameover_normal" };
@@ -32,6 +34,8 @@ namespace Iwanna {
 		static const String SHOOT_PATH = SE_PATH + SHOOT + U".mp3";
 		static const String CHERRYFALL = U"sndCherry";
 		static const String CHERRYFALL_PATH = SE_PATH + CHERRYFALL + U".mp3";
+		static const String GUYGUN = U"sndGuygun";
+		static const String GUYGUN_PATH = SE_PATH + GUYGUN + U".wav";
 		static const String BLOCKCHANGE = U"sndBlockChange";
 		static const String BLOCKCHANGE_PATH = SE_PATH + BLOCKCHANGE + U".mp3";
 		static const String BLOCKBREAK = U"sndBreak";
@@ -62,11 +66,34 @@ namespace Iwanna {
 		static const String SORD_STRONG_PATH = SE_PATH + SORD_STRONG + U".mp3";
 		static const String BOSS_WARP = U"sndBossWarp";
 		static const String BOSS_WARP_PATH = SE_PATH + BOSS_WARP + U".mp3";
+
+		//TayamaBoss VC
+		static const String VC_PATH = U"Sound/Vc/";
+		static const String VC_BAAN = U"vc_baan";
+		static const String VC_BAAN_PATH = VC_PATH + VC_BAAN + U".mp3";
+		static const String VC_BAKANA = U"vc_bakana";
+		static const String VC_BAKANA_PATH = VC_PATH + VC_BAKANA + U".mp3";
+		static const String VC_BIKKURI = U"vc_bikkuri";
+		static const String VC_BIKKURI_PATH = VC_PATH + VC_BIKKURI + U".mp3";
+		static const String VC_BUBUU = U"vc_bubuu";
+		static const String VC_BUBUU_PATH = VC_PATH + VC_BUBUU + U".mp3";
+		static const String VC_HAKKYOU = U"vc_hakkyou";
+		static const String VC_HAKKYOU_PATH = VC_PATH + VC_HAKKYOU + U".mp3";
+		static const String VC_HOSO1 = U"vc_hoso1";
+		static const String VC_HOSO1_PATH = VC_PATH + VC_HOSO1 + U".mp3";
+		static const String VC_HOSO2 = U"vc_hoso2";
+		static const String VC_HOSO2_PATH = VC_PATH + VC_HOSO2 + U".mp3";
+		static const String VC_HOSO3 = U"vc_hoso3";
+		static const String VC_HOSO3_PATH = VC_PATH + VC_HOSO3 + U".mp3";
+		static const String VC_PON = U"vc_pon";
+		static const String VC_PON_PATH = VC_PATH + VC_PON + U".mp3";
 		
 		void registerBGMs();
 		void registerSEs();
 		void registerAudio(const String& name, const String& path, const Loop loop = Loop::No);
 		void registerAudiosSync();
 		void loadAudiosSync();
+		void playOneShot(const String& name);
+		void playOneShot(const String& name, double volume);
 	}
 }

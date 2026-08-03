@@ -17,21 +17,53 @@ void MainGameSerializer::LoadCharactersMoraleValue() {
 	moraleValue2 = json[U"MoraleValue2"].get<int32>();
 	moraleValue3 = json[U"MoraleValue3"].get<int32>();
 	moraleValue4 = json[U"MoraleValue4"].get<int32>();
+	Global::moraleValue1 = moraleValue1;
+	Global::moraleValue2 = moraleValue2;
+	Global::moraleValue3 = moraleValue3;
+	Global::moraleValue4 = moraleValue4;
+	Global::getItem1 = json.contains(U"GetItem1")
+		? json[U"GetItem1"].get<bool>()
+		: false;
+}
+
+void MainGameSerializer::LoadEndingValue() {
+	const JSON json = JSON::Load(U"EndingValue.json");
+
+	if (!json) {
+		Global::endingValue = 0;
+		return;
+	}
+
+	Global::endingValue = json.contains(U"EndingValue")
+		? Clamp(json[U"EndingValue"].get<int32>(), 0, 9)
+		: 0;
 }
 
 void MainGameSerializer::defineGlobalStatuses() {
+	Global::endingValue = 4;
 
 	// 開始room
-	if (moraleValue2 > 90)Global::startRoomName = U"trap1";
+	if (moraleValue2 >= 90 && moraleValue3 >= 90 && moraleValue4 >= 90) {
+		Global::startRoomName = U"tutorialTrap";
+	}
+	else if (moraleValue1 < 30 && moraleValue2 < 30) {
+		Global::startRoomName = U"tutorialLow";
+	}
+	else if (moraleValue1 >= 90) {
+		Global::remainingGenerateStageNames.clear();
+		Global::startRoomName = U"tutorialLow";
+		Global::endingValue = 3;
+	}
+	else if (moraleValue2 > 90)Global::startRoomName = U"trapBoss";
 	else if(moraleValue1 <= 30) Global::startRoomName = U"normal1";
-	else Global::startRoomName = U"ExMilu";
+	else Global::startRoomName = U"normal4";
 
 	// ゲームタイトル
-	if (moraleValue2 > 90) Window::SetTitle(U"I wanna Siv3D (Debug Build)");
-	else Window::SetTitle(U"I wanna continue Siv3D");
+	if (moraleValue2 > 90) Window::SetTitle(U"TestPlayGame (Debug Build)");
+	else Window::SetTitle(U"TestPlayGame");
 
 	//Texture
-	if (moraleValue3 < 40) Global::mainTextureNumber = 0;
+	if (moraleValue3 < 30) Global::mainTextureNumber = 0;
 	else if (moraleValue3 <= 100) Global::mainTextureNumber = 1;
 
 	//BGM
@@ -40,12 +72,24 @@ void MainGameSerializer::defineGlobalStatuses() {
 	else if (moraleValue4 <= 100) Global::mainBgmNumber = 2;
 }
 
+void MainGameSerializer::SaveCharactersMoraleValue() {
+	JSON json;
+
+	json[U"MoraleValue1"] = Global::moraleValue1;
+	json[U"MoraleValue2"] = Global::moraleValue2;
+	json[U"MoraleValue3"] = Global::moraleValue3;
+	json[U"MoraleValue4"] = Global::moraleValue4;
+	json[U"GetItem1"] = Global::getItem1;
+
+	json.save(U"CharactersMoraleValue.json");
+}
+
 // エンディング種類値を保存する処理をここに実装
 void MainGameSerializer::SaveEndingValue() {
 	JSON json;
 
 	// 値をセット
-	json[U"EndingValue"] = 0;
+	json[U"EndingValue"] = Global::endingValue;
 
 	// ファイル保存
 	json.save(U"EndingValue.json");

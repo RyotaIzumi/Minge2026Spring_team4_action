@@ -4,11 +4,13 @@
 #include "Scene/Scene.h"
 #include "MainGameSerializer.h"
 #include "60FPSwithAutoFrameSkip.h"
+#include "Global.h"
 
 using App = SceneManager<Iwanna::SceneType, Iwanna::CommonData>;
 
 void Main()
 {
+	System::SetTerminationTriggers(UserAction::CloseButtonClicked);
 	System60::SetDisplaySize(Size{800,608});
 
 	Window::SetTitle(U"I wanna continue Siv3D");
@@ -28,27 +30,23 @@ void Main()
 	Image cursorImage{ U"✌"_emoji };
 	Cursor::RegisterCustomCursorStyle(U"cursorPiece", cursorImage.scaled(0.5), Point{10,10});
 	
-	Iwanna::registerTextures();
-	Iwanna::registerTexturesSync();
-	Iwanna::loadTexturesSync();
-
-	Iwanna::Sound::registerBGMs();
-	Iwanna::Sound::registerSEs();
-	Iwanna::Sound::registerAudiosSync();
-	Iwanna::Sound::loadAudiosSync();
-
 	App app;
+	app.add<Iwanna::Loading>(Iwanna::SceneType::LOADING);
 	app.add<Iwanna::StartMenu>(Iwanna::SceneType::START_MENU);
 	app.add<Iwanna::InGame>(Iwanna::SceneType::IN_GAME);
-	app.init(Iwanna::SceneType::START_MENU, 0s);
+	app.init(Iwanna::SceneType::LOADING, 0s);
 
 	mainGameSerializer.LoadCharactersMoraleValue();
+	mainGameSerializer.LoadEndingValue();
 	mainGameSerializer.defineGlobalStatuses();
+	Global::elapsedPlayTime = 0.0;
+	Global::deathCount = 0;
 
 	while (System60::Update()) {
 		if (not app.update()) {
 			break;
 		}
 	}
+	mainGameSerializer.SaveCharactersMoraleValue();
 	mainGameSerializer.SaveEndingValue();
 }

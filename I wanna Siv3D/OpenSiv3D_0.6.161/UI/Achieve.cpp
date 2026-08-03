@@ -16,7 +16,7 @@ namespace Iwanna {
 			nowPos = startPos;
 			canShowAchieve = true;
 			moveTimer.restart();
-			AudioAsset(Sound::ACHIEVE).playOneShot();
+			Sound::playOneShot(Sound::ACHIEVE);
 
 			moveStep++;
 			break;

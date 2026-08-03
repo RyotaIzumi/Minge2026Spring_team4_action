@@ -21,6 +21,7 @@ namespace Iwanna {
 		hasHp = true;
 		maxHp = 25;
 		hp = maxHp;
+		hpBarDelay.reset(hp, maxHp);
 
 		baseCenterPos = Vec2{ 400, 350 };
 		speed = 20;
@@ -79,15 +80,16 @@ namespace Iwanna {
 
 		//hp表示のフェードイン
 		if (hpBarAlpha < 1)hpBarAlpha += 0.05;
+		hpBarDelay.update(hp, maxHp);
 
 		//攻撃間隔の設定
 		switch (defeatedAttackTypeNum) {
 		case 0:attackIntervalTime = 3.5; break;
 		case 1:attackIntervalTime = 3.2; break;
 		case 2:attackIntervalTime = 2.8; break;
-		case 3:attackIntervalTime = 2.4; break;
-		case 4:attackIntervalTime = 2.0; break;
-		case 5:attackIntervalTime = 1.5; break;
+		case 3:attackIntervalTime = 2.5; break;
+		case 4:attackIntervalTime = 2.2; break;
+		case 5:attackIntervalTime = 1.8; break;
 		}
 
 		//攻撃強化関連の処理
@@ -100,11 +102,12 @@ namespace Iwanna {
 		if(defeatedAttackTypeNum >= 6) isSpecialAttack = true;
 		
 		//特殊攻撃の呼び出し
+		/*
 		if (isSpecialAttack) {
 			switch (specialAttackStep) {
 			case 0:
 				bossStageManager->createGrayLatticeCherry(100,[this]() { return std::make_shared<BossGrayLatticeCherry>(pos, 1.0, BossCherryType::Gray); });
-				AudioAsset(Sound::BLOCKCHANGE).playOneShot();
+				Sound::playOneShot(Sound::BLOCKCHANGE);
 				specialAttackStopwatch.restart();
 				specialAttackCount++;
 				specialAttackStep++;
@@ -118,6 +121,7 @@ namespace Iwanna {
 			}
 			return;
 		}
+		*/
 
 		// 一定間隔でファンネルりんごを一つ選んで攻撃
 		if (reachedAttackTime(attackIntervalTime)) {
@@ -139,14 +143,7 @@ namespace Iwanna {
 			double height = 20;              // 高さ
 			Vec2 barPos = Vec2(400,0);
 
-			// 最大HP（赤）
-			RectF(barPos.x - width / 2, barPos.y, width, height)
-				.draw(ColorF(1.0, 0.2, 0.2, hpBarAlpha));
-
-			// 現在HP（緑）
-			double hpRate = static_cast<double>(hp) / maxHp;
-			RectF(barPos.x - width / 2, barPos.y, width * hpRate, height)
-				.draw(ColorF(0.2, 1.0, 0.2, hpBarAlpha));
+			drawBossHpBar(barPos, width, height, hp, maxHp, hpBarAlpha, hpBarDelay);
 
 			// 文字表示
 			Vec2 textBasePos = Vec2(6, 18);
@@ -164,15 +161,499 @@ namespace Iwanna {
 	//ダメージを受けた際の処理
 	void BossCherry::hited() {
 		if (hp > 0) {
-			AudioAsset(Sound::BOSSHIT).playOneShot();
+			Sound::playOneShot(Sound::BOSSHIT);
 			hp--;
 		}
 
 		if (hp <= 0) {
-			AudioAsset(Sound::DEATH).playOneShot();
+			Sound::playOneShot(Sound::DEATH);
+			hasHp = false;
 			alpha = 0;
 			startStep = 3;
 			Global::isBossDefeated = true;
+			bossStageManager->requestBossCherryDefeatCleanup();
+		}
+
+		isMuteki = true;
+		mutekiInterval.restart();
+	}
+
+	TayamaBoss::TayamaBoss(Vec2 startPos, double scale, BossStageManager& manager)
+		: bossStageManager(&manager), Cherry(startPos, scale) {
+		pos = startPos;
+		baseScaleMag = scale;
+		setScaleMag(scale);
+		type = ObjectType::Cherry;
+		cherryType = CherryType::TrapBoss;
+
+		canPlayerKill = true;
+		isDelete = false;
+		isOutOfScreen = false;
+		isDeleteOutOfScreen = false;
+
+		hasHp = true;
+		maxHp = 20;
+		hp = maxHp;
+		hpBarDelay.reset(hp, maxHp);
+
+		gravity = 0;
+		speed = 0;
+		depth = 51;
+
+		const Vec2 centerPos{ Global::stageWidth / 2.0, Global::stageHeight / 2.0 };
+		movePosition(centerPos, 1.5, false);
+
+		switch (Random(2)) {
+		case 0:
+			Sound::playOneShot(Sound::VC_HOSO1);
+			break;
+		case 1:
+			Sound::playOneShot(Sound::VC_HOSO2);
+			break;
+		case 2:
+			Sound::playOneShot(Sound::VC_HOSO3);
+			break;
+		}
+	}
+
+	void TayamaBoss::applyScaleMag(double scale) {
+		scaleMag = Max(0.0, scale);
+		hitBox = std::make_shared<CircleHitBox>(pos, 45.0 * scaleMag);
+	}
+
+	void TayamaBoss::setScaleMag(double scale) {
+		baseScaleMag = Max(0.0, scale);
+		applyScaleMag(baseScaleMag);
+	}
+
+	void TayamaBoss::setRotatingSpreadAttackSettings(double duration, double interval) {
+		rotatingSpreadAttackDuration = Max(0.1, duration);
+		rotatingSpreadAttackInterval = Max(0.05, interval);
+	}
+
+	void TayamaBoss::setTargetAttackSettings(double duration, double interval) {
+		targetAttackDuration = Max(0.1, duration);
+		targetAttackInterval = Max(0.05, interval);
+	}
+
+	void TayamaBoss::setTargetAttackSpeedSettings(double baseSpeed, double intervalSpeed) {
+		targetAttackBaseSpeed = Max(0.0, baseSpeed);
+		targetAttackIntervalSpeed = intervalSpeed;
+	}
+
+	void TayamaBoss::setLineAttackSettings(double moveDuration, double targetY, double cherryInterval) {
+		lineAttackMoveDuration = Max(0.1, moveDuration);
+		lineAttackTargetY = targetY;
+		lineAttackCherryInterval = Max(4.0, cherryInterval);
+	}
+
+	void TayamaBoss::setLineAttackWarningSettings(double warnScale, double scaleUpTime, double scaleDownTime, double generateWaitTime) {
+		lineAttackWarnScale = Max(1.0, warnScale);
+		lineAttackScaleUpTime = Max(0.05, scaleUpTime);
+		lineAttackScaleDownTime = Max(0.05, scaleDownTime);
+		lineAttackGenerateWaitTime = Max(0.0, generateWaitTime);
+	}
+
+	void TayamaBoss::startRandomAttack() {
+		if (attackCountInSet == 0) {
+			targetAttackCountInSet = Random(1, 2);
+		}
+
+		if (attackCountInSet < 3) {
+			currentAttackPattern = (attackCountInSet == targetAttackCountInSet) ? 1 : 0;
+		}
+		else {
+			currentAttackPattern = 2;
+		}
+
+		switch (currentAttackPattern) {
+		case 0:
+			startRotatingSpreadAttack();
+			break;
+		case 1:
+			startTargetAttack();
+			break;
+		case 2:
+			startLineAttack();
+			break;
+		default:
+			startRotatingSpreadAttack();
+			break;
+		}
+	}
+
+	void TayamaBoss::startRotatingSpreadAttack() {
+		currentAttackPattern = 0;
+		attackStopwatch.restart();
+		attackIntervalStopwatch.restart();
+		bossStageManager->createCherrySpread(rotatingSpreadCherryNum, rotatingSpreadCherrySpeed, [this]() { return createTrapBarrageCherry(); });
+	}
+
+	void TayamaBoss::updateRotatingSpreadAttack() {
+		textureAngle += rotatingSpreadRotateSpeed * Scene::DeltaTime();
+
+		if (attackIntervalStopwatch.sF() >= rotatingSpreadAttackInterval) {
+			bossStageManager->createCherrySpread(rotatingSpreadCherryNum, rotatingSpreadCherrySpeed, [this]() { return createTrapBarrageCherry(); });
+			attackIntervalStopwatch.restart();
+		}
+
+		if (attackStopwatch.sF() >= rotatingSpreadAttackDuration) {
+			finishAttack();
+		}
+	}
+
+	void TayamaBoss::startTargetAttack() {
+		currentAttackPattern = 1;
+		attackStopwatch.restart();
+		attackIntervalStopwatch.restart();
+		bossStageManager->createSkyTargetCherry(targetAttackLineNum, targetAttackIsAddLine, [this]() { return createTrapSkyTargetCherry(); }, targetAttackBaseSpeed, targetAttackIntervalSpeed);
+	}
+
+	void TayamaBoss::updateTargetAttack() {
+		if (attackIntervalStopwatch.sF() >= targetAttackInterval) {
+			bossStageManager->createSkyTargetCherry(targetAttackLineNum, targetAttackIsAddLine, [this]() { return createTrapSkyTargetCherry(); }, targetAttackBaseSpeed, targetAttackIntervalSpeed);
+			attackIntervalStopwatch.restart();
+		}
+
+		if (attackStopwatch.sF() >= targetAttackDuration) {
+			finishAttack();
+		}
+	}
+
+	void TayamaBoss::startLineAttack() {
+		currentAttackPattern = 2;
+		lineAttackStep = 0;
+		attackStopwatch.restart();
+		attackIntervalStopwatch.restart();
+		Sound::playOneShot(Sound::VC_PON);
+	}
+
+	void TayamaBoss::updateLineAttack() {
+		const double warnedScale = baseScaleMag * lineAttackWarnScale;
+
+		switch (lineAttackStep) {
+		case 0:
+			applyScaleMag(Math::Lerp(baseScaleMag, warnedScale, Min(1.0, attackStopwatch.sF() / lineAttackScaleUpTime)));
+			if (attackStopwatch.sF() >= lineAttackScaleUpTime) {
+				attackStopwatch.restart();
+				lineAttackStep = 1;
+			}
+			break;
+		case 1:
+			applyScaleMag(Math::Lerp(warnedScale, baseScaleMag, Min(1.0, attackStopwatch.sF() / lineAttackScaleDownTime)));
+			if (attackStopwatch.sF() >= lineAttackScaleDownTime) {
+				applyScaleMag(baseScaleMag);
+				attackStopwatch.restart();
+				lineAttackStep = 2;
+			}
+			break;
+		case 2:
+			if (attackStopwatch.sF() >= lineAttackGenerateWaitTime) {
+				generateLineAttack();
+				attackStopwatch.restart();
+				Sound::playOneShot(Sound::SPIKETRAP);
+				lineAttackStep = 3;
+			}
+			break;
+		case 3:
+			if (attackStopwatch.sF() >= lineAttackMoveDuration + 0.3) {
+				finishAttack();
+			}
+			break;
+		}
+	}
+
+	void TayamaBoss::generateLineAttack() {
+		const double startY = Global::stageHeight + 32.0;
+		for (double x = -lineAttackCherryInterval; x <= Global::stageWidth + lineAttackCherryInterval; x += lineAttackCherryInterval) {
+			const Vec2 start{ x, startY };
+			const Vec2 target{ x, lineAttackTargetY };
+			bossStageManager->createCherry(createTrapLineCherry(start, target));
+		}
+	}
+
+	std::shared_ptr<BossBarrageCherry> TayamaBoss::createTrapBarrageCherry() {
+		auto cherry = std::make_shared<BossBarrageCherry>(pos, 1.0, BossCherryType::None);
+		cherry->setCustomTexture(U"sprCherryTrap", 32, true);
+		return cherry;
+	}
+
+	std::shared_ptr<BossSkyTargetCherry> TayamaBoss::createTrapSkyTargetCherry() {
+		auto cherry = std::make_shared<BossSkyTargetCherry>(pos, 1.0, BossCherryType::None);
+		cherry->setCustomTexture(U"sprCherryTrap", 32, true);
+		return cherry;
+	}
+
+	std::shared_ptr<TayamaLineCherry> TayamaBoss::createTrapLineCherry(Vec2 startPos, Vec2 targetPos) {
+		auto cherry = std::make_shared<TayamaLineCherry>(startPos, targetPos, 1.0, lineAttackMoveDuration);
+		cherry->setCustomTexture(U"sprCherryTrap", 32, true);
+		return cherry;
+	}
+
+	void TayamaBoss::finishAttack() {
+		textureAngle = 0.0;
+		applyScaleMag(baseScaleMag);
+		attackStopwatch.reset();
+		attackIntervalStopwatch.restart();
+		attackCountInSet = (attackCountInSet + 1) % 4;
+		appearanceStep = 2;
+	}
+
+	void TayamaBoss::updateDefeatedFall() {
+		defeatedFallSpeed += defeatedFallAcceleration;
+		pos.y += defeatedFallSpeed;
+		textureAngle += defeatedRotateSpeed * Scene::DeltaTime();
+
+		if (pos.y > Global::stageHeight + 128.0 * scaleMag) {
+			isDelete = true;
+		}
+	}
+
+	void TayamaBoss::barrageUpdate() {
+		if (isDefeatedFall) {
+			updateDefeatedFall();
+			return;
+		}
+
+		switch (appearanceStep) {
+		case 0:
+			if (getIsMoveFinished()) {
+				appearanceStep = 1;
+			}
+			break;
+		case 1:
+			if (hpBarAlpha < 1.0) {
+				hpBarAlpha = Min(1.0, hpBarAlpha + 0.05);
+			}
+			else {
+				attackIntervalStopwatch.restart();
+				appearanceStep = 2;
+			}
+			hpBarDelay.update(hp, maxHp);
+			break;
+		case 2:
+			hpBarDelay.update(hp, maxHp);
+			if (attackIntervalStopwatch.sF() >= attackWaitTime) {
+				startRandomAttack();
+				appearanceStep = 3;
+			}
+			break;
+		case 3:
+			hpBarDelay.update(hp, maxHp);
+			switch (currentAttackPattern) {
+			case 0:
+				updateRotatingSpreadAttack();
+				break;
+			case 1:
+				updateTargetAttack();
+				break;
+			case 2:
+				updateLineAttack();
+				break;
+			default:
+				updateRotatingSpreadAttack();
+				break;
+			}
+			break;
+		}
+	}
+
+	void TayamaBoss::draw() const {
+		constexpr int32 frameSize = 128;
+		const int32 texRange = Periodic::Square0_1(0.5) * frameSize;
+		TextureAsset(U"sprCherryTrapBoss")(texRange, 0, frameSize, frameSize)
+			.scaled(scaleMag)
+			.rotated(Math::ToRadians(textureAngle))
+			.drawAt(pos, ColorF(1.0, isMuteki ? 0.6 : 1.0));
+		//hitBox->draw(ColorF(0.5,0.5));
+
+		if (!hasHp) {
+			return;
+		}
+
+		const double width = Global::stageWidth;
+		const double height = 20.0;
+		const Vec2 barPos{ Global::stageWidth / 2.0, 0.0 };
+		drawBossHpBar(barPos, width, height, hp, maxHp, hpBarAlpha, hpBarDelay);
+
+		const String bossName = U"Boss : Tayama";
+		const Vec2 textPos{ 6, 18 };
+		for (const Vec2 offset : { Vec2{-1, 0}, Vec2{1, 0}, Vec2{0, -1}, Vec2{0, 1} }) {
+			FontAsset(U"BossHp")(bossName).draw(textPos + offset, ColorF{ 0.0, 0.0, 0.0, hpBarAlpha });
+		}
+		FontAsset(U"BossHp")(bossName).draw(textPos, ColorF{ 1.0, 1.0, 1.0, hpBarAlpha });
+	}
+
+	void TayamaBoss::hited() {
+		if (isMuteki || hp <= 0 || isDefeatedFall) {
+			return;
+		}
+
+		Sound::playOneShot(Sound::BOSSHIT);
+		--hp;
+
+		if (hp <= 0) {
+			Sound::playOneShot(Sound::DEATH);
+			Sound::playOneShot(Sound::VC_BIKKURI);
+			canPlayerKill = false;
+			hasHp = false;
+			isDefeatedFall = true;
+			defeatedFallSpeed = 0.0;
+			attackStopwatch.reset();
+			attackIntervalStopwatch.reset();
+			isMuteki = false;
+			Global::isBossDefeated = true;
+			return;
+		}
+
+		isMuteki = true;
+		mutekiInterval.restart();
+	}
+
+	LowBossCherry::LowBossCherry(Vec2 startPos, double scale, BossStageManager& manager)
+		: bossStageManager(&manager), Cherry(startPos, scale) {
+		pos = startPos;
+		scaleMag = scale;
+		hitBox = std::make_shared<CircleHitBox>(pos, 16.0 * scaleMag);
+		type = ObjectType::Cherry;
+		cherryType = CherryType::Boss;
+
+		canPlayerKill = true;
+		isDelete = false;
+		isOutOfScreen = false;
+		isDeleteOutOfScreen = false;
+		hasHp = true;
+		maxHp = 25;
+		hp = maxHp;
+		hpBarDelay.reset(hp, maxHp);
+		speed = moveSpeed;
+		direction = 90;
+		depth = 51;
+		appearanceStep = 0;
+	}
+
+	void LowBossCherry::updateDefeatedFall() {
+		defeatedFallSpeed += defeatedFallAcceleration;
+		pos.y += defeatedFallSpeed;
+		textureAngle += defeatedRotateSpeed * Scene::DeltaTime();
+
+		if (pos.y > Global::stageHeight + 64.0 * scaleMag) {
+			isDelete = true;
+		}
+	}
+
+	void LowBossCherry::createSpreadAttack() {
+		if (!bossStageManager) {
+			return;
+		}
+
+		bossStageManager->createCherrySpread(spreadCherryNum, spreadCherrySpeed, [this]() { return createLowBossBarrageCherry(); });
+	}
+
+	void LowBossCherry::createTargetAttack() {
+		if (!bossStageManager) {
+			return;
+		}
+
+		bossStageManager->createSkyTargetCherry(targetLineNum, targetIsAddLine, [this]() { return createLowBossTargetCherry(); }, targetBaseSpeed, targetIntervalSpeed);
+	}
+
+	std::shared_ptr<BossBarrageCherry> LowBossCherry::createLowBossBarrageCherry() {
+		auto cherry = std::make_shared<BossBarrageCherry>(pos, 1.0, BossCherryType::None);
+		cherry->setCustomAppleEmoji();
+		return cherry;
+	}
+
+	std::shared_ptr<BossSkyTargetCherry> LowBossCherry::createLowBossTargetCherry() {
+		auto cherry = std::make_shared<BossSkyTargetCherry>(pos, 1.0, BossCherryType::None);
+		cherry->setCustomAppleEmoji();
+		return cherry;
+	}
+
+	void LowBossCherry::barrageUpdate() {
+		if (isDefeatedFall) {
+			updateDefeatedFall();
+			return;
+		}
+
+		switch (appearanceStep) {
+		case 0:
+			if (pos.y <= targetY) {
+				pos.y = targetY;
+				speed = 0.0;
+				appearanceStep = 1;
+				spreadStopwatch.restart();
+				targetStopwatch.restart();
+				createSpreadAttack();
+				createTargetAttack();
+			}
+			break;
+		case 1:
+			if (spreadStopwatch.sF() >= spreadInterval) {
+				createSpreadAttack();
+				spreadStopwatch.restart();
+			}
+			if (targetStopwatch.sF() >= targetInterval) {
+				createTargetAttack();
+				targetStopwatch.restart();
+			}
+			break;
+		}
+
+		if (hpBarAlpha < 1.0) {
+			hpBarAlpha = Min(1.0, hpBarAlpha + 0.05);
+		}
+		hpBarDelay.update(hp, maxHp);
+	}
+
+	void LowBossCherry::draw() const {
+		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
+		static const Texture appleTexture{ U"\U0001F34E"_emoji };
+
+		appleTexture
+			.scaled(0.25 * scaleMag)
+			.rotated(Math::ToRadians(textureAngle))
+			.drawAt(pos, ColorF{ 1.0, isMuteki ? 0.6 : 1.0 });
+
+		//hitBox->draw(ColorF{ 0.2, 0.7, 1.0, 0.35 });
+
+		if (!hasHp) {
+			return;
+		}
+
+		const double width = Global::stageWidth;
+		const double height = 20.0;
+		const Vec2 barPos{ Global::stageWidth / 2.0, 0.0 };
+		drawBossHpBar(barPos, width, height, hp, maxHp, hpBarAlpha, hpBarDelay);
+
+		const String bossName = U"Boss";
+		const Vec2 textPos{ 6, 18 };
+		for (const Vec2 offset : { Vec2{-1, 0}, Vec2{1, 0}, Vec2{0, -1}, Vec2{0, 1} }) {
+			FontAsset(U"BossHp")(bossName).draw(textPos + offset, ColorF{ 0.0, 0.0, 0.0, hpBarAlpha });
+		}
+		FontAsset(U"BossHp")(bossName).draw(textPos, ColorF{ 1.0, 1.0, 1.0, hpBarAlpha });
+	}
+
+	void LowBossCherry::hited() {
+		if (isMuteki || hp <= 0 || isDefeatedFall) {
+			return;
+		}
+
+		Sound::playOneShot(Sound::BOSSHIT);
+		--hp;
+
+		if (hp <= 0) {
+			Sound::playOneShot(Sound::DEATH);
+			canPlayerKill = false;
+			hasHp = false;
+			isDefeatedFall = true;
+			defeatedFallSpeed = 0.0;
+			isMuteki = false;
+			Global::isBossDefeated = true;
+			if (Global::moraleValue1 < 30 && Global::moraleValue2 < 30) {
+				Global::endingValue = 1;
+			}
+			return;
 		}
 
 		isMuteki = true;
@@ -260,6 +741,7 @@ namespace Iwanna {
 		hasHp = true;
 		maxHp = 7;
 		hp = maxHp;
+		hpBarDelay.reset(hp, maxHp);
 
 		speed = 0;
 		direction = 0;
@@ -312,6 +794,7 @@ namespace Iwanna {
 		pos.y = -r * sin(Math::ToRadians(c)) + centerPos.y;
 
 		setTypeColor();
+		hpBarDelay.update(hp, maxHp);
 	}
 
 	void BossSubCherry::draw() const {
@@ -326,14 +809,7 @@ namespace Iwanna {
 			double height = 4;              // 高さ
 			Vec2 barPos = pos + Vec2(0, -10 * scaleMag); // 上に表示
 
-			// 最大HP（赤）
-			RectF(barPos.x - width / 2, barPos.y, width, height)
-				.draw(ColorF(1.0, 0.2, 0.2));
-
-			// 現在HP（緑）
-			double hpRate = static_cast<double>(hp) / maxHp;
-			RectF(barPos.x - width / 2, barPos.y, width * hpRate, height)
-				.draw(ColorF(0.2, 1.0, 0.2));
+			drawBossHpBar(barPos, width, height, hp, maxHp, 1.0, hpBarDelay);
 		}
 	}
 
@@ -428,8 +904,36 @@ namespace Iwanna {
 
 	void BossBarrageCherry::draw() const {
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
+		if (customAppleEmoji) {
+			static const Texture appleTexture{ U"\U0001F34E"_emoji };
+			appleTexture.scaled(0.13 * scaleMag).drawAt(pos.x - 1, pos.y - 1, ColorF{ 1.0, alpha });
+			//hitBox->draw(ColorF{ 0.2, 0.7, 1.0, 0.35 });
+			return;
+		}
+		if (customTextureName != U"") {
+			const int32 texRange = customTextureAnimation ? (static_cast<int32>(Periodic::Square0_1(0.5)) * customTextureEdge) : 0;
+			TextureAsset(customTextureName)(texRange, 0, customTextureEdge, customTextureEdge).scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1, ColorF(customTextureColor.r, customTextureColor.g, customTextureColor.b, customTextureColor.a * alpha));
+			return;
+		}
 		TextureAsset(U"sprCherryLowBarrageWhite").scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1, typeColor);
 		//hitBox->draw(ColorF(0.7,0.7));//判定の可視化
+	}
+
+	void BossBarrageCherry::setCustomTexture(String textureName, int32 textureEdge, bool hasAnimation) {
+		customTextureName = textureName;
+		customTextureEdge = textureEdge;
+		customTextureAnimation = hasAnimation;
+		customAppleEmoji = false;
+	}
+
+	void BossBarrageCherry::setCustomAppleEmoji() {
+		customAppleEmoji = true;
+		customTextureName = U"";
+		hitBox = std::make_shared<CircleHitBox>(pos, 9.0 * scaleMag);
+	}
+
+	void BossBarrageCherry::setCustomTextureColor(ColorF color) {
+		customTextureColor = color;
 	}
 
 	// 種類で色を決定する
@@ -517,27 +1021,27 @@ namespace Iwanna {
 				switch (cherrySubType) {
 				case BossCherryType::Red:
 					bossStageManager->createCherrySpread(25, 6, [this]() { return std::make_shared<BossBarrageCherry>(pos, 1.0, cherrySubType); });
-					AudioAsset(Sound::BLOCKBREAK).playOneShot();
+					Sound::playOneShot(Sound::BLOCKBREAK);
 					break;
 				case BossCherryType::Blue:
 					bossStageManager->createBlueLineCherry(20, 80, [this]() { return std::make_shared<BossFallBlueCherry>(pos, 1.0, cherrySubType); });
-					AudioAsset(Sound::CHERRYFALL).playOneShot();
+					Sound::playOneShot(Sound::CHERRYFALL);
 					break;
 				case BossCherryType::Yellow:
 					bossStageManager->createYellowStarCherry(5, 2, pos, 7, [this]() { return std::make_shared<BossYellowStarCherry>(pos, 1.0, cherrySubType); });
-					AudioAsset(Sound::BLOCKBREAK).playOneShot();
+					Sound::playOneShot(Sound::BLOCKBREAK);
 					break;
 				case BossCherryType::Green:
 					bossStageManager->createGreenWaveCherry(pos, 0.05, 10, [this]() { return std::make_shared<BossGreenWaveCherry>(pos, 1.0, cherrySubType); });
-					AudioAsset(Sound::BLOCKBREAK).playOneShot();
+					Sound::playOneShot(Sound::BLOCKBREAK);
 					break;
 				case BossCherryType::Orange:
 					bossStageManager->createOrangeStopCherry(false, [this]() { return std::make_shared<BossOrangeStopCherry>(pos, 1.0, cherrySubType); });
-					AudioAsset(Sound::SPIKETRAP).playOneShot();
+					Sound::playOneShot(Sound::SPIKETRAP);
 					break;
 				case BossCherryType::Sky:
 					bossStageManager->createSkyTargetCherry(7, false, [this]() { return std::make_shared<BossSkyTargetCherry>(pos, 1.0, cherrySubType); });
-					AudioAsset(Sound::BLOCKBREAK).playOneShot();
+					Sound::playOneShot(Sound::BLOCKBREAK);
 					break;
 				}
 			}
@@ -546,27 +1050,27 @@ namespace Iwanna {
 				case BossCherryType::Red:
 					bossStageManager->createCherrySpread(20, 6, [this]() { return std::make_shared<BossBarrageCherry>(pos, 1.0, cherrySubType); });
 					bossStageManager->createCherrySpread(25, 4, [this]() { return std::make_shared<BossBarrageCherry>(pos, 1.0, cherrySubType); });
-					AudioAsset(Sound::BLOCKBREAK).playOneShot();
+					Sound::playOneShot(Sound::BLOCKBREAK);
 					break;
 				case BossCherryType::Blue:
 					bossStageManager->createBlueLineCherry(40, 50, [this]() { return std::make_shared<BossFallBlueCherry>(pos, 1.0, cherrySubType); });
-					AudioAsset(Sound::CHERRYFALL).playOneShot();
+					Sound::playOneShot(Sound::CHERRYFALL);
 					break;
 				case BossCherryType::Yellow:
 					bossStageManager->createYellowStarCherry(5, 2, pos, 10, [this]() { return std::make_shared<BossYellowStarCherry>(pos, 1.0, cherrySubType); });
-					AudioAsset(Sound::BLOCKBREAK).playOneShot();
+					Sound::playOneShot(Sound::BLOCKBREAK);
 					break;
 				case BossCherryType::Green:
 					bossStageManager->createGreenWaveCherry(pos, 0.05, 13, [this]() { return std::make_shared<BossGreenWaveCherry>(pos, 1.0, cherrySubType); });
-					AudioAsset(Sound::BLOCKBREAK).playOneShot();
+					Sound::playOneShot(Sound::BLOCKBREAK);
 					break;
 				case BossCherryType::Orange:
 					bossStageManager->createOrangeStopCherry(true, [this]() { return std::make_shared<BossOrangeStopCherry>(pos, 1.0, cherrySubType); });
-					AudioAsset(Sound::SPIKETRAP).playOneShot();
+					Sound::playOneShot(Sound::SPIKETRAP);
 					break;
 				case BossCherryType::Sky:
 					bossStageManager->createSkyTargetCherry(5, true, [this]() { return std::make_shared<BossSkyTargetCherry>(pos, 1.0, cherrySubType); });
-					AudioAsset(Sound::BLOCKBREAK).playOneShot();
+					Sound::playOneShot(Sound::BLOCKBREAK);
 					break;
 				}
 			}
@@ -576,27 +1080,27 @@ namespace Iwanna {
 			switch (cherrySubType) {
 			case BossCherryType::Red:
 				bossStageManager->createCherrySpread(20, 6, [this]() { return std::make_shared<BossBarrageCherry>(pos, 1.0, cherrySubType); });
-				AudioAsset(Sound::BLOCKBREAK).playOneShot();
+				Sound::playOneShot(Sound::BLOCKBREAK);
 				break;
 			case BossCherryType::Blue:
 				bossStageManager->createBlueLineCherry(20, 80, [this]() { return std::make_shared<BossFallBlueCherry>(pos, 1.0, cherrySubType); });
-				AudioAsset(Sound::CHERRYFALL).playOneShot();
+				Sound::playOneShot(Sound::CHERRYFALL);
 				break;
 			case BossCherryType::Yellow:
 				bossStageManager->createYellowStarCherry(5, 2, pos, 6, [this]() { return std::make_shared<BossYellowStarCherry>(pos, 1.0, cherrySubType); });
-				AudioAsset(Sound::BLOCKBREAK).playOneShot();
+				Sound::playOneShot(Sound::BLOCKBREAK);
 				break;
 			case BossCherryType::Green:
 				bossStageManager->createGreenWaveCherry(pos, 0.05, 11, [this]() { return std::make_shared<BossGreenWaveCherry>(pos, 1.0, cherrySubType); });
-				AudioAsset(Sound::BLOCKBREAK).playOneShot();
+				Sound::playOneShot(Sound::BLOCKBREAK);
 				break;
 			case BossCherryType::Orange:
 				bossStageManager->createOrangeStopCherry(false, [this]() { return std::make_shared<BossOrangeStopCherry>(pos, 1.0, cherrySubType); });
-				AudioAsset(Sound::SPIKETRAP).playOneShot();
+				Sound::playOneShot(Sound::SPIKETRAP);
 				break;
 			case BossCherryType::Sky:
 				bossStageManager->createSkyTargetCherry(6, false, [this]() { return std::make_shared<BossSkyTargetCherry>(pos, 1.0, cherrySubType); });
-				AudioAsset(Sound::BLOCKBREAK).playOneShot();
+				Sound::playOneShot(Sound::BLOCKBREAK);
 				break;
 			}
 		}

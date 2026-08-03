@@ -17,23 +17,40 @@ namespace Iwanna {
         }
 
         Point getCell(const Vec2& pos) const {
-            return Point(int(pos.x / cellSize), int(pos.y / cellSize));
+            return Point(
+                static_cast<int32>(Floor(pos.x / cellSize)),
+                static_cast<int32>(Floor(pos.y / cellSize))
+            );
         }
 
         void add(GameObject* obj) {
-            cells[getCell(obj->pos)].push_back(obj);
+            const RectF area = obj->getBroadRect();
+            const Point tl = getCell(area.pos);
+            const Point br = getCell(area.pos + area.size);
+
+            for (int y = tl.y; y <= br.y; ++y) {
+                for (int x = tl.x; x <= br.x; ++x) {
+                    cells[Point(x, y)].push_back(obj);
+                }
+            }
         }
 
         Array<GameObject*> query(const RectF& area) {
             Array<GameObject*> result;
+            HashSet<GameObject*> addedObjects;
             Point tl = getCell(area.pos);
             Point br = getCell(area.pos + area.size);
 
             for (int y = tl.y; y <= br.y; ++y) {
                 for (int x = tl.x; x <= br.x; ++x) {
                     if (cells.contains(Point(x,y))) {
-                        for (auto* o : cells[Point(x,y)])
+                        for (auto* o : cells[Point(x,y)]) {
+                            if (addedObjects.contains(o)) {
+                                continue;
+                            }
+                            addedObjects.insert(o);
                             result.push_back(o);
+                        }
                     }
                 }
             }

@@ -17,8 +17,56 @@ namespace Iwanna {
 		startGame();
 	}
 
+	void MainGame::resetGameToStartMenu() {
+		audio.stop();
+		gameoverAudio.stop();
+		nowSoundName = U"";
+		playGameoverBgmOne = true;
+
+		Global::isExistSaveData = false;
+		Global::savedStartPlayerPos = Vec2{ -100, -100 };
+		Global::savedRoomName = Global::startRoomName;
+		Global::prevRoomName = U"";
+		Global::nowRoomName = Global::startRoomName;
+		Global::isChangeRoom = false;
+		Global::isLoopStage = false;
+
+		Global::trap2MapBgmStop = false;
+		Global::trapActivatedInTrap2Map = false;
+		Global::trapActivatedId30InTrap2Map = false;
+		Global::trapCameraActivatedInTrap2Map = false;
+		Global::warningTrapPaused = false;
+		Global::isPlayerFrozen = false;
+		Global::isSecretTriggerActivated = false;
+		Global::isBossAttackPowerUp = false;
+		Global::isBossExBarrageAttack = false;
+		Global::isBossDefeated = false;
+		Global::isCameraFollowMode = false;
+		Global::doNotStopBgm = false;
+		Global::prepareGetItem1 = false;
+
+		Global::elapsedPlayTime = 0.0;
+		Global::deathCount = 0;
+		Global::isRestartRoomReload = false;
+		Global::isLow1RestartDeathCheckActive = false;
+		Global::low1RestartDeathCheckElapsed = 0.0;
+
+		Global::remainingGenerateStageNames.clear();
+		Global::isGenerateStageFakeLoading = false;
+
+		Global::endingValue = 4;
+		if (!(Global::moraleValue2 >= 90 && Global::moraleValue3 >= 90 && Global::moraleValue4 >= 90)
+			&& Global::moraleValue1 >= 90) {
+			Global::endingValue = 3;
+		}
+
+		if (Global::moraleValue2 > 90) Window::SetTitle(U"TestPlayGame (Debug Build)");
+		else Window::SetTitle(U"TestPlayGame");
+	}
+
 	void MainGame::startGame() {
 		int32 chapter = 1;
+		const bool startedByRoomChange = Global::isChangeRoom;
 
 		//ステージ名称系の初期化
 		if (!Global::isExistSaveData && !Global::isChangeRoom) {
@@ -29,9 +77,9 @@ namespace Iwanna {
 		if(!Global::isChangeRoom) Global::nowRoomName = Global::savedRoomName;
 
 		//ステージの名称から種類を決定
-		if (Global::nowRoomName == U"boss" || Global::nowRoomName == U"ExBoss") {
+		if (Global::nowRoomName == U"boss" || Global::nowRoomName == U"bossLow" || Global::nowRoomName == U"ExBoss" || Global::nowRoomName == U"trapBoss") {
 			stageType = StageType::Boss;
-			if (Global::nowRoomName == U"boss" || Global::nowRoomName == U"ExBoss")pauseBgm();
+			pauseBgm();
 		}
 		else {
 			stageType = StageType::Normal;
@@ -66,6 +114,14 @@ namespace Iwanna {
 		case StageType::Boss:bossStageManager.setUpObjects(chapter); break;
 		}
 
+		Global::isLow1RestartDeathCheckActive = (Global::isRestartRoomReload && Global::nowRoomName == U"low1");
+		Global::low1RestartDeathCheckElapsed = 0.0;
+		Global::isRestartRoomReload = false;
+
+		if (startedByRoomChange && Global::isGenerateStage(Global::nowRoomName)) {
+			Global::isGenerateStageFakeLoading = true;
+		}
+
 		playGameoverBgmOne = true;
 		gameoverAudio.stop();
 
@@ -91,11 +147,25 @@ namespace Iwanna {
 
 			//playerが死亡していたらBGM一時停止
 			if (stageManager.getPlayer()->getIsDead()) {
+				if (Global::isLow1RestartDeathCheckActive
+					&& Global::low1RestartDeathCheckElapsed <= Global::low1RestartDeathCheckDuration) {
+					Global::endingValue = 5;
+					Global::isLow1RestartDeathCheckActive = false;
+				}
 				if (playGameoverBgmOne && !Global::doNotStopBgm) {
 					playGameoverBgm();
 					playGameoverBgmOne = false;
 				}
 				return;
+			}
+			if (Global::nowRoomName != U"clear") {
+				Global::elapsedPlayTime += Scene::DeltaTime();
+			}
+			if (Global::isLow1RestartDeathCheckActive) {
+				Global::low1RestartDeathCheckElapsed += Scene::DeltaTime();
+				if (Global::low1RestartDeathCheckElapsed > Global::low1RestartDeathCheckDuration) {
+					Global::isLow1RestartDeathCheckActive = false;
+				}
 			}
 			stageManager.getPlayer()->setStopOrPlayAnimation(!Global::warningTrapPaused);
 			break;
@@ -103,21 +173,29 @@ namespace Iwanna {
 		case StageType::Boss:
 			bossStageManager.update();
 			//playerが死亡していたらBGM一時停止
-			if (bossStageManager.getPlayer()->getIsDead() && !Global::doNotStopBgm) {
-				if (playGameoverBgmOne) {
+			if (bossStageManager.getPlayer()->getIsDead()) {
+				if (playGameoverBgmOne && !Global::doNotStopBgm) {
 					playGameoverBgm();
 					playGameoverBgmOne = false;
 				}
 				return;
 			}
+			Global::elapsedPlayTime += Scene::DeltaTime();
 			//bossが出現したらBGM再生
 			if (bossStageManager.bossBgmStart) {
-				if(Global::nowRoomName == U"boss") playBgm(U"boss_normal");
+				if(Global::nowRoomName == U"boss" || Global::nowRoomName == U"bossLow") {
+					if (Global::mainBgmNumber == 0) playBgm(U"boss_low", bossLowBgmVolume);
+					else playBgm(U"boss_normal");
+				}
+				if(Global::nowRoomName == U"trapBoss") {
+					if (bossStageManager.isTrapBossSecondPhaseBgm()) playBgm(U"boss_normal");
+					else playBgm(U"boss_low", bossLowBgmVolume);
+				}
 				if(Global::nowRoomName == U"ExBoss") playBgm(U"ex_boss");
 				bossStageManager.bossBgmStart = false;
 			}
 
-			if (Global::isBossDefeated)stopBgm();
+			if (bossStageManager.shouldStopBossBgm())stopBgm();
 			break;
 		}
 	}
@@ -143,11 +221,12 @@ namespace Iwanna {
 		}
 	}
 
-	void MainGame::playBgm(String bgm) {
+	void MainGame::playBgm(String bgm, double volume) {
 		stopBgm();
 		
 		audio = AudioAsset{bgm};
 		nowSoundName = bgm;
+		audio.setVolume(volume);
 		/*
 		SecondsF startTime = 0.0s;
 		int32 startStep = 0;

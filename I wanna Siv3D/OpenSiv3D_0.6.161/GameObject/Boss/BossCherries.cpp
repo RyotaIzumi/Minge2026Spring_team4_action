@@ -1,5 +1,7 @@
 ﻿#include "BossCherry.h"
 
+#include "../../StageManager/BossStageManager.h"
+
 namespace Iwanna{
 	// ----- 弾幕用青りんご ----- //
 	BossFallBlueCherry::BossFallBlueCherry(Vec2 startPos, double scale, BossCherryType cType) : BossBarrageCherry(startPos, scale, cType) {
@@ -35,6 +37,135 @@ namespace Iwanna{
 				isDelete = true;
 			}
 			break;
+		}
+
+		setTypeColor();
+	}
+
+	// ----- TayamaBoss用のライン弾幕 ----- //
+	TayamaLineCherry::TayamaLineCherry(Vec2 startPos, Vec2 targetPos, double scale, double duration)
+		: BossBarrageCherry(startPos, scale, BossCherryType::None), startPos(startPos), targetPos(targetPos) {
+		pos = startPos;
+		scaleMag = scale;
+		hitBox = std::make_shared<CircleHitBox>(pos, hitBoxSize * scaleMag);
+		type = ObjectType::Cherry;
+		cherryType = CherryType::Barrage;
+		cherrySubType = BossCherryType::None;
+
+		canPlayerKill = true;
+		isDelete = false;
+		isOutOfScreen = false;
+		isDeleteOutOfScreen = false;
+
+		alpha = 1.0;
+		speed = 0;
+		gravity = 0;
+		moveDuration = Max(0.1, duration);
+		moveElapsed = 0.0;
+		fallSpeed = 0.0;
+		attackStep = 0;
+	}
+
+	void TayamaLineCherry::barrageUpdate() {
+		switch (attackStep) {
+		case 0:
+			moveElapsed += Scene::DeltaTime();
+			{
+				const double t = Min(1.0, moveElapsed / moveDuration);
+				const double easedT = EaseOutQuad(t);
+
+				pos.x = Math::Lerp(startPos.x, targetPos.x, easedT);
+				pos.y = Math::Lerp(startPos.y, targetPos.y, easedT);
+
+				if (t >= 1.0) {
+					pos = targetPos;
+					attackStep = 1;
+				}
+			}
+			break;
+		case 1:
+			fallSpeed += fallAcceleration;
+			pos.y += fallSpeed;
+
+			if (pos.y > Global::stageHeight + 64.0) {
+				isDelete = true;
+			}
+			break;
+		}
+	}
+
+	TayamaSecondPhaseEyeCherry::TayamaSecondPhaseEyeCherry(Vec2 startPos, double scale, double initialSpeed, double acceleration)
+		: BossBarrageCherry(startPos, scale, BossCherryType::None), acceleration(acceleration) {
+		pos = startPos;
+		scaleMag = scale;
+		hitBox = std::make_shared<CircleHitBox>(pos, hitBoxSize * scaleMag);
+		type = ObjectType::Cherry;
+		cherryType = CherryType::Barrage;
+		cherrySubType = BossCherryType::None;
+
+		canPlayerKill = true;
+		isDelete = false;
+		isOutOfScreen = false;
+		isDeleteOutOfScreen = true;
+
+		alpha = 1.0;
+		speed = initialSpeed;
+	}
+
+	void TayamaSecondPhaseEyeCherry::barrageUpdate() {
+		speed += acceleration;
+		setTypeColor();
+	}
+
+	TayamaSecondPhaseTargetCherry::TayamaSecondPhaseTargetCherry(Vec2 startPos, double scale, double speed, double moveTime, double stopTime, int32 moveNum, BossStageManager& manager)
+		: BossBarrageCherry(startPos, scale, BossCherryType::None), bossStageManager(&manager) {
+		pos = startPos;
+		scaleMag = scale;
+		hitBox = std::make_shared<CircleHitBox>(pos, hitBoxSize * scaleMag);
+		type = ObjectType::Cherry;
+		cherryType = CherryType::Barrage;
+		cherrySubType = BossCherryType::None;
+
+		canPlayerKill = true;
+		isDelete = false;
+		isOutOfScreen = false;
+		isDeleteOutOfScreen = true;
+
+		alpha = 1.0;
+		moveSpeed = speed;
+		moveDuration = Max(0.1, moveTime);
+		stopDuration = Max(0.0, stopTime);
+		maxMoveCount = Max(1, moveNum);
+		moveCount = 0;
+		isStopping = false;
+		aimAtPlayer();
+		moveStopwatch.restart();
+	}
+
+	void TayamaSecondPhaseTargetCherry::aimAtPlayer() {
+		if (!bossStageManager || !bossStageManager->getPlayer()) {
+			return;
+		}
+
+		const Vec2 targetPos = bossStageManager->getPlayer()->pos;
+		const Vec2 diff = targetPos - pos;
+		direction = Math::ToDegrees(Atan2(-diff.y, diff.x));
+		speed = moveSpeed;
+	}
+
+	void TayamaSecondPhaseTargetCherry::barrageUpdate() {
+		if (isStopping) {
+			if (moveStopwatch.sF() >= stopDuration) {
+				isStopping = false;
+				++moveCount;
+				aimAtPlayer();
+				moveStopwatch.restart();
+			}
+		}
+		else if (moveCount < maxMoveCount - 1 && moveStopwatch.sF() >= moveDuration) {
+			speed = 0.0;
+			isStopping = true;
+			moveStopwatch.restart();
 		}
 
 		setTypeColor();

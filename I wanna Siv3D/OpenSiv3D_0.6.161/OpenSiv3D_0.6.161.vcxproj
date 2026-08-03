@@ -193,6 +193,7 @@
     <Image Include="App\Texture\Cherry\sprCherry.png" />
     <Image Include="App\Texture\Cherry\sprCherryAllWhite.png" />
     <Image Include="App\Texture\Cherry\sprCherryFrameWhite.png" />
+    <Image Include="App\Texture\Cherry\sprCherryLowWhite.png" />
     <Image Include="App\Texture\Cherry\sprCherryWhite.png" />
     <Image Include="App\Texture\Miku\sprMiku.png" />
   </ItemGroup>
@@ -383,6 +384,7 @@
     <ClInclude Include="60FPSwithAutoFrameSkip.h" />
     <ClInclude Include="GameObject\Item.h" />
     <ClInclude Include="UI\Achieve.h" />
+    <ClInclude Include="UI\BossHpBar.h" />
     <ClInclude Include="UI\TitleCard.h" />
     <ClInclude Include="Audio\AudioAsset.h" />
     <ClInclude Include="AvoidanceManager\AvoidanceManager.h" />

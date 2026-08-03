@@ -193,12 +193,12 @@ namespace Iwanna {
 	//ダメージを受けた際の処理
 	void Cherry::hited() {
 		if (hp > 0) {
-			AudioAsset(Sound::BOSSHIT).playOneShot();
+			Sound::playOneShot(Sound::BOSSHIT);
 			hp--;
 		}
 
 		if (hp <= 0) {
-			AudioAsset(Sound::DEATH).playOneShot();
+			Sound::playOneShot(Sound::DEATH);
 			isDelete = true;
 		}
 
@@ -241,15 +241,15 @@ namespace Iwanna {
 
 		cherryType = CherryType::Trap;
 
-		cherryTextureName = U"sprCherryLowWhite";
-		cherryColorType = CherryColorType::Blue;
+		cherryTextureName = U"sprCherryTrap";
+		cherryColorType = CherryColorType::None;
 
 		soundPlayOne = false;
 	}
 
 	void CherryTrap::trapUpdate(int32 id) {
 		checkOutOfScreen();
-		if (trapID == id) {
+		if (trapID == id && !isTrapActived) {
 			isTrapActived = true;
 		}
 
@@ -258,7 +258,7 @@ namespace Iwanna {
 
 			//効果音再生
 			if (!soundPlayOne) {
-				AudioAsset(Sound::CHERRYFALL).playOneShot();
+				Sound::playOneShot(Sound::CHERRYFALL);
 				soundPlayOne = true;
 			}
 		}
@@ -339,7 +339,7 @@ namespace Iwanna {
 	void GimmikBigCherry::generateAttack() {
 			switch (cherryColorType) {
 			case CherryColorType::Red:
-				stageManager->createCherrySpread(12, 4, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0,cherryColorType); });
+				stageManager->createCherrySpread(12, 3.5, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0,cherryColorType); });
 				break;
 			case CherryColorType::Blue:
 				stageManager->createBlueLineCherry([this]() { return std::make_shared<BarrageGimmikBlueCherry>(pos, 1.0, cherryColorType); });
@@ -352,7 +352,7 @@ namespace Iwanna {
 				break;
 			case CherryColorType::Orange:
 				stageManager->createOrangeStopCherry(true, [this]() { return std::make_shared<BarrageGimmikOrangeCherry>(pos, 1.0, cherryColorType); });
-				AudioAsset(Sound::SPIKETRAP).playOneShot();
+				Sound::playOneShot(Sound::SPIKETRAP);
 				break;
 			case CherryColorType::Sky:
 				stageManager->createSkyTargetCherry(7, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0, cherryColorType); });

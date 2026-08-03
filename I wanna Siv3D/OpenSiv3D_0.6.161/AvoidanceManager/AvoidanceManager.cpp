@@ -47,7 +47,7 @@ namespace Iwanna {
 		if (player->getIsGenerateBullet()) {
 			if (bullets.size() < bulletMaxNum) {
 				bullets << std::make_shared<Bullet>(player->pos, player->getDirection() == Global::Direction::RIGHT ? bulletSpeed : -bulletSpeed);
-				AudioAsset(Sound::SHOOT).playOneShot();
+				Sound::playOneShot(Sound::SHOOT);
 			}
 			player->setIsGenerateBullet(false);
 		}

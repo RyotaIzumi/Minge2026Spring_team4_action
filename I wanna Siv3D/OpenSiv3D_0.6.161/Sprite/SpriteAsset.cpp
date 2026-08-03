@@ -34,6 +34,8 @@ namespace Iwanna {
 		registerTexture(U"sprCherryLowBarrageWhite", CherryPath + U"sprCherryLowBarrageWhite.png");
 		registerTexture(U"sprCherryLowAllWhite", CherryPath + U"sprCherryLowAllWhite.png");
 		registerTexture(U"sprCherryLowBoss", CherryPath + U"sprCherryLowBoss.png");
+		registerTexture(U"sprCherryTrap", CherryPath + U"sprCherryTrap.png");
+		registerTexture(U"sprCherryTrapBoss", CherryPath + U"sprCherryTrapBoss.png");
 		registerTexture(U"sprSparkCherry", CherryPath + U"sparkCherry.png");
 
 		//ブロックテクスチャ登録
@@ -75,16 +77,24 @@ namespace Iwanna {
 		registerTexture(U"sprSpikeDown_secret", SpikePath + U"sprSpikeDown_secret.png");
 		registerTexture(U"sprSpikeRight_secret", SpikePath + U"sprSpikeRight_secret.png");
 
+		registerTexture(U"sprSpikeUp_trap", SpikePath + U"sprSpikeUp_trap.png");
+		registerTexture(U"sprSpikeLeft_trap", SpikePath + U"sprSpikeLeft_trap.png");
+		registerTexture(U"sprSpikeDown_trap", SpikePath + U"sprSpikeDown_trap.png");
+		registerTexture(U"sprSpikeRight_trap", SpikePath + U"sprSpikeRight_trap.png");
+
 		//背景テクスチャ登録
 		static const FilePath BackgroundPath = U"Texture/Background/";
 		registerTexture(U"background_sample", BackgroundPath + U"sample.png");
 		registerTexture(U"background_black", BackgroundPath + U"black.png");
 		registerTexture(U"background_cave", BackgroundPath + U"cave.png");
 		registerTexture(U"background_caveLong", BackgroundPath + U"caveLong.png");
+		registerTexture(U"background_trapBossCave1", BackgroundPath + U"trapBossCave1.png");
+		registerTexture(U"background_trapBossCave2", BackgroundPath + U"trapBossCave2.png");
 
 		//その他テクスチャ登録
 		static const FilePath OtherPath = U"Texture/Other/";
 		registerTexture(U"sprSave", OtherPath + U"sprSave.png");
+		registerTexture(U"sprSave_low", OtherPath + U"sprSave_low.png");
 		registerTexture(U"sprSave_normal", OtherPath + U"sprSave_normal.png");
 		registerTexture(U"sprWarp", OtherPath + U"sprWarp.png");
 		registerTexture(U"sprSecretWarp", OtherPath + U"sprSecretWarp.png");
@@ -97,11 +107,13 @@ namespace Iwanna {
 		registerTexture(U"treeTrap", OtherPath + U"tree.png");
 		registerTexture(U"transParentTreeTrap", OtherPath + U"transParentTree.png");
 		registerTexture(U"sprGAMEOVER", OtherPath + U"sprGAMEOVER.png");
+		registerTexture(U"sprGAMEOVER_low", OtherPath + U"sprGAMEOVER_low.png");
 		registerTexture(U"sprGAMEOVER_normal", OtherPath + U"sprGAMEOVER_normal.png");
 		registerTexture(U"hideLine", OtherPath + U"hideLine.png");
 		registerTexture(U"sprSign", OtherPath + U"sprSign.png");
 		registerTexture(U"heart", OtherPath + U"heart.png");
 		registerTexture(U"achieveFrame", OtherPath + U"achieveFrame.png");
+		registerTexture(U"tayama", OtherPath + U"tayama.png");
 
 		registerTexture(U"sprTitleCard_boss", OtherPath + U"sprTitleCard_boss.png");
 		registerTexture(U"sprTitleCard_secret", OtherPath + U"sprTitleCard_secret.png");

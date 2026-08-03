@@ -70,10 +70,43 @@ namespace Global {
 
 	// --- 入手アイテム関連 --- //
 	inline bool prepareGetItem1 = false;
-	inline bool getItem1 = true;
+	inline bool getItem1 = false;
 
 	inline int32 mainBgmNumber = 0;
 	inline int32 mainTextureNumber = 0;
+	inline int32 moraleValue1 = 50;
+	inline int32 moraleValue2 = 50;
+	inline int32 moraleValue3 = 50;
+	inline int32 moraleValue4 = 50;
+
+	// --- プレイ記録関連 --- //
+	inline double elapsedPlayTime = 0.0;
+	inline int32 deathCount = 0;
+	inline int32 endingValue = 0;
+	inline bool isRestartRoomReload = false;
+	inline bool isLow1RestartDeathCheckActive = false;
+	inline double low1RestartDeathCheckElapsed = 0.0;
+	inline double low1RestartDeathCheckDuration = 0.02;
+
+	// --- generateステージ関連 --- //
+	inline Array<String> generateStageNames = { U"generate1", U"generate2", U"generate3", U"generate4", U"generate5" };
+	inline Array<String> remainingGenerateStageNames;
+	inline bool isGenerateStageFakeLoading = false;
+
+	inline bool isGenerateStage(const String& roomName) {
+		return generateStageNames.includes(roomName);
+	}
+
+	inline String chooseGenerateStage() {
+		if (remainingGenerateStageNames.isEmpty()) {
+			remainingGenerateStageNames = generateStageNames;
+		}
+
+		const int32 index = Random(static_cast<int32>(remainingGenerateStageNames.size() - 1));
+		const String roomName = remainingGenerateStageNames[index];
+		remainingGenerateStageNames.remove_at(index);
+		return roomName;
+	}
 
 
 	 // ======================

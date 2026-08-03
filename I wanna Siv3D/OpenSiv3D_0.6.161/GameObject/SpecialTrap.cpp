@@ -85,7 +85,7 @@ namespace Iwanna {
 			textureAlpha = scaleTimer.progress0_1();
 			if (scaleTimer.reachedZero()) {
 				trapStopwatch.restart();
-				AudioAsset(Sound::ERROR).playOneShot();
+				Sound::playOneShot(Sound::ERROR);
 				trapStep++;
 			}
 			break;
@@ -98,7 +98,7 @@ namespace Iwanna {
 			break;
 		case 3://下移動までの待機時間
 			if (reachedTrapTime(1.5)) {
-				AudioAsset(Sound::CHERRYFALL).playOneShot();
+				Sound::playOneShot(Sound::CHERRYFALL);
 				trapStep++;
 			}
 			break;
@@ -200,7 +200,7 @@ namespace Iwanna {
 			if (trapID == nowTrapID) {
 				canPlayerKill = true;
 				isActivated = true;
-				AudioAsset(Sound::SPIKETRAP).playOneShot();
+				Sound::playOneShot(Sound::SPIKETRAP);
 
 				moveTimer.restart();
 				trapStep++;
@@ -246,11 +246,11 @@ namespace Iwanna {
 		switch (trapStep) {
 		case 0:
 			if (trapID == nowTrapID) {
-				Window::SetTitle(U"I wanna Siv3D                       ");
+				Window::SetTitle(U"TestPlayGame                       ");
 
 				canPlayerKill = true;
 				isActivated = true;
-				AudioAsset(Sound::SPIKETRAP).playOneShot();
+				Sound::playOneShot(Sound::SPIKETRAP);
 
 				moveTimer.restart();
 				trapStep++;
@@ -299,7 +299,7 @@ namespace Iwanna {
 
 				canPlayerKill = true;
 				isActivated = true;
-				AudioAsset(Sound::SPIKETRAP).playOneShot();
+				Sound::playOneShot(Sound::SPIKETRAP);
 
 				moveTimer.restart();
 				trapStep++;
@@ -322,7 +322,7 @@ namespace Iwanna {
 	}
 
 	void TitleTrap2::draw() const {
-		FontAsset(U"TitleTrap")(U"I wanna Siv3D").drawAt(pos, ColorF(Palette::Black));
+		FontAsset(U"TitleTrap")(U"TestPlayGame").drawAt(pos, ColorF(Palette::Black));
 		//hitBox->draw(Palette::Pink);
 	}
 
@@ -342,6 +342,7 @@ namespace Iwanna {
 		case 0:
 			if (trapID == nowTrapID) {
 				isActivated = true;
+				Sound::playOneShot(Sound::VC_BIKKURI);
 				scaleTimer.restart();
 				trapStep++;
 			}
@@ -422,7 +423,7 @@ namespace Iwanna {
 			if (trapID == nowTrapID) {
 				moveTimer.restart();
 				isActivated = true;
-				AudioAsset(Sound::DISCORD).playOneShot();
+				Sound::playOneShot(Sound::DISCORD);
 				trapStep++;
 			}
 			break;
@@ -495,7 +496,7 @@ namespace Iwanna {
 			if (reachedTrapTime(1.2) && !isPlayerDied) {
 				hspeed = -7;
 				vspeed = 0;
-				AudioAsset(Sound::BLOCKBREAK).playOneShot();
+				Sound::playOneShot(Sound::BLOCKBREAK);
 				trapStep++;
 			}
 			break;

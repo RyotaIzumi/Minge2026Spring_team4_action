@@ -1,8 +1,12 @@
 ﻿#pragma once
 #include "../Cherry.h"
+#include "../../UI/BossHpBar.h"
 
 namespace Iwanna {
 	class BossStageManager;
+	class BossBarrageCherry;
+	class BossSkyTargetCherry;
+	class TayamaLineCherry;
 	enum class BossCherryType {
 		Red,
 		Blue,
@@ -30,6 +34,7 @@ namespace Iwanna {
 
 		//hpバー用
 		double hpBarAlpha = 0.0;
+		BossHpBarDelayState hpBarDelay;
 
 		Stopwatch specialAttackStopwatch{ StartImmediately::No };
 		double specialAttackIntervalTime = 8.0;
@@ -56,6 +61,112 @@ namespace Iwanna {
 		void hited() override;
 	};
 
+	class TayamaBoss : public Cherry {
+	private:
+		BossStageManager* bossStageManager = nullptr;
+		double hpBarAlpha = 0.0;
+		BossHpBarDelayState hpBarDelay;
+		double baseScaleMag = 1.0;
+		bool isDefeatedFall = false;
+		int32 appearanceStep = 0;
+		int32 currentAttackPattern = 0;
+		int32 attackCountInSet = 0;
+		int32 targetAttackCountInSet = 0;
+		int32 lineAttackStep = 0;
+
+		Stopwatch attackStopwatch{ StartImmediately::No };
+		Stopwatch attackIntervalStopwatch{ StartImmediately::No };
+
+		double attackWaitTime = 2.0;
+		double rotatingSpreadAttackDuration = 5.0;
+		double rotatingSpreadAttackInterval = 0.18;
+		double rotatingSpreadRotateSpeed = 800.0;
+		int32 rotatingSpreadCherryNum = 6;
+		double rotatingSpreadCherrySpeed = 6.0;
+		double targetAttackDuration = 8.0;
+		double targetAttackInterval = 0.1;
+		int32 targetAttackLineNum = 1;
+		bool targetAttackIsAddLine = false;
+		double targetAttackBaseSpeed = 7.0;
+		double targetAttackIntervalSpeed = 5.0;
+		double lineAttackMoveDuration = 1.5;
+		double lineAttackTargetY = 160.0;
+		double lineAttackCherryInterval = 20.0;
+		double lineAttackWarnScale = 1.2;
+		double lineAttackScaleUpTime = 0.25;
+		double lineAttackScaleDownTime = 0.5;
+		double lineAttackGenerateWaitTime = 0.35;
+		double defeatedFallSpeed = 0.0;
+		double defeatedFallAcceleration = 0.25;
+		double defeatedRotateSpeed = 90.0;
+
+		void applyScaleMag(double scale);
+		void updateDefeatedFall();
+		void startRandomAttack();
+		void startRotatingSpreadAttack();
+		void updateRotatingSpreadAttack();
+		void startTargetAttack();
+		void updateTargetAttack();
+		void startLineAttack();
+		void updateLineAttack();
+		void generateLineAttack();
+		std::shared_ptr<BossBarrageCherry> createTrapBarrageCherry();
+		std::shared_ptr<BossSkyTargetCherry> createTrapSkyTargetCherry();
+		std::shared_ptr<TayamaLineCherry> createTrapLineCherry(Vec2 startPos, Vec2 targetPos);
+		void finishAttack();
+
+	public:
+		TayamaBoss(Vec2 startPos, double scale, BossStageManager& manager);
+
+		void setScaleMag(double scale);
+		void setRotatingSpreadAttackSettings(double duration, double interval);
+		void setTargetAttackSettings(double duration, double interval);
+		void setTargetAttackSpeedSettings(double baseSpeed, double intervalSpeed);
+		void setLineAttackSettings(double moveDuration, double targetY, double cherryInterval);
+		void setLineAttackWarningSettings(double warnScale, double scaleUpTime, double scaleDownTime, double generateWaitTime);
+		void barrageUpdate() override;
+		void draw() const override;
+		void hited() override;
+	};
+
+	class LowBossCherry : public Cherry {
+	private:
+		BossStageManager* bossStageManager = nullptr;
+		double hpBarAlpha = 0.0;
+		BossHpBarDelayState hpBarDelay;
+		bool isDefeatedFall = false;
+		int32 appearanceStep = 0;
+		Stopwatch spreadStopwatch{ StartImmediately::No };
+		Stopwatch targetStopwatch{ StartImmediately::No };
+
+		double targetY = 500.0;
+		double moveSpeed = 7.0;
+		double spreadInterval = 0.8;
+		int32 spreadCherryNum = 12;
+		double spreadCherrySpeed = 4.0;
+		double targetInterval = 2.0;
+		int32 targetLineNum = 3;
+		bool targetIsAddLine = false;
+		double targetBaseSpeed = 4.0;
+		double targetIntervalSpeed = 1.0;
+		double defeatedFallSpeed = 0.0;
+		double defeatedFallAcceleration = 0.25;
+		double defeatedRotateSpeed = 90.0;
+
+		void updateDefeatedFall();
+		void createSpreadAttack();
+		void createTargetAttack();
+		std::shared_ptr<BossBarrageCherry> createLowBossBarrageCherry();
+		std::shared_ptr<BossSkyTargetCherry> createLowBossTargetCherry();
+
+	public:
+		LowBossCherry(Vec2 startPos, double scale, BossStageManager& manager);
+
+		void barrageUpdate() override;
+		void draw() const override;
+		void hited() override;
+	};
+
 	class BossSubCherry : public Cherry {
 	private:
 		BossStageManager* bossStageManager = nullptr;
@@ -64,6 +175,7 @@ namespace Iwanna {
 		int32 startStep = 0;
 		int32 defeatedBossNum = 0;
 		ColorF typeColor;
+		BossHpBarDelayState hpBarDelay;
 
 		Vec2 centerPos;
 		double c,r,rMax;
@@ -88,12 +200,20 @@ namespace Iwanna {
 		int32 startStep = 0;
 		BossCherryType cherrySubType;
 		ColorF typeColor;
+		String customTextureName = U"";
+		int32 customTextureEdge = 32;
+		bool customTextureAnimation = false;
+		bool customAppleEmoji = false;
+		ColorF customTextureColor{ 1.0, 1.0, 1.0, 1.0 };
 	public:
 		BossBarrageCherry(Vec2 startPos, double scale, BossCherryType cType);
 
 		void barrageUpdate() override;
 		void draw() const override;
 
+		void setCustomTexture(String textureName, int32 textureEdge = 32, bool hasAnimation = false);
+		void setCustomAppleEmoji();
+		void setCustomTextureColor(ColorF color);
 		void setTypeColor();
 	};
 
@@ -104,6 +224,51 @@ namespace Iwanna {
 		ColorF typeColor;
 	public:
 		BossFallBlueCherry(Vec2 startPos, double scale, BossCherryType cType);
+
+		void barrageUpdate() override;
+	};
+
+	class TayamaLineCherry : public BossBarrageCherry {
+	private:
+		Vec2 startPos;
+		Vec2 targetPos;
+		double moveDuration = 1.0;
+		double moveElapsed = 0.0;
+		double fallSpeed = 0.0;
+		double fallAcceleration = 0.35;
+		int32 attackStep = 0;
+
+	public:
+		TayamaLineCherry(Vec2 startPos, Vec2 targetPos, double scale, double duration);
+
+		void barrageUpdate() override;
+	};
+
+	class TayamaSecondPhaseEyeCherry : public BossBarrageCherry {
+	private:
+		double acceleration = 0.0;
+
+	public:
+		TayamaSecondPhaseEyeCherry(Vec2 startPos, double scale, double initialSpeed, double acceleration);
+
+		void barrageUpdate() override;
+	};
+
+	class TayamaSecondPhaseTargetCherry : public BossBarrageCherry {
+	private:
+		BossStageManager* bossStageManager = nullptr;
+		Stopwatch moveStopwatch{ StartImmediately::No };
+		double moveSpeed = 4.0;
+		double moveDuration = 0.7;
+		double stopDuration = 0.35;
+		int32 moveCount = 0;
+		int32 maxMoveCount = 3;
+		bool isStopping = false;
+
+		void aimAtPlayer();
+
+	public:
+		TayamaSecondPhaseTargetCherry(Vec2 startPos, double scale, double speed, double moveTime, double stopTime, int32 moveNum, BossStageManager& manager);
 
 		void barrageUpdate() override;
 	};

@@ -155,13 +155,13 @@ namespace Iwanna {
 		if (isOnGround) {
 			vspeed = -jump;
 			djump = true;
-			AudioAsset(Sound::JUMP).playOneShot();
+			Sound::playOneShot(Sound::DJUMP);
 			isOnGround = false;
 		}
 		else if (djump) {
 			vspeed = -jump2;
 			djump = false;
-			AudioAsset(Sound::DJUMP).playOneShot();
+			Sound::playOneShot(Sound::JUMP);
 		}
 	}
 
@@ -178,12 +178,12 @@ namespace Iwanna {
 	//ダメージを受けた際の処理
 	void Player::playerHited() {
 		if (hp > 0) {
-			AudioAsset(Sound::DEATH).playOneShot();
+			Sound::playOneShot(Sound::DEATH);
 			hp--;
 		}
 
 		if (hp <= 0) {
-			AudioAsset(Sound::DEATH).playOneShot();
+			Sound::playOneShot(Sound::DEATH);
 			playerDead();
 		}
 
@@ -197,10 +197,16 @@ namespace Iwanna {
 		}
 
 		isDead = true;
+		++Global::deathCount;
+		if (Global::isLow1RestartDeathCheckActive
+			&& Global::low1RestartDeathCheckElapsed <= Global::low1RestartDeathCheckDuration) {
+			Global::endingValue = 5;
+			Global::isLow1RestartDeathCheckActive = false;
+		}
 		hspeed = 0;
 		vspeed = 0;
 		spriteSystem.stopOrPlayAnimation(false);
-		AudioAsset(Sound::DEATH).playOneShot();
+		Sound::playOneShot(Sound::DEATH);
 	}
 
 	Vec2 Player::snappedPos(Vec2 p)
@@ -222,14 +228,14 @@ namespace Iwanna {
 					auto* hideBlock = dynamic_cast<HideBlock*>(&other);
 					if (hideBlock->getIsHidden()) {
 						hideBlock->setIsHidden(false);
-						AudioAsset(Sound::BLOCKCHANGE).playOneShot();
+						Sound::playOneShot(Sound::BLOCKCHANGE);
 					}
 				}
 				else if (block->blockType == BlockType::ConditionalHide) {
 					auto* chBlock = dynamic_cast<ConditionalHideBlock*>(&other);
 					if (chBlock->getIsHidden() && chBlock->getHasCollide()) {
 						chBlock->setIsHidden(false);
-						AudioAsset(Sound::BLOCKCHANGE).playOneShot();
+						Sound::playOneShot(Sound::BLOCKCHANGE);
 					}
 				}
 				else if (block->blockType == BlockType::Fake) {
@@ -259,10 +265,10 @@ namespace Iwanna {
 				if (nextHitBox.intersects(*other.hitBox->getRect()))
 				{
 					if (hspeed > 0) {
-						pos.x = other.hitBox->left().x - 7;
+						pos.x = other.hitBox->left().x - 5;
 					}
 					else {
-						pos.x = other.hitBox->right().x + 7;
+						pos.x = other.hitBox->right().x + 5;
 					}
 
 					hspeed = 0;
@@ -279,7 +285,7 @@ namespace Iwanna {
 				if (nextHitBox.intersects(*other.hitBox->getRect()))
 				{
 					if (vspeed > 0) {
-						pos.y = other.hitBox->top().y - 13;
+						pos.y = other.hitBox->top().y - 10;
 						djump = true;
 						isOnGround = true;
 					}
@@ -300,7 +306,7 @@ namespace Iwanna {
 		// PlayerKill属性を持つオブジェクトとの衝突
 		if (other.canPlayerKill) {
 			if (this->intersects(other) && !isDead && !isMuteki) {
-				if (Global::getItem1 && (Global::nowRoomName == U"boss" || Global::nowRoomName == U"ExBoss")) playerHited();
+				if (Global::getItem1 && (Global::nowRoomName == U"boss" || Global::nowRoomName == U"bossLow" || Global::nowRoomName == U"ExBoss" || Global::nowRoomName == U"trapBoss")) playerHited();
 				else playerDead();
 			}
 		}
@@ -333,7 +339,11 @@ namespace Iwanna {
 				auto* warp = dynamic_cast<Warp*>(&other);
 				if (warp->getCanWarp()) {
 					Global::prevRoomName = Global::nowRoomName;
-					Global::nowRoomName = warp->getNextRoomName();
+					Global::nowRoomName = (Global::nowRoomName == U"tutorialLow" && Global::moraleValue1 >= 90)
+						? Global::chooseGenerateStage()
+						: Global::isGenerateStage(Global::nowRoomName)
+						? Global::chooseGenerateStage()
+						: warp->getNextRoomName();
 					Global::isChangeRoom = true;
 				}
 			}

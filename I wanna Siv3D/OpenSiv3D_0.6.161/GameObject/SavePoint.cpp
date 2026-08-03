@@ -21,7 +21,8 @@ namespace Iwanna {
 	}
 	void SavePoint::draw() const {
 		//hitBox->draw(Palette::Gray);
-		TextureAsset(U"sprSave_normal")(isSaving ? side : 0, 0, side, side).draw(pos);
+		const StringView textureName = (Global::mainTextureNumber == 0) ? U"sprSave_low" : U"sprSave_normal";
+		TextureAsset(textureName)(isSaving ? side : 0, 0, side, side).draw(pos);
 	}
 	// セーブされたときの処理
 	void SavePoint::saved() {
@@ -79,7 +80,8 @@ namespace Iwanna {
 	}
 	void BossSavePoint::draw() const {
 		//hitBox->draw(ColorF(0.7,0.7));
-		TextureAsset(U"sprSave")(isSaving ? side : 0, 0, side, side).scaled(saveScale).rotated(saveRotate).drawAt(pos, ColorF(1.0, saveAlpha));
+		const StringView textureName = (Global::mainTextureNumber == 0) ? U"sprSave_low" : U"sprSave_normal";
+		TextureAsset(textureName)(isSaving ? side : 0, 0, side, side).scaled(saveScale).rotated(saveRotate).drawAt(pos, ColorF(1.0, saveAlpha));
 	}
 
 	int32 BossSavePoint::getAppendBossId() const {
@@ -106,7 +108,7 @@ namespace Iwanna {
 		if (trapID == id && !isStartTrap) {
 			isStartTrap = true;
 			canPlayerKill = true;
-			AudioAsset(Sound::SPIKETRAP).playOneShot();
+			Sound::playOneShot(Sound::SPIKETRAP);
 		}
 
 		if (isStartTrap) {
@@ -142,6 +144,7 @@ namespace Iwanna {
 			case 0:
 				Global::isPlayerFrozen = true;
 				Global::trap2MapBgmStop = true;
+				Sound::playOneShot(Sound::VC_BUBUU);
 				trapIntervalTimer.restart();
 
 				trapStep++;
@@ -157,6 +160,10 @@ namespace Iwanna {
 	}
 
 	void SaveFakeTrap::setIsStartTrap(bool b) {
+		if (b && !isStartTrap) {
+			isSaving = true;
+			saveIntervalTimer.restart();
+		}
 		isStartTrap = b;
 	}
 
@@ -165,7 +172,7 @@ namespace Iwanna {
 	}
 
 	void SaveFakeTrap::draw() const {
-		TextureAsset(U"sprFakeSave")(0, 0, side, side).draw(pos);
+		TextureAsset(U"sprFakeSave")(isSaving ? side : 0, 0, side, side).draw(pos);
 		if (Global::trapCameraActivatedInTrap2Map)
 			FontAsset(U"Button")(U"↓").drawAt(pos.x + 16,pos.y - 20,ColorF(Palette::Black));
 	}
@@ -192,7 +199,8 @@ namespace Iwanna {
 	}
 
 	void SecretSavePoint::draw() const {
-		TextureAsset(U"sprSave_normal")(isSaving ? side : 0, 0, side, side).draw(pos,ColorF(1.0,alpha));
+		const StringView textureName = (Global::mainTextureNumber == 0) ? U"sprSave_low" : U"sprSave_normal";
+		TextureAsset(textureName)(isSaving ? side : 0, 0, side, side).draw(pos,ColorF(1.0,alpha));
 
 		// 文字表示
 		Vec2 textBasePos = Vec2(pos.x + 16, pos.y - 16);

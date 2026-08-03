@@ -1,7 +1,21 @@
 ﻿#include "StageManager.h"
 #include "../Audio/AudioAsset.h"
+#include "../MainGameSerializer.h"
 
 namespace Iwanna {
+	namespace {
+		String formatPlayTime(double seconds) {
+			const int32 totalSeconds = static_cast<int32>(seconds);
+			const int32 minutes = totalSeconds / 60;
+			const int32 displaySeconds = totalSeconds % 60;
+			const int32 centiseconds = static_cast<int32>((seconds - totalSeconds) * 100);
+
+			const String secondText = (displaySeconds < 10 ? U"0" : U"") + Format(displaySeconds);
+			const String centisecondText = (centiseconds < 10 ? U"0" : U"") + Format(centiseconds);
+			return Format(minutes) + U":" + secondText + U"." + centisecondText;
+		}
+	}
+
 	StageManager::StageManager() {
 		stockNearGameObjects.cellSize = 96;
 		stockBulletsNearGameObjects.cellSize = 96;
@@ -27,6 +41,9 @@ namespace Iwanna {
 
 		// 一部変数の初期化
 		isGenerateBloods = false;
+		playedTrapPonTriggerIDs.clear();
+		hasSecretEntranceFlashShown = false;
+		secretEntranceFlashAlpha = 0.0;
 
 		Global::trap2MapBgmStop = false;
 		Global::trapActivatedId30InTrap2Map = false;
@@ -47,15 +64,41 @@ namespace Iwanna {
 			//隠しアイテムマップ時のみタイトルカード表示
 			if(Global::nowRoomName == U"secret1") titleCard.startShowTitleCard(U"secret1");
 
-			if (Global::prepareGetItem1) {
+			if (Global::prepareGetItem1
+				&& Global::prevRoomName == U"secret1"
+				&& Global::nowRoomName == U"normal7") {
 				achive.startShowAchieve(AchieveType::ItemGet_Heart);
 				Global::prepareGetItem1 = false;
 				Global::getItem1 = true;
+				MainGameSerializer serializer;
+				serializer.SaveCharactersMoraleValue();
+				saveGame();
 			}
 		}
 		else {
 			loadGameObjects(Global::savedRoomName);
 		}
+
+		if (stageName == U"clear") {
+			saveGame();
+			if (Global::moraleValue1 < 30 && Global::moraleValue2 < 30
+				&& Global::moraleValue3 < 30 && Global::moraleValue4 < 30) {
+				Global::endingValue = 2;
+			}
+			else if (Global::deathCount == 0) {
+				Global::endingValue = 8;
+			}
+			else if ((30 <= Global::moraleValue1 && Global::moraleValue1 <= 89)
+				&& (30 <= Global::moraleValue2 && Global::moraleValue2 <= 89)
+				&& (30 <= Global::moraleValue3 && Global::moraleValue3 <= 100)
+				&& (30 <= Global::moraleValue4 && Global::moraleValue4 <= 100)) {
+				Global::endingValue = 7;
+			}
+			else if (Global::endingValue == 4) {
+				Global::endingValue = 0;
+			}
+		}
+
 		Global::isChangeRoom = false;
 
 		// セーブ時コールバックは、生成直後に一度だけ設定する
@@ -65,8 +108,9 @@ namespace Iwanna {
 			};
 		}
 
-		//アイテム入手関連
-		Global::prepareGetItem1 = false;
+		if (!(Global::prevRoomName == U"secret1" && Global::nowRoomName == U"normal7")) {
+			Global::prepareGetItem1 = false;
+		}
 	}
 
 	Vec2 StageManager::parsePos(const JSON& json) {
@@ -127,8 +171,8 @@ namespace Iwanna {
 			// 弾丸の生成
 			if (player->getIsGenerateBullet()) {
 				if (bullets.size() < bulletMaxNum) {
-					bullets << std::make_shared<Bullet>(player->pos, player->getDirection() == Global::Direction::RIGHT ? bulletSpeed : -bulletSpeed);
-					AudioAsset(Sound::SHOOT).playOneShot();
+					bullets << std::make_shared<Bullet>(player->pos, player->getDirection() == Global::Direction::RIGHT ? bulletSpeed : -bulletSpeed, player.get());
+					Sound::playOneShot(Sound::SHOOT);
 				}
 				player->setIsGenerateBullet(false);
 			}
@@ -180,6 +224,29 @@ namespace Iwanna {
 
 			// 特殊罠用にトリガー再設定
 			if (Global::trapCameraActivatedInTrap2Map)latestActivatedTriggerID = specialSaveTrapTriggerID;
+
+			if ((stageName == U"trap1" || stageName == U"trap2")
+				&& latestActivatedTriggerID >= 0
+				&& !playedTrapPonTriggerIDs.contains(latestActivatedTriggerID)) {
+				bool hasFlyingTrap = false;
+				for (const auto& spike : spikes) {
+					if (auto* spikeTrap = dynamic_cast<SpikeTrap*>(spike.get())) {
+						hasFlyingTrap |= (spikeTrap->getTrapID() == latestActivatedTriggerID);
+					}
+					if (auto* spikePathTrap = dynamic_cast<SpikePathTrap*>(spike.get())) {
+						hasFlyingTrap |= (spikePathTrap->getTrapID() == latestActivatedTriggerID);
+					}
+				}
+				for (const auto& cherry : cherries) {
+					if (auto* cherryTrap = dynamic_cast<CherryTrap*>(cherry.get())) {
+						hasFlyingTrap |= (cherryTrap->getTrapID() == latestActivatedTriggerID);
+					}
+				}
+				if (hasFlyingTrap) {
+					//Sound::playOneShot(Sound::VC_PON);
+					playedTrapPonTriggerIDs.insert(latestActivatedTriggerID);
+				}
+			}
 
 			//playerに現在の罠IDを渡す
 			player->setNowTrapID(latestActivatedTriggerID);
@@ -282,6 +349,17 @@ namespace Iwanna {
 				player->onCollision(*obj);
 			}
 
+			if (stageName == U"normal4"
+				&& Global::isSecretTriggerActivated
+				&& !hasSecretEntranceFlashShown) {
+				hasSecretEntranceFlashShown = true;
+				secretEntranceFlashAlpha = secretEntranceFlashStartAlpha;
+			}
+
+			if (secretEntranceFlashAlpha > 0.0) {
+				secretEntranceFlashAlpha = Max(0.0, secretEntranceFlashAlpha - secretEntranceFlashFadeSpeed);
+			}
+
 			player->updateLate();
 
 			//各弾丸とブロック,セーブポイントとの衝突
@@ -301,12 +379,12 @@ namespace Iwanna {
 
 			//暗転演出込みのマップ用
 			if (darkEffectStages.includes(stageName)) {
-				if (darkAlpha > 0.3) {
+				if (darkAlpha > 0.35) {
 					darkAlpha -= 0.05;
 				}
 				else {
 					if (darkAlphaTimer.reachedZero()) {
-						darkAlpha = 0.05 + Random(0.20);
+						darkAlpha = 0.05 + Random(0.30);
 						darkAlphaTimer.restart();
 					}
 				}
@@ -412,21 +490,52 @@ namespace Iwanna {
 
 			//GAMEOVER描画
 			if (isShowGameOver) {
+				const StringView gameOverTextureName = (Global::mainTextureNumber == 0) ? U"sprGAMEOVER_low" : U"sprGAMEOVER_normal";
 				if (Global::trapCameraActivatedInTrap2Map) {
-					TextureAsset(U"sprGAMEOVER_normal").scaled(1 / cameraScale).drawAt(saveTrapCameraPos);
+					TextureAsset(gameOverTextureName).scaled(1 / cameraScale).drawAt(saveTrapCameraPos);
 				}
 				else if (Global::isLoopStage)
 				{
-					TextureAsset(U"sprGAMEOVER_normal").drawAt(Global::stageWidth / 2, Global::stageHeight / 2);
+					TextureAsset(gameOverTextureName).drawAt(Global::stageWidth / 2, Global::stageHeight / 2);
 				}
 				else {
-					TextureAsset(U"sprGAMEOVER_normal").drawAt(executeCameraPos());
+					TextureAsset(gameOverTextureName).drawAt(executeCameraPos());
 				}
 			}
 
 			//タイトルカード
 			titleCard.draw();
 			achive.draw();
+		}
+
+		if (secretEntranceFlashAlpha > 0.0) {
+			Rect{ 0, 0, Global::windowWidth, Global::windowHeight }.draw(ColorF{ 1.0, 1.0, 1.0, secretEntranceFlashAlpha });
+		}
+
+		if (stageName == U"clear") {
+			const Vec2 basePos{ 400, 388 };
+			const String timeText = U"Time  " + formatPlayTime(Global::elapsedPlayTime);
+			const String deathText = U"Death " + Format(Global::deathCount);
+
+			FontAsset(U"BossHp")(timeText).drawAt(basePos + Vec2{ 2, 2 }, ColorF{ 0.0, 0.0, 0.0, 0.65 });
+			FontAsset(U"BossHp")(deathText).drawAt(basePos + Vec2{ 2, 48 }, ColorF{ 0.0, 0.0, 0.0, 0.65 });
+			FontAsset(U"BossHp")(timeText).drawAt(basePos, ColorF{ 1.0, 1.0, 1.0 });
+			FontAsset(U"BossHp")(deathText).drawAt(basePos + Vec2{ 0, 46 }, ColorF{ 1.0, 1.0, 1.0 });
+		}
+
+		if (stageName == U"tutorialLow") {
+			const Vec2 basePos{ 50, 50 };
+			const Array<String> tutorialTexts{
+				U"←→キー : 移動",
+				U"shift : ジャンプ、二段ジャンプ",
+				U"Zキー : ショット"
+			};
+
+			for (int32 i = 0; i < tutorialTexts.size(); ++i) {
+				const Vec2 textPos = basePos + Vec2{ 0, i * 26.0 };
+				FontAsset(U"Button")(tutorialTexts[i]).draw(textPos + Vec2{ 1, 1 }, ColorF{ 0.5, 0.7 });
+				FontAsset(U"Button")(tutorialTexts[i]).draw(textPos, ColorF{ 1.0, 1.0, 1.0 });
+			}
 		}
 	}
 

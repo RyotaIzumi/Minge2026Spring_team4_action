@@ -13,6 +13,7 @@ namespace Iwanna {
 		Boss,
 		BossSub,
 		ExBoss,
+		TrapBoss,
 		Barrage,
 		Trap,
 		Gimmik
