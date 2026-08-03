@@ -382,6 +382,7 @@ namespace Iwanna {
 				}
 			}
 
+			if (stageName == U"trapBoss" && isTrapBossSecondPhaseStarted && !isTrapBossSecondPhaseDefeated) {
 			//暗転演出の透明度を変更
 			if (darkAlpha > 0.2) {
 				darkAlpha -= 0.08;
