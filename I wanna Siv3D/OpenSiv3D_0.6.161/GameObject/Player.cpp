@@ -197,6 +197,7 @@ namespace Iwanna {
 		}
 
 		isDead = true;
+		++Global::deathCount;
 		hspeed = 0;
 		vspeed = 0;
 		spriteSystem.stopOrPlayAnimation(false);

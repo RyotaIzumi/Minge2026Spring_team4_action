@@ -79,6 +79,10 @@ namespace Global {
 	inline int32 moraleValue3 = 50;
 	inline int32 moraleValue4 = 50;
 
+	// --- プレイ記録関連 --- //
+	inline double elapsedPlayTime = 0.0;
+	inline int32 deathCount = 0;
+
 
 	 // ======================
 	// 定数

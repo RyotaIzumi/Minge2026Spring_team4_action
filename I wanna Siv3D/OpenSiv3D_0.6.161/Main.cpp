@@ -4,6 +4,7 @@
 #include "Scene/Scene.h"
 #include "MainGameSerializer.h"
 #include "60FPSwithAutoFrameSkip.h"
+#include "Global.h"
 
 using App = SceneManager<Iwanna::SceneType, Iwanna::CommonData>;
 
@@ -36,6 +37,8 @@ void Main()
 
 	mainGameSerializer.LoadCharactersMoraleValue();
 	mainGameSerializer.defineGlobalStatuses();
+	Global::elapsedPlayTime = 0.0;
+	Global::deathCount = 0;
 
 	while (System60::Update()) {
 		if (not app.update()) {

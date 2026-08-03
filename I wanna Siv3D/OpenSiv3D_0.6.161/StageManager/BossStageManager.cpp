@@ -39,6 +39,7 @@ namespace Iwanna {
 		hasTrapBossSecondPhaseBrokenBlocks = false;
 		trapBossSecondPhaseHp = trapBossSecondPhaseMaxHp;
 		trapBossSecondPhaseHpBarDelay.reset(trapBossSecondPhaseHp, trapBossSecondPhaseMaxHp);
+		trapBossSecondPhaseTayamaCenterPos = Vec2{ 370, 304 };
 		trapBossSecondPhaseTayamaAngle = 0.0;
 		trapBossSecondPhaseDefeatedFallSpeed = 0.0;
 		isTrapBossSecondPhaseEyeHitFlash = false;
@@ -463,6 +464,9 @@ namespace Iwanna {
 
 		if (trapBossSecondPhaseIntroStopwatch.sF() >= trapBossSecondPhaseIntroCooldown + trapBossSecondPhaseIntroTime) {
 			isTrapBossSecondPhaseStarted = true;
+			trapBossSecondPhaseTayamaCenterPos = Vec2{ 370, 304 };
+			trapBossSecondPhaseTayamaAngle = 0.0;
+			trapBossSecondPhaseDefeatedFallSpeed = 0.0;
 			backgroundName = U"background_trapBossCave2";
 			breakTrapBossSecondPhaseOverlappingBlocks();
 			cameraShake.shake(trapBossSecondPhaseStartShakeTime, trapBossSecondPhaseStartShakePower);

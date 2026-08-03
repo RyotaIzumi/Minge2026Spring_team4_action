@@ -97,19 +97,23 @@ namespace Iwanna {
 				}
 				return;
 			}
+			if (Global::nowRoomName != U"clear") {
+				Global::elapsedPlayTime += Scene::DeltaTime();
+			}
 			stageManager.getPlayer()->setStopOrPlayAnimation(!Global::warningTrapPaused);
 			break;
 
 		case StageType::Boss:
 			bossStageManager.update();
 			//playerが死亡していたらBGM一時停止
-			if (bossStageManager.getPlayer()->getIsDead() && !Global::doNotStopBgm) {
-				if (playGameoverBgmOne) {
+			if (bossStageManager.getPlayer()->getIsDead()) {
+				if (playGameoverBgmOne && !Global::doNotStopBgm) {
 					playGameoverBgm();
 					playGameoverBgmOne = false;
 				}
 				return;
 			}
+			Global::elapsedPlayTime += Scene::DeltaTime();
 			//bossが出現したらBGM再生
 			if (bossStageManager.bossBgmStart) {
 				if(Global::nowRoomName == U"boss" || Global::nowRoomName == U"bossLow") playBgm(U"boss_normal");

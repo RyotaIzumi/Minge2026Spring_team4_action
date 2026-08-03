@@ -2,6 +2,19 @@
 #include "../Audio/AudioAsset.h"
 
 namespace Iwanna {
+	namespace {
+		String formatPlayTime(double seconds) {
+			const int32 totalSeconds = static_cast<int32>(seconds);
+			const int32 minutes = totalSeconds / 60;
+			const int32 displaySeconds = totalSeconds % 60;
+			const int32 centiseconds = static_cast<int32>((seconds - totalSeconds) * 100);
+
+			const String secondText = (displaySeconds < 10 ? U"0" : U"") + Format(displaySeconds);
+			const String centisecondText = (centiseconds < 10 ? U"0" : U"") + Format(centiseconds);
+			return Format(minutes) + U":" + secondText + U"." + centisecondText;
+		}
+	}
+
 	StageManager::StageManager() {
 		stockNearGameObjects.cellSize = 96;
 		stockBulletsNearGameObjects.cellSize = 96;
@@ -452,6 +465,17 @@ namespace Iwanna {
 			//タイトルカード
 			titleCard.draw();
 			achive.draw();
+		}
+
+		if (stageName == U"clear") {
+			const Vec2 basePos{ 400, 388 };
+			const String timeText = U"Time  " + formatPlayTime(Global::elapsedPlayTime);
+			const String deathText = U"Death " + Format(Global::deathCount);
+
+			FontAsset(U"BossHp")(timeText).drawAt(basePos + Vec2{ 2, 2 }, ColorF{ 0.0, 0.0, 0.0, 0.65 });
+			FontAsset(U"BossHp")(deathText).drawAt(basePos + Vec2{ 2, 48 }, ColorF{ 0.0, 0.0, 0.0, 0.65 });
+			FontAsset(U"BossHp")(timeText).drawAt(basePos, ColorF{ 1.0, 1.0, 1.0 });
+			FontAsset(U"BossHp")(deathText).drawAt(basePos + Vec2{ 0, 46 }, ColorF{ 1.0, 1.0, 1.0 });
 		}
 	}
 
