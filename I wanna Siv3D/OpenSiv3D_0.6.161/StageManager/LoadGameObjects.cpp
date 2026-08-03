@@ -1,14 +1,37 @@
 ﻿#include "StageManager.h"
 
 namespace Iwanna {
+	namespace {
+		CherryColorType getExtraStageCherryColor(const String& fileName) {
+			if (fileName == U"ExMiluArea") return CherryColorType::White;
+			if (fileName == U"ExMochiArea") return CherryColorType::Orange;
+			if (fileName == U"ExGotArea") return CherryColorType::Black;
+			if (fileName == U"ExRyutaArea") return CherryColorType::Blue;
+			return CherryColorType::None;
+		}
+
+		void applyExtraCherryVisual(const std::shared_ptr<Cherry>& cherry, const String& fileName) {
+			if (!Global::isExtraStage(fileName)) {
+				return;
+			}
+
+			cherry->setCherryVisual(U"sprCherryLowWhite", getExtraStageCherryColor(fileName), true);
+		}
+	}
+
 	void StageManager::loadGameObjects(String fileName) {
 		String quarity;
+		const bool isExtraStage = Global::isExtraStage(fileName);
 		const bool isTrapMap = (fileName == U"trap1" || fileName == U"trap2" || fileName == U"trapBoss");
 		const bool isTrapPonMap = (fileName == U"trap1" || fileName == U"trap2");
 
 		switch (Global::mainTextureNumber) {
 		case 0: quarity = U"low"; break;
 		case 1: quarity = U"normal"; break;
+		case 2: quarity = U"secret"; break;
+		}
+		if (isExtraStage) {
+			quarity = U"secret";
 		}
 		const String spikeTextureType = isTrapPonMap ? U"trap" : quarity;
 
@@ -74,10 +97,16 @@ namespace Iwanna {
 					case 24: gameObjects.spikes << std::make_shared<Spike>(spikeTextureType, pos, 3); break;
 					case 25: gameObjects.savePoints << std::make_shared<SavePoint>(pos); break;
 					case 26: gameObjects.blocks << std::make_shared<HideBlock>(U"sprBlock_" + quarity + U"1", pos); break;
-					case 27: gameObjects.blocks << std::make_shared<ShootTroughBlock>(U"sprBlockShootTrough", pos); break;
+					case 27: gameObjects.blocks << std::make_shared<ShootTroughBlock>(isExtraStage ? U"sprBlock_secret2" : U"sprBlockShootTrough", pos); break;
 					case 28: gameObjects.blocks << std::make_shared<FakeBlock>(U"sprBlock_" + quarity + U"2", pos); break;
 					case 29: gameObjects.blocks << std::make_shared<WaterBlock>(U"sprWater", pos); break;
-					case 31: gameObjects.cherries << std::make_shared<SpriteCherry>(isTrapMap ? U"sprCherryTrap" : U"sprCherryLow", pos, 1); break;
+					case 31:
+					{
+						auto cherry = std::make_shared<SpriteCherry>(isTrapMap ? U"sprCherryTrap" : U"sprCherryLow", pos, 1);
+						applyExtraCherryVisual(cherry, fileName);
+						gameObjects.cherries << cherry;
+						break;
+					}
 					case 36: gameObjects.spikes << std::make_shared<AppendSpike>(spikeTextureType, pos, 0); break;
 					case 37: gameObjects.spikes << std::make_shared<AppendSpike>(spikeTextureType, pos, 2); break;
 					case 38: gameObjects.spikes << std::make_shared<DeleteSpike>(spikeTextureType, pos, 0); break;
@@ -287,6 +316,7 @@ namespace Iwanna {
 					if (gimmikName == U"前トリガー") gameObjects.triggers << std::make_shared<Trigger>(gimmikIntactPos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3, true);
 					if (gimmikName == U"罠りんご") {
 						auto cherry = std::make_shared<CherryTrap>(gimmikIntactPos, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
+						applyExtraCherryVisual(cherry, fileName);
 						gameObjects.cherries << cherry;
 					}
 					if (gimmikName == U"罠ブロック") gameObjects.blocks << std::make_shared<BreakBlock>(U"sprBlock_" + quarity + U"3", gimmikParsePos, static_cast<int32>(gimmikValue1));

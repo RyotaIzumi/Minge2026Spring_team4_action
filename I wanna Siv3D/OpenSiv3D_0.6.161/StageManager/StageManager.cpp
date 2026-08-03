@@ -14,6 +14,14 @@ namespace Iwanna {
 			const String centisecondText = (centiseconds < 10 ? U"0" : U"") + Format(centiseconds);
 			return Format(minutes) + U":" + secondText + U"." + centisecondText;
 		}
+
+		ColorF getExtraStageBackgroundColor(const String& stageName) {
+			if (stageName == U"ExMiluArea") return ColorF{ Palette::White };
+			if (stageName == U"ExMochiArea") return ColorF{ Palette::Orange };
+			if (stageName == U"ExGotArea") return ColorF{ Palette::Black };
+			if (stageName == U"ExRyutaArea") return ColorF{ Palette::Blue };
+			return ColorF{ Palette::Black };
+		}
 	}
 
 	StageManager::StageManager() {
@@ -451,7 +459,12 @@ namespace Iwanna {
 
 	void StageManager::draw() {
 		//背景描画
-		TextureAsset(backgroundName).draw();
+		if (Global::isExtraStage(stageName)) {
+			Rect{ 0, 0, Global::windowWidth, Global::windowHeight }.draw(getExtraStageBackgroundColor(stageName));
+		}
+		else {
+			TextureAsset(backgroundName).draw();
+		}
 
 		{
 			const auto t = camera.createTransformer();

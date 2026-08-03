@@ -80,6 +80,13 @@ namespace Iwanna {
 		}
 	}
 
+	void Cherry::setCherryVisual(String textureName, CherryColorType colorType, bool animation, int32 edge) {
+		cherryTextureName = textureName;
+		cherryColorType = colorType;
+		hasAnimation = animation;
+		textureEdge = edge;
+	}
+
 	void Cherry::draw() const {
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
 		int32 texRange;

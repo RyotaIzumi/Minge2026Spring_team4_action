@@ -85,6 +85,7 @@ namespace Iwanna {
 		virtual void trapUpdate(int32 id);
 
 		void setTypeColor();
+		void setCherryVisual(String textureName, CherryColorType colorType, bool animation, int32 edge = 32);
 		void draw() const override;
 
 		void movePosition(const Vec2& targetPoint, double timeSec, bool accele = false);
