@@ -51,6 +51,7 @@ namespace Iwanna {
 	public:
 		SpikePathTrap(String typeName, Vec2 startPos, int32 dir, int32 id, Vec2 next, double time);
 		void trapUpdate(int32 id) override;
+		int32 getTrapID() const;
 	};
 
 	class AppendSpike : public Spike {

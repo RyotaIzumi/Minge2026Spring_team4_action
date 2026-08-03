@@ -246,7 +246,7 @@ namespace Iwanna {
 		switch (trapStep) {
 		case 0:
 			if (trapID == nowTrapID) {
-				Window::SetTitle(U"I wanna Siv3D                       ");
+				Window::SetTitle(U"TestPlayGame                       ");
 
 				canPlayerKill = true;
 				isActivated = true;
@@ -322,7 +322,7 @@ namespace Iwanna {
 	}
 
 	void TitleTrap2::draw() const {
-		FontAsset(U"TitleTrap")(U"I wanna Siv3D").drawAt(pos, ColorF(Palette::Black));
+		FontAsset(U"TitleTrap")(U"TestPlayGame").drawAt(pos, ColorF(Palette::Black));
 		//hitBox->draw(Palette::Pink);
 	}
 
@@ -342,6 +342,7 @@ namespace Iwanna {
 		case 0:
 			if (trapID == nowTrapID) {
 				isActivated = true;
+				AudioAsset(Sound::VC_BIKKURI).playOneShot();
 				scaleTimer.restart();
 				trapStep++;
 			}

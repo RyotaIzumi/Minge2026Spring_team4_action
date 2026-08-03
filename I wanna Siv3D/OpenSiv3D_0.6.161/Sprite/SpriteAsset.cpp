@@ -77,6 +77,11 @@ namespace Iwanna {
 		registerTexture(U"sprSpikeDown_secret", SpikePath + U"sprSpikeDown_secret.png");
 		registerTexture(U"sprSpikeRight_secret", SpikePath + U"sprSpikeRight_secret.png");
 
+		registerTexture(U"sprSpikeUp_trap", SpikePath + U"sprSpikeUp_trap.png");
+		registerTexture(U"sprSpikeLeft_trap", SpikePath + U"sprSpikeLeft_trap.png");
+		registerTexture(U"sprSpikeDown_trap", SpikePath + U"sprSpikeDown_trap.png");
+		registerTexture(U"sprSpikeRight_trap", SpikePath + U"sprSpikeRight_trap.png");
+
 		//背景テクスチャ登録
 		static const FilePath BackgroundPath = U"Texture/Background/";
 		registerTexture(U"background_sample", BackgroundPath + U"sample.png");

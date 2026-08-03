@@ -249,7 +249,7 @@ namespace Iwanna {
 
 	void CherryTrap::trapUpdate(int32 id) {
 		checkOutOfScreen();
-		if (trapID == id) {
+		if (trapID == id && !isTrapActived) {
 			isTrapActived = true;
 		}
 

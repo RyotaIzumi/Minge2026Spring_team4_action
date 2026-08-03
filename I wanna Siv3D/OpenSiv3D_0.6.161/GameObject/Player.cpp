@@ -155,13 +155,13 @@ namespace Iwanna {
 		if (isOnGround) {
 			vspeed = -jump;
 			djump = true;
-			AudioAsset(Sound::JUMP).playOneShot();
+			AudioAsset(Sound::DJUMP).playOneShot();
 			isOnGround = false;
 		}
 		else if (djump) {
 			vspeed = -jump2;
 			djump = false;
-			AudioAsset(Sound::DJUMP).playOneShot();
+			AudioAsset(Sound::JUMP).playOneShot();
 		}
 	}
 

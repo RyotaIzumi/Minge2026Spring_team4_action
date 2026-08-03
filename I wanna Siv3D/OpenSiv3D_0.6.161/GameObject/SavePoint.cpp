@@ -144,6 +144,7 @@ namespace Iwanna {
 			case 0:
 				Global::isPlayerFrozen = true;
 				Global::trap2MapBgmStop = true;
+				AudioAsset(Sound::VC_BUBUU).playOneShot();
 				trapIntervalTimer.restart();
 
 				trapStep++;
@@ -159,6 +160,10 @@ namespace Iwanna {
 	}
 
 	void SaveFakeTrap::setIsStartTrap(bool b) {
+		if (b && !isStartTrap) {
+			isSaving = true;
+			saveIntervalTimer.restart();
+		}
 		isStartTrap = b;
 	}
 
@@ -167,7 +172,7 @@ namespace Iwanna {
 	}
 
 	void SaveFakeTrap::draw() const {
-		TextureAsset(U"sprFakeSave")(0, 0, side, side).draw(pos);
+		TextureAsset(U"sprFakeSave")(isSaving ? side : 0, 0, side, side).draw(pos);
 		if (Global::trapCameraActivatedInTrap2Map)
 			FontAsset(U"Button")(U"↓").drawAt(pos.x + 16,pos.y - 20,ColorF(Palette::Black));
 	}

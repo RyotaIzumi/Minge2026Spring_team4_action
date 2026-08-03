@@ -892,6 +892,10 @@ namespace Iwanna {
 		return Global::isBossDefeated;
 	}
 
+	bool BossStageManager::isTrapBossSecondPhaseBgm() const {
+		return stageName == U"trapBoss" && isTrapBossSecondPhaseStarted;
+	}
+
 	Vec2 BossStageManager::getTrapBossSecondPhaseLeftEyePos() const {
 		return trapBossSecondPhaseTayamaCenterPos + trapBossSecondPhaseLeftEyeOffset * trapBossSecondPhaseTayamaScale;
 	}

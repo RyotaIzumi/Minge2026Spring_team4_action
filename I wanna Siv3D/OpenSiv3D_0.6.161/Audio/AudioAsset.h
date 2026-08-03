@@ -12,6 +12,8 @@ namespace Iwanna {
 		const FilePath Path_MAIN_HIGH{ U"Sound/Bgm/main_high.mp3" };
 		const String SECRET{ U"secret_stage" };
 		const FilePath Path_SECRET{ U"Sound/Bgm/secret_stage.mp3" };
+		const String BOSS_LOW{ U"boss_low" };
+		const FilePath Path_BOSS_LOW{ U"Sound/Bgm/boss_low.mp3" };
 		const String BOSS_NORMAL{ U"boss_normal" };
 		const FilePath Path_BOSS_NORMAL{ U"Sound/Bgm/boss_normal.mp3" };
 		const String GAMEOVER_NORMAL{ U"gameover_normal" };

@@ -90,8 +90,8 @@ namespace Iwanna {
 		double trapBossSecondPhaseDefeatedFallSpeed = 0.0;
 		double trapBossSecondPhaseDefeatedFallAcceleration = 0.25;
 		double trapBossSecondPhaseDefeatedRotateSpeed = 90.0;
-		int32 trapBossSecondPhaseMaxHp = 30;
-		int32 trapBossSecondPhaseHp = 30;
+		int32 trapBossSecondPhaseMaxHp = 22;
+		int32 trapBossSecondPhaseHp = 22;
 		BossHpBarDelayState trapBossSecondPhaseHpBarDelay;
 		double trapBossSecondPhaseEyeHitRadius = 24.0;
 		Vec2 trapBossSecondPhaseLeftEyeOffset{ -22, 5 };
@@ -177,6 +177,7 @@ namespace Iwanna {
 		Array<std::shared_ptr<Block>> getBlocks();
 		CameraShake& getCameraShake() { return cameraShake; }
 		bool shouldStopBossBgm() const;
+		bool isTrapBossSecondPhaseBgm() const;
 		Vec2 getTrapBossSecondPhaseLeftEyePos() const;
 		Vec2 getTrapBossSecondPhaseRightEyePos() const;
 		Array<Vec2> getTrapBossSecondPhaseEyePositions() const;

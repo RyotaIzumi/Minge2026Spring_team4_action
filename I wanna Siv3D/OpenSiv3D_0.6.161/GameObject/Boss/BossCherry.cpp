@@ -252,7 +252,7 @@ namespace Iwanna {
 
 	void TayamaBoss::startRandomAttack() {
 		if (attackCountInSet == 0) {
-			targetAttackCountInSet = Random(2);
+			targetAttackCountInSet = Random(1, 2);
 		}
 
 		if (attackCountInSet < 3) {
@@ -461,7 +461,7 @@ namespace Iwanna {
 			.scaled(scaleMag)
 			.rotated(Math::ToRadians(textureAngle))
 			.drawAt(pos, ColorF(1.0, isMuteki ? 0.6 : 1.0));
-		hitBox->draw(ColorF(0.5,0.5));
+		//hitBox->draw(ColorF(0.5,0.5));
 
 		if (!hasHp) {
 			return;

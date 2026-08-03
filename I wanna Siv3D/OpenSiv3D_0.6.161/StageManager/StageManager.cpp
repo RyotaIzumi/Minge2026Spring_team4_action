@@ -27,6 +27,7 @@ namespace Iwanna {
 
 		// 一部変数の初期化
 		isGenerateBloods = false;
+		playedTrapPonTriggerIDs.clear();
 
 		Global::trap2MapBgmStop = false;
 		Global::trapActivatedId30InTrap2Map = false;
@@ -180,6 +181,29 @@ namespace Iwanna {
 
 			// 特殊罠用にトリガー再設定
 			if (Global::trapCameraActivatedInTrap2Map)latestActivatedTriggerID = specialSaveTrapTriggerID;
+
+			if ((stageName == U"trap1" || stageName == U"trap2")
+				&& latestActivatedTriggerID >= 0
+				&& !playedTrapPonTriggerIDs.contains(latestActivatedTriggerID)) {
+				bool hasFlyingTrap = false;
+				for (const auto& spike : spikes) {
+					if (auto* spikeTrap = dynamic_cast<SpikeTrap*>(spike.get())) {
+						hasFlyingTrap |= (spikeTrap->getTrapID() == latestActivatedTriggerID);
+					}
+					if (auto* spikePathTrap = dynamic_cast<SpikePathTrap*>(spike.get())) {
+						hasFlyingTrap |= (spikePathTrap->getTrapID() == latestActivatedTriggerID);
+					}
+				}
+				for (const auto& cherry : cherries) {
+					if (auto* cherryTrap = dynamic_cast<CherryTrap*>(cherry.get())) {
+						hasFlyingTrap |= (cherryTrap->getTrapID() == latestActivatedTriggerID);
+					}
+				}
+				if (hasFlyingTrap) {
+					//AudioAsset(Sound::VC_PON).playOneShot();
+					playedTrapPonTriggerIDs.insert(latestActivatedTriggerID);
+				}
+			}
 
 			//playerに現在の罠IDを渡す
 			player->setNowTrapID(latestActivatedTriggerID);

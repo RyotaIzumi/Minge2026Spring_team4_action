@@ -70,6 +70,7 @@ namespace Iwanna {
 		int32 oneTileSize = 32;
 		String stageName;
 		int32 latestActivatedTriggerID = -1;
+		HashSet<int32> playedTrapPonTriggerIDs;
 
 		//GAMEOVER画面用
 		Timer gameoverTimer{ 0.5s };

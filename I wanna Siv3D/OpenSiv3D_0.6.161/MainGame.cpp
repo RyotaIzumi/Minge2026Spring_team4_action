@@ -112,7 +112,11 @@ namespace Iwanna {
 			}
 			//bossが出現したらBGM再生
 			if (bossStageManager.bossBgmStart) {
-				if(Global::nowRoomName == U"boss" || Global::nowRoomName == U"bossLow" || Global::nowRoomName == U"trapBoss") playBgm(U"boss_normal");
+				if(Global::nowRoomName == U"boss" || Global::nowRoomName == U"bossLow") playBgm(U"boss_normal");
+				if(Global::nowRoomName == U"trapBoss") {
+					if (bossStageManager.isTrapBossSecondPhaseBgm()) playBgm(U"boss_normal");
+					else playBgm(U"boss_low", bossLowBgmVolume);
+				}
 				if(Global::nowRoomName == U"ExBoss") playBgm(U"ex_boss");
 				bossStageManager.bossBgmStart = false;
 			}
@@ -143,11 +147,12 @@ namespace Iwanna {
 		}
 	}
 
-	void MainGame::playBgm(String bgm) {
+	void MainGame::playBgm(String bgm, double volume) {
 		stopBgm();
 		
 		audio = AudioAsset{bgm};
 		nowSoundName = bgm;
+		audio.setVolume(volume);
 		/*
 		SecondsF startTime = 0.0s;
 		int32 startStep = 0;
