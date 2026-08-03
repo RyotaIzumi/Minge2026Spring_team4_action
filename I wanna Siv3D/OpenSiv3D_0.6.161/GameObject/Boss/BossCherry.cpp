@@ -21,6 +21,7 @@ namespace Iwanna {
 		hasHp = true;
 		maxHp = 25;
 		hp = maxHp;
+		hpBarDelay.reset(hp, maxHp);
 
 		baseCenterPos = Vec2{ 400, 350 };
 		speed = 20;
@@ -79,6 +80,7 @@ namespace Iwanna {
 
 		//hp表示のフェードイン
 		if (hpBarAlpha < 1)hpBarAlpha += 0.05;
+		hpBarDelay.update(hp, maxHp);
 
 		//攻撃間隔の設定
 		switch (defeatedAttackTypeNum) {
@@ -139,14 +141,7 @@ namespace Iwanna {
 			double height = 20;              // 高さ
 			Vec2 barPos = Vec2(400,0);
 
-			// 最大HP（赤）
-			RectF(barPos.x - width / 2, barPos.y, width, height)
-				.draw(ColorF(1.0, 0.2, 0.2, hpBarAlpha));
-
-			// 現在HP（緑）
-			double hpRate = static_cast<double>(hp) / maxHp;
-			RectF(barPos.x - width / 2, barPos.y, width * hpRate, height)
-				.draw(ColorF(0.2, 1.0, 0.2, hpBarAlpha));
+			drawBossHpBar(barPos, width, height, hp, maxHp, hpBarAlpha, hpBarDelay);
 
 			// 文字表示
 			Vec2 textBasePos = Vec2(6, 18);
@@ -195,6 +190,7 @@ namespace Iwanna {
 		hasHp = true;
 		maxHp = 20;
 		hp = maxHp;
+		hpBarDelay.reset(hp, maxHp);
 
 		gravity = 0;
 		speed = 0;
@@ -429,14 +425,17 @@ namespace Iwanna {
 				attackIntervalStopwatch.restart();
 				appearanceStep = 2;
 			}
+			hpBarDelay.update(hp, maxHp);
 			break;
 		case 2:
+			hpBarDelay.update(hp, maxHp);
 			if (attackIntervalStopwatch.sF() >= attackWaitTime) {
 				startRandomAttack();
 				appearanceStep = 3;
 			}
 			break;
 		case 3:
+			hpBarDelay.update(hp, maxHp);
 			switch (currentAttackPattern) {
 			case 0:
 				updateRotatingSpreadAttack();
@@ -471,12 +470,7 @@ namespace Iwanna {
 		const double width = Global::stageWidth;
 		const double height = 20.0;
 		const Vec2 barPos{ Global::stageWidth / 2.0, 0.0 };
-		const double hpRate = static_cast<double>(hp) / maxHp;
-
-		RectF{ barPos.x - width / 2.0, barPos.y, width, height }
-			.draw(ColorF{ 1.0, 0.2, 0.2, hpBarAlpha });
-		RectF{ barPos.x - width / 2.0, barPos.y, width * hpRate, height }
-			.draw(ColorF{ 0.2, 1.0, 0.2, hpBarAlpha });
+		drawBossHpBar(barPos, width, height, hp, maxHp, hpBarAlpha, hpBarDelay);
 
 		const String bossName = U"Boss : Tayama";
 		const Vec2 textPos{ 6, 18 };
@@ -527,6 +521,7 @@ namespace Iwanna {
 		hasHp = true;
 		maxHp = 25;
 		hp = maxHp;
+		hpBarDelay.reset(hp, maxHp);
 		speed = moveSpeed;
 		direction = 90;
 		depth = 51;
@@ -606,6 +601,7 @@ namespace Iwanna {
 		if (hpBarAlpha < 1.0) {
 			hpBarAlpha = Min(1.0, hpBarAlpha + 0.05);
 		}
+		hpBarDelay.update(hp, maxHp);
 	}
 
 	void LowBossCherry::draw() const {
@@ -624,12 +620,7 @@ namespace Iwanna {
 		const double width = Global::stageWidth;
 		const double height = 20.0;
 		const Vec2 barPos{ Global::stageWidth / 2.0, 0.0 };
-		const double hpRate = static_cast<double>(hp) / maxHp;
-
-		RectF{ barPos.x - width / 2.0, barPos.y, width, height }
-			.draw(ColorF{ 1.0, 0.2, 0.2, hpBarAlpha });
-		RectF{ barPos.x - width / 2.0, barPos.y, width * hpRate, height }
-			.draw(ColorF{ 0.2, 1.0, 0.2, hpBarAlpha });
+		drawBossHpBar(barPos, width, height, hp, maxHp, hpBarAlpha, hpBarDelay);
 
 		const String bossName = U"Boss";
 		const Vec2 textPos{ 6, 18 };
@@ -743,6 +734,7 @@ namespace Iwanna {
 		hasHp = true;
 		maxHp = 7;
 		hp = maxHp;
+		hpBarDelay.reset(hp, maxHp);
 
 		speed = 0;
 		direction = 0;
@@ -795,6 +787,7 @@ namespace Iwanna {
 		pos.y = -r * sin(Math::ToRadians(c)) + centerPos.y;
 
 		setTypeColor();
+		hpBarDelay.update(hp, maxHp);
 	}
 
 	void BossSubCherry::draw() const {
@@ -809,14 +802,7 @@ namespace Iwanna {
 			double height = 4;              // 高さ
 			Vec2 barPos = pos + Vec2(0, -10 * scaleMag); // 上に表示
 
-			// 最大HP（赤）
-			RectF(barPos.x - width / 2, barPos.y, width, height)
-				.draw(ColorF(1.0, 0.2, 0.2));
-
-			// 現在HP（緑）
-			double hpRate = static_cast<double>(hp) / maxHp;
-			RectF(barPos.x - width / 2, barPos.y, width * hpRate, height)
-				.draw(ColorF(0.2, 1.0, 0.2));
+			drawBossHpBar(barPos, width, height, hp, maxHp, 1.0, hpBarDelay);
 		}
 	}
 

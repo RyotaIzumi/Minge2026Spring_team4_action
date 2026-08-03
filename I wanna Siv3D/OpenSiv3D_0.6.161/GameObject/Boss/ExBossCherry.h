@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "../Cherry.h"
+#include "../../UI/BossHpBar.h"
 
 namespace Iwanna {
 	class BossStageManager;
@@ -133,6 +134,7 @@ namespace Iwanna {
 		double playerDistance = 0.0;
 
 		double hpBarAlpha = 0.0;
+		BossHpBarDelayState hpBarDelay;
 
 		//ボス自身のステータス
 		enum class BossForm {

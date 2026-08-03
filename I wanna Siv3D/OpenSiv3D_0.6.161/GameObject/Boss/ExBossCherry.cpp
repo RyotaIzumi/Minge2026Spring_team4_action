@@ -23,6 +23,7 @@ namespace Iwanna {
 		hasHp = true;
 		maxHp = 60;
 		hp = maxHp;
+		hpBarDelay.reset(hp, maxHp);
 		bossForm = BossForm::First;
 
 		baseCenterPos = Vec2{ 800, 330 };
@@ -87,6 +88,7 @@ namespace Iwanna {
 
 		//hp表示のフェードイン
 		if (hpBarAlpha < 1)hpBarAlpha += 0.05;
+		hpBarDelay.update(hp, maxHp);
 
 		updateBossForm();
 		
@@ -108,14 +110,7 @@ namespace Iwanna {
 			double height = 20;              // 高さ
 			Vec2 barPos = Vec2{ bossStageManager->executeCameraPos().x,0 };
 
-			// 最大HP（赤）
-			RectF(barPos.x - width / 2, barPos.y, width, height)
-				.draw(ColorF(1.0, 0.2, 0.2, hpBarAlpha));
-
-			// 現在HP（緑）
-			double hpRate = static_cast<double>(hp) / maxHp;
-			RectF(barPos.x - width / 2, barPos.y, width * hpRate, height)
-				.draw(ColorF(0.2, 1.0, 0.2, hpBarAlpha));
+			drawBossHpBar(barPos, width, height, hp, maxHp, hpBarAlpha, hpBarDelay);
 
 			// 文字表示
 			Vec2 textBasePos = barPos + Vec2(-380, 18);

@@ -17,6 +17,10 @@ void MainGameSerializer::LoadCharactersMoraleValue() {
 	moraleValue2 = json[U"MoraleValue2"].get<int32>();
 	moraleValue3 = json[U"MoraleValue3"].get<int32>();
 	moraleValue4 = json[U"MoraleValue4"].get<int32>();
+	Global::moraleValue1 = moraleValue1;
+	Global::moraleValue2 = moraleValue2;
+	Global::moraleValue3 = moraleValue3;
+	Global::moraleValue4 = moraleValue4;
 }
 
 void MainGameSerializer::defineGlobalStatuses() {

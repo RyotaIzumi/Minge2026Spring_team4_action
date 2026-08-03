@@ -1029,5 +1029,8 @@
     <ClInclude Include="MainGameSerializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="UI\BossHpBar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -74,6 +74,10 @@ namespace Global {
 
 	inline int32 mainBgmNumber = 0;
 	inline int32 mainTextureNumber = 0;
+	inline int32 moraleValue1 = 50;
+	inline int32 moraleValue2 = 50;
+	inline int32 moraleValue3 = 50;
+	inline int32 moraleValue4 = 50;
 
 
 	 // ======================

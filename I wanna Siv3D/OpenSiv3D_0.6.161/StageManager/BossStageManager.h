@@ -12,6 +12,7 @@
 #include "../GameObject/Blood.h"
 #include "../GameObject/Warp.h"
 #include "../UI/TitleCard.h"
+#include "../UI/BossHpBar.h"
 #include "CameraShake.h"
 #include "../Global.h"
 
@@ -91,6 +92,7 @@ namespace Iwanna {
 		double trapBossSecondPhaseDefeatedRotateSpeed = 90.0;
 		int32 trapBossSecondPhaseMaxHp = 30;
 		int32 trapBossSecondPhaseHp = 30;
+		BossHpBarDelayState trapBossSecondPhaseHpBarDelay;
 		double trapBossSecondPhaseEyeHitRadius = 24.0;
 		Vec2 trapBossSecondPhaseLeftEyeOffset{ -22, 5 };
 		Vec2 trapBossSecondPhaseRightEyeOffset{ 140, 15 };

@@ -38,6 +38,7 @@ namespace Iwanna {
 		isTrapBossSecondPhaseDefeatedFall = false;
 		hasTrapBossSecondPhaseBrokenBlocks = false;
 		trapBossSecondPhaseHp = trapBossSecondPhaseMaxHp;
+		trapBossSecondPhaseHpBarDelay.reset(trapBossSecondPhaseHp, trapBossSecondPhaseMaxHp);
 		trapBossSecondPhaseTayamaAngle = 0.0;
 		trapBossSecondPhaseDefeatedFallSpeed = 0.0;
 		isTrapBossSecondPhaseEyeHitFlash = false;
@@ -246,6 +247,9 @@ namespace Iwanna {
 		updateTrapBossSecondPhaseDefeatedFall();
 		updateTrapBossSecondPhaseEyeAttack();
 		updateTrapBossSecondPhaseTargetAttack();
+		if (stageName == U"trapBoss" && isTrapBossSecondPhaseStarted && !isTrapBossSecondPhaseDefeated && !isTrapBossSecondPhaseDefeatedFall) {
+			trapBossSecondPhaseHpBarDelay.update(trapBossSecondPhaseHp, trapBossSecondPhaseMaxHp);
+		}
 		// カメラ位置 + 揺れ
 		camera.setTargetCenter(executeCameraPos() + cameraShake.getOffset());
 		camera.update(); {
@@ -740,12 +744,7 @@ namespace Iwanna {
 		const double width = Global::stageWidth;
 		const double height = 20.0;
 		const Vec2 barPos{ Global::stageWidth / 2.0, 0.0 };
-		const double hpRate = static_cast<double>(trapBossSecondPhaseHp) / trapBossSecondPhaseMaxHp;
-
-		RectF{ barPos.x - width / 2.0, barPos.y, width, height }
-			.draw(ColorF{ 1.0, 0.2, 0.2 });
-		RectF{ barPos.x - width / 2.0, barPos.y, width * hpRate, height }
-			.draw(ColorF{ 0.2, 1.0, 0.2 });
+		drawBossHpBar(barPos, width, height, trapBossSecondPhaseHp, trapBossSecondPhaseMaxHp, 1.0, trapBossSecondPhaseHpBarDelay);
 
 		const String bossName = U"Boss : Tayama";
 		const Vec2 textPos{ 6, 18 };

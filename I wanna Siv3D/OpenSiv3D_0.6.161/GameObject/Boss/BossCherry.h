@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "../Cherry.h"
+#include "../../UI/BossHpBar.h"
 
 namespace Iwanna {
 	class BossStageManager;
@@ -33,6 +34,7 @@ namespace Iwanna {
 
 		//hpバー用
 		double hpBarAlpha = 0.0;
+		BossHpBarDelayState hpBarDelay;
 
 		Stopwatch specialAttackStopwatch{ StartImmediately::No };
 		double specialAttackIntervalTime = 8.0;
@@ -63,6 +65,7 @@ namespace Iwanna {
 	private:
 		BossStageManager* bossStageManager = nullptr;
 		double hpBarAlpha = 0.0;
+		BossHpBarDelayState hpBarDelay;
 		double baseScaleMag = 1.0;
 		bool isDefeatedFall = false;
 		int32 appearanceStep = 0;
@@ -130,6 +133,7 @@ namespace Iwanna {
 	private:
 		BossStageManager* bossStageManager = nullptr;
 		double hpBarAlpha = 0.0;
+		BossHpBarDelayState hpBarDelay;
 		bool isDefeatedFall = false;
 		int32 appearanceStep = 0;
 		Stopwatch spreadStopwatch{ StartImmediately::No };
@@ -171,6 +175,7 @@ namespace Iwanna {
 		int32 startStep = 0;
 		int32 defeatedBossNum = 0;
 		ColorF typeColor;
+		BossHpBarDelayState hpBarDelay;
 
 		Vec2 centerPos;
 		double c,r,rMax;

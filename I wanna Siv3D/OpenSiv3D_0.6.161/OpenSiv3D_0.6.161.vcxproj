@@ -384,6 +384,7 @@
     <ClInclude Include="60FPSwithAutoFrameSkip.h" />
     <ClInclude Include="GameObject\Item.h" />
     <ClInclude Include="UI\Achieve.h" />
+    <ClInclude Include="UI\BossHpBar.h" />
     <ClInclude Include="UI\TitleCard.h" />
     <ClInclude Include="Audio\AudioAsset.h" />
     <ClInclude Include="AvoidanceManager\AvoidanceManager.h" />
