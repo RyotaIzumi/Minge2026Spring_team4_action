@@ -73,7 +73,11 @@ namespace Iwanna {
 
 		if (stageName == U"clear") {
 			saveGame();
-			if (Global::deathCount == 0) {
+			if (Global::moraleValue1 < 30 && Global::moraleValue2 < 30
+				&& Global::moraleValue3 < 30 && Global::moraleValue4 < 30) {
+				Global::endingValue = 2;
+			}
+			else if (Global::deathCount == 0) {
 				Global::endingValue = 8;
 			}
 		}
@@ -150,7 +154,7 @@ namespace Iwanna {
 			if (player->getIsGenerateBullet()) {
 				if (bullets.size() < bulletMaxNum) {
 					bullets << std::make_shared<Bullet>(player->pos, player->getDirection() == Global::Direction::RIGHT ? bulletSpeed : -bulletSpeed, player.get());
-					AudioAsset(Sound::SHOOT).playOneShot();
+					Sound::playOneShot(Sound::SHOOT);
 				}
 				player->setIsGenerateBullet(false);
 			}
@@ -221,7 +225,7 @@ namespace Iwanna {
 					}
 				}
 				if (hasFlyingTrap) {
-					//AudioAsset(Sound::VC_PON).playOneShot();
+					//Sound::playOneShot(Sound::VC_PON);
 					playedTrapPonTriggerIDs.insert(latestActivatedTriggerID);
 				}
 			}

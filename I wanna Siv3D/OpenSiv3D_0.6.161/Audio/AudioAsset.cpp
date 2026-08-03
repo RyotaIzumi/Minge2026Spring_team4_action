@@ -1,6 +1,8 @@
 ﻿# include "AudioAsset.h"
 # include <cassert>
 
+# include "../Global.h"
+
 namespace Iwanna {
 	namespace Sound {
 
@@ -85,6 +87,22 @@ namespace Iwanna {
 			for (auto& r : registry) {
 				AudioAsset::Load(r.name);
 			}
+		}
+
+		void playOneShot(const String& name) {
+			if (Global::moraleValue4 < 30) {
+				return;
+			}
+
+			AudioAsset(name).playOneShot();
+		}
+
+		void playOneShot(const String& name, double volume) {
+			if (Global::moraleValue4 < 30) {
+				return;
+			}
+
+			AudioAsset(name).playOneShot(volume);
 		}
 	}
 }

@@ -136,7 +136,10 @@ namespace Iwanna {
 			Global::elapsedPlayTime += Scene::DeltaTime();
 			//bossが出現したらBGM再生
 			if (bossStageManager.bossBgmStart) {
-				if(Global::nowRoomName == U"boss" || Global::nowRoomName == U"bossLow") playBgm(U"boss_normal");
+				if(Global::nowRoomName == U"boss" || Global::nowRoomName == U"bossLow") {
+					if (Global::mainBgmNumber == 0) playBgm(U"boss_low", bossLowBgmVolume);
+					else playBgm(U"boss_normal");
+				}
 				if(Global::nowRoomName == U"trapBoss") {
 					if (bossStageManager.isTrapBossSecondPhaseBgm()) playBgm(U"boss_normal");
 					else playBgm(U"boss_low", bossLowBgmVolume);

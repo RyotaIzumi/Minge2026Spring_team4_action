@@ -31,7 +31,7 @@ namespace Iwanna {
 			case 2:
 				if (getIsRotateFinished()) {
 					//✨と予備攻撃範囲を出す
-					AudioAsset(Sound::SPARK).playOneShot();
+					Sound::playOneShot(Sound::SPARK);
 					const std::function<std::shared_ptr<Cherry>()>& spark1 = [&]() {
 						return std::make_shared<EffectCherrySpark>(sordCherriesManager->getSordEdgePos(), 0.3);
 					};
@@ -48,7 +48,7 @@ namespace Iwanna {
 			case 3:
 				if (getIsRotateFinished()) {
 					//攻撃を出す
-					AudioAsset(Sound::EXPRO).playOneShot();
+					Sound::playOneShot(Sound::EXPRO);
 					bossStageManager->createSordExproCherry(attackStartPos, false, [this]() { return std::make_shared<ExproCherry>(pos, 1.0);});
 
 					//弾幕作成
@@ -92,7 +92,7 @@ namespace Iwanna {
 				break;
 			case 1://振り下ろし開始
 				if (getIsRotateFinished() && getIsMoveFinished()) {
-					AudioAsset(Sound::SORD_STRONG).playOneShot();
+					Sound::playOneShot(Sound::SORD_STRONG);
 					if (isPlayerInRightSide) {
 						rotateDirection(220, 0.2, false);
 					}
@@ -140,7 +140,7 @@ namespace Iwanna {
 				break;
 			case 1://振り上げ開始
 				if (getIsRotateFinished() && getIsMoveFinished()) {
-					AudioAsset(Sound::SORD_STRONG).playOneShot();
+					Sound::playOneShot(Sound::SORD_STRONG);
 					if (isPlayerInRightSide) {
 						movePosition(Vec2{pos.x + 50, pos.y - 30}, 0.5, false);
 						rotateDirection(-220, 0.3, false);
@@ -212,7 +212,7 @@ namespace Iwanna {
 						barrageAttack(CherryColorType::Orange);
 					}
 
-					AudioAsset(Sound::SORD_STRONG).playOneShot();
+					Sound::playOneShot(Sound::SORD_STRONG);
 					if (isPlayerInRightSide) {
 						movePosition(Vec2{ pos.x + 160, pos.y }, 0.5, false);
 						rotateDirection(360, 1.0, false);
@@ -272,7 +272,7 @@ namespace Iwanna {
 				break;
 			case 2://突き刺さった状態からの待機
 				if (getIsMoveFinished()) {
-					AudioAsset(Sound::BLOCKBREAK).playOneShot();
+					Sound::playOneShot(Sound::BLOCKBREAK);
 
 					//弾幕作成
 					if (bossForm >= BossForm::Third) {
@@ -325,7 +325,7 @@ namespace Iwanna {
 				break;
 			case 1://振り上げ開始
 				if (getIsRotateFinished() && getIsMoveFinished()) {
-					AudioAsset(Sound::SORD_STRONG).playOneShot();
+					Sound::playOneShot(Sound::SORD_STRONG);
 					if (isPlayerInRightSide) {
 						rotateDirection(-220, 0.3, false);
 					}
@@ -445,7 +445,7 @@ namespace Iwanna {
 						movePosition(Vec2{ - 400, targetY }, 1.0, true);
 					}
 
-					AudioAsset(Sound::SORD_STRONG).playOneShot();
+					Sound::playOneShot(Sound::SORD_STRONG);
 					sordCherriesManager->setSordCanPlayerKill(true);
 					attackStep++;
 				}
@@ -490,7 +490,7 @@ namespace Iwanna {
 			case 1://ワープ開始
 				if (getIsMoveFinished()) {
 					bossStageManager->createWarpCurtainCherry(pos, [this]() { return std::make_shared<WarpCurtainCherry>(2.0); });
-					AudioAsset(Sound::BOSS_WARP).playOneShot();
+					Sound::playOneShot(Sound::BOSS_WARP);
 					attackStep++;
 				}
 				break;
@@ -528,7 +528,7 @@ namespace Iwanna {
 				break;
 			case 5://振り下ろし開始
 				if (getIsRotateFinished()) {
-					AudioAsset(Sound::SORD_STRONG).playOneShot();
+					Sound::playOneShot(Sound::SORD_STRONG);
 					if (isPlayerInRightSide) {
 						rotateDirection(230, 0.25, false);
 					}
@@ -589,7 +589,7 @@ namespace Iwanna {
 					break;
 				case CherryColorType::Blue:
 					bossStageManager->createBlueLineCherry(30, 80, [this]() { return std::make_shared<BossFallBlueCherry>(pos, 1.0, BossCherryType::Blue); });
-					AudioAsset(Sound::CHERRYFALL).playOneShot();
+					Sound::playOneShot(Sound::CHERRYFALL);
 					break;
 				case CherryColorType::Yellow:
 					throwDir = 60 + Random(60);
@@ -625,7 +625,7 @@ namespace Iwanna {
 			break;
 		case CherryColorType::Blue:
 			bossStageManager->createBlueLineCherry(30, 80, [this]() { return std::make_shared<BossFallBlueCherry>(pos, 1.0, BossCherryType::Blue); });
-			AudioAsset(Sound::CHERRYFALL).playOneShot();
+			Sound::playOneShot(Sound::CHERRYFALL);
 			break;
 		case CherryColorType::Yellow:
 			throwDir = 60 + Random(60);

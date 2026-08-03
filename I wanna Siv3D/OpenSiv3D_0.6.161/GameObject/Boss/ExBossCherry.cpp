@@ -59,7 +59,7 @@ namespace Iwanna {
 				if(isPlayerInRightSide)rotateDirection(-180, 0.6, false);
 				else rotateDirection(180, 0.6, false);
 
-				AudioAsset(Sound::SORD_STRONG).playOneShot();
+				Sound::playOneShot(Sound::SORD_STRONG);
 				sordCherriesManager->startFollowBoss();
 				sordCherriesManager->setSordCanPlayerKill(true);
 				startStep++;
@@ -137,12 +137,12 @@ namespace Iwanna {
 	//ダメージを受けた際の処理
 	void ExBossCherry::hited() {
 		if (hp > 0) {
-			AudioAsset(Sound::BOSSHIT).playOneShot();
+			Sound::playOneShot(Sound::BOSSHIT);
 			hp--;
 		}
 
 		if (hp <= 0) {
-			AudioAsset(Sound::DEATH).playOneShot();
+			Sound::playOneShot(Sound::DEATH);
 			throw Error{ U"おめでとう！君はボスを撃破した！" };
 			Global::isBossDefeated = true;
 		}

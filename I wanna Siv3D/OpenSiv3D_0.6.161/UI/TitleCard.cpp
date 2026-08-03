@@ -14,7 +14,7 @@ namespace Iwanna {
 			nowPos = startPos;
 			canShowTitleCard = true;
 			moveTimer.restart();
-			AudioAsset(Sound::TITLECARD).playOneShot();
+			Sound::playOneShot(Sound::TITLECARD);
 
 			moveStep++;
 			break;

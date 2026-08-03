@@ -262,7 +262,7 @@ namespace Iwanna {
 			if (player->getIsGenerateBullet()) {
 				if (bullets.size() < bulletMaxNum) {
 					bullets << std::make_shared<Bullet>(player->pos, player->getDirection() == Global::Direction::RIGHT ? bulletSpeed : -bulletSpeed, player.get());
-					AudioAsset(Sound::SHOOT).playOneShot();
+					Sound::playOneShot(Sound::SHOOT);
 				}
 				player->setIsGenerateBullet(false);
 			}
@@ -475,7 +475,7 @@ namespace Iwanna {
 			trapBossSecondPhaseTargetAttackCount = 0;
 			trapBossSecondPhaseAttackStopwatch.restart();
 			trapBossSecondPhaseTargetAttackStopwatch.restart();
-			AudioAsset(Sound::VC_HAKKYOU).playOneShot();
+			Sound::playOneShot(Sound::VC_HAKKYOU);
 		}
 	}
 
@@ -763,13 +763,13 @@ namespace Iwanna {
 			return;
 		}
 
-		AudioAsset(Sound::BOSSHIT).playOneShot();
+		Sound::playOneShot(Sound::BOSSHIT);
 		--trapBossSecondPhaseHp;
 		isTrapBossSecondPhaseEyeHitFlash = true;
 		trapBossSecondPhaseEyeHitFlashStopwatch.restart();
 
 		if (trapBossSecondPhaseHp <= 0) {
-			AudioAsset(Sound::DEATH).playOneShot();
+			Sound::playOneShot(Sound::DEATH);
 			defeatTrapBossSecondPhase();
 		}
 	}
@@ -781,7 +781,7 @@ namespace Iwanna {
 
 		isTrapBossSecondPhaseDefeated = true;
 		clearTrapBossSecondPhaseCherries();
-		AudioAsset(Sound::VC_BAKANA).playOneShot();
+		Sound::playOneShot(Sound::VC_BAKANA);
 		if (Global::moraleValue2 >= 90 && Global::moraleValue3 >= 90 && Global::moraleValue4 >= 90) {
 			Global::endingValue = 6;
 		}
@@ -918,7 +918,7 @@ namespace Iwanna {
 	//りんご生成と管理配列への追加
 	void BossStageManager::createCherry(std::shared_ptr<Cherry> cherry) {
 		if (stageName == U"trapBoss" && trapBossGuygunStopwatch.sF() >= trapBossGuygunInterval) {
-			AudioAsset(Sound::GUYGUN).playOneShot(trapBossGuygunVolume);
+			Sound::playOneShot(Sound::GUYGUN, trapBossGuygunVolume);
 			trapBossGuygunStopwatch.restart();
 		}
 

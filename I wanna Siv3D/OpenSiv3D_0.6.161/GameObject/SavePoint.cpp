@@ -108,7 +108,7 @@ namespace Iwanna {
 		if (trapID == id && !isStartTrap) {
 			isStartTrap = true;
 			canPlayerKill = true;
-			AudioAsset(Sound::SPIKETRAP).playOneShot();
+			Sound::playOneShot(Sound::SPIKETRAP);
 		}
 
 		if (isStartTrap) {
@@ -144,7 +144,7 @@ namespace Iwanna {
 			case 0:
 				Global::isPlayerFrozen = true;
 				Global::trap2MapBgmStop = true;
-				AudioAsset(Sound::VC_BUBUU).playOneShot();
+				Sound::playOneShot(Sound::VC_BUBUU);
 				trapIntervalTimer.restart();
 
 				trapStep++;

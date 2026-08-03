@@ -106,7 +106,7 @@ namespace Iwanna {
 			switch (specialAttackStep) {
 			case 0:
 				bossStageManager->createGrayLatticeCherry(100,[this]() { return std::make_shared<BossGrayLatticeCherry>(pos, 1.0, BossCherryType::Gray); });
-				AudioAsset(Sound::BLOCKCHANGE).playOneShot();
+				Sound::playOneShot(Sound::BLOCKCHANGE);
 				specialAttackStopwatch.restart();
 				specialAttackCount++;
 				specialAttackStep++;
@@ -159,12 +159,12 @@ namespace Iwanna {
 	//ダメージを受けた際の処理
 	void BossCherry::hited() {
 		if (hp > 0) {
-			AudioAsset(Sound::BOSSHIT).playOneShot();
+			Sound::playOneShot(Sound::BOSSHIT);
 			hp--;
 		}
 
 		if (hp <= 0) {
-			AudioAsset(Sound::DEATH).playOneShot();
+			Sound::playOneShot(Sound::DEATH);
 			alpha = 0;
 			startStep = 3;
 			Global::isBossDefeated = true;
@@ -201,13 +201,13 @@ namespace Iwanna {
 
 		switch (Random(2)) {
 		case 0:
-			AudioAsset(Sound::VC_HOSO1).playOneShot();
+			Sound::playOneShot(Sound::VC_HOSO1);
 			break;
 		case 1:
-			AudioAsset(Sound::VC_HOSO2).playOneShot();
+			Sound::playOneShot(Sound::VC_HOSO2);
 			break;
 		case 2:
-			AudioAsset(Sound::VC_HOSO3).playOneShot();
+			Sound::playOneShot(Sound::VC_HOSO3);
 			break;
 		}
 	}
@@ -321,7 +321,7 @@ namespace Iwanna {
 		lineAttackStep = 0;
 		attackStopwatch.restart();
 		attackIntervalStopwatch.restart();
-		AudioAsset(Sound::VC_PON).playOneShot();
+		Sound::playOneShot(Sound::VC_PON);
 	}
 
 	void TayamaBoss::updateLineAttack() {
@@ -347,7 +347,7 @@ namespace Iwanna {
 			if (attackStopwatch.sF() >= lineAttackGenerateWaitTime) {
 				generateLineAttack();
 				attackStopwatch.restart();
-				AudioAsset(Sound::SPIKETRAP).playOneShot();
+				Sound::playOneShot(Sound::SPIKETRAP);
 				lineAttackStep = 3;
 			}
 			break;
@@ -485,12 +485,12 @@ namespace Iwanna {
 			return;
 		}
 
-		AudioAsset(Sound::BOSSHIT).playOneShot();
+		Sound::playOneShot(Sound::BOSSHIT);
 		--hp;
 
 		if (hp <= 0) {
-			AudioAsset(Sound::DEATH).playOneShot();
-			AudioAsset(Sound::VC_BIKKURI).playOneShot();
+			Sound::playOneShot(Sound::DEATH);
+			Sound::playOneShot(Sound::VC_BIKKURI);
 			canPlayerKill = false;
 			hasHp = false;
 			isDefeatedFall = true;
@@ -635,11 +635,11 @@ namespace Iwanna {
 			return;
 		}
 
-		AudioAsset(Sound::BOSSHIT).playOneShot();
+		Sound::playOneShot(Sound::BOSSHIT);
 		--hp;
 
 		if (hp <= 0) {
-			AudioAsset(Sound::DEATH).playOneShot();
+			Sound::playOneShot(Sound::DEATH);
 			canPlayerKill = false;
 			hasHp = false;
 			isDefeatedFall = true;
@@ -1017,27 +1017,27 @@ namespace Iwanna {
 				switch (cherrySubType) {
 				case BossCherryType::Red:
 					bossStageManager->createCherrySpread(25, 6, [this]() { return std::make_shared<BossBarrageCherry>(pos, 1.0, cherrySubType); });
-					AudioAsset(Sound::BLOCKBREAK).playOneShot();
+					Sound::playOneShot(Sound::BLOCKBREAK);
 					break;
 				case BossCherryType::Blue:
 					bossStageManager->createBlueLineCherry(20, 80, [this]() { return std::make_shared<BossFallBlueCherry>(pos, 1.0, cherrySubType); });
-					AudioAsset(Sound::CHERRYFALL).playOneShot();
+					Sound::playOneShot(Sound::CHERRYFALL);
 					break;
 				case BossCherryType::Yellow:
 					bossStageManager->createYellowStarCherry(5, 2, pos, 7, [this]() { return std::make_shared<BossYellowStarCherry>(pos, 1.0, cherrySubType); });
-					AudioAsset(Sound::BLOCKBREAK).playOneShot();
+					Sound::playOneShot(Sound::BLOCKBREAK);
 					break;
 				case BossCherryType::Green:
 					bossStageManager->createGreenWaveCherry(pos, 0.05, 10, [this]() { return std::make_shared<BossGreenWaveCherry>(pos, 1.0, cherrySubType); });
-					AudioAsset(Sound::BLOCKBREAK).playOneShot();
+					Sound::playOneShot(Sound::BLOCKBREAK);
 					break;
 				case BossCherryType::Orange:
 					bossStageManager->createOrangeStopCherry(false, [this]() { return std::make_shared<BossOrangeStopCherry>(pos, 1.0, cherrySubType); });
-					AudioAsset(Sound::SPIKETRAP).playOneShot();
+					Sound::playOneShot(Sound::SPIKETRAP);
 					break;
 				case BossCherryType::Sky:
 					bossStageManager->createSkyTargetCherry(7, false, [this]() { return std::make_shared<BossSkyTargetCherry>(pos, 1.0, cherrySubType); });
-					AudioAsset(Sound::BLOCKBREAK).playOneShot();
+					Sound::playOneShot(Sound::BLOCKBREAK);
 					break;
 				}
 			}
@@ -1046,27 +1046,27 @@ namespace Iwanna {
 				case BossCherryType::Red:
 					bossStageManager->createCherrySpread(20, 6, [this]() { return std::make_shared<BossBarrageCherry>(pos, 1.0, cherrySubType); });
 					bossStageManager->createCherrySpread(25, 4, [this]() { return std::make_shared<BossBarrageCherry>(pos, 1.0, cherrySubType); });
-					AudioAsset(Sound::BLOCKBREAK).playOneShot();
+					Sound::playOneShot(Sound::BLOCKBREAK);
 					break;
 				case BossCherryType::Blue:
 					bossStageManager->createBlueLineCherry(40, 50, [this]() { return std::make_shared<BossFallBlueCherry>(pos, 1.0, cherrySubType); });
-					AudioAsset(Sound::CHERRYFALL).playOneShot();
+					Sound::playOneShot(Sound::CHERRYFALL);
 					break;
 				case BossCherryType::Yellow:
 					bossStageManager->createYellowStarCherry(5, 2, pos, 10, [this]() { return std::make_shared<BossYellowStarCherry>(pos, 1.0, cherrySubType); });
-					AudioAsset(Sound::BLOCKBREAK).playOneShot();
+					Sound::playOneShot(Sound::BLOCKBREAK);
 					break;
 				case BossCherryType::Green:
 					bossStageManager->createGreenWaveCherry(pos, 0.05, 13, [this]() { return std::make_shared<BossGreenWaveCherry>(pos, 1.0, cherrySubType); });
-					AudioAsset(Sound::BLOCKBREAK).playOneShot();
+					Sound::playOneShot(Sound::BLOCKBREAK);
 					break;
 				case BossCherryType::Orange:
 					bossStageManager->createOrangeStopCherry(true, [this]() { return std::make_shared<BossOrangeStopCherry>(pos, 1.0, cherrySubType); });
-					AudioAsset(Sound::SPIKETRAP).playOneShot();
+					Sound::playOneShot(Sound::SPIKETRAP);
 					break;
 				case BossCherryType::Sky:
 					bossStageManager->createSkyTargetCherry(5, true, [this]() { return std::make_shared<BossSkyTargetCherry>(pos, 1.0, cherrySubType); });
-					AudioAsset(Sound::BLOCKBREAK).playOneShot();
+					Sound::playOneShot(Sound::BLOCKBREAK);
 					break;
 				}
 			}
@@ -1076,27 +1076,27 @@ namespace Iwanna {
 			switch (cherrySubType) {
 			case BossCherryType::Red:
 				bossStageManager->createCherrySpread(20, 6, [this]() { return std::make_shared<BossBarrageCherry>(pos, 1.0, cherrySubType); });
-				AudioAsset(Sound::BLOCKBREAK).playOneShot();
+				Sound::playOneShot(Sound::BLOCKBREAK);
 				break;
 			case BossCherryType::Blue:
 				bossStageManager->createBlueLineCherry(20, 80, [this]() { return std::make_shared<BossFallBlueCherry>(pos, 1.0, cherrySubType); });
-				AudioAsset(Sound::CHERRYFALL).playOneShot();
+				Sound::playOneShot(Sound::CHERRYFALL);
 				break;
 			case BossCherryType::Yellow:
 				bossStageManager->createYellowStarCherry(5, 2, pos, 6, [this]() { return std::make_shared<BossYellowStarCherry>(pos, 1.0, cherrySubType); });
-				AudioAsset(Sound::BLOCKBREAK).playOneShot();
+				Sound::playOneShot(Sound::BLOCKBREAK);
 				break;
 			case BossCherryType::Green:
 				bossStageManager->createGreenWaveCherry(pos, 0.05, 11, [this]() { return std::make_shared<BossGreenWaveCherry>(pos, 1.0, cherrySubType); });
-				AudioAsset(Sound::BLOCKBREAK).playOneShot();
+				Sound::playOneShot(Sound::BLOCKBREAK);
 				break;
 			case BossCherryType::Orange:
 				bossStageManager->createOrangeStopCherry(false, [this]() { return std::make_shared<BossOrangeStopCherry>(pos, 1.0, cherrySubType); });
-				AudioAsset(Sound::SPIKETRAP).playOneShot();
+				Sound::playOneShot(Sound::SPIKETRAP);
 				break;
 			case BossCherryType::Sky:
 				bossStageManager->createSkyTargetCherry(6, false, [this]() { return std::make_shared<BossSkyTargetCherry>(pos, 1.0, cherrySubType); });
-				AudioAsset(Sound::BLOCKBREAK).playOneShot();
+				Sound::playOneShot(Sound::BLOCKBREAK);
 				break;
 			}
 		}

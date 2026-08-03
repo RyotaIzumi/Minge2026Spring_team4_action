@@ -93,5 +93,7 @@ namespace Iwanna {
 		void registerAudio(const String& name, const String& path, const Loop loop = Loop::No);
 		void registerAudiosSync();
 		void loadAudiosSync();
+		void playOneShot(const String& name);
+		void playOneShot(const String& name, double volume);
 	}
 }

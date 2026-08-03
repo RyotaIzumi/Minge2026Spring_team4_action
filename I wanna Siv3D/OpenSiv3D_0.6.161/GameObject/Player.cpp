@@ -155,13 +155,13 @@ namespace Iwanna {
 		if (isOnGround) {
 			vspeed = -jump;
 			djump = true;
-			AudioAsset(Sound::DJUMP).playOneShot();
+			Sound::playOneShot(Sound::DJUMP);
 			isOnGround = false;
 		}
 		else if (djump) {
 			vspeed = -jump2;
 			djump = false;
-			AudioAsset(Sound::JUMP).playOneShot();
+			Sound::playOneShot(Sound::JUMP);
 		}
 	}
 
@@ -178,12 +178,12 @@ namespace Iwanna {
 	//ダメージを受けた際の処理
 	void Player::playerHited() {
 		if (hp > 0) {
-			AudioAsset(Sound::DEATH).playOneShot();
+			Sound::playOneShot(Sound::DEATH);
 			hp--;
 		}
 
 		if (hp <= 0) {
-			AudioAsset(Sound::DEATH).playOneShot();
+			Sound::playOneShot(Sound::DEATH);
 			playerDead();
 		}
 
@@ -206,7 +206,7 @@ namespace Iwanna {
 		hspeed = 0;
 		vspeed = 0;
 		spriteSystem.stopOrPlayAnimation(false);
-		AudioAsset(Sound::DEATH).playOneShot();
+		Sound::playOneShot(Sound::DEATH);
 	}
 
 	Vec2 Player::snappedPos(Vec2 p)
@@ -228,14 +228,14 @@ namespace Iwanna {
 					auto* hideBlock = dynamic_cast<HideBlock*>(&other);
 					if (hideBlock->getIsHidden()) {
 						hideBlock->setIsHidden(false);
-						AudioAsset(Sound::BLOCKCHANGE).playOneShot();
+						Sound::playOneShot(Sound::BLOCKCHANGE);
 					}
 				}
 				else if (block->blockType == BlockType::ConditionalHide) {
 					auto* chBlock = dynamic_cast<ConditionalHideBlock*>(&other);
 					if (chBlock->getIsHidden() && chBlock->getHasCollide()) {
 						chBlock->setIsHidden(false);
-						AudioAsset(Sound::BLOCKCHANGE).playOneShot();
+						Sound::playOneShot(Sound::BLOCKCHANGE);
 					}
 				}
 				else if (block->blockType == BlockType::Fake) {

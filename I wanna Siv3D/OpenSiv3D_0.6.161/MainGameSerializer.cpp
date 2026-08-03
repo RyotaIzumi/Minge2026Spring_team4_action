@@ -60,7 +60,7 @@ void MainGameSerializer::defineGlobalStatuses() {
 	else Window::SetTitle(U"TestPlayGame");
 
 	//Texture
-	if (moraleValue3 < 40) Global::mainTextureNumber = 0;
+	if (moraleValue3 < 30) Global::mainTextureNumber = 0;
 	else if (moraleValue3 <= 100) Global::mainTextureNumber = 1;
 
 	//BGM

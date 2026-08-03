@@ -193,12 +193,12 @@ namespace Iwanna {
 	//ダメージを受けた際の処理
 	void Cherry::hited() {
 		if (hp > 0) {
-			AudioAsset(Sound::BOSSHIT).playOneShot();
+			Sound::playOneShot(Sound::BOSSHIT);
 			hp--;
 		}
 
 		if (hp <= 0) {
-			AudioAsset(Sound::DEATH).playOneShot();
+			Sound::playOneShot(Sound::DEATH);
 			isDelete = true;
 		}
 
@@ -258,7 +258,7 @@ namespace Iwanna {
 
 			//効果音再生
 			if (!soundPlayOne) {
-				AudioAsset(Sound::CHERRYFALL).playOneShot();
+				Sound::playOneShot(Sound::CHERRYFALL);
 				soundPlayOne = true;
 			}
 		}
@@ -352,7 +352,7 @@ namespace Iwanna {
 				break;
 			case CherryColorType::Orange:
 				stageManager->createOrangeStopCherry(true, [this]() { return std::make_shared<BarrageGimmikOrangeCherry>(pos, 1.0, cherryColorType); });
-				AudioAsset(Sound::SPIKETRAP).playOneShot();
+				Sound::playOneShot(Sound::SPIKETRAP);
 				break;
 			case CherryColorType::Sky:
 				stageManager->createSkyTargetCherry(7, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0, cherryColorType); });
