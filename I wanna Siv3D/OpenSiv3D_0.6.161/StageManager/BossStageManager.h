@@ -74,6 +74,7 @@ namespace Iwanna {
 
 		// boss関連
 		int32 defeatedBossNum = 0;
+		bool shouldCleanupBossCherryDefeatObjects = false;
 		bool isTrapBossSecondPhaseIntroStarted = false;
 		bool isTrapBossSecondPhaseStarted = false;
 		bool isTrapBossSecondPhaseDefeated = false;
@@ -163,6 +164,8 @@ namespace Iwanna {
 		void hitTrapBossSecondPhase();
 		void defeatTrapBossSecondPhase();
 		void clearTrapBossSecondPhaseCherries();
+		void requestBossCherryDefeatCleanup();
+		void cleanupBossCherryDefeatObjects();
 		void setStep(int32 newStep);
 		void saveGame();
 		Vec2 executeCameraPos();

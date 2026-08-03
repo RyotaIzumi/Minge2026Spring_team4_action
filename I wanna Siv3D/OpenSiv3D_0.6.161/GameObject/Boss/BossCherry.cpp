@@ -87,9 +87,9 @@ namespace Iwanna {
 		case 0:attackIntervalTime = 3.5; break;
 		case 1:attackIntervalTime = 3.2; break;
 		case 2:attackIntervalTime = 2.8; break;
-		case 3:attackIntervalTime = 2.4; break;
-		case 4:attackIntervalTime = 2.0; break;
-		case 5:attackIntervalTime = 1.5; break;
+		case 3:attackIntervalTime = 2.5; break;
+		case 4:attackIntervalTime = 2.2; break;
+		case 5:attackIntervalTime = 1.8; break;
 		}
 
 		//攻撃強化関連の処理
@@ -102,6 +102,7 @@ namespace Iwanna {
 		if(defeatedAttackTypeNum >= 6) isSpecialAttack = true;
 		
 		//特殊攻撃の呼び出し
+		/*
 		if (isSpecialAttack) {
 			switch (specialAttackStep) {
 			case 0:
@@ -120,6 +121,7 @@ namespace Iwanna {
 			}
 			return;
 		}
+		*/
 
 		// 一定間隔でファンネルりんごを一つ選んで攻撃
 		if (reachedAttackTime(attackIntervalTime)) {
@@ -165,9 +167,11 @@ namespace Iwanna {
 
 		if (hp <= 0) {
 			Sound::playOneShot(Sound::DEATH);
+			hasHp = false;
 			alpha = 0;
 			startStep = 3;
 			Global::isBossDefeated = true;
+			bossStageManager->requestBossCherryDefeatCleanup();
 		}
 
 		isMuteki = true;

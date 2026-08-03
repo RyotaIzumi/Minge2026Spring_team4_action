@@ -1,10 +1,10 @@
-#pragma once
+﻿#pragma once
 #include <Siv3D.hpp>
 #include "../Global.h"
 
 namespace Iwanna {
 	inline bool isMoraleBossHpBarEnabled() {
-		return Global::moraleValue1 >= 60;
+		return Global::moraleValue1 >= 50;
 	}
 
 	struct BossHpBarDelayState {

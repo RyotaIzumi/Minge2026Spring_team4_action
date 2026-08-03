@@ -50,6 +50,7 @@ namespace Iwanna {
 		trapBossSecondPhaseEyeHitFlashStopwatch.reset();
 		trapBossSecondPhaseAttackStopwatch.reset();
 		trapBossSecondPhaseTargetAttackStopwatch.reset();
+		shouldCleanupBossCherryDefeatObjects = false;
 
 		gameoverTimer.reset();
 		isShowGameOver = false;
@@ -387,6 +388,10 @@ namespace Iwanna {
 				}
 			}
 			updateTrapBossSecondPhaseBulletHits(bullets);
+
+			if (shouldCleanupBossCherryDefeatObjects) {
+				cleanupBossCherryDefeatObjects();
+			}
 
 			// 倒されたボスりんごのサブりんご取得用処理
 			if (!bossCherries.empty()) {
@@ -792,6 +797,19 @@ namespace Iwanna {
 	void BossStageManager::clearTrapBossSecondPhaseCherries() {
 		gameObjects.cherries.clear();
 		pendingCherries.clear();
+	}
+
+	void BossStageManager::requestBossCherryDefeatCleanup() {
+		shouldCleanupBossCherryDefeatObjects = true;
+	}
+
+	void BossStageManager::cleanupBossCherryDefeatObjects() {
+		gameObjects.cherries.clear();
+		pendingCherries.clear();
+		gameObjects.bossCherries.remove_if([](const std::shared_ptr<Cherry>& cherry) {
+			return dynamic_cast<BossSubCherry*>(cherry.get()) != nullptr;
+		});
+		shouldCleanupBossCherryDefeatObjects = false;
 	}
 
 	void BossStageManager::setStep(int32 newStep) {
