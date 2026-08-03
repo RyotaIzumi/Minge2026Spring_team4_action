@@ -782,6 +782,9 @@ namespace Iwanna {
 		isTrapBossSecondPhaseDefeated = true;
 		clearTrapBossSecondPhaseCherries();
 		AudioAsset(Sound::VC_BAKANA).playOneShot();
+		if (Global::moraleValue2 >= 90 && Global::moraleValue3 >= 90 && Global::moraleValue4 >= 90) {
+			Global::endingValue = 6;
+		}
 		isTrapBossSecondPhaseDefeatedFall = true;
 		trapBossSecondPhaseDefeatedFallSpeed = 0.0;
 	}

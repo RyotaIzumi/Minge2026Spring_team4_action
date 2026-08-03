@@ -40,7 +40,10 @@ void MainGameSerializer::defineGlobalStatuses() {
 	Global::endingValue = 4;
 
 	// 開始room
-	if (moraleValue1 < 30 && moraleValue2 < 30) {
+	if (moraleValue2 >= 90 && moraleValue3 >= 90 && moraleValue4 >= 90) {
+		Global::startRoomName = U"tutorialTrap";
+	}
+	else if (moraleValue1 < 30 && moraleValue2 < 30) {
 		Global::startRoomName = U"tutorialLow";
 	}
 	else if (moraleValue1 >= 90) {
