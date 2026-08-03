@@ -334,7 +334,11 @@ namespace Iwanna {
 				auto* warp = dynamic_cast<Warp*>(&other);
 				if (warp->getCanWarp()) {
 					Global::prevRoomName = Global::nowRoomName;
-					Global::nowRoomName = warp->getNextRoomName();
+					Global::nowRoomName = (Global::nowRoomName == U"tutorialLow" && Global::moraleValue1 >= 90)
+						? Global::chooseGenerateStage()
+						: Global::isGenerateStage(Global::nowRoomName)
+						? Global::chooseGenerateStage()
+						: warp->getNextRoomName();
 					Global::isChangeRoom = true;
 				}
 			}

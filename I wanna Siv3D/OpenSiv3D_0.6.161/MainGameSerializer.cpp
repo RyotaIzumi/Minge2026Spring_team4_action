@@ -39,7 +39,12 @@ void MainGameSerializer::LoadEndingValue() {
 void MainGameSerializer::defineGlobalStatuses() {
 
 	// 開始room
-	if (moraleValue2 > 90)Global::startRoomName = U"tutorialTrap";
+	if (moraleValue1 >= 90) {
+		Global::remainingGenerateStageNames.clear();
+		Global::startRoomName = U"tutorialLow";
+		Global::endingValue = 4;
+	}
+	else if (moraleValue2 > 90)Global::startRoomName = U"trapBoss";
 	else if(moraleValue1 <= 30) Global::startRoomName = U"normal1";
 	else Global::startRoomName = U"tutorial";
 
@@ -62,7 +67,7 @@ void MainGameSerializer::SaveEndingValue() {
 	JSON json;
 
 	// 値をセット
-	json[U"EndingValue"] = 0;
+	json[U"EndingValue"] = Global::endingValue;
 
 	// ファイル保存
 	json.save(U"EndingValue.json");

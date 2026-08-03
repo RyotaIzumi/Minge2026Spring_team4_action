@@ -50,7 +50,10 @@ namespace Iwanna {
 	class InGame : public App::Scene {
 	private:
 		bool isPauseMenuOpen = false;
+		bool isGenerateLoadingOpen = false;
+		Timer generateLoadingTimer{ 2.0s, StartImmediately::No };
 		void drawPauseMenu() const;
+		void drawGenerateLoading() const;
 	public:
 		InGame(const InitData& data);
 

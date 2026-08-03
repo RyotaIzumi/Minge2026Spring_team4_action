@@ -19,6 +19,7 @@ namespace Iwanna {
 
 	void MainGame::startGame() {
 		int32 chapter = 1;
+		const bool startedByRoomChange = Global::isChangeRoom;
 
 		//ステージ名称系の初期化
 		if (!Global::isExistSaveData && !Global::isChangeRoom) {
@@ -64,6 +65,10 @@ namespace Iwanna {
 		switch (stageType) {
 		case StageType::Normal:stageManager.setUpObjects(chapter); break;
 		case StageType::Boss:bossStageManager.setUpObjects(chapter); break;
+		}
+
+		if (startedByRoomChange && Global::isGenerateStage(Global::nowRoomName)) {
+			Global::isGenerateStageFakeLoading = true;
 		}
 
 		playGameoverBgmOne = true;

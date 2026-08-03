@@ -2,18 +2,74 @@
   {
     "Gimmiks": [
       {
+        "gimmikName": "罠針_上",
+        "gimmikPos": [
+          1120.0,
+          448.0
+        ],
+        "value1": 0,
+        "value2": 90.0,
+        "value3": 12.0
+      },
+      {
+        "gimmikName": "罠針_上",
+        "gimmikPos": [
+          1440.0,
+          448.0
+        ],
+        "value1": 1,
+        "value2": 120.0,
+        "value3": 12.0
+      },
+      {
+        "gimmikName": "罠トリガー",
+        "gimmikPos": [
+          1120.0,
+          32.0
+        ],
+        "value1": 0,
+        "value2": 1.0,
+        "value3": 14.0
+      },
+      {
+        "gimmikName": "罠トリガー",
+        "gimmikPos": [
+          1440.0,
+          32.0
+        ],
+        "value1": 1,
+        "value2": 1.0,
+        "value3": 14.0
+      },
+      {
         "gimmikName": "ワープ",
         "gimmikPos": [
-          640.0,
-          -32.0
+          2752.0,
+          608.0
         ],
-        "value1": "low2"
+        "value1": "bossLow"
+      },
+      {
+        "gimmikName": "ワープ",
+        "gimmikPos": [
+          2784.0,
+          608.0
+        ],
+        "value1": "bossLow"
+      },
+      {
+        "gimmikName": "ワープ",
+        "gimmikPos": [
+          2816.0,
+          608.0
+        ],
+        "value1": "trapLow"
       }
     ],
-    "background": "cave",
+    "background": "",
     "startPlayerPos": [
-      50.0,
-      550.0
+      80.0,
+      100.0
     ]
   }
 ]

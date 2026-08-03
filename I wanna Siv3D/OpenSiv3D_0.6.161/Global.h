@@ -84,6 +84,26 @@ namespace Global {
 	inline int32 deathCount = 0;
 	inline int32 endingValue = 0;
 
+	// --- generateステージ関連 --- //
+	inline Array<String> generateStageNames = { U"generate1", U"generate2", U"generate3", U"generate4", U"generate5" };
+	inline Array<String> remainingGenerateStageNames;
+	inline bool isGenerateStageFakeLoading = false;
+
+	inline bool isGenerateStage(const String& roomName) {
+		return generateStageNames.includes(roomName);
+	}
+
+	inline String chooseGenerateStage() {
+		if (remainingGenerateStageNames.isEmpty()) {
+			remainingGenerateStageNames = generateStageNames;
+		}
+
+		const int32 index = Random(static_cast<int32>(remainingGenerateStageNames.size() - 1));
+		const String roomName = remainingGenerateStageNames[index];
+		remainingGenerateStageNames.remove_at(index);
+		return roomName;
+	}
+
 
 	 // ======================
 	// 定数

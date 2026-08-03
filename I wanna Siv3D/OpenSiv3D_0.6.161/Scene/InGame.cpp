@@ -25,6 +25,19 @@ namespace Iwanna {
 	void InGame::update() {
 		auto& data = getData().game;
 
+		if (Global::isGenerateStageFakeLoading) {
+			Global::isGenerateStageFakeLoading = false;
+			isGenerateLoadingOpen = true;
+			generateLoadingTimer.restart();
+		}
+
+		if (isGenerateLoadingOpen) {
+			if (generateLoadingTimer.reachedZero()) {
+				isGenerateLoadingOpen = false;
+			}
+			return;
+		}
+
 		if (isPauseMenuOpen) {
 			if (KeyEscape.down()) {
 				isPauseMenuOpen = false;
@@ -63,6 +76,9 @@ namespace Iwanna {
 		auto& data = getData().game;
 
 		data.drawGame();
+		if (isGenerateLoadingOpen) {
+			drawGenerateLoading();
+		}
 		if (isPauseMenuOpen) {
 			drawPauseMenu();
 		}
@@ -84,5 +100,32 @@ namespace Iwanna {
 		FontAsset(U"BossHp")(endingText).drawAt(400, 318, ColorF{ 1.0, 1.0, 1.0 });
 		FontAsset(U"BossHp")(deathText).drawAt(400, 374, ColorF{ 1.0, 1.0, 1.0 });
 		FontAsset(U"BossHp")(timeText).drawAt(400, 418, ColorF{ 1.0, 1.0, 1.0 });
+	}
+
+	void InGame::drawGenerateLoading() const {
+		const int32 w = Scene::Width();
+		const int32 h = Scene::Height();
+		Rect{ 0, 0, w, h }.draw(ColorF{ 0.0, 0.0, 0.0, 0.72 });
+
+		const Vec2 loadingTextPos{ w - 210.0, h - 50.0 };
+		FontAsset(U"BossHp")(U"ステージ生成中").drawAt(loadingTextPos, Palette::White);
+
+		const Vec2 spinnerCenter{ w - 60.0, h - 48.0 };
+		const double rotation = Scene::Time() * 180.0;
+		const int32 appleCount = 10;
+		const double radius = 28.0;
+		static const Texture appleTexture{ U"\U0001F34E"_emoji };
+
+		for (int32 i = 0; i < appleCount; ++i) {
+			const double t = static_cast<double>(i) / (appleCount - 1);
+			const double angle = 55.0 + 250.0 * t + rotation;
+			const Vec2 applePos = spinnerCenter + Circular{ radius, Math::ToRadians(angle) };
+			const double appleScale = 0.18 + 0.12 * t;
+			const double alpha = 0.35 + 0.65 * t;
+
+			appleTexture
+				.scaled(appleScale)
+				.drawAt(applePos, ColorF{ 1.0, alpha });
+		}
 	}
 }
