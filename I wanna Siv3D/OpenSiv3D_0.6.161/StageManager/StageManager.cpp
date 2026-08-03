@@ -477,6 +477,21 @@ namespace Iwanna {
 			FontAsset(U"BossHp")(timeText).drawAt(basePos, ColorF{ 1.0, 1.0, 1.0 });
 			FontAsset(U"BossHp")(deathText).drawAt(basePos + Vec2{ 0, 46 }, ColorF{ 1.0, 1.0, 1.0 });
 		}
+
+		if (stageName == U"tutorialLow") {
+			const Vec2 basePos{ 50, 50 };
+			const Array<String> tutorialTexts{
+				U"←→キー : 移動",
+				U"shift : ジャンプ、二段ジャンプ",
+				U"Zキー : ショット"
+			};
+
+			for (int32 i = 0; i < tutorialTexts.size(); ++i) {
+				const Vec2 textPos = basePos + Vec2{ 0, i * 26.0 };
+				FontAsset(U"Button")(tutorialTexts[i]).draw(textPos + Vec2{ 1, 1 }, ColorF{ 0.5, 0.7 });
+				FontAsset(U"Button")(tutorialTexts[i]).draw(textPos, ColorF{ 1.0, 1.0, 1.0 });
+			}
+		}
 	}
 
 	void StageManager::setStep(int32 newStep) {

@@ -334,7 +334,7 @@ namespace Iwanna {
 
 		// ----- 以下通常ステージのギミック ----- //
 
-		if (fileName == U"tutorial") {
+		if (fileName == U"tutorial" || fileName == U"tutorialTrap") {
 			gameObjects.signs << std::make_shared<Sign>(Vec2{ 3,17 }, SignType::Tutorial_Move);
 			gameObjects.signs << std::make_shared<Sign>(Vec2{ 8,17 }, SignType::Tutorial_Jump);
 			gameObjects.signs << std::make_shared<Sign>(Vec2{ 12,16 }, SignType::Tutorial_DoubleJump);
