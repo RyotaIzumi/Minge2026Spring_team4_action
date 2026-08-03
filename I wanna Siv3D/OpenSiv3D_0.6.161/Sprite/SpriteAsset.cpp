@@ -83,6 +83,8 @@ namespace Iwanna {
 		registerTexture(U"background_black", BackgroundPath + U"black.png");
 		registerTexture(U"background_cave", BackgroundPath + U"cave.png");
 		registerTexture(U"background_caveLong", BackgroundPath + U"caveLong.png");
+		registerTexture(U"background_trapBossCave1", BackgroundPath + U"trapBossCave1.png");
+		registerTexture(U"background_trapBossCave2", BackgroundPath + U"trapBossCave2.png");
 
 		//その他テクスチャ登録
 		static const FilePath OtherPath = U"Texture/Other/";

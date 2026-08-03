@@ -32,6 +32,13 @@ namespace Iwanna {
 		Global::isBossExBarrageAttack = false;
 		Global::isBossDefeated = false;
 		Global::isCameraFollowMode = false;
+		isTrapBossSecondPhaseIntroStarted = false;
+		isTrapBossSecondPhaseStarted = false;
+		isTrapBossSecondPhaseDefeated = false;
+		trapBossSecondPhaseHp = trapBossSecondPhaseMaxHp;
+		isTrapBossSecondPhaseEyeHitFlash = false;
+		trapBossSecondPhaseIntroStopwatch.reset();
+		trapBossSecondPhaseEyeHitFlashStopwatch.reset();
 
 		gameoverTimer.reset();
 		isShowGameOver = false;
@@ -223,6 +230,7 @@ namespace Iwanna {
 
 		// 揺れ更新
 		cameraShake.update();
+		updateTrapBossSecondPhaseIntro();
 		// カメラ位置 + 揺れ
 		camera.setTargetCenter(executeCameraPos() + cameraShake.getOffset());
 		camera.update(); {
@@ -268,7 +276,12 @@ namespace Iwanna {
 			for (auto& b : blocks) {
 				stockNearGameObjects.add(b.get());
 				stockBulletsNearGameObjects.add(b.get());
-				if (b->isTriggerTrap)b->trapUpdate(Global::isBossDefeated ? 0 : -1);
+				if (b->isTriggerTrap) {
+					const bool shouldBreakByBossDefeat = (stageName == U"trapBoss")
+						? isTrapBossSecondPhaseDefeated
+						: Global::isBossDefeated;
+					b->trapUpdate(shouldBreakByBossDefeat ? 0 : -1);
+				}
 			}
 
 			// 針の更新と、起動しているトリガーIDの反映
@@ -352,6 +365,7 @@ namespace Iwanna {
 					b->onCollision(*obj);
 				}
 			}
+			updateTrapBossSecondPhaseBulletHits(bullets);
 
 			// 倒されたボスりんごのサブりんご取得用処理
 			if (!bossCherries.empty()) {
@@ -415,6 +429,46 @@ namespace Iwanna {
 		}
 	}
 
+	void BossStageManager::updateTrapBossSecondPhaseIntro() {
+		if (stageName != U"trapBoss" || !Global::isBossDefeated || isTrapBossSecondPhaseStarted) {
+			return;
+		}
+
+		if (!isTrapBossSecondPhaseIntroStarted) {
+			isTrapBossSecondPhaseIntroStarted = true;
+			trapBossSecondPhaseIntroStopwatch.restart();
+		}
+
+		if (trapBossSecondPhaseIntroStopwatch.sF() >= trapBossSecondPhaseIntroCooldown + trapBossSecondPhaseIntroTime) {
+			isTrapBossSecondPhaseStarted = true;
+			backgroundName = U"background_trapBossCave2";
+			cameraShake.shake(0.6, 30.0);
+			AudioAsset(Sound::VC_BIKKURI).playOneShot();
+		}
+	}
+
+	void BossStageManager::updateTrapBossSecondPhaseBulletHits(Array<std::shared_ptr<Bullet>>& bullets) {
+		if (stageName != U"trapBoss" || !isTrapBossSecondPhaseStarted || isTrapBossSecondPhaseDefeated) {
+			return;
+		}
+
+		const Circle leftEye{ getTrapBossSecondPhaseLeftEyePos(), trapBossSecondPhaseEyeHitRadius };
+		const Circle rightEye{ getTrapBossSecondPhaseRightEyePos(), trapBossSecondPhaseEyeHitRadius };
+
+		for (auto& bullet : bullets) {
+			if (bullet->isDelete || bullet->isOutOfScreen) {
+				continue;
+			}
+
+			if (const auto bulletCircle = bullet->hitBox->getCircle()) {
+				if (bulletCircle->intersects(leftEye) || bulletCircle->intersects(rightEye)) {
+					bullet->isDelete = true;
+					hitTrapBossSecondPhase();
+				}
+			}
+		}
+	}
+
 	void BossStageManager::debug() {
 		auto& player = gameObjects.player;
 
@@ -431,7 +485,10 @@ namespace Iwanna {
 
 	void BossStageManager::draw() {
 		//背景描画
+		drawTrapBossSecondPhaseIntro();
 		TextureAsset(backgroundName).draw();
+		drawTrapBossSecondPhaseTayama();
+		drawTrapBossSecondPhaseEyeHitBoxes();
 
 		Array<GameObject*> drawList;
 		drawList.reserve(
@@ -493,6 +550,89 @@ namespace Iwanna {
 				TextureAsset(U"heart").draw(playerHpBasePos.x + i * hpInterbalX, playerHpBasePos.y);
 			}
 		}
+
+		drawTrapBossSecondPhaseHp();
+	}
+
+	void BossStageManager::drawTrapBossSecondPhaseIntro() const {
+		if (!isTrapBossSecondPhaseIntroStarted || isTrapBossSecondPhaseStarted) {
+			return;
+		}
+
+		const double introElapsed = trapBossSecondPhaseIntroStopwatch.sF() - trapBossSecondPhaseIntroCooldown;
+		if (introElapsed < 0.0) {
+			return;
+		}
+
+		const double t = Min(1.0, introElapsed / trapBossSecondPhaseIntroTime);
+		const Vec2 drawPos = trapBossSecondPhaseTayamaStartPos.lerp(trapBossSecondPhaseTayamaEndPos, EaseOutQuad(t));
+
+		TextureAsset(U"tayama")
+			.scaled(trapBossSecondPhaseTayamaScale)
+			.drawAt(drawPos);
+	}
+
+	void BossStageManager::drawTrapBossSecondPhaseTayama() const {
+		if (stageName != U"trapBoss" || !isTrapBossSecondPhaseStarted || isTrapBossSecondPhaseDefeated) {
+			return;
+		}
+
+		TextureAsset(U"tayama")
+			.scaled(trapBossSecondPhaseTayamaScale)
+			.drawAt(trapBossSecondPhaseTayamaCenterPos);
+	}
+
+	void BossStageManager::drawTrapBossSecondPhaseEyeHitBoxes() const {
+		if (stageName != U"trapBoss" || !isTrapBossSecondPhaseStarted || isTrapBossSecondPhaseDefeated
+			|| !isTrapBossSecondPhaseEyeHitFlash
+			|| trapBossSecondPhaseEyeHitFlashStopwatch.sF() >= trapBossSecondPhaseEyeHitFlashTime) {
+			return;
+		}
+
+		const double alphaRate = 1.0 - trapBossSecondPhaseEyeHitFlashStopwatch.sF() / trapBossSecondPhaseEyeHitFlashTime;
+		const ColorF hitColor{ 1.0, 0.0, 0.0, trapBossSecondPhaseEyeHitFlashAlpha * alphaRate };
+		const ColorF frameColor{ 1.0, 1.0, 1.0, trapBossSecondPhaseEyeHitFlashAlpha * alphaRate };
+
+		for (const auto& eyePos : getTrapBossSecondPhaseEyePositions()) {
+			Circle{ eyePos, trapBossSecondPhaseEyeHitRadius }.draw(hitColor);
+			Circle{ eyePos, trapBossSecondPhaseEyeHitRadius }.drawFrame(2.0, frameColor);
+		}
+	}
+
+	void BossStageManager::drawTrapBossSecondPhaseHp() const {
+		if (stageName != U"trapBoss" || !isTrapBossSecondPhaseStarted || isTrapBossSecondPhaseDefeated) {
+			return;
+		}
+
+		const double width = 300.0;
+		const double height = 12.0;
+		const Vec2 barPos{ 400, 18 };
+		const double hpRate = static_cast<double>(trapBossSecondPhaseHp) / trapBossSecondPhaseMaxHp;
+
+		RectF{ barPos.x - width / 2.0, barPos.y, width, height }
+			.draw(ColorF{ 1.0, 0.2, 0.2 });
+		RectF{ barPos.x - width / 2.0, barPos.y, width * hpRate, height }
+			.draw(ColorF{ 0.2, 1.0, 0.2 });
+	}
+
+	void BossStageManager::hitTrapBossSecondPhase() {
+		if (isTrapBossSecondPhaseDefeated || trapBossSecondPhaseHp <= 0) {
+			return;
+		}
+
+		AudioAsset(Sound::BOSSHIT).playOneShot();
+		--trapBossSecondPhaseHp;
+		isTrapBossSecondPhaseEyeHitFlash = true;
+		trapBossSecondPhaseEyeHitFlashStopwatch.restart();
+
+		if (trapBossSecondPhaseHp <= 0) {
+			AudioAsset(Sound::DEATH).playOneShot();
+			defeatTrapBossSecondPhase();
+		}
+	}
+
+	void BossStageManager::defeatTrapBossSecondPhase() {
+		isTrapBossSecondPhaseDefeated = true;
 	}
 
 	void BossStageManager::setStep(int32 newStep) {
@@ -582,6 +722,18 @@ namespace Iwanna {
 
 	String BossStageManager::getStageName() const {
 		return stageName;
+	}
+
+	Vec2 BossStageManager::getTrapBossSecondPhaseLeftEyePos() const {
+		return trapBossSecondPhaseTayamaCenterPos + trapBossSecondPhaseLeftEyeOffset * trapBossSecondPhaseTayamaScale;
+	}
+
+	Vec2 BossStageManager::getTrapBossSecondPhaseRightEyePos() const {
+		return trapBossSecondPhaseTayamaCenterPos + trapBossSecondPhaseRightEyeOffset * trapBossSecondPhaseTayamaScale;
+	}
+
+	Array<Vec2> BossStageManager::getTrapBossSecondPhaseEyePositions() const {
+		return{ getTrapBossSecondPhaseLeftEyePos(), getTrapBossSecondPhaseRightEyePos() };
 	}
 
 	//りんご生成と管理配列への追加

@@ -73,6 +73,25 @@ namespace Iwanna {
 
 		// boss関連
 		int32 defeatedBossNum = 0;
+		bool isTrapBossSecondPhaseIntroStarted = false;
+		bool isTrapBossSecondPhaseStarted = false;
+		bool isTrapBossSecondPhaseDefeated = false;
+		Stopwatch trapBossSecondPhaseIntroStopwatch{ StartImmediately::No };
+		double trapBossSecondPhaseIntroCooldown = 4.0;
+		double trapBossSecondPhaseIntroTime = 1.0;
+		Vec2 trapBossSecondPhaseTayamaStartPos{ 316, 800 };
+		Vec2 trapBossSecondPhaseTayamaEndPos{ 316, 260 };
+		Vec2 trapBossSecondPhaseTayamaCenterPos{ 370, 304 };
+		double trapBossSecondPhaseTayamaScale = 1.0;
+		int32 trapBossSecondPhaseMaxHp = 30;
+		int32 trapBossSecondPhaseHp = 30;
+		double trapBossSecondPhaseEyeHitRadius = 24.0;
+		Vec2 trapBossSecondPhaseLeftEyeOffset{ -22, 5 };
+		Vec2 trapBossSecondPhaseRightEyeOffset{ 140, 15 };
+		bool isTrapBossSecondPhaseEyeHitFlash = false;
+		Stopwatch trapBossSecondPhaseEyeHitFlashStopwatch{ StartImmediately::No };
+		double trapBossSecondPhaseEyeHitFlashTime = 0.18;
+		double trapBossSecondPhaseEyeHitFlashAlpha = 0.35;
 
 		//暗転演出関連
 		double darkAlpha = 0.8;
@@ -93,6 +112,14 @@ namespace Iwanna {
 		void update();
 		void debug();
 		void draw();
+		void updateTrapBossSecondPhaseIntro();
+		void updateTrapBossSecondPhaseBulletHits(Array<std::shared_ptr<Bullet>>& bullets);
+		void drawTrapBossSecondPhaseIntro() const;
+		void drawTrapBossSecondPhaseTayama() const;
+		void drawTrapBossSecondPhaseEyeHitBoxes() const;
+		void drawTrapBossSecondPhaseHp() const;
+		void hitTrapBossSecondPhase();
+		void defeatTrapBossSecondPhase();
 		void setStep(int32 newStep);
 		void saveGame();
 		Vec2 executeCameraPos();
@@ -106,6 +133,9 @@ namespace Iwanna {
 		Array<std::shared_ptr<Cherry>> getCherries();
 		Array<std::shared_ptr<Block>> getBlocks();
 		CameraShake& getCameraShake() { return cameraShake; }
+		Vec2 getTrapBossSecondPhaseLeftEyePos() const;
+		Vec2 getTrapBossSecondPhaseRightEyePos() const;
+		Array<Vec2> getTrapBossSecondPhaseEyePositions() const;
 
 		//ExBoss用の取得関数
 		std::shared_ptr<SordCherriesManager> getExBossSordManagerCherry();
