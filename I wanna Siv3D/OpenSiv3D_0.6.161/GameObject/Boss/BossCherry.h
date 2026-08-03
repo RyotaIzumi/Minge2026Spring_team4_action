@@ -76,14 +76,16 @@ namespace Iwanna {
 
 		double attackWaitTime = 2.0;
 		double rotatingSpreadAttackDuration = 5.0;
-		double rotatingSpreadAttackInterval = 0.45;
-		double rotatingSpreadRotateSpeed = 300.0;
-		int32 rotatingSpreadCherryNum = 10;
-		double rotatingSpreadCherrySpeed = 5.0;
-		double targetAttackDuration = 5.0;
-		double targetAttackInterval = 0.6;
-		int32 targetAttackLineNum = 5;
+		double rotatingSpreadAttackInterval = 0.18;
+		double rotatingSpreadRotateSpeed = 800.0;
+		int32 rotatingSpreadCherryNum = 6;
+		double rotatingSpreadCherrySpeed = 6.0;
+		double targetAttackDuration = 8.0;
+		double targetAttackInterval = 0.1;
+		int32 targetAttackLineNum = 1;
 		bool targetAttackIsAddLine = false;
+		double targetAttackBaseSpeed = 7.0;
+		double targetAttackIntervalSpeed = 5.0;
 		double lineAttackMoveDuration = 1.5;
 		double lineAttackTargetY = 160.0;
 		double lineAttackCherryInterval = 20.0;
@@ -116,6 +118,7 @@ namespace Iwanna {
 		void setScaleMag(double scale);
 		void setRotatingSpreadAttackSettings(double duration, double interval);
 		void setTargetAttackSettings(double duration, double interval);
+		void setTargetAttackSpeedSettings(double baseSpeed, double intervalSpeed);
 		void setLineAttackSettings(double moveDuration, double targetY, double cherryInterval);
 		void setLineAttackWarningSettings(double warnScale, double scaleUpTime, double scaleDownTime, double generateWaitTime);
 		void barrageUpdate() override;
@@ -158,6 +161,7 @@ namespace Iwanna {
 		String customTextureName = U"";
 		int32 customTextureEdge = 32;
 		bool customTextureAnimation = false;
+		ColorF customTextureColor{ 1.0, 1.0, 1.0, 1.0 };
 	public:
 		BossBarrageCherry(Vec2 startPos, double scale, BossCherryType cType);
 
@@ -165,6 +169,7 @@ namespace Iwanna {
 		void draw() const override;
 
 		void setCustomTexture(String textureName, int32 textureEdge = 32, bool hasAnimation = false);
+		void setCustomTextureColor(ColorF color);
 		void setTypeColor();
 	};
 
@@ -191,6 +196,35 @@ namespace Iwanna {
 
 	public:
 		TayamaLineCherry(Vec2 startPos, Vec2 targetPos, double scale, double duration);
+
+		void barrageUpdate() override;
+	};
+
+	class TayamaSecondPhaseEyeCherry : public BossBarrageCherry {
+	private:
+		double acceleration = 0.0;
+
+	public:
+		TayamaSecondPhaseEyeCherry(Vec2 startPos, double scale, double initialSpeed, double acceleration);
+
+		void barrageUpdate() override;
+	};
+
+	class TayamaSecondPhaseTargetCherry : public BossBarrageCherry {
+	private:
+		BossStageManager* bossStageManager = nullptr;
+		Stopwatch moveStopwatch{ StartImmediately::No };
+		double moveSpeed = 4.0;
+		double moveDuration = 0.7;
+		double stopDuration = 0.35;
+		int32 moveCount = 0;
+		int32 maxMoveCount = 3;
+		bool isStopping = false;
+
+		void aimAtPlayer();
+
+	public:
+		TayamaSecondPhaseTargetCherry(Vec2 startPos, double scale, double speed, double moveTime, double stopTime, int32 moveNum, BossStageManager& manager);
 
 		void barrageUpdate() override;
 	};

@@ -193,7 +193,7 @@ namespace Iwanna {
 		isDeleteOutOfScreen = false;
 
 		hasHp = true;
-		maxHp = 10;
+		maxHp = 20;
 		hp = maxHp;
 
 		gravity = 0;
@@ -234,6 +234,11 @@ namespace Iwanna {
 	void TayamaBoss::setTargetAttackSettings(double duration, double interval) {
 		targetAttackDuration = Max(0.1, duration);
 		targetAttackInterval = Max(0.05, interval);
+	}
+
+	void TayamaBoss::setTargetAttackSpeedSettings(double baseSpeed, double intervalSpeed) {
+		targetAttackBaseSpeed = Max(0.0, baseSpeed);
+		targetAttackIntervalSpeed = intervalSpeed;
 	}
 
 	void TayamaBoss::setLineAttackSettings(double moveDuration, double targetY, double cherryInterval) {
@@ -301,12 +306,12 @@ namespace Iwanna {
 		currentAttackPattern = 1;
 		attackStopwatch.restart();
 		attackIntervalStopwatch.restart();
-		bossStageManager->createSkyTargetCherry(targetAttackLineNum, targetAttackIsAddLine, [this]() { return createTrapSkyTargetCherry(); });
+		bossStageManager->createSkyTargetCherry(targetAttackLineNum, targetAttackIsAddLine, [this]() { return createTrapSkyTargetCherry(); }, targetAttackBaseSpeed, targetAttackIntervalSpeed);
 	}
 
 	void TayamaBoss::updateTargetAttack() {
 		if (attackIntervalStopwatch.sF() >= targetAttackInterval) {
-			bossStageManager->createSkyTargetCherry(targetAttackLineNum, targetAttackIsAddLine, [this]() { return createTrapSkyTargetCherry(); });
+			bossStageManager->createSkyTargetCherry(targetAttackLineNum, targetAttackIsAddLine, [this]() { return createTrapSkyTargetCherry(); }, targetAttackBaseSpeed, targetAttackIntervalSpeed);
 			attackIntervalStopwatch.restart();
 		}
 
@@ -491,7 +496,7 @@ namespace Iwanna {
 
 		if (hp <= 0) {
 			AudioAsset(Sound::DEATH).playOneShot();
-			AudioAsset(Sound::VC_BAKANA).playOneShot();
+			AudioAsset(Sound::VC_BIKKURI).playOneShot();
 			canPlayerKill = false;
 			hasHp = false;
 			isDefeatedFall = true;
@@ -757,8 +762,8 @@ namespace Iwanna {
 	void BossBarrageCherry::draw() const {
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
 		if (customTextureName != U"") {
-			const int32 texRange = customTextureAnimation ? static_cast<int32>(Periodic::Square0_1(0.5) * customTextureEdge) : 0;
-			TextureAsset(customTextureName)(texRange, 0, customTextureEdge, customTextureEdge).scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1, ColorF(1.0, alpha));
+			const int32 texRange = customTextureAnimation ? (static_cast<int32>(Periodic::Square0_1(0.5)) * customTextureEdge) : 0;
+			TextureAsset(customTextureName)(texRange, 0, customTextureEdge, customTextureEdge).scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1, ColorF(customTextureColor.r, customTextureColor.g, customTextureColor.b, customTextureColor.a * alpha));
 			return;
 		}
 		TextureAsset(U"sprCherryLowBarrageWhite").scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1, typeColor);
@@ -769,6 +774,10 @@ namespace Iwanna {
 		customTextureName = textureName;
 		customTextureEdge = textureEdge;
 		customTextureAnimation = hasAnimation;
+	}
+
+	void BossBarrageCherry::setCustomTextureColor(ColorF color) {
+		customTextureColor = color;
 	}
 
 	// 種類で色を決定する

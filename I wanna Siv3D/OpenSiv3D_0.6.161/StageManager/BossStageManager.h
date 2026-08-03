@@ -76,6 +76,7 @@ namespace Iwanna {
 		bool isTrapBossSecondPhaseIntroStarted = false;
 		bool isTrapBossSecondPhaseStarted = false;
 		bool isTrapBossSecondPhaseDefeated = false;
+		bool isTrapBossSecondPhaseDefeatedFall = false;
 		bool hasTrapBossSecondPhaseBrokenBlocks = false;
 		Stopwatch trapBossSecondPhaseIntroStopwatch{ StartImmediately::No };
 		double trapBossSecondPhaseIntroCooldown = 4.0;
@@ -84,6 +85,10 @@ namespace Iwanna {
 		Vec2 trapBossSecondPhaseTayamaEndPos{ 316, 260 };
 		Vec2 trapBossSecondPhaseTayamaCenterPos{ 370, 304 };
 		double trapBossSecondPhaseTayamaScale = 1.0;
+		double trapBossSecondPhaseTayamaAngle = 0.0;
+		double trapBossSecondPhaseDefeatedFallSpeed = 0.0;
+		double trapBossSecondPhaseDefeatedFallAcceleration = 0.25;
+		double trapBossSecondPhaseDefeatedRotateSpeed = 90.0;
 		int32 trapBossSecondPhaseMaxHp = 30;
 		int32 trapBossSecondPhaseHp = 30;
 		double trapBossSecondPhaseEyeHitRadius = 24.0;
@@ -96,10 +101,35 @@ namespace Iwanna {
 		int32 trapBossSecondPhaseBreakBlockRange = 4;
 		double trapBossSecondPhaseStartShakeTime = 2.0;
 		double trapBossSecondPhaseStartShakePower = 90.0;
+		Stopwatch trapBossSecondPhaseAttackStopwatch{ StartImmediately::No };
+		int32 trapBossSecondPhaseEyeAttackCount = 0;
+		double trapBossSecondPhaseEyeAttackStartDelay = 2.0;
+		double trapBossSecondPhaseEyeAttackInterval = 0.2;
+		double trapBossSecondPhaseEyeAttackBaseDirection = 90.0;
+		double trapBossSecondPhaseEyeAttackAngleStep = 30.0;
+		double trapBossSecondPhaseEyeAttackCherrySpeed = 3.0;
+		double trapBossSecondPhaseEyeAttackCherryAcceleration = 0.08;
+		double trapBossSecondPhaseEyeAttackCherryScale = 1.2;
+		Stopwatch trapBossSecondPhaseTargetAttackStopwatch{ StartImmediately::No };
+		int32 trapBossSecondPhaseTargetAttackCount = 0;
+		double trapBossSecondPhaseTargetAttackStartDelay = 3.0;
+		double trapBossSecondPhaseTargetAttackInterval = 4.0;
+		double trapBossSecondPhaseTargetAttackCherrySpeed = 4.5;
+		double trapBossSecondPhaseTargetAttackCherryScale = 1.5;
+		double trapBossSecondPhaseTargetAttackMoveTime = 1.0;
+		double trapBossSecondPhaseTargetAttackStopTime = 0.5;
+		int32 trapBossSecondPhaseTargetAttackMoveCount = 3;
 
 		//暗転演出関連
 		double darkAlpha = 0.8;
 		Timer darkAlphaTimer{0.5s,StartImmediately::Yes};
+		double trapBossSecondPhaseDarkAlpha = 0.15;
+		double trapBossSecondPhaseDarkAlphaMin = 0.10;
+		double trapBossSecondPhaseDarkAlphaMax = 0.25;
+		double trapBossSecondPhaseDarkAlphaFadeSpeed = 0.08;
+		Stopwatch trapBossGuygunStopwatch{ StartImmediately::Yes };
+		double trapBossGuygunInterval = 0.06;
+		double trapBossGuygunVolume = 0.3;
 
 		//player hp UI関連
 		Vec2 playerHpBasePos{0,576};
@@ -117,14 +147,20 @@ namespace Iwanna {
 		void debug();
 		void draw();
 		void updateTrapBossSecondPhaseIntro();
+		void updateTrapBossSecondPhaseDefeatedFall();
+		void updateTrapBossSecondPhaseEyeAttack();
+		void updateTrapBossSecondPhaseTargetAttack();
 		void updateTrapBossSecondPhaseBulletHits(Array<std::shared_ptr<Bullet>>& bullets);
 		void breakTrapBossSecondPhaseOverlappingBlocks();
+		void createTrapBossSecondPhaseEyeAttackCherry(Vec2 startPos, double direction);
+		void createTrapBossSecondPhaseTargetAttackCherry(Vec2 startPos);
 		void drawTrapBossSecondPhaseIntro() const;
 		void drawTrapBossSecondPhaseTayama() const;
 		void drawTrapBossSecondPhaseEyeHitBoxes() const;
 		void drawTrapBossSecondPhaseHp() const;
 		void hitTrapBossSecondPhase();
 		void defeatTrapBossSecondPhase();
+		void clearTrapBossSecondPhaseCherries();
 		void setStep(int32 newStep);
 		void saveGame();
 		Vec2 executeCameraPos();
@@ -172,7 +208,7 @@ namespace Iwanna {
 		void createYellowStarCherry(int32 Nkakkei, int32 nextNumber, Vec2 center, int32 lineNum, const std::function<std::shared_ptr<Cherry>()>& factory);
 		void createGreenWaveCherry(Vec2 startPos, double interval, double high, const std::function<std::shared_ptr<BossGreenWaveCherry>()>& factory);
 		void createOrangeStopCherry(bool isAddUpDown, const std::function<std::shared_ptr<BossOrangeStopCherry>()>& factory);
-		void createSkyTargetCherry(int32 lineNum, bool isAddLine, const std::function<std::shared_ptr<BossSkyTargetCherry>()>& factory);
+		void createSkyTargetCherry(int32 lineNum, bool isAddLine, const std::function<std::shared_ptr<BossSkyTargetCherry>()>& factory, double baseSpd = 5.0, double interSpd = 2.0);
 		void createGrayLatticeCherry(double interval,const std::function<std::shared_ptr<BossGrayLatticeCherry>()>& factory);
 
 		// ----- ExBoss用 ----- //

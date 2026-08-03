@@ -32,6 +32,8 @@ namespace Iwanna {
 		static const String SHOOT_PATH = SE_PATH + SHOOT + U".mp3";
 		static const String CHERRYFALL = U"sndCherry";
 		static const String CHERRYFALL_PATH = SE_PATH + CHERRYFALL + U".mp3";
+		static const String GUYGUN = U"sndGuygun";
+		static const String GUYGUN_PATH = SE_PATH + GUYGUN + U".wav";
 		static const String BLOCKCHANGE = U"sndBlockChange";
 		static const String BLOCKCHANGE_PATH = SE_PATH + BLOCKCHANGE + U".mp3";
 		static const String BLOCKBREAK = U"sndBreak";

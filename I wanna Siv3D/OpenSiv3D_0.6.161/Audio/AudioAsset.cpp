@@ -30,6 +30,7 @@ namespace Iwanna {
 			registerAudio(DJUMP, DJUMP_PATH);
 			registerAudio(SHOOT, SHOOT_PATH);
 			registerAudio(CHERRYFALL, CHERRYFALL_PATH);
+			registerAudio(GUYGUN, GUYGUN_PATH);
 			registerAudio(BLOCKCHANGE, BLOCKCHANGE_PATH);
 			registerAudio(BLOCKBREAK, BLOCKBREAK_PATH);
 			registerAudio(SPIKETRAP, SPIKETRAP_PATH);
