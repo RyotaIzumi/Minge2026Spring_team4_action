@@ -510,7 +510,7 @@ namespace Iwanna {
 		: bossStageManager(&manager), Cherry(startPos, scale) {
 		pos = startPos;
 		scaleMag = scale;
-		hitBox = std::make_shared<CircleHitBox>(pos, hitBoxSize * scaleMag);
+		hitBox = std::make_shared<CircleHitBox>(pos, 16.0 * scaleMag);
 		type = ObjectType::Cherry;
 		cherryType = CherryType::Boss;
 
@@ -556,15 +556,13 @@ namespace Iwanna {
 
 	std::shared_ptr<BossBarrageCherry> LowBossCherry::createLowBossBarrageCherry() {
 		auto cherry = std::make_shared<BossBarrageCherry>(pos, 1.0, BossCherryType::None);
-		cherry->setCustomTexture(U"sprCherryLowWhite", 32, true);
-		cherry->setCustomTextureColor(ColorF{ 1.0, 0.15, 0.15 });
+		cherry->setCustomAppleEmoji();
 		return cherry;
 	}
 
 	std::shared_ptr<BossSkyTargetCherry> LowBossCherry::createLowBossTargetCherry() {
 		auto cherry = std::make_shared<BossSkyTargetCherry>(pos, 1.0, BossCherryType::None);
-		cherry->setCustomTexture(U"sprCherryLowWhite", 32, true);
-		cherry->setCustomTextureColor(ColorF{ 1.0, 0.15, 0.15 });
+		cherry->setCustomAppleEmoji();
 		return cherry;
 	}
 
@@ -606,12 +604,14 @@ namespace Iwanna {
 
 	void LowBossCherry::draw() const {
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
-		const int32 texRange = static_cast<int32>(Periodic::Square0_1(0.5)) * 32;
+		static const Texture appleTexture{ U"\U0001F34E"_emoji };
 
-		TextureAsset(U"sprCherryLowWhite")(texRange, 0, 32, 32)
-			.scaled(scaleMag)
+		appleTexture
+			.scaled(0.25 * scaleMag)
 			.rotated(Math::ToRadians(textureAngle))
-			.drawAt(pos, ColorF{ 1.0, 0.15, 0.15, isMuteki ? 0.6 : 1.0 });
+			.drawAt(pos, ColorF{ 1.0, isMuteki ? 0.6 : 1.0 });
+
+		//hitBox->draw(ColorF{ 0.2, 0.7, 1.0, 0.35 });
 
 		if (!hasHp) {
 			return;
@@ -897,6 +897,12 @@ namespace Iwanna {
 
 	void BossBarrageCherry::draw() const {
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
+		if (customAppleEmoji) {
+			static const Texture appleTexture{ U"\U0001F34E"_emoji };
+			appleTexture.scaled(0.13 * scaleMag).drawAt(pos.x - 1, pos.y - 1, ColorF{ 1.0, alpha });
+			//hitBox->draw(ColorF{ 0.2, 0.7, 1.0, 0.35 });
+			return;
+		}
 		if (customTextureName != U"") {
 			const int32 texRange = customTextureAnimation ? (static_cast<int32>(Periodic::Square0_1(0.5)) * customTextureEdge) : 0;
 			TextureAsset(customTextureName)(texRange, 0, customTextureEdge, customTextureEdge).scaled(scaleMag).drawAt(pos.x - 1, pos.y - 1, ColorF(customTextureColor.r, customTextureColor.g, customTextureColor.b, customTextureColor.a * alpha));
@@ -910,6 +916,13 @@ namespace Iwanna {
 		customTextureName = textureName;
 		customTextureEdge = textureEdge;
 		customTextureAnimation = hasAnimation;
+		customAppleEmoji = false;
+	}
+
+	void BossBarrageCherry::setCustomAppleEmoji() {
+		customAppleEmoji = true;
+		customTextureName = U"";
+		hitBox = std::make_shared<CircleHitBox>(pos, 9.0 * scaleMag);
 	}
 
 	void BossBarrageCherry::setCustomTextureColor(ColorF color) {

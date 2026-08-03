@@ -203,6 +203,7 @@ namespace Iwanna {
 		String customTextureName = U"";
 		int32 customTextureEdge = 32;
 		bool customTextureAnimation = false;
+		bool customAppleEmoji = false;
 		ColorF customTextureColor{ 1.0, 1.0, 1.0, 1.0 };
 	public:
 		BossBarrageCherry(Vec2 startPos, double scale, BossCherryType cType);
@@ -211,6 +212,7 @@ namespace Iwanna {
 		void draw() const override;
 
 		void setCustomTexture(String textureName, int32 textureEdge = 32, bool hasAnimation = false);
+		void setCustomAppleEmoji();
 		void setCustomTextureColor(ColorF color);
 		void setTypeColor();
 	};
