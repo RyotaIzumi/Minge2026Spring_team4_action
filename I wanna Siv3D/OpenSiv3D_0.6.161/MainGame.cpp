@@ -117,7 +117,7 @@ namespace Iwanna {
 				bossStageManager.bossBgmStart = false;
 			}
 
-			if (Global::isBossDefeated)stopBgm();
+			if (bossStageManager.shouldStopBossBgm())stopBgm();
 			break;
 		}
 	}

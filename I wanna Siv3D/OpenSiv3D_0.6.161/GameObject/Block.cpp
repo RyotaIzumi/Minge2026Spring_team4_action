@@ -16,11 +16,17 @@ namespace Iwanna {
 		depth = 40;
 	}
 	void Block::update() {
+		updateDebris();
 	}
 	void Block::trapUpdate(int32 id) {
 	}
 	void Block::draw() const {
 		//hitBox->draw(Palette::Gray);
+		if (isDebris) {
+			drawDebris();
+			return;
+		}
+
 		TextureAsset(textureName).draw(pos);
 	}
 	void Block::onCollision(GameObject& other) {
@@ -33,6 +39,49 @@ namespace Iwanna {
 	//当たり判定の有無を返す
 	bool Block::getHasCollide() const {
 		return hasCollide;
+	}
+
+	void Block::breakAsDebris() {
+		if (isDebris) {
+			return;
+		}
+
+		AudioAsset(Sound::BLOCKBREAK).play();
+		isDebris = true;
+		hasCollide = false;
+		isTriggerTrap = false;
+		hitBox->setPos(Vec2{ -100000, -100000 });
+		debrisAlpha = 1.0;
+		textureAngle = Random(360.0);
+		direction = Random(200.0, 340.0);
+		speed = Random(3.0, 8.0);
+		debrisRotateSpeed = Random(-12.0, 12.0);
+		calculateSpeed();
+	}
+
+	bool Block::getIsDebris() const {
+		return isDebris;
+	}
+
+	void Block::updateDebris() {
+		if (!isDebris) {
+			return;
+		}
+
+		vspeed += debrisGravity;
+		pos.x += hspeed;
+		pos.y += vspeed;
+		textureAngle += debrisRotateSpeed;
+
+		if (pos.y > Global::stageHeight + side * 4 || pos.x < -side * 4 || pos.x > Global::stageWidth + side * 4) {
+			isDelete = true;
+		}
+	}
+
+	void Block::drawDebris() const {
+		TextureAsset(textureName)
+			.rotated(Math::ToRadians(textureAngle))
+			.drawAt(pos + Vec2{ side / 2.0, side / 2.0 }, ColorF(1.0, debrisAlpha));
 	}
 
 	// ----- 隠しブロック ----- //
@@ -50,6 +99,11 @@ namespace Iwanna {
 
 	void HideBlock::draw() const {
 		//hitBox->draw(Palette::Gray);
+		if (isDebris) {
+			drawDebris();
+			return;
+		}
+
 		TextureAsset(textureName).draw(pos,ColorF(1.0,isHidden ? 0.0 : 1.0));
 	}
 
@@ -103,6 +157,11 @@ namespace Iwanna {
 
 	void FakeBlock::draw() const {
 		//hitBox->draw(Palette::Gray);
+		if (isDebris) {
+			drawDebris();
+			return;
+		}
+
 		TextureAsset(textureName).draw(pos, ColorF(1.0, isHidden ? 0.0 : 1.0));
 	}
 
@@ -132,6 +191,11 @@ namespace Iwanna {
 
 	void ShootTroughBlock::draw() const {
 		//hitBox->draw(Palette::Gray);
+		if (isDebris) {
+			drawDebris();
+			return;
+		}
+
 		TextureAsset(textureName).draw(pos);
 	}
 
@@ -160,9 +224,14 @@ namespace Iwanna {
 	}
 
 	void BreakBlock::update() {
+		Block::update();
 	}
 
 	void BreakBlock::trapUpdate(int32 id) {
+		if (isDebris) {
+			return;
+		}
+
 		if (triggerID == id && !isBreak) {
 			AudioAsset(Sound::BLOCKBREAK).play();
 			isBreak = true;
@@ -184,6 +253,11 @@ namespace Iwanna {
 
 	void BreakBlock::draw() const {
 		//hitBox->draw(Palette::Gray);
+		if (isDebris) {
+			drawDebris();
+			return;
+		}
+
 		TextureAsset(textureName).draw(pos, ColorF(1.0, blockAlpha));
 	}
 

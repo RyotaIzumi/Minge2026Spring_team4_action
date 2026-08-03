@@ -76,6 +76,7 @@ namespace Iwanna {
 		bool isTrapBossSecondPhaseIntroStarted = false;
 		bool isTrapBossSecondPhaseStarted = false;
 		bool isTrapBossSecondPhaseDefeated = false;
+		bool hasTrapBossSecondPhaseBrokenBlocks = false;
 		Stopwatch trapBossSecondPhaseIntroStopwatch{ StartImmediately::No };
 		double trapBossSecondPhaseIntroCooldown = 4.0;
 		double trapBossSecondPhaseIntroTime = 1.0;
@@ -92,6 +93,9 @@ namespace Iwanna {
 		Stopwatch trapBossSecondPhaseEyeHitFlashStopwatch{ StartImmediately::No };
 		double trapBossSecondPhaseEyeHitFlashTime = 0.18;
 		double trapBossSecondPhaseEyeHitFlashAlpha = 0.35;
+		int32 trapBossSecondPhaseBreakBlockRange = 4;
+		double trapBossSecondPhaseStartShakeTime = 2.0;
+		double trapBossSecondPhaseStartShakePower = 90.0;
 
 		//暗転演出関連
 		double darkAlpha = 0.8;
@@ -114,6 +118,7 @@ namespace Iwanna {
 		void draw();
 		void updateTrapBossSecondPhaseIntro();
 		void updateTrapBossSecondPhaseBulletHits(Array<std::shared_ptr<Bullet>>& bullets);
+		void breakTrapBossSecondPhaseOverlappingBlocks();
 		void drawTrapBossSecondPhaseIntro() const;
 		void drawTrapBossSecondPhaseTayama() const;
 		void drawTrapBossSecondPhaseEyeHitBoxes() const;
@@ -133,6 +138,7 @@ namespace Iwanna {
 		Array<std::shared_ptr<Cherry>> getCherries();
 		Array<std::shared_ptr<Block>> getBlocks();
 		CameraShake& getCameraShake() { return cameraShake; }
+		bool shouldStopBossBgm() const;
 		Vec2 getTrapBossSecondPhaseLeftEyePos() const;
 		Vec2 getTrapBossSecondPhaseRightEyePos() const;
 		Array<Vec2> getTrapBossSecondPhaseEyePositions() const;

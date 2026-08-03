@@ -21,6 +21,12 @@ namespace Iwanna {
 		int32 side = 32;
 		String textureName = U"sprBlock";
 		bool hasCollide = true;
+		bool isDebris = false;
+		double debrisAlpha = 1.0;
+		double debrisGravity = 0.45;
+		double debrisRotateSpeed = 0.0;
+		void updateDebris();
+		void drawDebris() const;
 	public:
 		Block(String name, Vec2 startPos);
 		BlockType blockType = BlockType::Normal;
@@ -34,6 +40,8 @@ namespace Iwanna {
 
 		void setHasCollide(bool b);
 		bool getHasCollide() const;
+		virtual void breakAsDebris();
+		bool getIsDebris() const;
 	};
 
 	class HideBlock : public Block {

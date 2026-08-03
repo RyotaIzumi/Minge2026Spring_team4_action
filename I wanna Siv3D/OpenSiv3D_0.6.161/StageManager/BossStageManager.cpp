@@ -35,6 +35,7 @@ namespace Iwanna {
 		isTrapBossSecondPhaseIntroStarted = false;
 		isTrapBossSecondPhaseStarted = false;
 		isTrapBossSecondPhaseDefeated = false;
+		hasTrapBossSecondPhaseBrokenBlocks = false;
 		trapBossSecondPhaseHp = trapBossSecondPhaseMaxHp;
 		isTrapBossSecondPhaseEyeHitFlash = false;
 		trapBossSecondPhaseIntroStopwatch.reset();
@@ -274,6 +275,7 @@ namespace Iwanna {
 
 			// 対ブロック
 			for (auto& b : blocks) {
+				b->update();
 				stockNearGameObjects.add(b.get());
 				stockBulletsNearGameObjects.add(b.get());
 				if (b->isTriggerTrap) {
@@ -442,8 +444,37 @@ namespace Iwanna {
 		if (trapBossSecondPhaseIntroStopwatch.sF() >= trapBossSecondPhaseIntroCooldown + trapBossSecondPhaseIntroTime) {
 			isTrapBossSecondPhaseStarted = true;
 			backgroundName = U"background_trapBossCave2";
-			cameraShake.shake(0.6, 30.0);
+			breakTrapBossSecondPhaseOverlappingBlocks();
+			cameraShake.shake(trapBossSecondPhaseStartShakeTime, trapBossSecondPhaseStartShakePower);
+			bossBgmStart = true;
 			AudioAsset(Sound::VC_BIKKURI).playOneShot();
+		}
+	}
+
+	void BossStageManager::breakTrapBossSecondPhaseOverlappingBlocks() {
+		if (hasTrapBossSecondPhaseBrokenBlocks) {
+			return;
+		}
+
+		hasTrapBossSecondPhaseBrokenBlocks = true;
+
+		const double breakWidth = (trapBossSecondPhaseBreakBlockRange * 2 + 1) * oneTileSize;
+		const Vec2 centerBlockTopLeft{
+			Floor(Global::windowWidth / 2.0 / oneTileSize) * oneTileSize,
+			Floor(Global::windowHeight / 2.0 / oneTileSize) * oneTileSize
+		};
+		const RectF breakArea{
+			Vec2{ centerBlockTopLeft.x - trapBossSecondPhaseBreakBlockRange * oneTileSize, 0 },
+			SizeF{ breakWidth, static_cast<double>(Global::stageHeight) }
+		};
+
+		for (auto& block : gameObjects.blocks) {
+			if (block->getIsDebris()
+				|| !block->getBroadRect().intersects(breakArea)) {
+				continue;
+			}
+
+			block->breakAsDebris();
 		}
 	}
 
@@ -722,6 +753,14 @@ namespace Iwanna {
 
 	String BossStageManager::getStageName() const {
 		return stageName;
+	}
+
+	bool BossStageManager::shouldStopBossBgm() const {
+		if (stageName == U"trapBoss" && isTrapBossSecondPhaseStarted && !isTrapBossSecondPhaseDefeated) {
+			return false;
+		}
+
+		return Global::isBossDefeated;
 	}
 
 	Vec2 BossStageManager::getTrapBossSecondPhaseLeftEyePos() const {
