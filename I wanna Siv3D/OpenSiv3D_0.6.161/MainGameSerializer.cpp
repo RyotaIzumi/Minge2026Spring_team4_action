@@ -23,6 +23,19 @@ void MainGameSerializer::LoadCharactersMoraleValue() {
 	Global::moraleValue4 = moraleValue4;
 }
 
+void MainGameSerializer::LoadEndingValue() {
+	const JSON json = JSON::Load(U"EndingValue.json");
+
+	if (!json) {
+		Global::endingValue = 0;
+		return;
+	}
+
+	Global::endingValue = json.contains(U"EndingValue")
+		? Clamp(json[U"EndingValue"].get<int32>(), 0, 9)
+		: 0;
+}
+
 void MainGameSerializer::defineGlobalStatuses() {
 
 	// 開始room

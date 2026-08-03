@@ -10,6 +10,7 @@ using App = SceneManager<Iwanna::SceneType, Iwanna::CommonData>;
 
 void Main()
 {
+	System::SetTerminationTriggers(UserAction::CloseButtonClicked);
 	System60::SetDisplaySize(Size{800,608});
 
 	Window::SetTitle(U"I wanna continue Siv3D");
@@ -36,6 +37,7 @@ void Main()
 	app.init(Iwanna::SceneType::LOADING, 0s);
 
 	mainGameSerializer.LoadCharactersMoraleValue();
+	mainGameSerializer.LoadEndingValue();
 	mainGameSerializer.defineGlobalStatuses();
 	Global::elapsedPlayTime = 0.0;
 	Global::deathCount = 0;

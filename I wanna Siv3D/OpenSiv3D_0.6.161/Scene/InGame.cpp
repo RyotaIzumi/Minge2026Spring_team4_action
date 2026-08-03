@@ -1,12 +1,44 @@
 ﻿#include "Scene.h"
 
 namespace Iwanna {
+	namespace {
+		String formatPlayTime(double seconds) {
+			const int32 totalSeconds = static_cast<int32>(seconds);
+			const int32 minutes = totalSeconds / 60;
+			const int32 displaySeconds = totalSeconds % 60;
+			const int32 centiseconds = static_cast<int32>((seconds - totalSeconds) * 100);
+
+			const String secondText = (displaySeconds < 10 ? U"0" : U"") + Format(displaySeconds);
+			const String centisecondText = (centiseconds < 10 ? U"0" : U"") + Format(centiseconds);
+			return Format(minutes) + U":" + secondText + U"." + centisecondText;
+		}
+
+		String getEndingLetter() {
+			return String{ static_cast<char32>(U'A' + Clamp(Global::endingValue, 0, 9)) };
+		}
+	}
+
 	InGame::InGame(const InitData& data) : IScene(data) {
 
 	}
 
 	void InGame::update() {
 		auto& data = getData().game;
+
+		if (isPauseMenuOpen) {
+			if (KeyEscape.down()) {
+				isPauseMenuOpen = false;
+			}
+			else if (KeyQ.down()) {
+				System::Exit();
+			}
+			return;
+		}
+
+		if (KeyEscape.down()) {
+			isPauseMenuOpen = true;
+			return;
+		}
 
 		data.updateGame();
 
@@ -29,5 +61,26 @@ namespace Iwanna {
 		auto& data = getData().game;
 
 		data.drawGame();
+		if (isPauseMenuOpen) {
+			drawPauseMenu();
+		}
+	}
+
+	void InGame::drawPauseMenu() const {
+		Rect{ 0, 0, Global::windowWidth, Global::windowHeight }.draw(ColorF{ 0.0, 0.0, 0.0, 0.65 });
+
+		FontAsset(U"Button")(U"Escでゲームに戻る").draw(24, 24, ColorF{ 1.0, 1.0, 1.0 });
+
+		const String quitText = U"ゲームをやめる : Qキー";
+		const String cautionText = U"(テストプレイの進捗は失われます！)";
+		const String endingText = U"到達するエンディング : " + getEndingLetter();
+		const String deathText = U"Death " + Format(Global::deathCount);
+		const String timeText = U"Play Time " + formatPlayTime(Global::elapsedPlayTime);
+
+		FontAsset(U"BossHp")(quitText).drawAt(400, 220, ColorF{ 1.0, 1.0, 1.0 });
+		FontAsset(U"Button")(cautionText).drawAt(400, 268, ColorF{ 1.0, 0.15, 0.15 });
+		FontAsset(U"BossHp")(endingText).drawAt(400, 318, ColorF{ 1.0, 1.0, 1.0 });
+		FontAsset(U"BossHp")(deathText).drawAt(400, 374, ColorF{ 1.0, 1.0, 1.0 });
+		FontAsset(U"BossHp")(timeText).drawAt(400, 418, ColorF{ 1.0, 1.0, 1.0 });
 	}
 }

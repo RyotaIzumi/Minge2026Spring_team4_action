@@ -82,6 +82,7 @@ namespace Global {
 	// --- プレイ記録関連 --- //
 	inline double elapsedPlayTime = 0.0;
 	inline int32 deathCount = 0;
+	inline int32 endingValue = 0;
 
 
 	 // ======================

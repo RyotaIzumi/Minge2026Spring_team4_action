@@ -49,6 +49,8 @@ namespace Iwanna {
 
 	class InGame : public App::Scene {
 	private:
+		bool isPauseMenuOpen = false;
+		void drawPauseMenu() const;
 	public:
 		InGame(const InitData& data);
 
