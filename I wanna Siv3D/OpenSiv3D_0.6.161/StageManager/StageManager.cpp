@@ -1,5 +1,6 @@
 ﻿#include "StageManager.h"
 #include "../Audio/AudioAsset.h"
+#include "../MainGameSerializer.h"
 
 namespace Iwanna {
 	namespace {
@@ -61,10 +62,15 @@ namespace Iwanna {
 			//隠しアイテムマップ時のみタイトルカード表示
 			if(Global::nowRoomName == U"secret1") titleCard.startShowTitleCard(U"secret1");
 
-			if (Global::prepareGetItem1) {
+			if (Global::prepareGetItem1
+				&& Global::prevRoomName == U"secret1"
+				&& Global::nowRoomName == U"normal7") {
 				achive.startShowAchieve(AchieveType::ItemGet_Heart);
 				Global::prepareGetItem1 = false;
 				Global::getItem1 = true;
+				MainGameSerializer serializer;
+				serializer.SaveCharactersMoraleValue();
+				saveGame();
 			}
 		}
 		else {
@@ -100,8 +106,9 @@ namespace Iwanna {
 			};
 		}
 
-		//アイテム入手関連
-		Global::prepareGetItem1 = false;
+		if (!(Global::prevRoomName == U"secret1" && Global::nowRoomName == U"normal7")) {
+			Global::prepareGetItem1 = false;
+		}
 	}
 
 	Vec2 StageManager::parsePos(const JSON& json) {

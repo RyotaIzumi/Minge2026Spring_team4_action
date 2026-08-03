@@ -111,6 +111,10 @@ namespace Iwanna {
 		FontAsset(U"BossHp")(endingText).drawAt(400, 318, ColorF{ 1.0, 1.0, 1.0 });
 		FontAsset(U"BossHp")(deathText).drawAt(400, 394, ColorF{ 1.0, 1.0, 1.0 });
 		FontAsset(U"BossHp")(timeText).drawAt(400, 438, ColorF{ 1.0, 1.0, 1.0 });
+
+		if (Global::getItem1) {
+			TextureAsset(U"heart").draw(24, Global::windowHeight - 56);
+		}
 	}
 
 	void InGame::drawGenerateLoading() const {

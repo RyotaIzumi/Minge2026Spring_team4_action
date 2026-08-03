@@ -44,7 +44,6 @@ namespace Iwanna {
 		Global::isCameraFollowMode = false;
 		Global::doNotStopBgm = false;
 		Global::prepareGetItem1 = false;
-		Global::getItem1 = true;
 
 		Global::elapsedPlayTime = 0.0;
 		Global::deathCount = 0;

@@ -346,7 +346,7 @@ namespace Iwanna {
 			gameObjects.signs << std::make_shared<Sign>(Vec2{ 62,17 }, SignType::Tutorial_Item);
 		}
 
-		if (fileName == U"secret1") {
+		if (fileName == U"secret1" && !Global::getItem1) {
 			gameObjects.items << std::make_shared<Item>(Vec2{7,9},ItemType::Heart);
 		}
 

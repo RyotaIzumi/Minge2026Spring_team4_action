@@ -47,5 +47,6 @@ void Main()
 			break;
 		}
 	}
+	mainGameSerializer.SaveCharactersMoraleValue();
 	mainGameSerializer.SaveEndingValue();
 }
