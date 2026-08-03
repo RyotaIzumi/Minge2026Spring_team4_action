@@ -70,6 +70,14 @@ namespace Iwanna {
 		else {
 			loadGameObjects(Global::savedRoomName);
 		}
+
+		if (stageName == U"clear") {
+			saveGame();
+			if (Global::deathCount == 0) {
+				Global::endingValue = 8;
+			}
+		}
+
 		Global::isChangeRoom = false;
 
 		// セーブ時コールバックは、生成直後に一度だけ設定する
