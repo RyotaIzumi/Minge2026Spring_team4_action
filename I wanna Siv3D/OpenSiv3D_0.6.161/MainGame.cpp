@@ -67,6 +67,10 @@ namespace Iwanna {
 		case StageType::Boss:bossStageManager.setUpObjects(chapter); break;
 		}
 
+		Global::isLow1RestartDeathCheckActive = (Global::isRestartRoomReload && Global::nowRoomName == U"low1");
+		Global::low1RestartDeathCheckElapsed = 0.0;
+		Global::isRestartRoomReload = false;
+
 		if (startedByRoomChange && Global::isGenerateStage(Global::nowRoomName)) {
 			Global::isGenerateStageFakeLoading = true;
 		}
@@ -96,6 +100,11 @@ namespace Iwanna {
 
 			//playerが死亡していたらBGM一時停止
 			if (stageManager.getPlayer()->getIsDead()) {
+				if (Global::isLow1RestartDeathCheckActive
+					&& Global::low1RestartDeathCheckElapsed <= Global::low1RestartDeathCheckDuration) {
+					Global::endingValue = 5;
+					Global::isLow1RestartDeathCheckActive = false;
+				}
 				if (playGameoverBgmOne && !Global::doNotStopBgm) {
 					playGameoverBgm();
 					playGameoverBgmOne = false;
@@ -104,6 +113,12 @@ namespace Iwanna {
 			}
 			if (Global::nowRoomName != U"clear") {
 				Global::elapsedPlayTime += Scene::DeltaTime();
+			}
+			if (Global::isLow1RestartDeathCheckActive) {
+				Global::low1RestartDeathCheckElapsed += Scene::DeltaTime();
+				if (Global::low1RestartDeathCheckElapsed > Global::low1RestartDeathCheckDuration) {
+					Global::isLow1RestartDeathCheckActive = false;
+				}
 			}
 			stageManager.getPlayer()->setStopOrPlayAnimation(!Global::warningTrapPaused);
 			break;

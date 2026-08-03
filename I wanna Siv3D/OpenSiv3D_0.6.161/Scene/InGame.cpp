@@ -56,6 +56,9 @@ namespace Iwanna {
 		data.updateGame();
 
 		if (Global::inputRestart.down() || Global::isChangeRoom) {
+			if (Global::inputRestart.down()) {
+				Global::isRestartRoomReload = true;
+			}
 			data.startGame();
 
 			if (Global::moraleValue2 > 90) Window::SetTitle(U"TestPlayGame (Debug Build)");

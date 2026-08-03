@@ -198,6 +198,11 @@ namespace Iwanna {
 
 		isDead = true;
 		++Global::deathCount;
+		if (Global::isLow1RestartDeathCheckActive
+			&& Global::low1RestartDeathCheckElapsed <= Global::low1RestartDeathCheckDuration) {
+			Global::endingValue = 5;
+			Global::isLow1RestartDeathCheckActive = false;
+		}
 		hspeed = 0;
 		vspeed = 0;
 		spriteSystem.stopOrPlayAnimation(false);

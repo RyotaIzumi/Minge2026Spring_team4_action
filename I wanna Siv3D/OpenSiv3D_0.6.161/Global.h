@@ -83,6 +83,10 @@ namespace Global {
 	inline double elapsedPlayTime = 0.0;
 	inline int32 deathCount = 0;
 	inline int32 endingValue = 0;
+	inline bool isRestartRoomReload = false;
+	inline bool isLow1RestartDeathCheckActive = false;
+	inline double low1RestartDeathCheckElapsed = 0.0;
+	inline double low1RestartDeathCheckDuration = 0.03;
 
 	// --- generateステージ関連 --- //
 	inline Array<String> generateStageNames = { U"generate1", U"generate2", U"generate3", U"generate4", U"generate5" };
