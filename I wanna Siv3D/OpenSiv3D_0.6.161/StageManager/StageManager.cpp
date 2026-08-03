@@ -141,7 +141,7 @@ namespace Iwanna {
 			// 弾丸の生成
 			if (player->getIsGenerateBullet()) {
 				if (bullets.size() < bulletMaxNum) {
-					bullets << std::make_shared<Bullet>(player->pos, player->getDirection() == Global::Direction::RIGHT ? bulletSpeed : -bulletSpeed);
+					bullets << std::make_shared<Bullet>(player->pos, player->getDirection() == Global::Direction::RIGHT ? bulletSpeed : -bulletSpeed, player.get());
 					AudioAsset(Sound::SHOOT).playOneShot();
 				}
 				player->setIsGenerateBullet(false);

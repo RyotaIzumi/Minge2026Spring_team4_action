@@ -5,7 +5,7 @@
 #include "../GameObject/Cherry.h"
 
 namespace Iwanna {
-	Bullet::Bullet(Vec2& genePos, double hs){
+	Bullet::Bullet(Vec2& genePos, double hs, Player* owner) : ownerPlayer(owner) {
 
 		//GameObject.hの値初期化
 		pos = genePos;
@@ -61,6 +61,10 @@ namespace Iwanna {
 
 		// セーブポイント衝突
 		if (this->intersects(other) && other.type == ObjectType::SavePoint) {
+			if (ownerPlayer && ownerPlayer->getIsDead()) {
+				return;
+			}
+
 			auto* savePoint = dynamic_cast<SavePoint*>(&other);
 			switch (savePoint->saveType) {
 			case SaveType::Normal:
