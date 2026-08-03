@@ -28,19 +28,11 @@ void Main()
 	Image cursorImage{ U"✌"_emoji };
 	Cursor::RegisterCustomCursorStyle(U"cursorPiece", cursorImage.scaled(0.5), Point{10,10});
 	
-	Iwanna::registerTextures();
-	Iwanna::registerTexturesSync();
-	Iwanna::loadTexturesSync();
-
-	Iwanna::Sound::registerBGMs();
-	Iwanna::Sound::registerSEs();
-	Iwanna::Sound::registerAudiosSync();
-	Iwanna::Sound::loadAudiosSync();
-
 	App app;
+	app.add<Iwanna::Loading>(Iwanna::SceneType::LOADING);
 	app.add<Iwanna::StartMenu>(Iwanna::SceneType::START_MENU);
 	app.add<Iwanna::InGame>(Iwanna::SceneType::IN_GAME);
-	app.init(Iwanna::SceneType::START_MENU, 0s);
+	app.init(Iwanna::SceneType::LOADING, 0s);
 
 	mainGameSerializer.LoadCharactersMoraleValue();
 	mainGameSerializer.defineGlobalStatuses();

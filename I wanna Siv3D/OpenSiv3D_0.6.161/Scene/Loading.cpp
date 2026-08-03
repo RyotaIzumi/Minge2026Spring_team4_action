@@ -1,6 +1,6 @@
 ﻿#include "Scene.h"
 #include "../Sprite/SpriteAsset.h"
-//#include "../AudioAsset.h"
+#include "../Audio/AudioAsset.h"
 
 namespace Iwanna {
 	Loading::Loading(const InitData& init) : IScene(init) {
@@ -8,26 +8,45 @@ namespace Iwanna {
 	}
 
 	void Loading::load() {
+		registerTextures();
 		registerTexturesSync();
-		//Sound::registerAudiosSync(profiler);
 		loadTexturesSync();
-		//Sound::loadAudiosSync(profiler);
-		Timer timer{ 1s };
-		timer.restart();
-		while (!timer.reachedZero()) {
-		}
+		Sound::registerBGMs();
+		Sound::registerSEs();
+		Sound::registerAudiosSync();
+		Sound::loadAudiosSync();
 	}
 
 	void Loading::update() {
 		if (loadingTask.isReady()) {
-			changeScene(SceneType::IN_GAME, 0.25s);
+			changeScene(SceneType::START_MENU, 0.25s);
 		}
 	}
 
 	void Loading::draw() const {
-		int32 w = Scene::Width();
-		int32 h = Scene::Height();
+		const int32 w = Scene::Width();
+		const int32 h = Scene::Height();
 		Rect{ 0, 0, w, h }.draw(Palette::Black);
-		FontAsset(U"Big")(U"ロード中").drawAt(w / 2, h / 2 - 200);
+
+		const Vec2 loadingTextPos{ w - 170.0, h - 50.0 };
+		FontAsset(U"BossHp")(U"\u30ED\u30FC\u30C9\u4E2D").drawAt(loadingTextPos, Palette::White);
+
+		const Vec2 spinnerCenter{ w - 60.0, h - 48.0 };
+		const double rotation = Scene::Time() * 180.0;
+		const int32 appleCount = 10;
+		const double radius = 28.0;
+		static const Texture appleTexture{ U"\U0001F34E"_emoji };
+
+		for (int32 i = 0; i < appleCount; ++i) {
+			const double t = static_cast<double>(i) / (appleCount - 1);
+			const double angle = 55.0 + 250.0 * t + rotation;
+			const Vec2 applePos = spinnerCenter + Circular{ radius, Math::ToRadians(angle) };
+			const double appleScale = 0.18 + 0.12 * t;
+			const double alpha = 0.35 + 0.65 * t;
+
+			appleTexture
+				.scaled(appleScale)
+				.drawAt(applePos, ColorF{ 1.0, alpha });
+		}
 	}
 }
