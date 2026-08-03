@@ -42,6 +42,8 @@ namespace Iwanna {
 		// 一部変数の初期化
 		isGenerateBloods = false;
 		playedTrapPonTriggerIDs.clear();
+		hasSecretEntranceFlashShown = false;
+		secretEntranceFlashAlpha = 0.0;
 
 		Global::trap2MapBgmStop = false;
 		Global::trapActivatedId30InTrap2Map = false;
@@ -347,6 +349,17 @@ namespace Iwanna {
 				player->onCollision(*obj);
 			}
 
+			if (stageName == U"normal4"
+				&& Global::isSecretTriggerActivated
+				&& !hasSecretEntranceFlashShown) {
+				hasSecretEntranceFlashShown = true;
+				secretEntranceFlashAlpha = secretEntranceFlashStartAlpha;
+			}
+
+			if (secretEntranceFlashAlpha > 0.0) {
+				secretEntranceFlashAlpha = Max(0.0, secretEntranceFlashAlpha - secretEntranceFlashFadeSpeed);
+			}
+
 			player->updateLate();
 
 			//各弾丸とブロック,セーブポイントとの衝突
@@ -366,12 +379,12 @@ namespace Iwanna {
 
 			//暗転演出込みのマップ用
 			if (darkEffectStages.includes(stageName)) {
-				if (darkAlpha > 0.3) {
+				if (darkAlpha > 0.35) {
 					darkAlpha -= 0.05;
 				}
 				else {
 					if (darkAlphaTimer.reachedZero()) {
-						darkAlpha = 0.05 + Random(0.20);
+						darkAlpha = 0.05 + Random(0.30);
 						darkAlphaTimer.restart();
 					}
 				}
@@ -493,6 +506,10 @@ namespace Iwanna {
 			//タイトルカード
 			titleCard.draw();
 			achive.draw();
+		}
+
+		if (secretEntranceFlashAlpha > 0.0) {
+			Rect{ 0, 0, Global::windowWidth, Global::windowHeight }.draw(ColorF{ 1.0, 1.0, 1.0, secretEntranceFlashAlpha });
 		}
 
 		if (stageName == U"clear") {

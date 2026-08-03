@@ -87,8 +87,12 @@ namespace Iwanna {
 
 		//暗転演出関連
 		double darkAlpha = 0.8;
-		Timer darkAlphaTimer{ 1.0s,StartImmediately::Yes };
+		Timer darkAlphaTimer{ 0.6s,StartImmediately::Yes };
 		Array<String> darkEffectStages{U"secret1"};
+		bool hasSecretEntranceFlashShown = false;
+		double secretEntranceFlashAlpha = 0.0;
+		double secretEntranceFlashStartAlpha = 0.65;
+		double secretEntranceFlashFadeSpeed = 0.06;
 
 		int32 step = 0;
 	public:
