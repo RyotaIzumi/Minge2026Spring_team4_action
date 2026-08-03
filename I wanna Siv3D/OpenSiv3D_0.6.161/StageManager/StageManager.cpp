@@ -80,6 +80,9 @@ namespace Iwanna {
 			else if (Global::deathCount == 0) {
 				Global::endingValue = 8;
 			}
+			else if (Global::endingValue == 4) {
+				Global::endingValue = 0;
+			}
 		}
 
 		Global::isChangeRoom = false;
