@@ -32,6 +32,7 @@ namespace Iwanna {
 		MainGame();
 
 		void startNewGame();
+		void resetGameToStartMenu();
 		void startGame();
 		void updateGame();
 		void debugGame();

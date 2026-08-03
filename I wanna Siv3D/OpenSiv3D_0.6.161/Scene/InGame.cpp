@@ -45,6 +45,12 @@ namespace Iwanna {
 			else if (KeyQ.down()) {
 				System::Exit();
 			}
+			else if (KeyW.down()) {
+				data.resetGameToStartMenu();
+				isPauseMenuOpen = false;
+				isGenerateLoadingOpen = false;
+				changeScene(SceneType::START_MENU, 0.0s);
+			}
 			return;
 		}
 
@@ -93,16 +99,18 @@ namespace Iwanna {
 		FontAsset(U"Button")(U"Escでゲームに戻る").draw(24, 24, ColorF{ 1.0, 1.0, 1.0 });
 
 		const String quitText = U"ゲームをやめる : Qキー";
+		const String restartText = U"ゲームを最初からやり直す : Wキー";
 		const String cautionText = U"(テストプレイの進捗は失われます！)";
 		const String endingText = U"到達するエンディング : " + getEndingLetter();
 		const String deathText = U"Death " + Format(Global::deathCount);
 		const String timeText = U"Play Time " + formatPlayTime(Global::elapsedPlayTime);
 
-		FontAsset(U"BossHp")(quitText).drawAt(400, 220, ColorF{ 1.0, 1.0, 1.0 });
+		FontAsset(U"BossHp")(quitText).drawAt(400, 172, ColorF{ 1.0, 1.0, 1.0 });
+		FontAsset(U"BossHp")(restartText).drawAt(400, 220, ColorF{ 1.0, 1.0, 1.0 });
 		FontAsset(U"Button")(cautionText).drawAt(400, 268, ColorF{ 1.0, 0.15, 0.15 });
 		FontAsset(U"BossHp")(endingText).drawAt(400, 318, ColorF{ 1.0, 1.0, 1.0 });
-		FontAsset(U"BossHp")(deathText).drawAt(400, 374, ColorF{ 1.0, 1.0, 1.0 });
-		FontAsset(U"BossHp")(timeText).drawAt(400, 418, ColorF{ 1.0, 1.0, 1.0 });
+		FontAsset(U"BossHp")(deathText).drawAt(400, 394, ColorF{ 1.0, 1.0, 1.0 });
+		FontAsset(U"BossHp")(timeText).drawAt(400, 438, ColorF{ 1.0, 1.0, 1.0 });
 	}
 
 	void InGame::drawGenerateLoading() const {

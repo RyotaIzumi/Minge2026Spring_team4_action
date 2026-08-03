@@ -17,6 +17,54 @@ namespace Iwanna {
 		startGame();
 	}
 
+	void MainGame::resetGameToStartMenu() {
+		audio.stop();
+		gameoverAudio.stop();
+		nowSoundName = U"";
+		playGameoverBgmOne = true;
+
+		Global::isExistSaveData = false;
+		Global::savedStartPlayerPos = Vec2{ -100, -100 };
+		Global::savedRoomName = Global::startRoomName;
+		Global::prevRoomName = U"";
+		Global::nowRoomName = Global::startRoomName;
+		Global::isChangeRoom = false;
+		Global::isLoopStage = false;
+
+		Global::trap2MapBgmStop = false;
+		Global::trapActivatedInTrap2Map = false;
+		Global::trapActivatedId30InTrap2Map = false;
+		Global::trapCameraActivatedInTrap2Map = false;
+		Global::warningTrapPaused = false;
+		Global::isPlayerFrozen = false;
+		Global::isSecretTriggerActivated = false;
+		Global::isBossAttackPowerUp = false;
+		Global::isBossExBarrageAttack = false;
+		Global::isBossDefeated = false;
+		Global::isCameraFollowMode = false;
+		Global::doNotStopBgm = false;
+		Global::prepareGetItem1 = false;
+		Global::getItem1 = true;
+
+		Global::elapsedPlayTime = 0.0;
+		Global::deathCount = 0;
+		Global::isRestartRoomReload = false;
+		Global::isLow1RestartDeathCheckActive = false;
+		Global::low1RestartDeathCheckElapsed = 0.0;
+
+		Global::remainingGenerateStageNames.clear();
+		Global::isGenerateStageFakeLoading = false;
+
+		Global::endingValue = 4;
+		if (!(Global::moraleValue2 >= 90 && Global::moraleValue3 >= 90 && Global::moraleValue4 >= 90)
+			&& Global::moraleValue1 >= 90) {
+			Global::endingValue = 3;
+		}
+
+		if (Global::moraleValue2 > 90) Window::SetTitle(U"TestPlayGame (Debug Build)");
+		else Window::SetTitle(U"TestPlayGame");
+	}
+
 	void MainGame::startGame() {
 		int32 chapter = 1;
 		const bool startedByRoomChange = Global::isChangeRoom;
