@@ -259,10 +259,10 @@ namespace Iwanna {
 				if (nextHitBox.intersects(*other.hitBox->getRect()))
 				{
 					if (hspeed > 0) {
-						pos.x = other.hitBox->left().x - 7;
+						pos.x = other.hitBox->left().x - 5;
 					}
 					else {
-						pos.x = other.hitBox->right().x + 7;
+						pos.x = other.hitBox->right().x + 5;
 					}
 
 					hspeed = 0;
@@ -279,7 +279,7 @@ namespace Iwanna {
 				if (nextHitBox.intersects(*other.hitBox->getRect()))
 				{
 					if (vspeed > 0) {
-						pos.y = other.hitBox->top().y - 13;
+						pos.y = other.hitBox->top().y - 10;
 						djump = true;
 						isOnGround = true;
 					}

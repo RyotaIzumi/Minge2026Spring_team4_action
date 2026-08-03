@@ -136,6 +136,7 @@ namespace Iwanna {
 		bool intersects(const HitBox& other) const override;
 
 		void setPos(const Vec2& pos) override {
+			basePos = pos;
 			switch (spikeDir) {
 			case 0://上向き
 				triangle.set({

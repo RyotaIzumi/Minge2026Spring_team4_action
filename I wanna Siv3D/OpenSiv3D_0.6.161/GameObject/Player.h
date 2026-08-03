@@ -28,7 +28,7 @@ namespace Iwanna {
 		int32 nowTrapID = 0;
 
 		//player当たり判定サイズ
-		SizeF hitBoxSize{ 15,26 };
+		SizeF hitBoxSize{ 11,21 };
 
 		//アニメーション管理用変数
 		SpriteSystem spriteSystem;

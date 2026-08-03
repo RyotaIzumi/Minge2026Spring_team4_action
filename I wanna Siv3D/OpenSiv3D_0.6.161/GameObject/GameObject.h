@@ -50,7 +50,11 @@ namespace Iwanna {
 		RectF getBroadRect() const {
 			if (auto r = hitBox->getRect()) return *r;
 			if (auto c = hitBox->getCircle()) return c->boundingRect();
-			return RectF{};
+			const double left = hitBox->left().x;
+			const double right = hitBox->right().x;
+			const double top = hitBox->top().y;
+			const double bottom = hitBox->bottom().y;
+			return RectF{ left, top, right - left, bottom - top };
 		}
 
 		bool intersects(const GameObject& other) const {
