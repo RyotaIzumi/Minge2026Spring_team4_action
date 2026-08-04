@@ -54,6 +54,7 @@ namespace Iwanna {
 		isExBossThirdPhaseRestoring = false;
 		isExBossCameraLocked = false;
 		hasExBossThirdPhaseLowBoss = false;
+		hasExBossThirdPhaseBossCherry = false;
 		trapBossSecondPhaseIntroStopwatch.reset();
 		trapBossSecondPhaseEyeHitFlashStopwatch.reset();
 		trapBossSecondPhaseAttackStopwatch.reset();
@@ -338,20 +339,24 @@ namespace Iwanna {
 				stockNearGameObjects.add(c.get());
 			}
 			//ボスりんご
-			Vec2 bossCherryPos;
-			BossCherryType attackCherryType;
+			Vec2 bossCherryPos{ 0, 0 };
+			bool hasBossCherryPos = false;
+			BossCherryType attackCherryType = BossCherryType::None;
 			for (auto& bc : bossCherries) {
 				bc->update();
 
 				if (auto* b = dynamic_cast<BossCherry*>(bc.get())) {
 					bossCherryPos = b->pos;
+					hasBossCherryPos = true;
 					defeatedBossNum = b->getDefeatedBossNum();
 					attackCherryType = b->getBossCherryAttackType();
 				}
 				else if (auto* bs = dynamic_cast<BossSubCherry*>(bc.get())) {
-					bs->setCenterPos(bossCherryPos);
-					bs->setDefeatedBossNum(defeatedBossNum);
-					bs->generateAttack(attackCherryType);
+					if (hasBossCherryPos) {
+						bs->setCenterPos(bossCherryPos);
+						bs->setDefeatedBossNum(defeatedBossNum);
+						bs->generateAttack(attackCherryType);
+					}
 				}
 
 				stockNearGameObjects.add(bc.get());
@@ -1054,6 +1059,85 @@ namespace Iwanna {
 			}
 		}
 
+		return true;
+	}
+
+	void BossStageManager::summonExBossThirdPhaseBossCherry() {
+		if (stageName != U"ExBoss" || hasExBossThirdPhaseBossCherry) {
+			return;
+		}
+
+		exBossLockedCameraCenter = executeCameraPos();
+		isExBossCameraLocked = true;
+		Global::isCameraFollowMode = false;
+
+		const double startY = exBossLockedCameraCenter.y - Global::windowHeight / 2.0 - 96.0;
+		auto bossCherry = std::make_shared<BossCherry>(
+			Vec2{ exBossLockedCameraCenter.x, startY },
+			exBossBossCherryScale,
+			*this);
+		bossCherry->setSummonPatternSettings(
+			exBossBossCherryTargetY,
+			exBossBossCherryAppearDuration,
+			exBossBossCherryLifeTime,
+			exBossBossCherryAttackInterval);
+		bossCherry->setHpBarVisible(false);
+		pendingBossCherries << bossCherry;
+
+		const Array<BossCherryType> funnelTypes{
+			BossCherryType::Red,
+			BossCherryType::Blue,
+			BossCherryType::Yellow,
+			BossCherryType::Green,
+			BossCherryType::Orange,
+			BossCherryType::Sky
+		};
+		for (const auto type : funnelTypes) {
+			auto funnel = std::make_shared<BossSubCherry>(
+				Vec2{ exBossLockedCameraCenter.x, startY },
+				exBossBossCherryFunnelScale,
+				type,
+				*this);
+			funnel->setSummonPattern(true);
+			pendingBossCherries << funnel;
+		}
+
+		hasExBossThirdPhaseBossCherry = true;
+	}
+
+	bool BossStageManager::isExBossThirdPhaseBossCherryFinished() {
+		if (stageName != U"ExBoss" || !hasExBossThirdPhaseBossCherry) {
+			return false;
+		}
+
+		for (const auto& cherry : gameObjects.bossCherries) {
+			if (auto* bossCherry = dynamic_cast<BossCherry*>(cherry.get())) {
+				if (bossCherry->getIsSummonPattern()) {
+					return false;
+				}
+			}
+		}
+
+		for (const auto& cherry : pendingBossCherries) {
+			if (auto* bossCherry = dynamic_cast<BossCherry*>(cherry.get())) {
+				if (bossCherry->getIsSummonPattern()) {
+					return false;
+				}
+			}
+		}
+
+		for (const auto& cherry : gameObjects.bossCherries) {
+			auto* subCherry = dynamic_cast<BossSubCherry*>(cherry.get());
+			if (subCherry != nullptr && subCherry->getIsSummonPattern()) {
+				cherry->isDelete = true;
+			}
+		}
+		for (const auto& cherry : pendingBossCherries) {
+			auto* subCherry = dynamic_cast<BossSubCherry*>(cherry.get());
+			if (subCherry != nullptr && subCherry->getIsSummonPattern()) {
+				cherry->isDelete = true;
+			}
+		}
 		return true;
 	}
 

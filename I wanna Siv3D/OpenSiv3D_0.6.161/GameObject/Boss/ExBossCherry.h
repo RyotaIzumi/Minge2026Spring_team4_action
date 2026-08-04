@@ -150,7 +150,8 @@ namespace Iwanna {
 		BossForm prevBossForm = BossForm::First;
 		bool isThirdFormRetreatPending = false;
 		bool isThirdFormRetreatFinished = false;
-		bool isThirdFormLowBossSummoned = false;
+		bool isThirdFormSummonSelected = false;
+		int32 thirdFormSummonType = -1;
 		bool isThirdFormReturning = false;
 		Stopwatch thirdFormRetreatStopwatch{ StartImmediately::No };
 		double thirdFormRetreatWaitTime = 1.4;

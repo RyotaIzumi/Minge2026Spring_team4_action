@@ -48,19 +48,40 @@ namespace Iwanna {
 				}
 				break;
 			case 3:
-				if (!isThirdFormLowBossSummoned && bossStageManager->isExBossThirdPhaseDarkened()) {
-					bossStageManager->summonExBossThirdPhaseLowBoss();
-					isThirdFormLowBossSummoned = true;
+			{
+				if (!isThirdFormSummonSelected && bossStageManager->isExBossThirdPhaseDarkened()) {
+					thirdFormSummonType = Random(1);
+					switch (thirdFormSummonType) {
+					case 0:
+						bossStageManager->summonExBossThirdPhaseLowBoss();
+						break;
+					case 1:
+						bossStageManager->summonExBossThirdPhaseBossCherry();
+						break;
+					}
+					isThirdFormSummonSelected = true;
+				}
+
+				bool isSummonedBossFinished = false;
+				switch (thirdFormSummonType) {
+				case 0:
+					isSummonedBossFinished = bossStageManager->isExBossThirdPhaseLowBossFinished();
+					break;
+				case 1:
+					isSummonedBossFinished = bossStageManager->isExBossThirdPhaseBossCherryFinished();
+					break;
 				}
 
 				if (thirdFormRetreatStopwatch.sF() >= thirdFormDarkeningWaitTime
-					&& bossStageManager->isExBossThirdPhaseLowBossFinished()) {
+					&& isThirdFormSummonSelected
+					&& isSummonedBossFinished) {
 					thirdFormRetreatStopwatch.reset();
 					bossStageManager->finishExBossThirdPhaseLowBoss();
 					nowAttackType = ExBossAttackType::ThirdFormReturn;
 					attackStep = 0;
 				}
 				break;
+			}
 			}
 
 			break;

@@ -161,6 +161,15 @@ namespace Iwanna {
 		double exBossLowBossTargetBaseSpeed = 4.0;
 		double exBossLowBossTargetIntervalSpeed = 1.0;
 
+		// 召喚BossCherry
+		bool hasExBossThirdPhaseBossCherry = false;
+		double exBossBossCherryScale = 5.0;
+		double exBossBossCherryFunnelScale = 2.0;
+		double exBossBossCherryAppearDuration = 1.4;
+		double exBossBossCherryTargetY = 304.0;
+		double exBossBossCherryLifeTime = 16.0;
+		double exBossBossCherryAttackInterval = 1.2;
+
 		Stopwatch trapBossGuygunStopwatch{ StartImmediately::Yes };
 		double trapBossGuygunInterval = 0.06;
 		double trapBossGuygunVolume = 0.3;
@@ -216,6 +225,8 @@ namespace Iwanna {
 		bool isExBossThirdPhaseDarkened() const;
 		void summonExBossThirdPhaseLowBoss();
 		bool isExBossThirdPhaseLowBossFinished() const;
+		void summonExBossThirdPhaseBossCherry();
+		bool isExBossThirdPhaseBossCherryFinished();
 		void finishExBossThirdPhaseLowBoss();
 		Vec2 getExBossLockedCameraCenter() const;
 		Vec2 getTrapBossSecondPhaseLeftEyePos() const;
