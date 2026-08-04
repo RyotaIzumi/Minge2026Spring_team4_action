@@ -55,6 +55,9 @@ namespace Iwanna {
 		registerTexture(U"sprBlock_secret1", BlockPath + U"sprBlock_secret1.png");
 		registerTexture(U"sprBlock_secret2", BlockPath + U"sprBlock_secret2.png");
 		registerTexture(U"sprBlock_secret3", BlockPath + U"sprBlock_secret3.png");
+		registerTexture(U"sprBlock_extra1", BlockPath + U"sprBlock_extra1.png");
+		registerTexture(U"sprBlock_extra2", BlockPath + U"sprBlock_extra2.png");
+		registerTexture(U"sprBlock_extra3", BlockPath + U"sprBlock_extra3.png");
 
 		//mikuテクスチャ登録
 		static const FilePath MikuPath = U"Texture/Miku/";
@@ -81,6 +84,7 @@ namespace Iwanna {
 		registerTexture(U"sprSpikeLeft_trap", SpikePath + U"sprSpikeLeft_trap.png");
 		registerTexture(U"sprSpikeDown_trap", SpikePath + U"sprSpikeDown_trap.png");
 		registerTexture(U"sprSpikeRight_trap", SpikePath + U"sprSpikeRight_trap.png");
+		registerTexture(U"sprSpikeExtra", SpikePath + U"sprSpikeExtra.png");
 
 		//背景テクスチャ登録
 		static const FilePath BackgroundPath = U"Texture/Background/";
@@ -114,6 +118,7 @@ namespace Iwanna {
 		registerTexture(U"heart", OtherPath + U"heart.png");
 		registerTexture(U"achieveFrame", OtherPath + U"achieveFrame.png");
 		registerTexture(U"tayama", OtherPath + U"tayama.png");
+		registerTexture(U"sprExtraLogo", OtherPath + U"sprExtraLogo.png");
 
 		registerTexture(U"sprTitleCard_boss", OtherPath + U"sprTitleCard_boss.png");
 		registerTexture(U"sprTitleCard_secret", OtherPath + U"sprTitleCard_secret.png");

@@ -15,12 +15,29 @@ namespace Iwanna {
 			return Format(minutes) + U":" + secondText + U"." + centisecondText;
 		}
 
-		ColorF getExtraStageBackgroundColor(const String& stageName) {
+		ColorF getExtraStageMainColor(const String& stageName) {
 			if (stageName == U"ExMiluArea") return ColorF{ Palette::White };
 			if (stageName == U"ExMochiArea") return ColorF{ Palette::Orange };
-			if (stageName == U"ExGotArea") return ColorF{ Palette::Black };
+			if (stageName == U"ExGotArea") return ColorF{ Palette::Gray };
 			if (stageName == U"ExRyutaArea") return ColorF{ Palette::Blue };
-			return ColorF{ Palette::Black };
+			return ColorF{ Palette::White };
+		}
+
+		void drawExtraStageBackground(const String& stageName) {
+			Rect{ 0, 0, Global::windowWidth, Global::windowHeight }.draw(ColorF{ 0.0, 0.0, 0.0 });
+
+			const ColorF mainColor = getExtraStageMainColor(stageName);
+			const ColorF lineColor{ mainColor.r, mainColor.g, mainColor.b, 0.32 };
+			const double spacing = 54.0;
+			const double speed = 26.0;
+			const double offset = Fmod(Scene::Time() * speed, spacing);
+			const Vec2 scroll{ -offset, offset };
+			const double extent = Global::windowWidth + Global::windowHeight + spacing * 4.0;
+
+			for (double x = -extent - offset; x < extent; x += spacing) {
+				Line{ Vec2{ x, -spacing } + scroll, Vec2{ x + extent, extent - spacing } + scroll }.draw(2.0, lineColor);
+				Line{ Vec2{ x, Global::windowHeight + spacing } + scroll, Vec2{ x + extent, Global::windowHeight - extent + spacing } + scroll }.draw(2.0, lineColor);
+			}
 		}
 	}
 
@@ -460,7 +477,7 @@ namespace Iwanna {
 	void StageManager::draw() {
 		//背景描画
 		if (Global::isExtraStage(stageName)) {
-			Rect{ 0, 0, Global::windowWidth, Global::windowHeight }.draw(getExtraStageBackgroundColor(stageName));
+			drawExtraStageBackground(stageName);
 		}
 		else {
 			TextureAsset(backgroundName).draw();

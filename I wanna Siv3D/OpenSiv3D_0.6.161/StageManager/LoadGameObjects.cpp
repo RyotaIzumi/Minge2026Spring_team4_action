@@ -5,9 +5,17 @@ namespace Iwanna {
 		CherryColorType getExtraStageCherryColor(const String& fileName) {
 			if (fileName == U"ExMiluArea") return CherryColorType::White;
 			if (fileName == U"ExMochiArea") return CherryColorType::Orange;
-			if (fileName == U"ExGotArea") return CherryColorType::Black;
+			if (fileName == U"ExGotArea") return CherryColorType::Gray;
 			if (fileName == U"ExRyutaArea") return CherryColorType::Blue;
 			return CherryColorType::None;
+		}
+
+		ColorF getExtraStageBlockColor(const String& fileName) {
+			if (fileName == U"ExMiluArea") return ColorF{ Palette::White };
+			if (fileName == U"ExMochiArea") return ColorF{ Palette::Orange };
+			if (fileName == U"ExGotArea") return ColorF{ Palette::Gray };
+			if (fileName == U"ExRyutaArea") return ColorF{ Palette::Blue };
+			return ColorF{ Palette::White };
 		}
 
 		void applyExtraCherryVisual(const std::shared_ptr<Cherry>& cherry, const String& fileName) {
@@ -28,12 +36,12 @@ namespace Iwanna {
 		switch (Global::mainTextureNumber) {
 		case 0: quarity = U"low"; break;
 		case 1: quarity = U"normal"; break;
-		case 2: quarity = U"secret"; break;
+		case 2: quarity = U"extra"; break;
 		}
 		if (isExtraStage) {
-			quarity = U"secret";
+			quarity = U"extra";
 		}
-		const String spikeTextureType = isTrapPonMap ? U"trap" : quarity;
+		const String spikeTextureType = isExtraStage ? U"extra" : isTrapPonMap ? U"trap" : quarity;
 
 		//ステージデータの読み込みとオブジェクト生成
 		CSV csv{ U"MapData/" + fileName + U".csv" };
@@ -97,7 +105,7 @@ namespace Iwanna {
 					case 24: gameObjects.spikes << std::make_shared<Spike>(spikeTextureType, pos, 3); break;
 					case 25: gameObjects.savePoints << std::make_shared<SavePoint>(pos); break;
 					case 26: gameObjects.blocks << std::make_shared<HideBlock>(U"sprBlock_" + quarity + U"1", pos); break;
-					case 27: gameObjects.blocks << std::make_shared<ShootTroughBlock>(isExtraStage ? U"sprBlock_secret2" : U"sprBlockShootTrough", pos); break;
+					case 27: gameObjects.blocks << std::make_shared<ShootTroughBlock>(isExtraStage ? U"sprBlock_extra2" : U"sprBlockShootTrough", pos); break;
 					case 28: gameObjects.blocks << std::make_shared<FakeBlock>(U"sprBlock_" + quarity + U"2", pos); break;
 					case 29: gameObjects.blocks << std::make_shared<WaterBlock>(U"sprWater", pos); break;
 					case 31:
@@ -386,5 +394,14 @@ namespace Iwanna {
 		if (fileName == U"normal5")gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{80,80},3.0,CherryColorType::Sky,*this);
 		if (fileName == U"normal6")gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{80,528},3.0,CherryColorType::Green,*this);
 		if (fileName == U"normal7")gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{624,304},3.0,CherryColorType::Orange,*this);
+
+		if (isExtraStage) {
+			const ColorF blockColor = getExtraStageBlockColor(fileName);
+			for (auto& block : gameObjects.blocks) {
+				if (block->blockType != BlockType::Water) {
+					block->setBlockColor(blockColor);
+				}
+			}
+		}
 	}
 }

@@ -1,4 +1,4 @@
-#include "Spike.h"
+﻿#include "Spike.h"
 
 namespace Iwanna {
 	Spike::Spike(String typeName, Vec2 startPos, int32 dir) {
@@ -21,6 +21,20 @@ namespace Iwanna {
 	}
 
 	void Spike::draw() const {
+		if (typeName == U"extra") {
+			const int32 frame = static_cast<int32>(Scene::Time() * 12.0) % 10;
+			double angle = 0.0;
+			switch (spriteDirection) {
+			case 1: angle = -90.0; break;
+			case 2: angle = 180.0; break;
+			case 3: angle = 90.0; break;
+			}
+			TextureAsset(U"sprSpikeExtra")(frame * side, 0, side, side)
+				.rotated(Math::ToRadians(angle))
+				.drawAt(pos + Vec2{ side / 2.0, side / 2.0 }, ColorF(1.0, alpha));
+			return;
+		}
+
 		switch (spriteDirection) {
 		case 0: TextureAsset(U"sprSpikeUp_" + typeName).draw(pos, ColorF(1.0, alpha)); break;
 		case 1: TextureAsset(U"sprSpikeLeft_" + typeName).draw(pos, ColorF(1.0, alpha)); break;

@@ -22,11 +22,13 @@ namespace Iwanna {
 		String textureName = U"sprBlock";
 		bool hasCollide = true;
 		bool isDebris = false;
+		ColorF blockColor{ 1.0, 1.0, 1.0 };
 		double debrisAlpha = 1.0;
 		double debrisGravity = 0.45;
 		double debrisRotateSpeed = 0.0;
 		void updateDebris();
 		void drawDebris() const;
+		ColorF getBlockDrawColor(double alpha = 1.0) const;
 	public:
 		Block(String name, Vec2 startPos);
 		BlockType blockType = BlockType::Normal;
@@ -40,6 +42,7 @@ namespace Iwanna {
 
 		void setHasCollide(bool b);
 		bool getHasCollide() const;
+		void setBlockColor(ColorF color);
 		virtual void breakAsDebris();
 		bool getIsDebris() const;
 	};
