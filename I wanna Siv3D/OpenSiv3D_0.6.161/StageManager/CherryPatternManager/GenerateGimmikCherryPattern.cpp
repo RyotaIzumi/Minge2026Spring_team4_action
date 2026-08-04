@@ -189,7 +189,7 @@ namespace Iwanna {
 		 */
 	void StageManager::createGrayLatticeCherry(double interval, const std::function<std::shared_ptr<BossGrayLatticeCherry>()>& factory) {
 		Vec2 startBasePos{ -100,-400 };
-		Vec2 centerPos{ 400,150 };
+		Vec2 centerPos{ 400,304 };
 		double cherryInterval = 24;
 		int32 lineNumX = 15;
 		int32 lineNumY = 15;

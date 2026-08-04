@@ -6,7 +6,7 @@ namespace Iwanna {
 			if (fileName == U"ExMiluArea") return CherryColorType::White;
 			if (fileName == U"ExMochiArea") return CherryColorType::Orange;
 			if (fileName == U"ExGotArea") return CherryColorType::Gray;
-			if (fileName == U"ExRyutaArea") return CherryColorType::Blue;
+			if (fileName == U"ExRyutaArea") return CherryColorType::Sky;
 			return CherryColorType::None;
 		}
 
@@ -14,7 +14,7 @@ namespace Iwanna {
 			if (fileName == U"ExMiluArea") return ColorF{ Palette::White };
 			if (fileName == U"ExMochiArea") return ColorF{ Palette::Orange };
 			if (fileName == U"ExGotArea") return ColorF{ Palette::Gray };
-			if (fileName == U"ExRyutaArea") return ColorF{ Palette::Blue };
+			if (fileName == U"ExRyutaArea") return ColorF{ 0.32, 0.62, 1.0 };
 			return ColorF{ Palette::White };
 		}
 
@@ -398,6 +398,10 @@ namespace Iwanna {
 		if (fileName == U"normal5")gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{80,80},3.0,CherryColorType::Sky,*this);
 		if (fileName == U"normal6")gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{80,528},3.0,CherryColorType::Green,*this);
 		if (fileName == U"normal7")gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{624,304},3.0,CherryColorType::Orange,*this);
+		if (fileName == U"ExRyutaArea") {
+			const double grayBigCherryScale = 7.0;
+			gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{400,304}, grayBigCherryScale, CherryColorType::Gray, *this);
+		}
 
 		if (isExtraStage) {
 			const ColorF blockColor = getExtraStageBlockColor(fileName);
