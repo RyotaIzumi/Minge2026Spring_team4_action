@@ -106,7 +106,8 @@ namespace Iwanna {
 		FallSwing,
 		Slide,
 		Warp,
-		ThirdFormRetreat
+		ThirdFormRetreat,
+		ThirdFormReturn
 	};
 
 	class ExBossCherry : public Cherry {
@@ -149,9 +150,11 @@ namespace Iwanna {
 		BossForm prevBossForm = BossForm::First;
 		bool isThirdFormRetreatPending = false;
 		bool isThirdFormRetreatFinished = false;
+		bool isThirdFormLowBossSummoned = false;
+		bool isThirdFormReturning = false;
 		Stopwatch thirdFormRetreatStopwatch{ StartImmediately::No };
 		double thirdFormRetreatWaitTime = 1.4;
-		double thirdFormDarkeningWaitTime = 3.0;
+		double thirdFormDarkeningWaitTime = 20.0;
 
 		Array<ExBossAttackType> canAttackTypes{ ExBossAttackType::SwingOne, ExBossAttackType::Fall, ExBossAttackType::Slide, ExBossAttackType::SparkExpro, ExBossAttackType::Warp };
 		Array<CherryColorType> randomChoiceBarrageAttacks{ CherryColorType::Red,CherryColorType::Yellow };

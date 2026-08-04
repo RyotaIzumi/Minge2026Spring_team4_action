@@ -48,8 +48,39 @@ namespace Iwanna {
 				}
 				break;
 			case 3:
-				if (thirdFormRetreatStopwatch.sF() >= thirdFormDarkeningWaitTime) {
+				if (!isThirdFormLowBossSummoned && bossStageManager->isExBossThirdPhaseDarkened()) {
+					bossStageManager->summonExBossThirdPhaseLowBoss();
+					isThirdFormLowBossSummoned = true;
+				}
+
+				if (thirdFormRetreatStopwatch.sF() >= thirdFormDarkeningWaitTime
+					&& bossStageManager->isExBossThirdPhaseLowBossFinished()) {
 					thirdFormRetreatStopwatch.reset();
+					bossStageManager->finishExBossThirdPhaseLowBoss();
+					nowAttackType = ExBossAttackType::ThirdFormReturn;
+					attackStep = 0;
+				}
+				break;
+			}
+
+			break;
+
+		case ExBossAttackType::ThirdFormReturn:
+			switch (attackStep) {
+			case 0:
+			{
+				const Vec2 cameraCenter = bossStageManager->getExBossLockedCameraCenter();
+				pos = Vec2{ cameraCenter.x, cameraCenter.y - Global::windowHeight / 2.0 - 120.0 };
+				movePosition(Vec2{ cameraCenter.x, 304.0 }, 1.4, false);
+				rotateDirection(getBaseAngleDiff(), 1.0, false);
+				attackStep++;
+				break;
+			}
+			case 1:
+				if (getIsMoveFinished() && getIsRotateFinished()) {
+					baseY = 304.0;
+					baseCenterPos = pos;
+					isThirdFormReturning = false;
 					startWait();
 				}
 				break;

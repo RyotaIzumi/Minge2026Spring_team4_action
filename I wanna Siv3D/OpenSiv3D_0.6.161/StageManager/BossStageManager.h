@@ -40,6 +40,7 @@ namespace Iwanna {
 
 		// 追加するりんごを一時格納するためのもの
 		Array<std::shared_ptr<Cherry>> pendingCherries;
+		Array<std::shared_ptr<Cherry>> pendingBossCherries;
 
 		//カメラ関連
 		Vec2 cameraBasePos{ 400, 304 };
@@ -138,8 +139,28 @@ namespace Iwanna {
 		double exBossEntryDarkAlpha = 0.0;
 		double exBossEntryDarkAlphaFadeSpeed = 0.03;
 		bool isExBossThirdPhaseDarkening = false;
+		bool isExBossThirdPhaseRestoring = false;
 		double exBossThirdPhaseDarkAlphaTarget = 0.9;
 		double exBossThirdPhaseDarkAlphaSpeed = 0.01;
+		double exBossThirdPhaseRestoreSpeed = 0.01;
+		bool isExBossCameraLocked = false;
+		Vec2 exBossLockedCameraCenter{ 800, 304 };
+
+		// 召喚LowBoss
+		bool hasExBossThirdPhaseLowBoss = false;
+		double exBossLowBossScale = 5.0;
+		double exBossLowBossAppearDuration = 1.4;
+		double exBossLowBossTargetY = 304.0;
+		double exBossLowBossLifeTime = 15.0;
+		double exBossLowBossSpreadInterval = 0.6;
+		int32 exBossLowBossSpreadCherryNum = 16;
+		double exBossLowBossSpreadCherrySpeed = 5.0;
+		double exBossLowBossTargetInterval = 1.6;
+		int32 exBossLowBossTargetLineNum = 3;
+		bool exBossLowBossTargetIsAddLine = false;
+		double exBossLowBossTargetBaseSpeed = 4.0;
+		double exBossLowBossTargetIntervalSpeed = 1.0;
+
 		Stopwatch trapBossGuygunStopwatch{ StartImmediately::Yes };
 		double trapBossGuygunInterval = 0.06;
 		double trapBossGuygunVolume = 0.3;
@@ -192,6 +213,11 @@ namespace Iwanna {
 		bool shouldStopBossBgm() const;
 		bool isTrapBossSecondPhaseBgm() const;
 		void startExBossThirdPhaseDarkening();
+		bool isExBossThirdPhaseDarkened() const;
+		void summonExBossThirdPhaseLowBoss();
+		bool isExBossThirdPhaseLowBossFinished() const;
+		void finishExBossThirdPhaseLowBoss();
+		Vec2 getExBossLockedCameraCenter() const;
 		Vec2 getTrapBossSecondPhaseLeftEyePos() const;
 		Vec2 getTrapBossSecondPhaseRightEyePos() const;
 		Array<Vec2> getTrapBossSecondPhaseEyePositions() const;

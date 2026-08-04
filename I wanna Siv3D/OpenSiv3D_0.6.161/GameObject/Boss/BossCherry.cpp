@@ -532,6 +532,40 @@ namespace Iwanna {
 		appearanceStep = 0;
 	}
 
+	void LowBossCherry::setAppearanceSettings(double newTargetY, double duration, bool easeOut) {
+		targetY = newTargetY;
+		appearanceDuration = Max(duration, 0.001);
+		useEaseOutAppearance = easeOut;
+
+		if (useEaseOutAppearance) {
+			speed = 0.0;
+			movePosition(Vec2{ pos.x, targetY }, appearanceDuration, false);
+		}
+	}
+
+	void LowBossCherry::setLifeTime(double duration) {
+		hasLifeTime = true;
+		lifeTime = Max(duration, 0.0);
+	}
+
+	void LowBossCherry::setHpBarVisible(bool visible) {
+		hasHp = visible;
+	}
+
+	void LowBossCherry::setSpreadAttackSettings(double interval, int32 cherryNum, double spd) {
+		spreadInterval = interval;
+		spreadCherryNum = cherryNum;
+		spreadCherrySpeed = spd;
+	}
+
+	void LowBossCherry::setTargetAttackSettings(double interval, int32 lineNum, bool isAddLine, double baseSpeed, double intervalSpeed) {
+		targetInterval = interval;
+		targetLineNum = lineNum;
+		targetIsAddLine = isAddLine;
+		targetBaseSpeed = baseSpeed;
+		targetIntervalSpeed = intervalSpeed;
+	}
+
 	void LowBossCherry::updateDefeatedFall() {
 		defeatedFallSpeed += defeatedFallAcceleration;
 		pos.y += defeatedFallSpeed;
@@ -578,17 +612,28 @@ namespace Iwanna {
 
 		switch (appearanceStep) {
 		case 0:
-			if (pos.y <= targetY) {
+			if ((useEaseOutAppearance && getIsMoveFinished()) || (!useEaseOutAppearance && pos.y <= targetY)) {
 				pos.y = targetY;
 				speed = 0.0;
 				appearanceStep = 1;
 				spreadStopwatch.restart();
 				targetStopwatch.restart();
+				if (hasLifeTime) {
+					lifeStopwatch.restart();
+				}
 				createSpreadAttack();
 				createTargetAttack();
 			}
 			break;
 		case 1:
+			if (hasLifeTime && lifeStopwatch.sF() >= lifeTime) {
+				speed = 0.0;
+				vspeed = -leaveSpeed;
+				lifeStopwatch.reset();
+				appearanceStep = 2;
+				return;
+			}
+
 			if (spreadStopwatch.sF() >= spreadInterval) {
 				createSpreadAttack();
 				spreadStopwatch.restart();
@@ -596,6 +641,13 @@ namespace Iwanna {
 			if (targetStopwatch.sF() >= targetInterval) {
 				createTargetAttack();
 				targetStopwatch.restart();
+			}
+			break;
+		case 2:
+			vspeed -= leaveAcceleration;
+			pos.y += vspeed;
+			if (pos.y < -96.0 * scaleMag) {
+				isDelete = true;
 			}
 			break;
 		}

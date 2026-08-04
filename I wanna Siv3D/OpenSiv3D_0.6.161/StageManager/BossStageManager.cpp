@@ -15,6 +15,7 @@ namespace Iwanna {
 		gameObjects.bullets.clear();
 		gameObjects.cherries.clear();
 		gameObjects.bossCherries.clear();
+		pendingBossCherries.clear();
 		gameObjects.blocks.clear();
 		gameObjects.spikes.clear();
 		gameObjects.savePoints.clear();
@@ -50,6 +51,9 @@ namespace Iwanna {
 		exBossDarkAlpha = 0.0;
 		exBossEntryDarkAlpha = 0.0;
 		isExBossThirdPhaseDarkening = false;
+		isExBossThirdPhaseRestoring = false;
+		isExBossCameraLocked = false;
+		hasExBossThirdPhaseLowBoss = false;
 		trapBossSecondPhaseIntroStopwatch.reset();
 		trapBossSecondPhaseEyeHitFlashStopwatch.reset();
 		trapBossSecondPhaseAttackStopwatch.reset();
@@ -358,6 +362,10 @@ namespace Iwanna {
 				cherries << c;
 			}
 			pendingCherries.clear();
+			for (auto& c : pendingBossCherries) {
+				bossCherries << c;
+			}
+			pendingBossCherries.clear();
 
 
 			//セーブ関連
@@ -438,7 +446,14 @@ namespace Iwanna {
 			}
 
 			if (stageName == U"ExBoss" && isExBossDarkEffectActive) {
-				if (isExBossThirdPhaseDarkening) {
+				if (isExBossThirdPhaseRestoring) {
+					exBossDarkAlpha = Max(0.0, exBossDarkAlpha - exBossThirdPhaseRestoreSpeed);
+					if (exBossDarkAlpha <= 0.0) {
+						isExBossThirdPhaseRestoring = false;
+						isExBossDarkEffectActive = false;
+					}
+				}
+				else if (isExBossThirdPhaseDarkening) {
 					exBossDarkAlpha = Min(exBossThirdPhaseDarkAlphaTarget, exBossDarkAlpha + exBossThirdPhaseDarkAlphaSpeed);
 				}
 				else if (exBossDarkAlpha > exBossDarkAlphaMax) {
@@ -878,6 +893,10 @@ namespace Iwanna {
 	Vec2 BossStageManager::executeCameraPos() {
 		Vec2 nextPos;
 
+		if (isExBossCameraLocked) {
+			return exBossLockedCameraCenter;
+		}
+
 		if (Global::isCameraFollowMode) {
 			nextPos.x = static_cast<int32>(gameObjects.player->pos.x);
 			nextPos.y = Global::stageHeight / 2;
@@ -982,7 +1001,76 @@ namespace Iwanna {
 
 		isExBossDarkEffectActive = true;
 		isExBossThirdPhaseDarkening = true;
+		isExBossThirdPhaseRestoring = false;
 		exBossDarkAlpha = Max(exBossDarkAlpha, exBossDarkAlphaMax);
+	}
+
+	bool BossStageManager::isExBossThirdPhaseDarkened() const {
+		return stageName == U"ExBoss" && isExBossThirdPhaseDarkening && exBossDarkAlpha >= exBossThirdPhaseDarkAlphaTarget;
+	}
+
+	void BossStageManager::summonExBossThirdPhaseLowBoss() {
+		if (stageName != U"ExBoss" || hasExBossThirdPhaseLowBoss) {
+			return;
+		}
+
+		exBossLockedCameraCenter = executeCameraPos();
+		isExBossCameraLocked = true;
+		Global::isCameraFollowMode = false;
+
+		const double startY = exBossLockedCameraCenter.y - Global::windowHeight / 2.0 - 96.0;
+		auto lowBoss = std::make_shared<LowBossCherry>(
+			Vec2{ exBossLockedCameraCenter.x, startY },
+			exBossLowBossScale,
+			*this);
+		lowBoss->setAppearanceSettings(exBossLowBossTargetY, exBossLowBossAppearDuration, true);
+		lowBoss->setLifeTime(exBossLowBossLifeTime);
+		lowBoss->setHpBarVisible(false);
+		lowBoss->setSpreadAttackSettings(exBossLowBossSpreadInterval, exBossLowBossSpreadCherryNum, exBossLowBossSpreadCherrySpeed);
+		lowBoss->setTargetAttackSettings(
+			exBossLowBossTargetInterval,
+			exBossLowBossTargetLineNum,
+			exBossLowBossTargetIsAddLine,
+			exBossLowBossTargetBaseSpeed,
+			exBossLowBossTargetIntervalSpeed);
+		pendingBossCherries << lowBoss;
+		hasExBossThirdPhaseLowBoss = true;
+	}
+
+	bool BossStageManager::isExBossThirdPhaseLowBossFinished() const {
+		if (stageName != U"ExBoss" || !hasExBossThirdPhaseLowBoss) {
+			return false;
+		}
+
+		for (const auto& cherry : gameObjects.bossCherries) {
+			if (dynamic_cast<const LowBossCherry*>(cherry.get())) {
+				return false;
+			}
+		}
+
+		for (const auto& cherry : pendingBossCherries) {
+			if (dynamic_cast<const LowBossCherry*>(cherry.get())) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	void BossStageManager::finishExBossThirdPhaseLowBoss() {
+		if (stageName != U"ExBoss") {
+			return;
+		}
+
+		isExBossCameraLocked = false;
+		Global::isCameraFollowMode = true;
+		isExBossThirdPhaseDarkening = false;
+		isExBossThirdPhaseRestoring = true;
+		isExBossDarkEffectActive = true;
+	}
+
+	Vec2 BossStageManager::getExBossLockedCameraCenter() const {
+		return exBossLockedCameraCenter;
 	}
 
 	Vec2 BossStageManager::getTrapBossSecondPhaseLeftEyePos() const {

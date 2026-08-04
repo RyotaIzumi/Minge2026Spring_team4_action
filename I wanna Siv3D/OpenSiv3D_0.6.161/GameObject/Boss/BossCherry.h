@@ -138,9 +138,16 @@ namespace Iwanna {
 		int32 appearanceStep = 0;
 		Stopwatch spreadStopwatch{ StartImmediately::No };
 		Stopwatch targetStopwatch{ StartImmediately::No };
+		Stopwatch lifeStopwatch{ StartImmediately::No };
 
 		double targetY = 500.0;
 		double moveSpeed = 7.0;
+		bool useEaseOutAppearance = false;
+		double appearanceDuration = 1.0;
+		bool hasLifeTime = false;
+		double lifeTime = 0.0;
+		double leaveSpeed = 2.5;
+		double leaveAcceleration = 0.08;
 		double spreadInterval = 0.8;
 		int32 spreadCherryNum = 12;
 		double spreadCherrySpeed = 4.0;
@@ -162,6 +169,11 @@ namespace Iwanna {
 	public:
 		LowBossCherry(Vec2 startPos, double scale, BossStageManager& manager);
 
+		void setAppearanceSettings(double targetY, double duration, bool easeOut);
+		void setLifeTime(double duration);
+		void setHpBarVisible(bool visible);
+		void setSpreadAttackSettings(double interval, int32 cherryNum, double speed);
+		void setTargetAttackSettings(double interval, int32 lineNum, bool isAddLine, double baseSpeed, double intervalSpeed);
 		void barrageUpdate() override;
 		void draw() const override;
 		void hited() override;
