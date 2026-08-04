@@ -308,7 +308,8 @@ namespace Iwanna {
 		// PlayerKill属性を持つオブジェクトとの衝突
 		if (other.canPlayerKill) {
 			if (this->intersects(other) && !isDead && !isMuteki) {
-				if (Global::getItem1 && (Global::nowRoomName == U"boss" || Global::nowRoomName == U"bossLow" || Global::nowRoomName == U"ExBoss" || Global::nowRoomName == U"trapBoss")) playerHited();
+				if ((Global::getItem1 && (Global::nowRoomName == U"boss" || Global::nowRoomName == U"bossLow" || Global::nowRoomName == U"trapBoss"))
+					|| Global::nowRoomName == U"ExBoss") playerHited();
 				else playerDead();
 			}
 		}
@@ -419,6 +420,11 @@ namespace Iwanna {
 	//hpを取得
 	int32 Player::getHp() const {
 		return hp;
+	}
+
+	void Player::setHp(int32 value) {
+		maxHp = value;
+		hp = maxHp;
 	}
 
 	// アニメーションの再生と停止を切り替える

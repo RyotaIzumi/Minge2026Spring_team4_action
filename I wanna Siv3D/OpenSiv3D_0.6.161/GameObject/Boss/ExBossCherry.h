@@ -105,7 +105,8 @@ namespace Iwanna {
 		Fall,
 		FallSwing,
 		Slide,
-		Warp
+		Warp,
+		ThirdFormRetreat
 	};
 
 	class ExBossCherry : public Cherry {
@@ -145,6 +146,12 @@ namespace Iwanna {
 		};
 
 		BossForm bossForm = BossForm::First;
+		BossForm prevBossForm = BossForm::First;
+		bool isThirdFormRetreatPending = false;
+		bool isThirdFormRetreatFinished = false;
+		Stopwatch thirdFormRetreatStopwatch{ StartImmediately::No };
+		double thirdFormRetreatWaitTime = 1.4;
+		double thirdFormDarkeningWaitTime = 3.0;
 
 		Array<ExBossAttackType> canAttackTypes{ ExBossAttackType::SwingOne, ExBossAttackType::Fall, ExBossAttackType::Slide, ExBossAttackType::SparkExpro, ExBossAttackType::Warp };
 		Array<CherryColorType> randomChoiceBarrageAttacks{ CherryColorType::Red,CherryColorType::Yellow };
@@ -161,6 +168,7 @@ namespace Iwanna {
 
 		void barrageUpdate() override;
 		void draw() const override;
+		void drawHpBarScreen() const;
 
 		void updateBossForm();
 		bool getRandomChance(double p);

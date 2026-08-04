@@ -79,7 +79,14 @@ namespace Iwanna {
 		//ステージの名称から種類を決定
 		if (Global::nowRoomName == U"boss" || Global::nowRoomName == U"bossLow" || Global::nowRoomName == U"ExBoss" || Global::nowRoomName == U"trapBoss") {
 			stageType = StageType::Boss;
-			pauseBgm();
+			const bool keepExBossBgm = (Global::nowRoomName == U"ExBoss"
+				&& Global::isExistSaveData
+				&& !Global::isChangeRoom
+				&& nowSoundName == U"ex_boss"
+				&& audio.isPlaying());
+			if (!keepExBossBgm) {
+				pauseBgm();
+			}
 		}
 		else {
 			stageType = StageType::Normal;
@@ -193,7 +200,14 @@ namespace Iwanna {
 					if (bossStageManager.isTrapBossSecondPhaseBgm()) playBgm(U"boss_normal");
 					else playBgm(U"boss_low", bossLowBgmVolume);
 				}
-				if(Global::nowRoomName == U"ExBoss") playBgm(U"ex_boss");
+				if (Global::nowRoomName == U"ExBoss") {
+					if (nowSoundName != U"ex_boss" || (!audio.isPlaying() && !audio.isPaused())) {
+						playBgm(U"ex_boss");
+					}
+					else if (audio.isPaused()) {
+						audio.play();
+					}
+				}
 				bossStageManager.bossBgmStart = false;
 			}
 

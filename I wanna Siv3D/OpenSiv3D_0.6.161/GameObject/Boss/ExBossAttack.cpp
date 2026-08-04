@@ -6,6 +6,14 @@ namespace Iwanna {
 	void ExBossCherry::attack() {
 		switch (nowAttackType) {
 		case ExBossAttackType::Wait:// --- 待機状態 --- //
+			if (isThirdFormRetreatPending) {
+				isThirdFormRetreatPending = false;
+				nowAttackType = ExBossAttackType::ThirdFormRetreat;
+				attackStep = 0;
+				waitStopwatch.reset();
+				break;
+			}
+
 			if (waitStopwatch.isRunning()) {
 				if (waitStopwatch.s() >= waitTime) {
 					waitStopwatch.reset();
@@ -13,6 +21,40 @@ namespace Iwanna {
 					//nowAttackType = ExBossAttackType::Slide;
 				}
 			}
+			break;
+
+		case ExBossAttackType::ThirdFormRetreat:
+			switch (attackStep) {
+			case 0:
+				sordCherriesManager->setSordCanPlayerKill(false);
+				movePosition(Vec2{ pos.x, -420 }, 1.2, true);
+				rotateDirection(getBaseAngleDiff(), 1.2, false);
+				thirdFormRetreatStopwatch.reset();
+				attackStep++;
+				break;
+			case 1:
+				if (getIsMoveFinished() && getIsRotateFinished()) {
+					thirdFormRetreatStopwatch.restart();
+					attackStep++;
+				}
+				break;
+			case 2:
+				if (thirdFormRetreatStopwatch.sF() >= thirdFormRetreatWaitTime) {
+					bossStageManager->startExBossThirdPhaseDarkening();
+					isThirdFormRetreatFinished = true;
+					thirdFormRetreatStopwatch.reset();
+					thirdFormRetreatStopwatch.restart();
+					attackStep++;
+				}
+				break;
+			case 3:
+				if (thirdFormRetreatStopwatch.sF() >= thirdFormDarkeningWaitTime) {
+					thirdFormRetreatStopwatch.reset();
+					startWait();
+				}
+				break;
+			}
+
 			break;
 
 		case ExBossAttackType::SparkExpro: // --- ✨爆発攻撃 --- //

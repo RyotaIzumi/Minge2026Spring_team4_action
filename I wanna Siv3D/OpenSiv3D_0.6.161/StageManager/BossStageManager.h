@@ -130,6 +130,16 @@ namespace Iwanna {
 		double trapBossSecondPhaseDarkAlphaMin = 0.10;
 		double trapBossSecondPhaseDarkAlphaMax = 0.25;
 		double trapBossSecondPhaseDarkAlphaFadeSpeed = 0.08;
+		bool isExBossDarkEffectActive = false;
+		double exBossDarkAlpha = 0.0;
+		double exBossDarkAlphaMin = 0.05;
+		double exBossDarkAlphaMax = 0.35;
+		double exBossDarkAlphaFadeSpeed = 0.05;
+		double exBossEntryDarkAlpha = 0.0;
+		double exBossEntryDarkAlphaFadeSpeed = 0.03;
+		bool isExBossThirdPhaseDarkening = false;
+		double exBossThirdPhaseDarkAlphaTarget = 0.9;
+		double exBossThirdPhaseDarkAlphaSpeed = 0.01;
 		Stopwatch trapBossGuygunStopwatch{ StartImmediately::Yes };
 		double trapBossGuygunInterval = 0.06;
 		double trapBossGuygunVolume = 0.3;
@@ -181,6 +191,7 @@ namespace Iwanna {
 		CameraShake& getCameraShake() { return cameraShake; }
 		bool shouldStopBossBgm() const;
 		bool isTrapBossSecondPhaseBgm() const;
+		void startExBossThirdPhaseDarkening();
 		Vec2 getTrapBossSecondPhaseLeftEyePos() const;
 		Vec2 getTrapBossSecondPhaseRightEyePos() const;
 		Array<Vec2> getTrapBossSecondPhaseEyePositions() const;

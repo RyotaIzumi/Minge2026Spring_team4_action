@@ -67,6 +67,7 @@ namespace Iwanna {
 		void setIsMuteki(bool value);
 		bool getIsMuteki() const;
 		int32 getHp() const;
+		void setHp(int32 value);
 
 		void setStopOrPlayAnimation(bool isPlay);
 

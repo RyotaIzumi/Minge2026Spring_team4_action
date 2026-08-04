@@ -46,6 +46,10 @@ namespace Iwanna {
 		trapBossSecondPhaseEyeAttackCount = 0;
 		trapBossSecondPhaseTargetAttackCount = 0;
 		trapBossSecondPhaseDarkAlpha = trapBossSecondPhaseDarkAlphaMax;
+		isExBossDarkEffectActive = false;
+		exBossDarkAlpha = 0.0;
+		exBossEntryDarkAlpha = 0.0;
+		isExBossThirdPhaseDarkening = false;
 		trapBossSecondPhaseIntroStopwatch.reset();
 		trapBossSecondPhaseEyeHitFlashStopwatch.reset();
 		trapBossSecondPhaseAttackStopwatch.reset();
@@ -80,6 +84,7 @@ namespace Iwanna {
 		case 0: quarity = U"low"; break;
 		case 1: quarity = U"normal"; break;
 		}
+		const String blockQuarity = (fileName == U"ExBoss") ? U"normal" : quarity;
 
 		//ステージデータの読み込みとオブジェクト生成
 		CSV csv{ U"MapData/" + fileName + U".csv"};
@@ -106,17 +111,17 @@ namespace Iwanna {
 
 				// value に応じて配置
 				switch (value) {
-				case 1: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_" + quarity + U"1", pos); break;
-				case 6: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_" + quarity + U"2", pos); break;
-				case 7: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_" + quarity + U"3", pos); break;
+				case 1: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_" + blockQuarity + U"1", pos); break;
+				case 6: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_" + blockQuarity + U"2", pos); break;
+				case 7: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_" + blockQuarity + U"3", pos); break;
 				case 21: gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 0); break;
 				case 22: gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 1); break;
 				case 23: gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 2); break;
 				case 24: gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 3); break;
 				//case 25: gameObjects.savePoints << std::make_shared<SavePoint>(pos); break;
-				case 26: gameObjects.blocks << std::make_shared<HideBlock>(U"sprBlock_" + quarity + U"1", pos); break;
+				case 26: gameObjects.blocks << std::make_shared<HideBlock>(U"sprBlock_" + blockQuarity + U"1", pos); break;
 				case 27: gameObjects.blocks << std::make_shared<ShootTroughBlock>(U"sprBlockShootTrough", pos); break;
-				case 28: gameObjects.blocks << std::make_shared<FakeBlock>(U"sprBlock_" + quarity + U"2", pos); break;
+				case 28: gameObjects.blocks << std::make_shared<FakeBlock>(U"sprBlock_" + blockQuarity + U"2", pos); break;
 				}
 			}
 		}
@@ -178,8 +183,8 @@ namespace Iwanna {
 						if (gimmik.contains(U"value4")) gimmikValue4 = gimmik[U"value4"].get<double>();
 					}
 
-					if (gimmikName == U"罠ブロック") gameObjects.blocks << std::make_shared<BreakBlock>(U"sprBlock_" + quarity + U"3", gimmikParsePos, static_cast<int32>(gimmikValue1));
-					if (gimmikName == U"時間罠ブロック") gameObjects.blocks << std::make_shared<TimedBreakBlock>(U"sprBlock_" + quarity + U"3", gimmikParsePos, static_cast<int32>(gimmikValue1), gimmikValue2);
+					if (gimmikName == U"罠ブロック") gameObjects.blocks << std::make_shared<BreakBlock>(U"sprBlock_" + blockQuarity + U"3", gimmikParsePos, static_cast<int32>(gimmikValue1));
+					if (gimmikName == U"時間罠ブロック") gameObjects.blocks << std::make_shared<TimedBreakBlock>(U"sprBlock_" + blockQuarity + U"3", gimmikParsePos, static_cast<int32>(gimmikValue1), gimmikValue2);
 					if (gimmikName == U"ワープ") gameObjects.warps << std::make_shared<Warp>(gimmikIntactPos, gimmikString);
 					if (gimmikName == U"ループ移動針") gameObjects.spikes << std::make_shared<SpikeLoopMove>(quarity, gimmikIntactPos, static_cast<int32>(gimmikValue1), Vec2{ gimmikValue2, gimmikValue3 }, gimmikValue4);
 				}
@@ -201,10 +206,18 @@ namespace Iwanna {
 			gameObjects.savePoints << std::make_shared<BossSavePoint>(Vec2{ 400,500 }, 4);
 		}
 		if (stageName == U"ExBoss") {
+			gameObjects.player->setHp(3);
 			gameObjects.savePoints << std::make_shared<BossSavePoint>(Vec2{ 800,450 }, 2);
 			gameObjects.bossCherries << std::make_shared<SordCherriesManager>(Vec2{ 800,430 }, 2.0, *this);
 			Global::isCameraFollowMode = true;
 			Global::isBossExBarrageAttack = true;
+			exBossEntryDarkAlpha = 1.0;
+
+			if (Global::isExistSaveData && !Global::isChangeRoom && Global::savedRoomName == U"ExBoss") {
+				gameObjects.savePoints.clear();
+				Global::doNotStopBgm = true;
+				generateBoss(2);
+			}
 		}
 		if (stageName == U"trapBoss") {
 			gameObjects.savePoints << std::make_shared<BossSavePoint>(Vec2{ 400,500 }, 3);
@@ -424,6 +437,23 @@ namespace Iwanna {
 				}
 			}
 
+			if (stageName == U"ExBoss" && isExBossDarkEffectActive) {
+				if (isExBossThirdPhaseDarkening) {
+					exBossDarkAlpha = Min(exBossThirdPhaseDarkAlphaTarget, exBossDarkAlpha + exBossThirdPhaseDarkAlphaSpeed);
+				}
+				else if (exBossDarkAlpha > exBossDarkAlphaMax) {
+					exBossDarkAlpha = Max(exBossDarkAlphaMax, exBossDarkAlpha - exBossDarkAlphaFadeSpeed);
+				}
+				else if (darkAlphaTimer.reachedZero()) {
+					exBossDarkAlpha = exBossDarkAlphaMin + Random(exBossDarkAlphaMax - exBossDarkAlphaMin);
+					darkAlphaTimer.restart();
+				}
+			}
+
+			if (stageName == U"ExBoss" && exBossEntryDarkAlpha > 0.0) {
+				exBossEntryDarkAlpha = Max(0.0, exBossEntryDarkAlpha - exBossEntryDarkAlphaFadeSpeed);
+			}
+
 			// ----- 以下削除処理 -----
 
 			//画面外のりんごを削除
@@ -632,7 +662,9 @@ namespace Iwanna {
 	void BossStageManager::draw() {
 		//背景描画
 		drawTrapBossSecondPhaseIntro();
-		TextureAsset(backgroundName).draw();
+		if (stageName != U"ExBoss") {
+			TextureAsset(backgroundName).draw();
+		}
 
 		Array<GameObject*> drawList;
 		drawList.reserve(
@@ -666,7 +698,8 @@ namespace Iwanna {
 			const auto t = camera.createTransformer();
 
 			if (Global::nowRoomName == U"ExBoss") {
-				TextureAsset(backgroundName).draw();
+				const double backgroundBrightness = Clamp(1.0 - exBossDarkAlpha, 0.0, 1.0);
+				TextureAsset(backgroundName).draw(ColorF(backgroundBrightness, backgroundBrightness, backgroundBrightness));
 			}
 
 			drawTrapBossSecondPhaseTayama();
@@ -680,6 +713,10 @@ namespace Iwanna {
 				Rect(0, 0, 1600, 608).draw(ColorF(0.0, 0.0, 0.0, trapBossSecondPhaseDarkAlpha));
 			}
 
+			if (stageName == U"ExBoss" && exBossEntryDarkAlpha > 0.0) {
+				Rect(0, 0, Global::stageWidth, Global::stageHeight).draw(ColorF(0.0, 0.0, 0.0, exBossEntryDarkAlpha));
+			}
+
 			//GAMEOVER描画
 			if (isShowGameOver) {
 				const StringView gameOverTextureName = (Global::mainTextureNumber == 0) ? U"sprGAMEOVER_low" : U"sprGAMEOVER_normal";
@@ -689,11 +726,19 @@ namespace Iwanna {
 
 		titleCard.draw();
 
+		if (stageName == U"ExBoss") {
+			for (const auto& cherry : gameObjects.bossCherries) {
+				if (const auto* exBoss = dynamic_cast<const ExBossCherry*>(cherry.get())) {
+					exBoss->drawHpBarScreen();
+				}
+			}
+		}
+
 		if (Global::nowRoomName == U"ExBoss") {
 			Rect(0, 544, 800, 64).draw(ColorF(Palette::Black));
 		}
 
-		if (Global::getItem1) {
+		if (Global::getItem1 || stageName == U"ExBoss") {
 			int32 nowPlayerHp = gameObjects.player->getHp();
 			for (int i = 0; i < nowPlayerHp; i++) {
 				TextureAsset(U"heart").draw(playerHpBasePos.x + i * hpInterbalX, playerHpBasePos.y);
@@ -869,7 +914,11 @@ namespace Iwanna {
 		case 2://Exボス召喚
 			gameObjects.bossCherries << std::make_shared<ExBossCherry>(Vec2{ 800,-300 }, 5.0, *this);
 			bossBgmStart = true;
+			Global::doNotStopBgm = true;
 			darkAlpha = 0.9;
+			isExBossDarkEffectActive = true;
+			exBossDarkAlpha = 1.0;
+			darkAlphaTimer.restart();
 			cameraShake.shake(0.4, 20.0);
 			titleCard.startShowTitleCard(U"ExBoss");
 			break;
@@ -924,6 +973,16 @@ namespace Iwanna {
 
 	bool BossStageManager::isTrapBossSecondPhaseBgm() const {
 		return stageName == U"trapBoss" && isTrapBossSecondPhaseStarted;
+	}
+
+	void BossStageManager::startExBossThirdPhaseDarkening() {
+		if (stageName != U"ExBoss") {
+			return;
+		}
+
+		isExBossDarkEffectActive = true;
+		isExBossThirdPhaseDarkening = true;
+		exBossDarkAlpha = Max(exBossDarkAlpha, exBossDarkAlphaMax);
 	}
 
 	Vec2 BossStageManager::getTrapBossSecondPhaseLeftEyePos() const {
