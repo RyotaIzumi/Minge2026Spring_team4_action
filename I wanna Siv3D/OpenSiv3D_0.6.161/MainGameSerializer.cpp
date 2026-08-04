@@ -59,7 +59,7 @@ void MainGameSerializer::defineGlobalStatuses() {
 	}
 	else if (moraleValue2 > 90)Global::startRoomName = U"trapBoss";
 	else if(moraleValue1 <= 30) Global::startRoomName = U"normal1";
-	else Global::startRoomName = U"tutorial";
+	else Global::startRoomName = U"ExRenoArea";
 
 	// ゲームタイトル
 	if (moraleValue2 > 90) Window::SetTitle(U"TestPlayGame (Debug Build)");
