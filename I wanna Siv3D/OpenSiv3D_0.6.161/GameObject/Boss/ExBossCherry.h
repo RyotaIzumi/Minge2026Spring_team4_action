@@ -148,6 +148,7 @@ namespace Iwanna {
 
 		BossForm bossForm = BossForm::First;
 		BossForm prevBossForm = BossForm::First;
+		bool isForthFormGrayAttackUsed = false;
 		bool isThirdFormRetreatPending = false;
 		bool isThirdFormRetreatFinished = false;
 		bool isThirdFormSummonSelected = false;

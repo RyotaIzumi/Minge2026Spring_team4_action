@@ -158,13 +158,21 @@ namespace Iwanna {
 	void ExBossCherry::updateBossForm() {
 		prevBossForm = bossForm;
 
-		if (hp > 59)bossForm = BossForm::First;
-		else if (hp > 58)bossForm = BossForm::Second;
+		if (hp > 50)bossForm = BossForm::First;
+		else if (hp > 35)bossForm = BossForm::Second;
 		else if (hp > 15)bossForm = BossForm::Third;
 		else bossForm = BossForm::Forth;
 
 		if (prevBossForm < BossForm::Third && bossForm >= BossForm::Third && !isThirdFormRetreatFinished) {
 			isThirdFormRetreatPending = true;
+		}
+
+		if (prevBossForm < BossForm::Forth && bossForm >= BossForm::Forth && !isForthFormGrayAttackUsed) {
+			isForthFormGrayAttackUsed = true;
+			Sound::playOneShot(Sound::SPIKETRAP);
+			bossStageManager->createGrayLatticeCherry(100, [this]() {
+				return std::make_shared<BossGrayLatticeCherry>(pos, 1.0, BossCherryType::Gray);
+			});
 		}
 	}
 
