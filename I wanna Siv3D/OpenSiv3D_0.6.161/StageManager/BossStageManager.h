@@ -170,6 +170,41 @@ namespace Iwanna {
 		double exBossBossCherryLifeTime = 16.0;
 		double exBossBossCherryAttackInterval = 1.2;
 
+		// 召喚Tayama第二形態
+		bool hasExBossThirdPhaseTayama = false;
+		bool isExBossThirdPhaseTayamaLeaving = false;
+		int32 exBossThirdPhaseTayamaStep = 0;
+		Vec2 exBossThirdPhaseTayamaCenterPos{ 800, 304 };
+		Vec2 exBossThirdPhaseTayamaStartPos{ 800, -320 };
+		Vec2 exBossThirdPhaseTayamaTargetPos{ 800, 304 };
+		Stopwatch exBossThirdPhaseTayamaStopwatch{ StartImmediately::No };
+		Stopwatch exBossThirdPhaseTayamaAttackStopwatch{ StartImmediately::No };
+		Stopwatch exBossThirdPhaseTayamaTargetAttackStopwatch{ StartImmediately::No };
+		int32 exBossThirdPhaseTayamaEyeAttackCount = 0;
+		int32 exBossThirdPhaseTayamaTargetAttackCount = 0;
+		double exBossThirdPhaseTayamaScale = 1.0;
+		double exBossThirdPhaseTayamaAppearDuration = 1.4;
+		double exBossThirdPhaseTayamaTargetY = 304.0;
+		double exBossThirdPhaseTayamaLifeTime = 16.0;
+		double exBossThirdPhaseTayamaLeaveVelocity = 0.0;
+		double exBossThirdPhaseTayamaLeaveSpeed = 2.5;
+		double exBossThirdPhaseTayamaLeaveAcceleration = 0.08;
+
+		// 召喚ボス名前表示
+		bool isExBossSummonNameBarWaiting = false;
+		bool isExBossSummonNameBarActive = false;
+		String exBossSummonNameBarTextureName = U"";
+		String exBossSummonNameBarWaitingTextureName = U"";
+		Vec2 exBossSummonNameBarCenterPos{ 0, 0 };
+		Vec2 exBossSummonNameBarWaitingCenterPos{ 0, 0 };
+		Vec2 exBossSummonNameBarAnchor{ 12, 73 };
+		Stopwatch exBossSummonNameBarStopwatch{ StartImmediately::No };
+		Stopwatch exBossSummonNameBarWaitingStopwatch{ StartImmediately::No };
+		double exBossSummonNameBarWaitingDelay = 0.0;
+		double exBossSummonNameBarFadeInTime = 0.35;
+		double exBossSummonNameBarShowTime = 2.5;
+		double exBossSummonNameBarFadeOutTime = 0.5;
+
 		Stopwatch trapBossGuygunStopwatch{ StartImmediately::Yes };
 		double trapBossGuygunInterval = 0.06;
 		double trapBossGuygunVolume = 0.3;
@@ -193,6 +228,8 @@ namespace Iwanna {
 		void updateTrapBossSecondPhaseDefeatedFall();
 		void updateTrapBossSecondPhaseEyeAttack();
 		void updateTrapBossSecondPhaseTargetAttack();
+		void updateExBossThirdPhaseTayamaSummon();
+		void updateExBossSummonNameBar();
 		void updateTrapBossSecondPhaseBulletHits(Array<std::shared_ptr<Bullet>>& bullets);
 		void breakTrapBossSecondPhaseOverlappingBlocks();
 		void createTrapBossSecondPhaseEyeAttackCherry(Vec2 startPos, double direction);
@@ -200,6 +237,8 @@ namespace Iwanna {
 		void drawTrapBossSecondPhaseIntro() const;
 		void drawTrapBossSecondPhaseTayama() const;
 		void drawTrapBossSecondPhaseEyeHitBoxes() const;
+		void drawExBossThirdPhaseTayama() const;
+		void drawExBossSummonNameBar() const;
 		void drawTrapBossSecondPhaseHp() const;
 		void hitTrapBossSecondPhase();
 		void defeatTrapBossSecondPhase();
@@ -227,6 +266,10 @@ namespace Iwanna {
 		bool isExBossThirdPhaseLowBossFinished() const;
 		void summonExBossThirdPhaseBossCherry();
 		bool isExBossThirdPhaseBossCherryFinished();
+		void summonExBossThirdPhaseTayama();
+		bool isExBossThirdPhaseTayamaFinished() const;
+		void reserveExBossSummonNameBar(String textureName, Vec2 centerPos, double delay);
+		void startExBossSummonNameBar(String textureName, Vec2 centerPos);
 		void finishExBossThirdPhaseLowBoss();
 		Vec2 getExBossLockedCameraCenter() const;
 		Vec2 getTrapBossSecondPhaseLeftEyePos() const;

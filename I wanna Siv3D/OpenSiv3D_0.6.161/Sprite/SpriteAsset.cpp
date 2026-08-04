@@ -119,8 +119,12 @@ namespace Iwanna {
 		registerTexture(U"achieveFrame", OtherPath + U"achieveFrame.png");
 		registerTexture(U"tayama", OtherPath + U"tayama.png");
 		registerTexture(U"sprExtraLogo", OtherPath + U"sprExtraLogo.png");
+		registerTexture(U"sprNameBar_low", OtherPath + U"sprNameBar_low.png");
+		registerTexture(U"sprNameBar_normal", OtherPath + U"sprNameBar_normal.png");
+		registerTexture(U"sprNameBar_trap", OtherPath + U"sprNameBar_trap.png");
 
 		registerTexture(U"sprTitleCard_boss", OtherPath + U"sprTitleCard_boss.png");
+		registerTexture(U"sprTitleCard_exboss", OtherPath + U"sprTitleCard_exboss.png");
 		registerTexture(U"sprTitleCard_secret", OtherPath + U"sprTitleCard_secret.png");
 		registerTexture(U"sprTitleCard_milu", OtherPath + U"sprTitleCard_milu.png");
 		registerTexture(U"sprTitleCard_mochi", OtherPath + U"sprTitleCard_mochi.png");

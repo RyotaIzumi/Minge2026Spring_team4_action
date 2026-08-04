@@ -50,13 +50,16 @@ namespace Iwanna {
 			case 3:
 			{
 				if (!isThirdFormSummonSelected && bossStageManager->isExBossThirdPhaseDarkened()) {
-					thirdFormSummonType = Random(1);
+					thirdFormSummonType = Random(2);
 					switch (thirdFormSummonType) {
 					case 0:
 						bossStageManager->summonExBossThirdPhaseLowBoss();
 						break;
 					case 1:
 						bossStageManager->summonExBossThirdPhaseBossCherry();
+						break;
+					case 2:
+						bossStageManager->summonExBossThirdPhaseTayama();
 						break;
 					}
 					isThirdFormSummonSelected = true;
@@ -69,6 +72,9 @@ namespace Iwanna {
 					break;
 				case 1:
 					isSummonedBossFinished = bossStageManager->isExBossThirdPhaseBossCherryFinished();
+					break;
+				case 2:
+					isSummonedBossFinished = bossStageManager->isExBossThirdPhaseTayamaFinished();
 					break;
 				}
 

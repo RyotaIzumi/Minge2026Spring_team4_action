@@ -55,6 +55,12 @@ namespace Iwanna {
 		isExBossCameraLocked = false;
 		hasExBossThirdPhaseLowBoss = false;
 		hasExBossThirdPhaseBossCherry = false;
+		hasExBossThirdPhaseTayama = false;
+		isExBossThirdPhaseTayamaLeaving = false;
+		exBossThirdPhaseTayamaStep = 0;
+		exBossThirdPhaseTayamaLeaveVelocity = 0.0;
+		isExBossSummonNameBarWaiting = false;
+		isExBossSummonNameBarActive = false;
 		trapBossSecondPhaseIntroStopwatch.reset();
 		trapBossSecondPhaseEyeHitFlashStopwatch.reset();
 		trapBossSecondPhaseAttackStopwatch.reset();
@@ -267,6 +273,8 @@ namespace Iwanna {
 		updateTrapBossSecondPhaseDefeatedFall();
 		updateTrapBossSecondPhaseEyeAttack();
 		updateTrapBossSecondPhaseTargetAttack();
+		updateExBossThirdPhaseTayamaSummon();
+		updateExBossSummonNameBar();
 		if (stageName == U"trapBoss" && isTrapBossSecondPhaseStarted && !isTrapBossSecondPhaseDefeated && !isTrapBossSecondPhaseDefeatedFall) {
 			trapBossSecondPhaseHpBarDelay.update(trapBossSecondPhaseHp, trapBossSecondPhaseMaxHp);
 		}
@@ -591,6 +599,88 @@ namespace Iwanna {
 		++trapBossSecondPhaseTargetAttackCount;
 	}
 
+	void BossStageManager::updateExBossThirdPhaseTayamaSummon() {
+		if (stageName != U"ExBoss" || !hasExBossThirdPhaseTayama) {
+			return;
+		}
+
+		switch (exBossThirdPhaseTayamaStep) {
+		case 0:
+		{
+			const double t = Min(1.0, exBossThirdPhaseTayamaStopwatch.sF() / exBossThirdPhaseTayamaAppearDuration);
+			exBossThirdPhaseTayamaCenterPos = exBossThirdPhaseTayamaStartPos.lerp(exBossThirdPhaseTayamaTargetPos, EaseOutQuad(t));
+			if (t >= 1.0) {
+				exBossThirdPhaseTayamaCenterPos = exBossThirdPhaseTayamaTargetPos;
+				exBossThirdPhaseTayamaStopwatch.restart();
+				exBossThirdPhaseTayamaAttackStopwatch.restart();
+				exBossThirdPhaseTayamaTargetAttackStopwatch.restart();
+				exBossThirdPhaseTayamaEyeAttackCount = 0;
+				exBossThirdPhaseTayamaTargetAttackCount = 0;
+				exBossThirdPhaseTayamaStep = 1;
+			}
+			break;
+		}
+		case 1:
+		{
+			const double nextEyeAttackTime = trapBossSecondPhaseEyeAttackStartDelay
+				+ exBossThirdPhaseTayamaEyeAttackCount * trapBossSecondPhaseEyeAttackInterval;
+			if (exBossThirdPhaseTayamaAttackStopwatch.sF() >= nextEyeAttackTime) {
+				const double angleOffset = exBossThirdPhaseTayamaEyeAttackCount * trapBossSecondPhaseEyeAttackAngleStep;
+				createTrapBossSecondPhaseEyeAttackCherry(
+					exBossThirdPhaseTayamaCenterPos + trapBossSecondPhaseLeftEyeOffset * exBossThirdPhaseTayamaScale,
+					trapBossSecondPhaseEyeAttackBaseDirection + angleOffset);
+				createTrapBossSecondPhaseEyeAttackCherry(
+					exBossThirdPhaseTayamaCenterPos + trapBossSecondPhaseRightEyeOffset * exBossThirdPhaseTayamaScale,
+					trapBossSecondPhaseEyeAttackBaseDirection - angleOffset);
+				++exBossThirdPhaseTayamaEyeAttackCount;
+			}
+
+			const double nextTargetAttackTime = trapBossSecondPhaseTargetAttackStartDelay
+				+ exBossThirdPhaseTayamaTargetAttackCount * trapBossSecondPhaseTargetAttackInterval;
+			if (exBossThirdPhaseTayamaTargetAttackStopwatch.sF() >= nextTargetAttackTime) {
+				createTrapBossSecondPhaseTargetAttackCherry(
+					exBossThirdPhaseTayamaCenterPos + trapBossSecondPhaseLeftEyeOffset * exBossThirdPhaseTayamaScale);
+				createTrapBossSecondPhaseTargetAttackCherry(
+					exBossThirdPhaseTayamaCenterPos + trapBossSecondPhaseRightEyeOffset * exBossThirdPhaseTayamaScale);
+				++exBossThirdPhaseTayamaTargetAttackCount;
+			}
+
+			if (exBossThirdPhaseTayamaStopwatch.sF() >= exBossThirdPhaseTayamaLifeTime) {
+				isExBossThirdPhaseTayamaLeaving = true;
+				exBossThirdPhaseTayamaLeaveVelocity = -exBossThirdPhaseTayamaLeaveSpeed;
+				exBossThirdPhaseTayamaStep = 2;
+			}
+			break;
+		}
+		case 2:
+			exBossThirdPhaseTayamaLeaveVelocity -= exBossThirdPhaseTayamaLeaveAcceleration;
+			exBossThirdPhaseTayamaCenterPos.y += exBossThirdPhaseTayamaLeaveVelocity;
+			if (exBossThirdPhaseTayamaCenterPos.y < exBossLockedCameraCenter.y - Global::windowHeight / 2.0 - TextureAsset(U"tayama").height() * exBossThirdPhaseTayamaScale) {
+				hasExBossThirdPhaseTayama = false;
+				isExBossThirdPhaseTayamaLeaving = false;
+			}
+			break;
+		}
+	}
+
+	void BossStageManager::updateExBossSummonNameBar() {
+		if (stageName != U"ExBoss") {
+			isExBossSummonNameBarWaiting = false;
+			isExBossSummonNameBarActive = false;
+			return;
+		}
+
+		if (isExBossSummonNameBarWaiting && exBossSummonNameBarWaitingStopwatch.sF() >= exBossSummonNameBarWaitingDelay) {
+			startExBossSummonNameBar(exBossSummonNameBarWaitingTextureName, exBossSummonNameBarWaitingCenterPos);
+			isExBossSummonNameBarWaiting = false;
+		}
+
+		const double totalTime = exBossSummonNameBarFadeInTime + exBossSummonNameBarShowTime + exBossSummonNameBarFadeOutTime;
+		if (isExBossSummonNameBarActive && exBossSummonNameBarStopwatch.sF() >= totalTime) {
+			isExBossSummonNameBarActive = false;
+		}
+	}
+
 	void BossStageManager::breakTrapBossSecondPhaseOverlappingBlocks() {
 		if (hasTrapBossSecondPhaseBrokenBlocks) {
 			return;
@@ -723,10 +813,12 @@ namespace Iwanna {
 			}
 
 			drawTrapBossSecondPhaseTayama();
+			drawExBossThirdPhaseTayama();
 			drawTrapBossSecondPhaseEyeHitBoxes();
 
 			// 描画
 			for (auto& obj : drawList) obj->draw();
+			drawExBossSummonNameBar();
 
 			if (stageName == U"trapBoss" && isTrapBossSecondPhaseStarted && !isTrapBossSecondPhaseDefeated) {
 				//暗転演出
@@ -813,6 +905,35 @@ namespace Iwanna {
 			Circle{ eyePos, trapBossSecondPhaseEyeHitRadius }.draw(hitColor);
 			Circle{ eyePos, trapBossSecondPhaseEyeHitRadius }.drawFrame(2.0, frameColor);
 		}
+	}
+
+	void BossStageManager::drawExBossThirdPhaseTayama() const {
+		if (stageName != U"ExBoss" || !hasExBossThirdPhaseTayama) {
+			return;
+		}
+
+		TextureAsset(U"tayama")
+			.scaled(exBossThirdPhaseTayamaScale)
+			.drawAt(exBossThirdPhaseTayamaCenterPos);
+	}
+
+	void BossStageManager::drawExBossSummonNameBar() const {
+		if (stageName != U"ExBoss" || !isExBossSummonNameBarActive || exBossSummonNameBarTextureName == U"") {
+			return;
+		}
+
+		const double elapsed = exBossSummonNameBarStopwatch.sF();
+		double alpha = 1.0;
+		if (elapsed < exBossSummonNameBarFadeInTime) {
+			alpha = elapsed / exBossSummonNameBarFadeInTime;
+		}
+		else if (elapsed > exBossSummonNameBarFadeInTime + exBossSummonNameBarShowTime) {
+			const double fadeOutElapsed = elapsed - exBossSummonNameBarFadeInTime - exBossSummonNameBarShowTime;
+			alpha = 1.0 - fadeOutElapsed / exBossSummonNameBarFadeOutTime;
+		}
+
+		alpha = Clamp(alpha, 0.0, 1.0);
+		TextureAsset(exBossSummonNameBarTextureName).draw(exBossSummonNameBarCenterPos - exBossSummonNameBarAnchor, ColorF{ 1.0, alpha });
 	}
 
 	void BossStageManager::drawTrapBossSecondPhaseHp() const {
@@ -1040,6 +1161,7 @@ namespace Iwanna {
 			exBossLowBossTargetIntervalSpeed);
 		pendingBossCherries << lowBoss;
 		hasExBossThirdPhaseLowBoss = true;
+		reserveExBossSummonNameBar(U"sprNameBar_low", Vec2{ exBossLockedCameraCenter.x, exBossLowBossTargetY }, exBossLowBossAppearDuration);
 	}
 
 	bool BossStageManager::isExBossThirdPhaseLowBossFinished() const {
@@ -1103,6 +1225,7 @@ namespace Iwanna {
 		}
 
 		hasExBossThirdPhaseBossCherry = true;
+		reserveExBossSummonNameBar(U"sprNameBar_normal", Vec2{ exBossLockedCameraCenter.x, exBossBossCherryTargetY }, exBossBossCherryAppearDuration);
 	}
 
 	bool BossStageManager::isExBossThirdPhaseBossCherryFinished() {
@@ -1141,6 +1264,57 @@ namespace Iwanna {
 		return true;
 	}
 
+	void BossStageManager::summonExBossThirdPhaseTayama() {
+		if (stageName != U"ExBoss" || hasExBossThirdPhaseTayama) {
+			return;
+		}
+
+		exBossLockedCameraCenter = executeCameraPos();
+		isExBossCameraLocked = true;
+		Global::isCameraFollowMode = false;
+
+		exBossThirdPhaseTayamaStartPos = Vec2{
+			exBossLockedCameraCenter.x,
+			exBossLockedCameraCenter.y - Global::windowHeight / 2.0 - TextureAsset(U"tayama").height() * exBossThirdPhaseTayamaScale
+		};
+		exBossThirdPhaseTayamaTargetPos = Vec2{ exBossLockedCameraCenter.x, exBossThirdPhaseTayamaTargetY };
+		exBossThirdPhaseTayamaCenterPos = exBossThirdPhaseTayamaStartPos;
+		exBossThirdPhaseTayamaStep = 0;
+		exBossThirdPhaseTayamaStopwatch.restart();
+		exBossThirdPhaseTayamaAttackStopwatch.reset();
+		exBossThirdPhaseTayamaTargetAttackStopwatch.reset();
+		exBossThirdPhaseTayamaEyeAttackCount = 0;
+		exBossThirdPhaseTayamaTargetAttackCount = 0;
+		exBossThirdPhaseTayamaLeaveVelocity = 0.0;
+		isExBossThirdPhaseTayamaLeaving = false;
+		hasExBossThirdPhaseTayama = true;
+		reserveExBossSummonNameBar(U"sprNameBar_trap", exBossThirdPhaseTayamaTargetPos, exBossThirdPhaseTayamaAppearDuration);
+		Sound::playOneShot(Sound::VC_BAAN);
+	}
+
+	bool BossStageManager::isExBossThirdPhaseTayamaFinished() const {
+		if (stageName != U"ExBoss") {
+			return false;
+		}
+
+		return !hasExBossThirdPhaseTayama;
+	}
+
+	void BossStageManager::reserveExBossSummonNameBar(String textureName, Vec2 centerPos, double delay) {
+		isExBossSummonNameBarWaiting = true;
+		exBossSummonNameBarWaitingTextureName = textureName;
+		exBossSummonNameBarWaitingCenterPos = centerPos;
+		exBossSummonNameBarWaitingDelay = Max(0.0, delay);
+		exBossSummonNameBarWaitingStopwatch.restart();
+	}
+
+	void BossStageManager::startExBossSummonNameBar(String textureName, Vec2 centerPos) {
+		exBossSummonNameBarTextureName = textureName;
+		exBossSummonNameBarCenterPos = centerPos;
+		isExBossSummonNameBarActive = true;
+		exBossSummonNameBarStopwatch.restart();
+	}
+
 	void BossStageManager::finishExBossThirdPhaseLowBoss() {
 		if (stageName != U"ExBoss") {
 			return;
@@ -1171,7 +1345,9 @@ namespace Iwanna {
 
 	//りんご生成と管理配列への追加
 	void BossStageManager::createCherry(std::shared_ptr<Cherry> cherry) {
-		if (stageName == U"trapBoss" && trapBossGuygunStopwatch.sF() >= trapBossGuygunInterval) {
+		const bool shouldPlayTrapBossGuygun = stageName == U"trapBoss"
+			|| (stageName == U"ExBoss" && hasExBossThirdPhaseTayama && exBossThirdPhaseTayamaStep == 1);
+		if (shouldPlayTrapBossGuygun && trapBossGuygunStopwatch.sF() >= trapBossGuygunInterval) {
 			Sound::playOneShot(Sound::GUYGUN, trapBossGuygunVolume);
 			trapBossGuygunStopwatch.restart();
 		}

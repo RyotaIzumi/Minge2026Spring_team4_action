@@ -87,7 +87,7 @@ namespace Iwanna {
 		}
 		if (roomName == U"ExBoss") {
 			titleCardText = U"Treasure House";
-			titleCardTexture = U"sprTitleCard_boss";
+			titleCardTexture = U"sprTitleCard_exboss";
 		}
 		if (roomName == U"secret1") {
 			titleCardText = U"Secret Item Room";
