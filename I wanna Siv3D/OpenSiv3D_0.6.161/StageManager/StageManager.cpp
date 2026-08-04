@@ -104,6 +104,11 @@ namespace Iwanna {
 			loadGameObjects(Global::savedRoomName);
 		}
 
+		if (Global::isExtraStage(stageName)) {
+			titleCard.setEntryByPlayerPosition(gameObjects.player->pos, executeCameraPos());
+			titleCard.startShowTitleCard(stageName);
+		}
+
 		if (stageName == U"clear") {
 			saveGame();
 			if (Global::moraleValue1 < 30 && Global::moraleValue2 < 30

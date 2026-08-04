@@ -100,12 +100,14 @@ namespace Iwanna {
 			}
 
 			if (Global::isChangeRoom) {
-				if (Global::nowRoomName == U"secret1" && nowSoundName != U"secret_stage")playBgm(U"secret_stage");
-				if (Global::nowRoomName != U"secret1" && nowSoundName != mainBgmName)playBgm(mainBgmName);
+				const bool useSecretStageBgm = (Global::nowRoomName == U"secret1" || Global::isExtraStage(Global::nowRoomName));
+				if (useSecretStageBgm && nowSoundName != U"secret_stage")playBgm(U"secret_stage");
+				if (!useSecretStageBgm && nowSoundName != mainBgmName)playBgm(mainBgmName);
 			}
 			else {
-				if (Global::savedRoomName == U"secret1" && nowSoundName != U"secret_stage")playBgm(U"secret_stage");
-				if (Global::savedRoomName != U"secret1" && nowSoundName != mainBgmName)playBgm(mainBgmName);
+				const bool useSecretStageBgm = (Global::savedRoomName == U"secret1" || Global::isExtraStage(Global::savedRoomName));
+				if (useSecretStageBgm && nowSoundName != U"secret_stage")playBgm(U"secret_stage");
+				if (!useSecretStageBgm && nowSoundName != mainBgmName)playBgm(mainBgmName);
 			}
 		}
 

@@ -130,6 +130,10 @@ namespace Iwanna {
 			}
 		}
 
+		if (isExtraStage) {
+			Global::doNotStopBgm = true;
+		}
+
 		//ステージサイズを更新
 		Global::stageWidth = csv.columns(0) * oneTileSize;
 		Global::stageHeight = csv.rows() * oneTileSize;

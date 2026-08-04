@@ -122,6 +122,10 @@ namespace Iwanna {
 
 		registerTexture(U"sprTitleCard_boss", OtherPath + U"sprTitleCard_boss.png");
 		registerTexture(U"sprTitleCard_secret", OtherPath + U"sprTitleCard_secret.png");
+		registerTexture(U"sprTitleCard_milu", OtherPath + U"sprTitleCard_milu.png");
+		registerTexture(U"sprTitleCard_mochi", OtherPath + U"sprTitleCard_mochi.png");
+		registerTexture(U"sprTitleCard_got", OtherPath + U"sprTitleCard_got.png");
+		registerTexture(U"sprTitleCard_ryuta", OtherPath + U"sprTitleCard_ryuta.png");
 	}
 
 	void registerTexturesSync() {
