@@ -80,6 +80,13 @@ namespace Iwanna {
 		}
 	}
 
+	void Cherry::setCherryVisual(String textureName, CherryColorType colorType, bool animation, int32 edge) {
+		cherryTextureName = textureName;
+		cherryColorType = colorType;
+		hasAnimation = animation;
+		textureEdge = edge;
+	}
+
 	void Cherry::draw() const {
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
 		int32 texRange;
@@ -309,6 +316,7 @@ namespace Iwanna {
 		case CherryColorType::Green:  startTime = 0.1; break;
 		case CherryColorType::Orange: startTime = 5.0; break;
 		case CherryColorType::Sky:    startTime = 2.2; break;
+		case CherryColorType::Gray:   startTime = 3.0; break;
 		}
 
 		// 攻撃間隔設定
@@ -319,6 +327,7 @@ namespace Iwanna {
 		case CherryColorType::Green:  attackInterval = 3.8; break;
 		case CherryColorType::Orange: attackInterval = 5.0; break;
 		case CherryColorType::Sky:    attackInterval = 1.9; break;
+		case CherryColorType::Gray:   attackInterval = 7.0; break;
 		}
 	}
 
@@ -356,6 +365,10 @@ namespace Iwanna {
 				break;
 			case CherryColorType::Sky:
 				stageManager->createSkyTargetCherry(7, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0, cherryColorType); });
+				break;
+			case CherryColorType::Gray:
+				stageManager->createGrayLatticeCherry(100, [this]() { return std::make_shared<BossGrayLatticeCherry>(pos, 1.0, BossCherryType::Gray); });
+				Sound::playOneShot(Sound::BLOCKCHANGE);
 				break;
 			}
 	}

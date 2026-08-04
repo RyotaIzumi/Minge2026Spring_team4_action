@@ -14,6 +14,31 @@ namespace Iwanna {
 			const String centisecondText = (centiseconds < 10 ? U"0" : U"") + Format(centiseconds);
 			return Format(minutes) + U":" + secondText + U"." + centisecondText;
 		}
+
+		ColorF getExtraStageMainColor(const String& stageName) {
+			if (stageName == U"ExMiluArea") return ColorF{ Palette::White };
+			if (stageName == U"ExMochiArea") return ColorF{ Palette::Orange };
+			if (stageName == U"ExGotArea") return ColorF{ Palette::Gray };
+			if (stageName == U"ExRyutaArea") return ColorF{ 0.32, 0.62, 1.0 };
+			return ColorF{ Palette::White };
+		}
+
+		void drawExtraStageBackground(const String& stageName) {
+			Rect{ 0, 0, Global::windowWidth, Global::windowHeight }.draw(ColorF{ 0.0, 0.0, 0.0 });
+
+			const ColorF mainColor = getExtraStageMainColor(stageName);
+			const ColorF lineColor{ mainColor.r, mainColor.g, mainColor.b, 0.32 };
+			const double spacing = 54.0;
+			const double speed = 26.0;
+			const double offset = Fmod(Scene::Time() * speed, spacing);
+			const Vec2 scroll{ -offset, offset };
+			const double extent = Global::windowWidth + Global::windowHeight + spacing * 4.0;
+
+			for (double x = -extent - offset; x < extent; x += spacing) {
+				Line{ Vec2{ x, -spacing } + scroll, Vec2{ x + extent, extent - spacing } + scroll }.draw(2.0, lineColor);
+				Line{ Vec2{ x, Global::windowHeight + spacing } + scroll, Vec2{ x + extent, Global::windowHeight - extent + spacing } + scroll }.draw(2.0, lineColor);
+			}
+		}
 	}
 
 	StageManager::StageManager() {
@@ -77,6 +102,11 @@ namespace Iwanna {
 		}
 		else {
 			loadGameObjects(Global::savedRoomName);
+		}
+
+		if (Global::isExtraStage(stageName)) {
+			titleCard.setEntryByPlayerPosition(gameObjects.player->pos, executeCameraPos());
+			titleCard.startShowTitleCard(stageName);
 		}
 
 		if (stageName == U"clear") {
@@ -330,7 +360,12 @@ namespace Iwanna {
 			//playerの近くのオブジェクトのみを取得して当たり判定確認
 			auto near = stockNearGameObjects.query(player->getBroadRect());
 			for (auto* obj : near) {
-				if (obj == player.get()) continue;
+				if (obj == player.get() || obj->type != ObjectType::Block) continue;
+				player->onCollision(*obj);
+			}
+			near = stockNearGameObjects.query(player->getBroadRect());
+			for (auto* obj : near) {
+				if (obj == player.get() || obj->type == ObjectType::Block) continue;
 				player->onCollision(*obj);
 			}
 			//血のブロックに対する衝突
@@ -451,7 +486,12 @@ namespace Iwanna {
 
 	void StageManager::draw() {
 		//背景描画
-		TextureAsset(backgroundName).draw();
+		if (Global::isExtraStage(stageName)) {
+			drawExtraStageBackground(stageName);
+		}
+		else {
+			TextureAsset(backgroundName).draw();
+		}
 
 		{
 			const auto t = camera.createTransformer();

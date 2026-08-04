@@ -6,6 +6,14 @@ namespace Iwanna {
 	void ExBossCherry::attack() {
 		switch (nowAttackType) {
 		case ExBossAttackType::Wait:// --- 待機状態 --- //
+			if (isThirdFormRetreatPending) {
+				isThirdFormRetreatPending = false;
+				nowAttackType = ExBossAttackType::ThirdFormRetreat;
+				attackStep = 0;
+				waitStopwatch.reset();
+				break;
+			}
+
 			if (waitStopwatch.isRunning()) {
 				if (waitStopwatch.s() >= waitTime) {
 					waitStopwatch.reset();
@@ -13,6 +21,98 @@ namespace Iwanna {
 					//nowAttackType = ExBossAttackType::Slide;
 				}
 			}
+			break;
+
+		case ExBossAttackType::ThirdFormRetreat:
+			switch (attackStep) {
+			case 0:
+				sordCherriesManager->setSordCanPlayerKill(false);
+				movePosition(Vec2{ pos.x, -420 }, 1.2, true);
+				rotateDirection(getBaseAngleDiff(), 1.2, false);
+				thirdFormRetreatStopwatch.reset();
+				attackStep++;
+				break;
+			case 1:
+				if (getIsMoveFinished() && getIsRotateFinished()) {
+					thirdFormRetreatStopwatch.restart();
+					attackStep++;
+				}
+				break;
+			case 2:
+				if (thirdFormRetreatStopwatch.sF() >= thirdFormRetreatWaitTime) {
+					bossStageManager->startExBossThirdPhaseDarkening();
+					isThirdFormRetreatFinished = true;
+					thirdFormRetreatStopwatch.reset();
+					thirdFormRetreatStopwatch.restart();
+					attackStep++;
+				}
+				break;
+			case 3:
+			{
+				if (!isThirdFormSummonSelected && bossStageManager->isExBossThirdPhaseDarkened()) {
+					thirdFormSummonType = Random(2);
+					switch (thirdFormSummonType) {
+					case 0:
+						bossStageManager->summonExBossThirdPhaseLowBoss();
+						break;
+					case 1:
+						bossStageManager->summonExBossThirdPhaseBossCherry();
+						break;
+					case 2:
+						bossStageManager->summonExBossThirdPhaseTayama();
+						break;
+					}
+					isThirdFormSummonSelected = true;
+				}
+
+				bool isSummonedBossFinished = false;
+				switch (thirdFormSummonType) {
+				case 0:
+					isSummonedBossFinished = bossStageManager->isExBossThirdPhaseLowBossFinished();
+					break;
+				case 1:
+					isSummonedBossFinished = bossStageManager->isExBossThirdPhaseBossCherryFinished();
+					break;
+				case 2:
+					isSummonedBossFinished = bossStageManager->isExBossThirdPhaseTayamaFinished();
+					break;
+				}
+
+				if (thirdFormRetreatStopwatch.sF() >= thirdFormDarkeningWaitTime
+					&& isThirdFormSummonSelected
+					&& isSummonedBossFinished) {
+					thirdFormRetreatStopwatch.reset();
+					bossStageManager->finishExBossThirdPhaseLowBoss();
+					nowAttackType = ExBossAttackType::ThirdFormReturn;
+					attackStep = 0;
+				}
+				break;
+			}
+			}
+
+			break;
+
+		case ExBossAttackType::ThirdFormReturn:
+			switch (attackStep) {
+			case 0:
+			{
+				const Vec2 cameraCenter = bossStageManager->getExBossLockedCameraCenter();
+				pos = Vec2{ cameraCenter.x, cameraCenter.y - Global::windowHeight / 2.0 - 120.0 };
+				movePosition(Vec2{ cameraCenter.x, 304.0 }, 1.4, false);
+				rotateDirection(getBaseAngleDiff(), 1.0, false);
+				attackStep++;
+				break;
+			}
+			case 1:
+				if (getIsMoveFinished() && getIsRotateFinished()) {
+					baseY = 304.0;
+					baseCenterPos = pos;
+					isThirdFormReturning = false;
+					startWait();
+				}
+				break;
+			}
+
 			break;
 
 		case ExBossAttackType::SparkExpro: // --- ✨爆発攻撃 --- //

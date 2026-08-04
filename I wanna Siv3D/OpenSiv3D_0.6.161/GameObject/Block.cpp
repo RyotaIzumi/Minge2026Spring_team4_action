@@ -27,7 +27,7 @@ namespace Iwanna {
 			return;
 		}
 
-		TextureAsset(textureName).draw(pos);
+		TextureAsset(textureName).draw(pos, getBlockDrawColor());
 	}
 	void Block::onCollision(GameObject& other) {
 	}
@@ -39,6 +39,10 @@ namespace Iwanna {
 	//当たり判定の有無を返す
 	bool Block::getHasCollide() const {
 		return hasCollide;
+	}
+
+	void Block::setBlockColor(ColorF color) {
+		blockColor = color;
 	}
 
 	void Block::breakAsDebris() {
@@ -81,7 +85,11 @@ namespace Iwanna {
 	void Block::drawDebris() const {
 		TextureAsset(textureName)
 			.rotated(Math::ToRadians(textureAngle))
-			.drawAt(pos + Vec2{ side / 2.0, side / 2.0 }, ColorF(1.0, debrisAlpha));
+			.drawAt(pos + Vec2{ side / 2.0, side / 2.0 }, getBlockDrawColor(debrisAlpha));
+	}
+
+	ColorF Block::getBlockDrawColor(double drawAlpha) const {
+		return ColorF{ blockColor.r, blockColor.g, blockColor.b, blockColor.a * drawAlpha };
 	}
 
 	// ----- 隠しブロック ----- //
@@ -104,7 +112,7 @@ namespace Iwanna {
 			return;
 		}
 
-		TextureAsset(textureName).draw(pos,ColorF(1.0,isHidden ? 0.0 : 1.0));
+		TextureAsset(textureName).draw(pos, getBlockDrawColor(isHidden ? 0.0 : 1.0));
 	}
 
 	void HideBlock::onCollision(GameObject& other) {
@@ -162,7 +170,7 @@ namespace Iwanna {
 			return;
 		}
 
-		TextureAsset(textureName).draw(pos, ColorF(1.0, isHidden ? 0.0 : 1.0));
+		TextureAsset(textureName).draw(pos, getBlockDrawColor(isHidden ? 0.0 : 1.0));
 	}
 
 	void FakeBlock::onCollision(GameObject& other) {
@@ -196,7 +204,7 @@ namespace Iwanna {
 			return;
 		}
 
-		TextureAsset(textureName).draw(pos);
+		TextureAsset(textureName).draw(pos, getBlockDrawColor());
 	}
 
 	void ShootTroughBlock::onCollision(GameObject& other) {
@@ -258,7 +266,7 @@ namespace Iwanna {
 			return;
 		}
 
-		TextureAsset(textureName).draw(pos, ColorF(1.0, blockAlpha));
+		TextureAsset(textureName).draw(pos, getBlockDrawColor(blockAlpha));
 	}
 
 	void BreakBlock::onCollision(GameObject& other) {

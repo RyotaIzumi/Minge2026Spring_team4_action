@@ -39,6 +39,16 @@ namespace Iwanna {
 		Stopwatch specialAttackStopwatch{ StartImmediately::No };
 		double specialAttackIntervalTime = 8.0;
 		int32 specialAttackCount = 0;
+
+		bool isSummonPattern = false;
+		Stopwatch summonLifeStopwatch{ StartImmediately::No };
+		Stopwatch summonAttackStopwatch{ StartImmediately::No };
+		double summonTargetY = 304.0;
+		double summonAppearDuration = 1.4;
+		double summonLifeTime = 16.0;
+		double summonAttackInterval = 2.0;
+		double summonLeaveSpeed = 2.5;
+		double summonLeaveAcceleration = 0.08;
 		
 	protected:
 		BossStageManager* bossStageManager = nullptr;
@@ -52,6 +62,9 @@ namespace Iwanna {
 		void barrageUpdate() override;
 		void draw() const override;
 
+		void setSummonPatternSettings(double targetY, double appearDuration, double lifeTime, double attackInterval);
+		void setHpBarVisible(bool visible);
+		bool getIsSummonPattern() const;
 		void startAttack(BossCherryType type);
 		BossCherryType getBossCherryAttackType() const;
 		void removeDefeatedAttackType(BossCherryType type);
@@ -138,9 +151,16 @@ namespace Iwanna {
 		int32 appearanceStep = 0;
 		Stopwatch spreadStopwatch{ StartImmediately::No };
 		Stopwatch targetStopwatch{ StartImmediately::No };
+		Stopwatch lifeStopwatch{ StartImmediately::No };
 
 		double targetY = 500.0;
 		double moveSpeed = 7.0;
+		bool useEaseOutAppearance = false;
+		double appearanceDuration = 1.0;
+		bool hasLifeTime = false;
+		double lifeTime = 0.0;
+		double leaveSpeed = 2.5;
+		double leaveAcceleration = 0.08;
 		double spreadInterval = 0.8;
 		int32 spreadCherryNum = 12;
 		double spreadCherrySpeed = 4.0;
@@ -162,6 +182,11 @@ namespace Iwanna {
 	public:
 		LowBossCherry(Vec2 startPos, double scale, BossStageManager& manager);
 
+		void setAppearanceSettings(double targetY, double duration, bool easeOut);
+		void setLifeTime(double duration);
+		void setHpBarVisible(bool visible);
+		void setSpreadAttackSettings(double interval, int32 cherryNum, double speed);
+		void setTargetAttackSettings(double interval, int32 lineNum, bool isAddLine, double baseSpeed, double intervalSpeed);
 		void barrageUpdate() override;
 		void draw() const override;
 		void hited() override;
@@ -174,6 +199,7 @@ namespace Iwanna {
 		BossCherryType cherryAttackType;
 		int32 startStep = 0;
 		int32 defeatedBossNum = 0;
+		bool isSummonPattern = false;
 		ColorF typeColor;
 		BossHpBarDelayState hpBarDelay;
 
@@ -191,6 +217,8 @@ namespace Iwanna {
 		void setCenterPos(Vec2 cPos);
 		void setTypeColor();
 		void setDefeatedBossNum(int32);
+		void setSummonPattern(bool enabled);
+		bool getIsSummonPattern() const;
 		BossCherryType getBossCherrySubType() const;
 		void generateAttack(BossCherryType);
 	};

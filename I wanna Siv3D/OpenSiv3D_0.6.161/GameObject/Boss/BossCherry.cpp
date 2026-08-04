@@ -39,6 +39,58 @@ namespace Iwanna {
 	}
 
 	void BossCherry::barrageUpdate() {
+		if (isSummonPattern) {
+			switch (startStep) {
+			case 0:
+				speed = 0;
+				gravity = 0;
+				movePosition(Vec2{ pos.x, summonTargetY }, summonAppearDuration, false);
+				startStep++;
+				break;
+			case 1:
+				if (getIsMoveFinished()) {
+					baseCenterPos = pos;
+					summonLifeStopwatch.restart();
+					summonAttackStopwatch.restart();
+					cherryAttackType = BossCherryType::None;
+					startStep++;
+				}
+				break;
+			case 2:
+				pos.y = -r * sin(Math::ToRadians(c)) + baseCenterPos.y;
+				c += 1;
+
+				if (summonAttackStopwatch.sF() >= summonAttackInterval) {
+					cherryAttackType = canAttackTypes.choice();
+					summonAttackStopwatch.restart();
+				}
+				else {
+					cherryAttackType = BossCherryType::None;
+				}
+
+				if (summonLifeStopwatch.sF() >= summonLifeTime) {
+					speed = 0;
+					gravity = 0;
+					vspeed = -summonLeaveSpeed;
+					cherryAttackType = BossCherryType::None;
+					startStep++;
+				}
+				break;
+			case 3:
+				vspeed -= summonLeaveAcceleration;
+				pos.y += vspeed;
+				cherryAttackType = BossCherryType::None;
+				if (pos.y < -96.0 * scaleMag) {
+					isDelete = true;
+				}
+				break;
+			}
+
+			if (hpBarAlpha < 1) hpBarAlpha += 0.05;
+			hpBarDelay.update(hp, maxHp);
+			return;
+		}
+
 		//ボス戦開始時の処理
 		switch (startStep) {
 		case 0:
@@ -532,6 +584,40 @@ namespace Iwanna {
 		appearanceStep = 0;
 	}
 
+	void LowBossCherry::setAppearanceSettings(double newTargetY, double duration, bool easeOut) {
+		targetY = newTargetY;
+		appearanceDuration = Max(duration, 0.001);
+		useEaseOutAppearance = easeOut;
+
+		if (useEaseOutAppearance) {
+			speed = 0.0;
+			movePosition(Vec2{ pos.x, targetY }, appearanceDuration, false);
+		}
+	}
+
+	void LowBossCherry::setLifeTime(double duration) {
+		hasLifeTime = true;
+		lifeTime = Max(duration, 0.0);
+	}
+
+	void LowBossCherry::setHpBarVisible(bool visible) {
+		hasHp = visible;
+	}
+
+	void LowBossCherry::setSpreadAttackSettings(double interval, int32 cherryNum, double spd) {
+		spreadInterval = interval;
+		spreadCherryNum = cherryNum;
+		spreadCherrySpeed = spd;
+	}
+
+	void LowBossCherry::setTargetAttackSettings(double interval, int32 lineNum, bool isAddLine, double baseSpeed, double intervalSpeed) {
+		targetInterval = interval;
+		targetLineNum = lineNum;
+		targetIsAddLine = isAddLine;
+		targetBaseSpeed = baseSpeed;
+		targetIntervalSpeed = intervalSpeed;
+	}
+
 	void LowBossCherry::updateDefeatedFall() {
 		defeatedFallSpeed += defeatedFallAcceleration;
 		pos.y += defeatedFallSpeed;
@@ -578,17 +664,28 @@ namespace Iwanna {
 
 		switch (appearanceStep) {
 		case 0:
-			if (pos.y <= targetY) {
+			if ((useEaseOutAppearance && getIsMoveFinished()) || (!useEaseOutAppearance && pos.y <= targetY)) {
 				pos.y = targetY;
 				speed = 0.0;
 				appearanceStep = 1;
 				spreadStopwatch.restart();
 				targetStopwatch.restart();
+				if (hasLifeTime) {
+					lifeStopwatch.restart();
+				}
 				createSpreadAttack();
 				createTargetAttack();
 			}
 			break;
 		case 1:
+			if (hasLifeTime && lifeStopwatch.sF() >= lifeTime) {
+				speed = 0.0;
+				vspeed = -leaveSpeed;
+				lifeStopwatch.reset();
+				appearanceStep = 2;
+				return;
+			}
+
 			if (spreadStopwatch.sF() >= spreadInterval) {
 				createSpreadAttack();
 				spreadStopwatch.restart();
@@ -596,6 +693,13 @@ namespace Iwanna {
 			if (targetStopwatch.sF() >= targetInterval) {
 				createTargetAttack();
 				targetStopwatch.restart();
+			}
+			break;
+		case 2:
+			vspeed -= leaveAcceleration;
+			pos.y += vspeed;
+			if (pos.y < -96.0 * scaleMag) {
+				isDelete = true;
 			}
 			break;
 		}
@@ -658,6 +762,26 @@ namespace Iwanna {
 
 		isMuteki = true;
 		mutekiInterval.restart();
+	}
+
+	void BossCherry::setSummonPatternSettings(double targetY, double appearDuration, double lifeTime, double attackInterval) {
+		isSummonPattern = true;
+		summonTargetY = targetY;
+		summonAppearDuration = Max(0.01, appearDuration);
+		summonLifeTime = Max(0.0, lifeTime);
+		summonAttackInterval = Max(0.01, attackInterval);
+		hasHp = false;
+		canPlayerKill = false;
+		startStep = 0;
+		cherryAttackType = BossCherryType::None;
+	}
+
+	void BossCherry::setHpBarVisible(bool visible) {
+		hasHp = visible;
+	}
+
+	bool BossCherry::getIsSummonPattern() const {
+		return isSummonPattern;
 	}
 
 	// 攻撃を呼び出す
@@ -837,6 +961,18 @@ namespace Iwanna {
 	// 倒したボスの数を設定
 	void BossSubCherry::setDefeatedBossNum(int32 num) {
 		defeatedBossNum = num;
+	}
+
+	void BossSubCherry::setSummonPattern(bool enabled) {
+		isSummonPattern = enabled;
+		if (enabled) {
+			hasHp = false;
+			canPlayerKill = false;
+		}
+	}
+
+	bool BossSubCherry::getIsSummonPattern() const {
+		return isSummonPattern;
 	}
 
 	// 攻撃を呼び出す

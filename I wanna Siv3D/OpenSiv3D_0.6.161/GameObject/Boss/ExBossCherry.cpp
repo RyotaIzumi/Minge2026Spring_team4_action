@@ -104,16 +104,20 @@ namespace Iwanna {
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
 		TextureAsset(U"sprCherryLowBoss").scaled(scaleMag).rotated(Math::ToRadians(textureAngle)).drawAt(pos.x - 1, pos.y - 1, ColorF(1.0, isMuteki ? 0.6 : 1.0));
 
+		//hitBox->draw(ColorF(0.7,0.7));//判定の可視化
+	}
+
+	void ExBossCherry::drawHpBarScreen() const {
 		// ===== HPバー =====
 		if (hasHp) {
 			double width = Global::windowWidth;   // 横幅
 			double height = 20;              // 高さ
-			Vec2 barPos = Vec2{ bossStageManager->executeCameraPos().x,0 };
+			Vec2 barPos = Vec2{ Global::windowWidth / 2.0, 0 };
 
 			drawBossHpBar(barPos, width, height, hp, maxHp, hpBarAlpha, hpBarDelay);
 
 			// 文字表示
-			Vec2 textBasePos = barPos + Vec2(-380, 18);
+			Vec2 textBasePos = Vec2{ 6, 18 };
 			FontAsset(U"BossHp")(U"Guardian Cherry , the Sword Saint").draw(textBasePos.x - 1, textBasePos.y, ColorF(0, 0, 0, hpBarAlpha));
 			FontAsset(U"BossHp")(U"Guardian Cherry , the Sword Saint").draw(textBasePos.x + 1, textBasePos.y, ColorF(0, 0, 0, hpBarAlpha));
 			FontAsset(U"BossHp")(U"Guardian Cherry , the Sword Saint").draw(textBasePos.x, textBasePos.y - 1, ColorF(0, 0, 0, hpBarAlpha));
@@ -122,7 +126,6 @@ namespace Iwanna {
 			// 本体（白）
 			FontAsset(U"BossHp")(U"Guardian Cherry , the Sword Saint").draw(textBasePos.x, textBasePos.y, ColorF(1.0, 1.0, 1.0, hpBarAlpha));
 		}
-		//hitBox->draw(ColorF(0.7,0.7));//判定の可視化
 	}
 
 	double ExBossCherry::getBaseAngleDiff() const {
@@ -153,10 +156,24 @@ namespace Iwanna {
 
 	//bossの攻撃形態を設定
 	void ExBossCherry::updateBossForm() {
+		prevBossForm = bossForm;
+
 		if (hp > 50)bossForm = BossForm::First;
 		else if (hp > 35)bossForm = BossForm::Second;
 		else if (hp > 15)bossForm = BossForm::Third;
 		else bossForm = BossForm::Forth;
+
+		if (prevBossForm < BossForm::Third && bossForm >= BossForm::Third && !isThirdFormRetreatFinished) {
+			isThirdFormRetreatPending = true;
+		}
+
+		if (prevBossForm < BossForm::Forth && bossForm >= BossForm::Forth && !isForthFormGrayAttackUsed) {
+			isForthFormGrayAttackUsed = true;
+			Sound::playOneShot(Sound::SPIKETRAP);
+			bossStageManager->createGrayLatticeCherry(100, [this]() {
+				return std::make_shared<BossGrayLatticeCherry>(pos, 1.0, BossCherryType::Gray);
+			});
+		}
 	}
 
 	//引数の確率でtrueを返す関数

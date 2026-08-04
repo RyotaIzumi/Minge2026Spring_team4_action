@@ -7,7 +7,7 @@ namespace Iwanna {
 	private:
 		String titleName;
 		Size cardSize{256,195};
-		Vec2 startPos, nowPos, cameraPos;
+		Vec2 startPos, showPos, nowPos, cameraPos;
 		double moveRangeY;
 		Timer moveTimer{ 1.2s,StartImmediately::No };
 		Timer waitTimer{ 1.5s,StartImmediately::No };
@@ -23,6 +23,7 @@ namespace Iwanna {
 		void update();
 		void reset();
 		void setNowCameraPos(Vec2 pos);
+		void setEntryByPlayerPosition(Vec2 playerPos, Vec2 viewCenter);
 		void startShowTitleCard(String roomName);
 		void draw() const;
 	};

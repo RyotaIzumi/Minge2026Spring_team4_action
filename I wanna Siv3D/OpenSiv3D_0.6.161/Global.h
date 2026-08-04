@@ -97,6 +97,13 @@ namespace Global {
 		return generateStageNames.includes(roomName);
 	}
 
+	inline bool isExtraStage(const String& roomName) {
+		return roomName == U"ExMiluArea"
+			|| roomName == U"ExMochiArea"
+			|| roomName == U"ExGotArea"
+			|| roomName == U"ExRyutaArea";
+	}
+
 	inline String chooseGenerateStage() {
 		if (remainingGenerateStageNames.isEmpty()) {
 			remainingGenerateStageNames = generateStageNames;
