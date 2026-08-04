@@ -137,33 +137,36 @@ namespace Iwanna {
 
 		void setPos(const Vec2& pos) override {
 			basePos = pos;
+			constexpr double tipInset = 1.0;
+			constexpr double sideInset = 2.0;
+			constexpr double rootInset = 1.0;
 			switch (spikeDir) {
 			case 0://上向き
 				triangle.set({
-					Vec2{ pos.x + 16,  pos.y + 1},
-					Vec2{ pos.x + 31, pos.y + 31 },
-					Vec2{ pos.x + 1, pos.y + 31  }
+					Vec2{ pos.x + 16,  pos.y + tipInset },
+					Vec2{ pos.x + 32 - sideInset, pos.y + 32 - rootInset },
+					Vec2{ pos.x + sideInset, pos.y + 32 - rootInset }
 				});
 				break;
 			case 1://左向き
 				triangle.set({
-					Vec2{ pos.x + 31,  pos.y + 1 },
-					Vec2{ pos.x + 31, pos.y + 31 },
-					Vec2{ pos.x + 1, pos.y + 16  }
+					Vec2{ pos.x + 32 - rootInset,  pos.y + sideInset },
+					Vec2{ pos.x + 32 - rootInset, pos.y + 32 - sideInset },
+					Vec2{ pos.x + tipInset, pos.y + 16 }
 				});
 				break;
 			case 2://下向き
 				triangle.set({
-					Vec2{ pos.x + 1,  pos.y + 1 },
-					Vec2{ pos.x + 31, pos.y + 1 },
-					Vec2{ pos.x + 16, pos.y + 31  }
+					Vec2{ pos.x + sideInset,  pos.y + rootInset },
+					Vec2{ pos.x + 32 - sideInset, pos.y + rootInset },
+					Vec2{ pos.x + 16, pos.y + 32 - tipInset }
 				});
 				break;
 			case 3://右向き
 				triangle.set({
-					Vec2{ pos.x + 1,  pos.y + 1 },
-					Vec2{ pos.x + 31, pos.y + 16 },
-					Vec2{ pos.x + 1, pos.y + 31}
+					Vec2{ pos.x + rootInset,  pos.y + sideInset },
+					Vec2{ pos.x + 32 - tipInset, pos.y + 16 },
+					Vec2{ pos.x + rootInset, pos.y + 32 - sideInset }
 				});
 				break;
 			}

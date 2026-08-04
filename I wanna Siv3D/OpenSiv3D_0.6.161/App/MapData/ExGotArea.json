@@ -162,7 +162,7 @@
         ],
         "value1": -98,
         "value2": 30.0,
-        "value3": 90.0
+        "value3": 10.0
       },
       {
         "gimmikName": "罠トリガー",
@@ -509,6 +509,16 @@
         "gimmikName": "罠針_下",
         "gimmikPos": [
           288.0,
+          32.0
+        ],
+        "value1": 0,
+        "value2": 0.0,
+        "value3": 0.0
+      },
+      {
+        "gimmikName": "罠針_下",
+        "gimmikPos": [
+          704.0,
           32.0
         ],
         "value1": 0,

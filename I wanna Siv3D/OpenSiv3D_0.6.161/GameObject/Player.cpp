@@ -301,6 +301,8 @@ namespace Iwanna {
 			if (nextHitBox.intersects(*other.hitBox->getRect())) {
 				hspeed = 0;
 			}
+
+			hitBox->setPos(pos);
 		}
 
 		// PlayerKill属性を持つオブジェクトとの衝突

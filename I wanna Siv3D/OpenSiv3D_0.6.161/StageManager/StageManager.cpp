@@ -360,7 +360,12 @@ namespace Iwanna {
 			//playerの近くのオブジェクトのみを取得して当たり判定確認
 			auto near = stockNearGameObjects.query(player->getBroadRect());
 			for (auto* obj : near) {
-				if (obj == player.get()) continue;
+				if (obj == player.get() || obj->type != ObjectType::Block) continue;
+				player->onCollision(*obj);
+			}
+			near = stockNearGameObjects.query(player->getBroadRect());
+			for (auto* obj : near) {
+				if (obj == player.get() || obj->type == ObjectType::Block) continue;
 				player->onCollision(*obj);
 			}
 			//血のブロックに対する衝突
