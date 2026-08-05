@@ -34,12 +34,16 @@ void MainGameSerializer::LoadGameSettings() {
 
 	if (!json) {
 		Global::soundVolume = 1.0;
+		Global::isFullscreen = false;
 		return;
 	}
 
 	Global::soundVolume = json.contains(U"SoundVolume")
 		? Clamp(json[U"SoundVolume"].get<double>(), 0.0, 1.0)
 		: 1.0;
+	Global::isFullscreen = json.contains(U"Fullscreen")
+		? json[U"Fullscreen"].get<bool>()
+		: false;
 }
 
 void MainGameSerializer::LoadEndingValue() {
@@ -109,6 +113,7 @@ void MainGameSerializer::SaveGameSettings() {
 	JSON json;
 
 	json[U"SoundVolume"] = Clamp(Global::soundVolume, 0.0, 1.0);
+	json[U"Fullscreen"] = Global::isFullscreen;
 
 	json.save(U"GameSettings.json");
 }

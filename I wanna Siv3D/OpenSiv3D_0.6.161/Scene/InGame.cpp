@@ -112,6 +112,11 @@ namespace Iwanna {
 		FontAsset(U"BossHp")(endingText).drawAt(400, 318, ColorF{ 1.0, 1.0, 1.0 });
 		FontAsset(U"BossHp")(deathText).drawAt(400, 394, ColorF{ 1.0, 1.0, 1.0 });
 		FontAsset(U"BossHp")(timeText).drawAt(400, 438, ColorF{ 1.0, 1.0, 1.0 });
+		const bool previousFullscreen = Global::isFullscreen;
+		SimpleGUI::CheckBox(Global::isFullscreen, U"フルスクリーン", Vec2{ 475, 524 }, 260);
+		if (Global::isFullscreen != previousFullscreen) {
+			Global::applyWindowMode();
+		}
 		SimpleGUI::Slider(U"サウンド", Global::soundVolume, 0.0, 1.0, Vec2{ 420, 560 }, 110, 260);
 		Global::soundVolume = Clamp(Global::soundVolume, 0.0, 1.0);
 

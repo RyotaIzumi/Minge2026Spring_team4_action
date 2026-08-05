@@ -69,6 +69,7 @@ namespace Global {
 	// --- BGM関連 --- ///
 	inline bool doNotStopBgm = false;
 	inline double soundVolume = 1.0;
+	inline bool isFullscreen = false;
 
 	// --- 入手アイテム関連 --- //
 	inline bool prepareGetItem1 = false;
@@ -135,4 +136,19 @@ namespace Global {
 	constexpr int32 startStep_Chapter1 = 0;
 	constexpr int32 startStep_Chapter2 = 840;
 	constexpr int32 startStep_Chapter3 = 1320;
+
+	inline void applyWindowMode() {
+		const Size windowSize{ windowWidth, windowHeight };
+		Scene::SetResizeMode(ResizeMode::Keep);
+		if (isFullscreen) {
+			Window::Resize(windowSize);
+			Scene::Resize(windowSize);
+			Window::SetFullscreen(true);
+		}
+		else {
+			Window::SetFullscreen(false);
+			Window::Resize(windowSize);
+			Scene::Resize(windowSize);
+		}
+	}
 }
