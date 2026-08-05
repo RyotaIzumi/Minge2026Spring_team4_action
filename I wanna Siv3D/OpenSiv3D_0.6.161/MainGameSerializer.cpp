@@ -1,5 +1,31 @@
 ﻿#include "MainGameSerializer.h"
 
+		const FilePath localAppData = FileSystem::GetFolderPath(SpecialFolder::LocalAppData);
+		const FilePath appData = FileSystem::ParentPath(localAppData);
+		return appData
+			+ U"AppData/LocalLow/PandD_org/【PandD Game Dev Club】Our Chaotic Developers Refuse to Stick to the Plan/GameSave.json";
+	}
+
+	String GetCurrentEndingId() {
+		const int32 endingIndex = Clamp(Global::endingValue, 0, 9);
+		return U"Ending_" + String{ static_cast<char32>(U'A' + endingIndex) };
+	}
+
+	Array<String> ReadStringArray(const JSON& json, const String& key) {
+		Array<String> values;
+
+		if (!json.contains(key)) {
+			return values;
+		}
+
+		for (const auto& value : json[key].arrayView()) {
+			values << value.getString();
+		}
+
+		return values;
+	}
+}
+
 MainGameSerializer::MainGameSerializer() {
 }
 
