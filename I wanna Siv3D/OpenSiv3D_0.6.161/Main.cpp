@@ -50,5 +50,6 @@ void Main()
 	}
 	mainGameSerializer.SaveCharactersMoraleValue();
 	mainGameSerializer.SaveGameSettings();
+	mainGameSerializer.SaveEndingClearRecord();
 	mainGameSerializer.SaveEndingValue();
 }

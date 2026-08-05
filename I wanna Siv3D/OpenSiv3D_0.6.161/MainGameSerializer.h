@@ -18,5 +18,6 @@ public:
 	void defineGlobalStatuses();
 	void SaveCharactersMoraleValue();
 	void SaveGameSettings();
+	void SaveEndingClearRecord();
     void SaveEndingValue();
 };

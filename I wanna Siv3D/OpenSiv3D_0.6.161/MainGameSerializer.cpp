@@ -1,9 +1,23 @@
 ﻿#include "MainGameSerializer.h"
 
-		const FilePath localAppData = FileSystem::GetFolderPath(SpecialFolder::LocalAppData);
-		const FilePath appData = FileSystem::ParentPath(localAppData);
-		return appData
-			+ U"AppData/LocalLow/PandD_org/【PandD Game Dev Club】Our Chaotic Developers Refuse to Stick to the Plan/GameSave.json";
+namespace {
+	FilePath GetGameSaveFilePath() {
+		wchar_t* userProfilePath = nullptr;
+		size_t userProfilePathLength = 0;
+		FilePath basePath;
+
+		if (_wdupenv_s(&userProfilePath, &userProfilePathLength, L"USERPROFILE") == 0
+			&& userProfilePath != nullptr) {
+			basePath = Unicode::FromWstring(userProfilePath);
+			free(userProfilePath);
+		}
+		else {
+			const FilePath localAppData = FileSystem::GetFolderPath(SpecialFolder::LocalAppData);
+			basePath = FileSystem::ParentPath(FileSystem::ParentPath(localAppData));
+		}
+
+		return basePath
+			+ U"/AppData/LocalLow/PandD_org/【PandD Game Dev Club】Our Chaotic Developers Refuse to Stick to the Plan/GameSave.json";
 	}
 
 	String GetCurrentEndingId() {
@@ -105,7 +119,7 @@ void MainGameSerializer::defineGlobalStatuses() {
 	}
 	else if (moraleValue2 > 90 && moraleValue2 <= 100)Global::startRoomName = U"trapBoss";
 	else if(moraleValue1 <= 30) Global::startRoomName = U"normal1";
-	else Global::startRoomName = U"normal2";
+	else Global::startRoomName = U"boss";
 
 	// ゲームタイトル
 	if (moraleValue2 > 90 && moraleValue2 <= 100) Window::SetTitle(U"TestPlayGame (Debug Build)");
@@ -142,6 +156,44 @@ void MainGameSerializer::SaveGameSettings() {
 	json[U"Fullscreen"] = Global::isFullscreen;
 
 	json.save(U"GameSettings.json");
+}
+
+void MainGameSerializer::SaveEndingClearRecord() {
+	const FilePath savePath = GetGameSaveFilePath();
+	FileSystem::CreateDirectories(FileSystem::ParentPath(savePath));
+
+	JSON json = JSON::Load(savePath);
+	if (!json) {
+		json = JSON{};
+	}
+
+	const String endingId = GetCurrentEndingId();
+	Array<String> reachedEndingIds = ReadStringArray(json, U"reachedEndingIds");
+	if (not reachedEndingIds.includes(endingId)) {
+		reachedEndingIds << endingId;
+	}
+
+	json[U"chapterId"] = U"Chapter";
+	json[U"currentBlockId"] = U"";
+	json[U"reachedBlockIds"] = ReadStringArray(json, U"reachedBlockIds");
+	json[U"reachedEndingIds"] = reachedEndingIds;
+
+	const int32 clearTime = Max(0, static_cast<int32>(Floor(Global::elapsedPlayTime)));
+	const int32 deathCount = Max(0, Global::deathCount);
+	bool shouldUpdateRecord = true;
+
+	if (json.contains(U"eachEndingClearTime")
+		&& json[U"eachEndingClearTime"].contains(endingId)) {
+		const int32 savedClearTime = json[U"eachEndingClearTime"][endingId].get<int32>();
+		shouldUpdateRecord = (savedClearTime < 0 || clearTime < savedClearTime);
+	}
+
+	if (shouldUpdateRecord) {
+		json[U"eachEndingClearTime"][endingId] = clearTime;
+		json[U"eachEndingDeathCount"][endingId] = deathCount;
+	}
+
+	json.save(savePath);
 }
 
 // エンディング種類値を保存する処理をここに実装
