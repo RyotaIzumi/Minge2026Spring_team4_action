@@ -78,6 +78,7 @@ namespace Iwanna {
 		if (!Global::isPlayerFrozen) {
 			if (Global::getItem2 && Global::inputWarpMode.down()) {
 				isWarpMode = !isWarpMode;
+				Sound::playOneShot(Sound::CHANGE);
 			}
 			if (!Global::getItem2) {
 				isWarpMode = false;
