@@ -20,6 +20,10 @@ namespace Iwanna {
 		roomOutTrue = false;//kid君をroom外にいけるようにする
 		isDead = false;//死亡状態かどうか
 		isGenerateBullet = false;//弾生成フラグ
+		isWarpMode = false;
+		usedWarpInAir = false;
+		isGenerateWarpEffect = false;
+		warpEffectPos = Vec2{ 0, 0 };
 		isOutOfScreen = false;//画面外判定用フラグ
 
 		//GameObject.hの値初期化
@@ -72,6 +76,13 @@ namespace Iwanna {
 		if (isDead) return;
 
 		if (!Global::isPlayerFrozen) {
+			if (Global::getItem2 && Global::inputWarpMode.down()) {
+				isWarpMode = !isWarpMode;
+				Sound::playOneShot(Sound::CHANGE);
+			}
+			if (!Global::getItem2) {
+				isWarpMode = false;
+			}
 			if (Global::inputLeft.pressed()) playerMoveLeft();
 			if (Global::inputRight.pressed()) playerMoveRight();
 			if (Global::inputShoot.down()) playerShoot();
@@ -134,6 +145,9 @@ namespace Iwanna {
 		TextureRegion texture = spriteSystem.getTextureRegion(direction);
 		if(!isDead)texture.scaled(1.0).drawAt(pos.x,pos.y - 3, ColorF(1.0, isMuteki ? 0.5 : 1.0));
 		else texture.scaled(1.0).drawAt(pos.x, pos.y - 3, ColorF(0.8,0,0,0.8));
+		if (!isDead && Global::getItem2 && isWarpMode) {
+			TextureAsset(U"item2").draw(getItem2WarpIconPos(), ColorF{ 1.0, canUseItem2Warp() ? 0.65 : 0.25 });
+		}
 		//hitBox->draw(ColorF(Palette::Red,0.6));
 	}
 
@@ -172,7 +186,43 @@ namespace Iwanna {
 	}
 
 	void Player::playerShoot() {
+		if (Global::getItem2 && isWarpMode) {
+			if (canUseItem2Warp()) {
+				useItem2Warp();
+			}
+			return;
+		}
+
 		isGenerateBullet = true;
+	}
+
+	bool Player::canUseItem2Warp() const {
+		return Global::getItem2 && isWarpMode && (isOnGround || !usedWarpInAir);
+	}
+
+	Vec2 Player::getItem2WarpIconPos() const {
+		const double tileSize = 32.0;
+		const double dirSign = (direction == Global::Direction::RIGHT) ? 1.0 : -1.0;
+		const Vec2 baseTilePos{
+			Math::Floor(pos.x / tileSize) * tileSize,
+			Math::Floor(pos.y / tileSize) * tileSize
+		};
+		return baseTilePos + Vec2{ dirSign * tileSize * 2.0, 0 };
+	}
+
+	void Player::useItem2Warp() {
+		const bool wasOnGround = isOnGround;
+		const Vec2 warpCenterPos = getItem2WarpIconPos() + Vec2{ 16,16 };
+		pos = warpCenterPos;
+		hspeed = 0.0;
+		vspeed = 0.0;
+		if (!wasOnGround) {
+			usedWarpInAir = true;
+		}
+		warpEffectPos = warpCenterPos;
+		isGenerateWarpEffect = true;
+		Sound::playOneShot(Sound::WARP);
+		hitBox->setPos(pos);
 	}
 
 	//ダメージを受けた際の処理
@@ -242,7 +292,7 @@ namespace Iwanna {
 					auto* fakeBlock = dynamic_cast<FakeBlock*>(&other);
 					if (!fakeBlock->getIsHidden()) {
 						fakeBlock->setIsHidden(true);
-						AudioAsset(Sound::BLOCKCHANGE).play();
+						Sound::playOneShot(Sound::BLOCKCHANGE);
 					}
 				}
 				else if (block->blockType == BlockType::Water) {//水ブロック
@@ -287,6 +337,7 @@ namespace Iwanna {
 					if (vspeed > 0) {
 						pos.y = other.hitBox->top().y - 10;
 						djump = true;
+						usedWarpInAir = false;
 						isOnGround = true;
 					}
 					else {
@@ -308,7 +359,8 @@ namespace Iwanna {
 		// PlayerKill属性を持つオブジェクトとの衝突
 		if (other.canPlayerKill) {
 			if (this->intersects(other) && !isDead && !isMuteki) {
-				if ((Global::getItem1 && (Global::nowRoomName == U"boss" || Global::nowRoomName == U"bossLow" || Global::nowRoomName == U"trapBoss"))
+				if (Global::nowRoomName == U"boss"
+					|| Global::nowRoomName == U"trapBoss"
 					|| Global::nowRoomName == U"ExBoss") playerHited();
 				else playerDead();
 			}
@@ -400,6 +452,18 @@ namespace Iwanna {
 	// 弾生成フラグを取得
 	bool Player::getIsGenerateBullet() const {
 		return isGenerateBullet;
+	}
+
+	void Player::setIsGenerateWarpEffect(bool value) {
+		isGenerateWarpEffect = value;
+	}
+
+	bool Player::getIsGenerateWarpEffect() const {
+		return isGenerateWarpEffect;
+	}
+
+	Vec2 Player::getWarpEffectPos() const {
+		return warpEffectPos;
 	}
 
 	// 向きを取得

@@ -2,15 +2,16 @@
 #include <SIv3D.hpp>
 #include "../Global.h"
 
-namespace Iwanna {
+	namespace Iwanna {
 	enum class AchieveType {
-		ItemGet_Heart
+		ItemGet_Heart,
+		ItemGet_Warp
 	};
 
 	class Achieve {
 	private:
 		String titleName;
-		Size cardSize{ 224,64 };
+		Size cardSize{ 288,64 };
 		Vec2 startPos, nowPos, cameraPos;
 		double moveRangeY;
 		Timer moveTimer{ 1.2s,StartImmediately::No };

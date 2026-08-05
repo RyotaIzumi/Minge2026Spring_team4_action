@@ -57,8 +57,12 @@ namespace Iwanna {
 		
 		switch (type) {
 		case AchieveType::ItemGet_Heart:
-			achieveText = U"アイテムゲット！\nボス戦で残機が増加！";
-			achieveIconTexture = U"heart";
+			achieveText = U"針を銃で壊せるように！\nまた、銃の攻撃力も上昇！";
+			achieveIconTexture = U"item1";
+			break;
+		case AchieveType::ItemGet_Warp:
+			achieveText = U"ワープできるようになった！\nXキーで切り替え可能！";
+			achieveIconTexture = U"item2";
 			break;
 		}
 		moveStep = 0;

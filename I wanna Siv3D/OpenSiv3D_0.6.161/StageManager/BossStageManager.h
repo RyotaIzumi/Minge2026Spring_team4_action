@@ -11,7 +11,9 @@
 #include "../GameObject/SavePoint.h"
 #include "../GameObject/Blood.h"
 #include "../GameObject/Warp.h"
+#include "../GameObject/Item.h"
 #include "../UI/TitleCard.h"
+#include "../UI/Achieve.h"
 #include "../UI/BossHpBar.h"
 #include "CameraShake.h"
 #include "../Global.h"
@@ -29,6 +31,7 @@ namespace Iwanna {
 		Array<std::shared_ptr<BossSavePoint>> savePoints;
 		Array<std::shared_ptr<Blood>> bloods;
 		Array<std::shared_ptr<Warp>> warps;
+		Array<std::shared_ptr<Item>> items;
 	};
 
 	class BossStageManager {
@@ -50,6 +53,7 @@ namespace Iwanna {
 
 		//タイトルカード(画面右上に表示するやつ)
 		TitleCard titleCard;
+		Achieve achive;
 
 		//背景用
 		String backgroundName;
@@ -230,6 +234,8 @@ namespace Iwanna {
 		void updateTrapBossSecondPhaseTargetAttack();
 		void updateExBossThirdPhaseTayamaSummon();
 		void updateExBossSummonNameBar();
+		void updateItem2Pickup();
+		void updateBulletSpikeHits();
 		void updateTrapBossSecondPhaseBulletHits(Array<std::shared_ptr<Bullet>>& bullets);
 		void breakTrapBossSecondPhaseOverlappingBlocks();
 		void createTrapBossSecondPhaseEyeAttackCherry(Vec2 startPos, double direction);
@@ -240,11 +246,12 @@ namespace Iwanna {
 		void drawExBossThirdPhaseTayama() const;
 		void drawExBossSummonNameBar() const;
 		void drawTrapBossSecondPhaseHp() const;
-		void hitTrapBossSecondPhase();
+		void hitTrapBossSecondPhase(int32 damage = 1);
 		void defeatTrapBossSecondPhase();
 		void clearTrapBossSecondPhaseCherries();
 		void requestBossCherryDefeatCleanup();
 		void cleanupBossCherryDefeatObjects();
+		void spawnItem2();
 		void setStep(int32 newStep);
 		void saveGame();
 		Vec2 executeCameraPos();
@@ -282,6 +289,7 @@ namespace Iwanna {
 		String getStageName() const;
 
 		void createCherry(std::shared_ptr<Cherry> cherry);
+		void createPlayerWarpEffectCherries(Vec2 centerPos);
 
 		void createPeripheryBlocks();
 		void createFloorBlocks(Vec2 basePos);

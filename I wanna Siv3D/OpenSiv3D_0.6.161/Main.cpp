@@ -11,11 +11,12 @@ using App = SceneManager<Iwanna::SceneType, Iwanna::CommonData>;
 void Main()
 {
 	System::SetTerminationTriggers(UserAction::CloseButtonClicked);
-	System60::SetDisplaySize(Size{800,608});
 
 	Window::SetTitle(U"I wanna continue Siv3D");
 
 	MainGameSerializer mainGameSerializer;
+	mainGameSerializer.LoadGameSettings();
+	System60::SetDisplaySize(Size{800,608}, Global::isFullscreen);
 
 	//フォントはここで宣言
 	FontAsset::Register(U"Big", 60, Typeface::Regular);
@@ -48,5 +49,7 @@ void Main()
 		}
 	}
 	mainGameSerializer.SaveCharactersMoraleValue();
+	mainGameSerializer.SaveGameSettings();
+	mainGameSerializer.SaveEndingClearRecord();
 	mainGameSerializer.SaveEndingValue();
 }

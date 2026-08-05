@@ -208,6 +208,11 @@ namespace Iwanna {
 				player->setIsGenerateBullet(false);
 			}
 
+			if (player->getIsGenerateWarpEffect()) {
+				createPlayerWarpEffectCherries(player->getWarpEffectPos());
+				player->setIsGenerateWarpEffect(false);
+			}
+
 			// 血しぶきの生成
 			if (player->getIsDead() && !isGenerateBloods) {
 				double circleNum = 2;
@@ -398,6 +403,9 @@ namespace Iwanna {
 
 			player->updateLate();
 
+			//item1取得後の弾丸と針の衝突
+			updateBulletSpikeHits();
+
 			//各弾丸とブロック,セーブポイントとの衝突
 			for (auto& b : bullets) {
 				auto nearObjs = stockBulletsNearGameObjects.query(b->getBroadRect());
@@ -435,7 +443,7 @@ namespace Iwanna {
 
 			//画面外の針を削除
 			spikes.remove_if([](auto&& spike) {
-				return spike->isOutOfScreen;
+				return spike->isOutOfScreen || spike->isDelete;
 			});
 
 			//画面外の血を削除
@@ -465,6 +473,29 @@ namespace Iwanna {
 			bullets.remove_if([](auto&& bullet) {
 				return bullet->isOutOfScreen || bullet->isDelete;
 			});
+		}
+	}
+
+	void StageManager::updateBulletSpikeHits() {
+		if (!Global::getItem1) {
+			return;
+		}
+
+		for (auto& bullet : gameObjects.bullets) {
+			if (bullet->isDelete || bullet->isOutOfScreen) {
+				continue;
+			}
+
+			for (auto& spike : gameObjects.spikes) {
+				if (spike->isDelete || spike->isOutOfScreen || spike->getIsDebris()) {
+					continue;
+				}
+
+				bullet->onCollision(*spike);
+				if (bullet->isDelete) {
+					break;
+				}
+			}
 		}
 	}
 
@@ -594,11 +625,24 @@ namespace Iwanna {
 
 	// カメラの位置をプレイヤーのいるエリアの中心に設定
 	Vec2 StageManager::executeCameraPos() {
-		Vec2 nextPos;
-		int32 playerAreaX = static_cast<int32>(gameObjects.player->pos.x) / Global::windowWidth;
-		int32 playerAreaY = static_cast<int32>(gameObjects.player->pos.y) / Global::windowHeight;
-		nextPos.x = playerAreaX * Global::windowWidth + Global::windowWidth / 2;
-		nextPos.y = playerAreaY * Global::windowHeight + Global::windowHeight / 2;
+		const double halfWindowWidth = Global::windowWidth / 2.0;
+		const double halfWindowHeight = Global::windowHeight / 2.0;
+		const double maxPlayerX = Max(0.0, Global::stageWidth - 1.0);
+		const double maxPlayerY = Max(0.0, Global::stageHeight - 1.0);
+		const Vec2 clampedPlayerPos{
+			Clamp(gameObjects.player->pos.x, 0.0, maxPlayerX),
+			Clamp(gameObjects.player->pos.y, 0.0, maxPlayerY)
+		};
+
+		const int32 playerAreaX = static_cast<int32>(clampedPlayerPos.x) / Global::windowWidth;
+		const int32 playerAreaY = static_cast<int32>(clampedPlayerPos.y) / Global::windowHeight;
+		Vec2 nextPos{
+			playerAreaX * Global::windowWidth + halfWindowWidth,
+			playerAreaY * Global::windowHeight + halfWindowHeight
+		};
+
+		nextPos.x = Clamp(nextPos.x, halfWindowWidth, Max(halfWindowWidth, Global::stageWidth - halfWindowWidth));
+		nextPos.y = Clamp(nextPos.y, halfWindowHeight, Max(halfWindowHeight, Global::stageHeight - halfWindowHeight));
 		return nextPos;
 	}
 
@@ -631,6 +675,19 @@ namespace Iwanna {
 	//りんご生成と管理配列への追加
 	void StageManager::createCherry(std::shared_ptr<Cherry> cherry) {
 		pendingCherries << cherry;
+	}
+
+	void StageManager::createPlayerWarpEffectCherries(Vec2 centerPos) {
+		const int32 cherryNum = 18;
+		const double cherrySpeed = 4.0;
+		const double deltaDirection = 360.0 / cherryNum;
+
+		for (int32 i = 0; i < cherryNum; ++i) {
+			gameObjects.cherries << std::make_shared<WarpEffectAppleCherry>(
+				centerPos,
+				i * deltaDirection,
+				cherrySpeed);
+		}
 	}
 
 	//外周のブロック配置

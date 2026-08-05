@@ -19,6 +19,7 @@ namespace Global {
 	inline Input inputRight = KeyRight;
 	inline Input inputJump = KeyShift;
 	inline Input inputShoot = KeyZ;
+	inline Input inputWarpMode = KeyX;
 	inline Input inputStart = KeyShift;
 	inline Input inputRestart = KeyR;
 	inline Input inputEscape = KeyQ;
@@ -67,10 +68,13 @@ namespace Global {
 
 	// --- BGM関連 --- ///
 	inline bool doNotStopBgm = false;
+	inline double soundVolume = 1.0;
+	inline bool isFullscreen = false;
 
 	// --- 入手アイテム関連 --- //
 	inline bool prepareGetItem1 = false;
 	inline bool getItem1 = false;
+	inline bool getItem2 = false;
 
 	inline int32 mainBgmNumber = 0;
 	inline int32 mainTextureNumber = 0;
@@ -132,4 +136,19 @@ namespace Global {
 	constexpr int32 startStep_Chapter1 = 0;
 	constexpr int32 startStep_Chapter2 = 840;
 	constexpr int32 startStep_Chapter3 = 1320;
+
+	inline void applyWindowMode() {
+		const Size windowSize{ windowWidth, windowHeight };
+		Scene::SetResizeMode(ResizeMode::Keep);
+		if (isFullscreen) {
+			Window::Resize(windowSize);
+			Scene::Resize(windowSize);
+			Window::SetFullscreen(true);
+		}
+		else {
+			Window::SetFullscreen(false);
+			Window::Resize(windowSize);
+			Scene::Resize(windowSize);
+		}
+	}
 }

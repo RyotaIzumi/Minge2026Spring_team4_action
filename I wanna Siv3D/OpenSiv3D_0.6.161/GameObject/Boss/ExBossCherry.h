@@ -180,7 +180,7 @@ namespace Iwanna {
 
 		void decideAttack();
 
-		void hited() override;
+		void hited(int32 damage = 1) override;
 
 		// ExBossAttack.cppで定義
 		void attack();

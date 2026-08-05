@@ -50,7 +50,7 @@ namespace Iwanna {
 			return;
 		}
 
-		AudioAsset(Sound::BLOCKBREAK).play();
+		Sound::playOneShot(Sound::BLOCKBREAK);
 		isDebris = true;
 		hasCollide = false;
 		isTriggerTrap = false;
@@ -241,7 +241,7 @@ namespace Iwanna {
 		}
 
 		if (triggerID == id && !isBreak) {
-			AudioAsset(Sound::BLOCKBREAK).play();
+			Sound::playOneShot(Sound::BLOCKBREAK);
 			isBreak = true;
 		}
 

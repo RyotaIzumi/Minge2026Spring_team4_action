@@ -1,5 +1,7 @@
 ﻿#include "Spike.h"
 
+#include "../Audio/AudioAsset.h"
+
 namespace Iwanna {
 	Spike::Spike(String typeName, Vec2 startPos, int32 dir) {
 		this->typeName = typeName;
@@ -15,12 +17,18 @@ namespace Iwanna {
 	}
 
 	void Spike::update() {
+		updateDebris();
 	}
 
 	void Spike::trapUpdate(int32 id) {
 	}
 
 	void Spike::draw() const {
+		if (isDebris) {
+			drawDebris();
+			return;
+		}
+
 		if (typeName == U"extra") {
 			const int32 frame = static_cast<int32>(Scene::Time() * 12.0) % 10;
 			double angle = 0.0;
@@ -46,6 +54,70 @@ namespace Iwanna {
 	void Spike::onCollision(GameObject& other) {
 	}
 
+	void Spike::breakAsDebris() {
+		if (isDebris) {
+			return;
+		}
+
+		Sound::playOneShot(Sound::BLOCKBREAK);
+		isDebris = true;
+		canPlayerKill = false;
+		hitBox->setPos(Vec2{ -100000, -100000 });
+		debrisAlpha = 1.0;
+		textureAngle = Random(360.0);
+		direction = Random(200.0, 340.0);
+		speed = Random(3.0, 8.0);
+		debrisRotateSpeed = Random(-12.0, 12.0);
+		calculateSpeed();
+	}
+
+	bool Spike::getIsDebris() const {
+		return isDebris;
+	}
+
+	void Spike::updateDebris() {
+		if (!isDebris) {
+			return;
+		}
+
+		vspeed += debrisGravity;
+		pos.x += hspeed;
+		pos.y += vspeed;
+		textureAngle += debrisRotateSpeed;
+		debrisAlpha = Max(0.0, debrisAlpha - 0.01);
+
+		if (pos.y > Global::stageHeight + side * 4 || pos.x < -side * 4 || pos.x > Global::stageWidth + side * 4) {
+			isDelete = true;
+			isOutOfScreen = true;
+		}
+	}
+
+	void Spike::drawDebris() const {
+		if (typeName == U"extra") {
+			const int32 frame = static_cast<int32>(Scene::Time() * 12.0) % 10;
+			TextureAsset(U"sprSpikeExtra")(frame * side, 0, side, side)
+				.rotated(Math::ToRadians(textureAngle))
+				.drawAt(pos + Vec2{ side / 2.0, side / 2.0 }, ColorF{ 1.0, debrisAlpha });
+			return;
+		}
+
+		const Vec2 center = pos + Vec2{ side / 2.0, side / 2.0 };
+		switch (spriteDirection) {
+		case 0:
+			TextureAsset(U"sprSpikeUp_" + typeName).rotated(Math::ToRadians(textureAngle)).drawAt(center, ColorF{ 1.0, debrisAlpha });
+			break;
+		case 1:
+			TextureAsset(U"sprSpikeLeft_" + typeName).rotated(Math::ToRadians(textureAngle)).drawAt(center, ColorF{ 1.0, debrisAlpha });
+			break;
+		case 2:
+			TextureAsset(U"sprSpikeDown_" + typeName).rotated(Math::ToRadians(textureAngle)).drawAt(center, ColorF{ 1.0, debrisAlpha });
+			break;
+		case 3:
+			TextureAsset(U"sprSpikeRight_" + typeName).rotated(Math::ToRadians(textureAngle)).drawAt(center, ColorF{ 1.0, debrisAlpha });
+			break;
+		}
+	}
+
 	void Spike::checkOutOfScreen() {
 		const int32 excess = side;
 		if (pos.x < -1 * excess || pos.x > Global::stageWidth + excess ||
@@ -68,6 +140,10 @@ namespace Iwanna {
 	}
 
 	void SpikeTrap::trapUpdate(int32 id) {
+		if (getIsDebris()) {
+			return;
+		}
+
 		checkOutOfScreen();
 		if (trapID == id && !isTrapActived) {
 			isTrapActived = true;
@@ -104,6 +180,10 @@ namespace Iwanna {
 	}
 
 	void SpikePathTrap::trapUpdate(int32 id) {
+		if (getIsDebris()) {
+			return;
+		}
+
 		checkOutOfScreen();
 
 		if (trapID == id && !isTrapActived) {
@@ -137,6 +217,11 @@ namespace Iwanna {
 	}
 
 	void AppendSpike::update() {
+		if (getIsDebris()) {
+			Spike::update();
+			return;
+		}
+
 		if (Global::isSecretTriggerActivated) {
 			alpha += 0.02;
 			canPlayerKill = true;
@@ -151,6 +236,11 @@ namespace Iwanna {
 	}
 
 	void DeleteSpike::update() {
+		if (getIsDebris()) {
+			Spike::update();
+			return;
+		}
+
 		if (Global::isSecretTriggerActivated) {
 			alpha -= 0.02;
 			canPlayerKill = false;
@@ -168,6 +258,11 @@ namespace Iwanna {
 	}
 
 	void SpikeUpDown::update() {
+		if (getIsDebris()) {
+			Spike::update();
+			return;
+		}
+
 		switch (moveStep) {
 		case 0:
 			if (moveTimer.sF() >= moveTime) {
@@ -215,6 +310,11 @@ namespace Iwanna {
 	}
 
 	void SpikeLoopMove::update() {
+		if (getIsDebris()) {
+			Spike::update();
+			return;
+		}
+
 		elapsedTime += Scene::DeltaTime();
 
 		while (elapsedTime >= moveTime) {

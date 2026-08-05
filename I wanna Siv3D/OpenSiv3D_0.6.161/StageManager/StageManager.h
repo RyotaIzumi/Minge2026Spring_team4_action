@@ -104,6 +104,7 @@ namespace Iwanna {
 		Vec2 parseIntactPos(const JSON& json);
 
 		void update();
+		void updateBulletSpikeHits();
 		void debug();
 		void draw()
 			;
@@ -122,6 +123,7 @@ namespace Iwanna {
 		std::shared_ptr<SpecialTrap> getWarningWindowTrap();
 
 		void createCherry(std::shared_ptr<Cherry> cherry);
+		void createPlayerWarpEffectCherries(Vec2 centerPos);
 
 		void createPeripheryBlocks();
 		void createFloorBlocks(Vec2 basePos);

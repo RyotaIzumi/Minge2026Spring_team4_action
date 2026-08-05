@@ -1,5 +1,6 @@
 ﻿#include "BossStageManager.h"
 #include "../Audio/AudioAsset.h"
+#include "../MainGameSerializer.h"
 
 namespace Iwanna {
 	BossStageManager::BossStageManager() {
@@ -21,6 +22,7 @@ namespace Iwanna {
 		gameObjects.savePoints.clear();
 		gameObjects.bloods.clear();
 		gameObjects.warps.clear();
+		gameObjects.items.clear();
 
 		// 一部変数の初期化
 		isGenerateBloods = false;
@@ -212,9 +214,11 @@ namespace Iwanna {
 		}
 
 		if (stageName == U"boss") {
+			gameObjects.player->setHp(3);
 			gameObjects.savePoints << std::make_shared<BossSavePoint>(Vec2{400,500},1);
 		}
 		if (stageName == U"bossLow") {
+			gameObjects.player->setHp(1);
 			gameObjects.savePoints << std::make_shared<BossSavePoint>(Vec2{ 400,500 }, 4);
 		}
 		if (stageName == U"ExBoss") {
@@ -232,6 +236,7 @@ namespace Iwanna {
 			}
 		}
 		if (stageName == U"trapBoss") {
+			gameObjects.player->setHp(3);
 			gameObjects.savePoints << std::make_shared<BossSavePoint>(Vec2{ 400,500 }, 3);
 		}
 	}
@@ -256,6 +261,7 @@ namespace Iwanna {
 		auto& savePoints = gameObjects.savePoints;
 		auto& bloods = gameObjects.bloods;
 		auto& warps = gameObjects.warps;
+		auto& items = gameObjects.items;
 
 		//死亡判定
 		if (player->getIsDead()) {
@@ -267,6 +273,7 @@ namespace Iwanna {
 
 		//タイトルカード処理
 		titleCard.update();
+		achive.update();
 
 		// 揺れ更新
 		cameraShake.update();
@@ -293,6 +300,11 @@ namespace Iwanna {
 					Sound::playOneShot(Sound::SHOOT);
 				}
 				player->setIsGenerateBullet(false);
+			}
+
+			if (player->getIsGenerateWarpEffect()) {
+				createPlayerWarpEffectCherries(player->getWarpEffectPos());
+				player->setIsGenerateWarpEffect(false);
 			}
 
 			// 血しぶきの生成
@@ -328,6 +340,8 @@ namespace Iwanna {
 				if (b->isTriggerTrap) {
 					const bool shouldBreakByBossDefeat = (stageName == U"trapBoss")
 						? isTrapBossSecondPhaseDefeated
+						: (stageName == U"boss")
+						? Global::isBossDefeated && Global::getItem2
 						: Global::isBossDefeated;
 					b->trapUpdate(shouldBreakByBossDefeat ? 0 : -1);
 				}
@@ -390,6 +404,10 @@ namespace Iwanna {
 			for (auto& w : warps) {
 				stockNearGameObjects.add(w.get());
 			}
+			for (auto& i : items) {
+				i->update();
+				stockNearGameObjects.add(i.get());
+			}
 
 			//playerの近くのオブジェクトのみを取得して当たり判定確認
 			auto near = stockNearGameObjects.query(player->getBroadRect());
@@ -417,8 +435,12 @@ namespace Iwanna {
 				if (obj == player.get()) continue;
 				player->onCollision(*obj);
 			}
+			updateItem2Pickup();
 
 			player->updateLate();
+
+			//item1取得後の弾丸と針の衝突
+			updateBulletSpikeHits();
 
 			//各弾丸とブロック,セーブポイントとの衝突
 			for (auto& b : bullets) {
@@ -496,7 +518,7 @@ namespace Iwanna {
 
 			//画面外の針を削除
 			spikes.remove_if([](auto&& spike) {
-				return spike->isOutOfScreen;
+				return spike->isOutOfScreen || spike->isDelete;
 			});
 
 			//画面外の血を削除
@@ -512,6 +534,11 @@ namespace Iwanna {
 			//セーブ削除
 			savePoints.remove_if([](auto&& save) {
 				return save->isDelete;
+			});
+
+			//アイテム削除
+			items.remove_if([](auto&& item) {
+				return item->isDelete;
 			});
 
 			//弾丸削除
@@ -750,8 +777,48 @@ namespace Iwanna {
 			if (const auto bulletCircle = bullet->hitBox->getCircle()) {
 				if (bulletCircle->intersects(leftEye) || bulletCircle->intersects(rightEye)) {
 					bullet->isDelete = true;
-					hitTrapBossSecondPhase();
+					hitTrapBossSecondPhase(Global::getItem1 ? 3 : 1);
 				}
+			}
+		}
+	}
+
+	void BossStageManager::updateBulletSpikeHits() {
+		if (!Global::getItem1) {
+			return;
+		}
+
+		for (auto& bullet : gameObjects.bullets) {
+			if (bullet->isDelete || bullet->isOutOfScreen) {
+				continue;
+			}
+
+			for (auto& spike : gameObjects.spikes) {
+				if (spike->isDelete || spike->isOutOfScreen || spike->getIsDebris()) {
+					continue;
+				}
+
+				bullet->onCollision(*spike);
+				if (bullet->isDelete) {
+					break;
+				}
+			}
+		}
+	}
+
+	void BossStageManager::updateItem2Pickup() {
+		if (Global::getItem2) {
+			return;
+		}
+
+		for (auto& item : gameObjects.items) {
+			if (item->getItemType() == ItemType::Warp && item->isPlayerTouching) {
+				Global::getItem2 = true;
+				achive.startShowAchieve(AchieveType::ItemGet_Warp);
+				MainGameSerializer serializer;
+				serializer.SaveCharactersMoraleValue();
+				saveGame();
+				break;
 			}
 		}
 	}
@@ -783,6 +850,7 @@ namespace Iwanna {
 			+ gameObjects.blocks.size()
 			+ gameObjects.savePoints.size()
 			+ gameObjects.warps.size()
+			+ gameObjects.items.size()
 			+ gameObjects.cherries.size()
 			+ gameObjects.bossCherries.size()
 			+ gameObjects.bloods.size()
@@ -794,6 +862,7 @@ namespace Iwanna {
 		for (const auto& b : gameObjects.blocks) drawList << b.get();
 		for (const auto& s : gameObjects.savePoints) drawList << s.get();
 		for (const auto& w : gameObjects.warps) drawList << w.get();
+		for (const auto& i : gameObjects.items) drawList << i.get();
 		for (const auto& c : gameObjects.cherries) drawList << c.get();
 		for (const auto& c : gameObjects.bossCherries) drawList << c.get();
 		for (const auto& b : gameObjects.bloods) drawList << b.get();
@@ -851,7 +920,7 @@ namespace Iwanna {
 			Rect(0, 544, 800, 64).draw(ColorF(Palette::Black));
 		}
 
-		if (Global::getItem1 || stageName == U"ExBoss") {
+		if (stageName == U"boss" || stageName == U"trapBoss" || stageName == U"ExBoss") {
 			int32 nowPlayerHp = gameObjects.player->getHp();
 			for (int i = 0; i < nowPlayerHp; i++) {
 				TextureAsset(U"heart").draw(playerHpBasePos.x + i * hpInterbalX, playerHpBasePos.y);
@@ -859,6 +928,7 @@ namespace Iwanna {
 		}
 
 		drawTrapBossSecondPhaseHp();
+		achive.draw();
 	}
 
 	void BossStageManager::drawTrapBossSecondPhaseIntro() const {
@@ -955,13 +1025,13 @@ namespace Iwanna {
 		FontAsset(U"BossHp")(bossName).draw(textPos, ColorF{ 1.0, 1.0, 1.0 });
 	}
 
-	void BossStageManager::hitTrapBossSecondPhase() {
+	void BossStageManager::hitTrapBossSecondPhase(int32 damage) {
 		if (isTrapBossSecondPhaseDefeated || isTrapBossSecondPhaseDefeatedFall || trapBossSecondPhaseHp <= 0) {
 			return;
 		}
 
 		Sound::playOneShot(Sound::BOSSHIT);
-		--trapBossSecondPhaseHp;
+		trapBossSecondPhaseHp -= Max(1, damage);
 		isTrapBossSecondPhaseEyeHitFlash = true;
 		trapBossSecondPhaseEyeHitFlashStopwatch.restart();
 
@@ -1001,7 +1071,15 @@ namespace Iwanna {
 		gameObjects.bossCherries.remove_if([](const std::shared_ptr<Cherry>& cherry) {
 			return dynamic_cast<BossSubCherry*>(cherry.get()) != nullptr;
 		});
+		if (stageName == U"boss" && !Global::getItem2 && gameObjects.items.isEmpty()) {
+			spawnItem2();
+		}
 		shouldCleanupBossCherryDefeatObjects = false;
+	}
+
+	void BossStageManager::spawnItem2() {
+		const Vec2 itemPixelPos{ 384, 544 };
+		gameObjects.items << std::make_shared<Item>(itemPixelPos / oneTileSize, ItemType::Warp);
 	}
 
 	void BossStageManager::setStep(int32 newStep) {
@@ -1019,25 +1097,33 @@ namespace Iwanna {
 	// カメラの位置をプレイヤーのいるエリアの中心に設定
 	Vec2 BossStageManager::executeCameraPos() {
 		Vec2 nextPos;
+		const double halfWindowWidth = Global::windowWidth / 2.0;
+		const double halfWindowHeight = Global::windowHeight / 2.0;
 
 		if (isExBossCameraLocked) {
 			return exBossLockedCameraCenter;
 		}
 
 		if (Global::isCameraFollowMode) {
-			nextPos.x = static_cast<int32>(gameObjects.player->pos.x);
+			nextPos.x = Clamp(gameObjects.player->pos.x, halfWindowWidth, Max(halfWindowWidth, Global::stageWidth - halfWindowWidth));
 			nextPos.y = Global::stageHeight / 2;
-
-			if (nextPos.x < Global::windowWidth / 2) nextPos.x = Global::windowWidth / 2;
-			else if (nextPos.x > Global::stageWidth - Global::windowWidth / 2) nextPos.x = Global::stageWidth - Global::windowWidth / 2;
 
 			return nextPos;
 		}
 
-		int32 playerAreaX = static_cast<int32>(gameObjects.player->pos.x) / Global::windowWidth;
-		int32 playerAreaY = static_cast<int32>(gameObjects.player->pos.y) / Global::windowHeight;
-		nextPos.x = playerAreaX * Global::windowWidth + Global::windowWidth / 2;
-		nextPos.y = playerAreaY * Global::windowHeight + Global::windowHeight / 2;
+		const double maxPlayerX = Max(0.0, Global::stageWidth - 1.0);
+		const double maxPlayerY = Max(0.0, Global::stageHeight - 1.0);
+		const Vec2 clampedPlayerPos{
+			Clamp(gameObjects.player->pos.x, 0.0, maxPlayerX),
+			Clamp(gameObjects.player->pos.y, 0.0, maxPlayerY)
+		};
+
+		const int32 playerAreaX = static_cast<int32>(clampedPlayerPos.x) / Global::windowWidth;
+		const int32 playerAreaY = static_cast<int32>(clampedPlayerPos.y) / Global::windowHeight;
+		nextPos.x = playerAreaX * Global::windowWidth + halfWindowWidth;
+		nextPos.y = playerAreaY * Global::windowHeight + halfWindowHeight;
+		nextPos.x = Clamp(nextPos.x, halfWindowWidth, Max(halfWindowWidth, Global::stageWidth - halfWindowWidth));
+		nextPos.y = Clamp(nextPos.y, halfWindowHeight, Max(halfWindowHeight, Global::stageHeight - halfWindowHeight));
 		return nextPos;
 	}
 
@@ -1354,6 +1440,19 @@ namespace Iwanna {
 		}
 
 		pendingCherries << cherry;
+	}
+
+	void BossStageManager::createPlayerWarpEffectCherries(Vec2 centerPos) {
+		const int32 cherryNum = 18;
+		const double cherrySpeed = 4.0;
+		const double deltaDirection = 360.0 / cherryNum;
+
+		for (int32 i = 0; i < cherryNum; ++i) {
+			gameObjects.cherries << std::make_shared<WarpEffectAppleCherry>(
+				centerPos,
+				i * deltaDirection,
+				cherrySpeed);
+		}
 	}
 
 	//外周のブロック配置

@@ -43,6 +43,8 @@ namespace Iwanna {
 			registerAudio(TITLECARD, TITLECARD_PATH);
 			registerAudio(ITEM_GET, ITEM_GET_PATH);
 			registerAudio(ACHIEVE, ACHIEVE_PATH);
+			registerAudio(WARP, WARP_PATH);
+			registerAudio(CHANGE, CHANGE_PATH);
 
 			//EXボスSE
 			registerAudio(EXPRO, EXPRO_PATH);
@@ -94,7 +96,7 @@ namespace Iwanna {
 				return;
 			}
 
-			AudioAsset(name).playOneShot();
+			AudioAsset(name).playOneShot(Global::soundVolume);
 		}
 
 		void playOneShot(const String& name, double volume) {
@@ -102,7 +104,7 @@ namespace Iwanna {
 				return;
 			}
 
-			AudioAsset(name).playOneShot(volume);
+			AudioAsset(name).playOneShot(volume * Global::soundVolume);
 		}
 	}
 }

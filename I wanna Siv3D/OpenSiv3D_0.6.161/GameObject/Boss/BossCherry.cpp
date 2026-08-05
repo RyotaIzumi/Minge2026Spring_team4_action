@@ -211,10 +211,10 @@ namespace Iwanna {
 	}
 
 	//ダメージを受けた際の処理
-	void BossCherry::hited() {
+	void BossCherry::hited(int32 damage) {
 		if (hp > 0) {
 			Sound::playOneShot(Sound::BOSSHIT);
-			hp--;
+			hp -= Max(1, damage);
 		}
 
 		if (hp <= 0) {
@@ -536,13 +536,13 @@ namespace Iwanna {
 		FontAsset(U"BossHp")(bossName).draw(textPos, ColorF{ 1.0, 1.0, 1.0, hpBarAlpha });
 	}
 
-	void TayamaBoss::hited() {
+	void TayamaBoss::hited(int32 damage) {
 		if (isMuteki || hp <= 0 || isDefeatedFall) {
 			return;
 		}
 
 		Sound::playOneShot(Sound::BOSSHIT);
-		--hp;
+		hp -= Max(1, damage);
 
 		if (hp <= 0) {
 			Sound::playOneShot(Sound::DEATH);
@@ -575,7 +575,7 @@ namespace Iwanna {
 		isOutOfScreen = false;
 		isDeleteOutOfScreen = false;
 		hasHp = true;
-		maxHp = 25;
+		maxHp = 16;
 		hp = maxHp;
 		hpBarDelay.reset(hp, maxHp);
 		speed = moveSpeed;
@@ -738,13 +738,13 @@ namespace Iwanna {
 		FontAsset(U"BossHp")(bossName).draw(textPos, ColorF{ 1.0, 1.0, 1.0, hpBarAlpha });
 	}
 
-	void LowBossCherry::hited() {
+	void LowBossCherry::hited(int32 damage) {
 		if (isMuteki || hp <= 0 || isDefeatedFall) {
 			return;
 		}
 
 		Sound::playOneShot(Sound::BOSSHIT);
-		--hp;
+		hp -= Max(1, damage);
 
 		if (hp <= 0) {
 			Sound::playOneShot(Sound::DEATH);
