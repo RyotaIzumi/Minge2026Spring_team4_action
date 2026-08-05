@@ -71,6 +71,7 @@ namespace Global {
 	// --- 入手アイテム関連 --- //
 	inline bool prepareGetItem1 = false;
 	inline bool getItem1 = false;
+	inline bool getItem2 = false;
 
 	inline int32 mainBgmNumber = 0;
 	inline int32 mainTextureNumber = 0;

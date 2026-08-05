@@ -24,6 +24,9 @@ void MainGameSerializer::LoadCharactersMoraleValue() {
 	Global::getItem1 = json.contains(U"GetItem1")
 		? json[U"GetItem1"].get<bool>()
 		: false;
+	Global::getItem2 = json.contains(U"GetItem2")
+		? json[U"GetItem2"].get<bool>()
+		: false;
 }
 
 void MainGameSerializer::LoadEndingValue() {
@@ -59,7 +62,7 @@ void MainGameSerializer::defineGlobalStatuses() {
 	}
 	else if (moraleValue2 > 90 && moraleValue2 <= 100)Global::startRoomName = U"trapBoss";
 	else if(moraleValue1 <= 30) Global::startRoomName = U"normal1";
-	else Global::startRoomName = U"secret1";
+	else Global::startRoomName = U"boss";
 
 	// ゲームタイトル
 	if (moraleValue2 > 90 && moraleValue2 <= 100) Window::SetTitle(U"TestPlayGame (Debug Build)");
@@ -84,6 +87,7 @@ void MainGameSerializer::SaveCharactersMoraleValue() {
 	json[U"MoraleValue3"] = Global::moraleValue3;
 	json[U"MoraleValue4"] = Global::moraleValue4;
 	json[U"GetItem1"] = Global::getItem1;
+	json[U"GetItem2"] = Global::getItem2;
 
 	json.save(U"CharactersMoraleValue.json");
 }

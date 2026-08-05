@@ -2,9 +2,10 @@
 #include <SIv3D.hpp>
 #include "../Global.h"
 
-namespace Iwanna {
+	namespace Iwanna {
 	enum class AchieveType {
-		ItemGet_Heart
+		ItemGet_Heart,
+		ItemGet_Warp
 	};
 
 	class Achieve {

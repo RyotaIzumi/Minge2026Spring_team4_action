@@ -1,5 +1,6 @@
 ﻿#include "BossStageManager.h"
 #include "../Audio/AudioAsset.h"
+#include "../MainGameSerializer.h"
 
 namespace Iwanna {
 	BossStageManager::BossStageManager() {
@@ -21,6 +22,7 @@ namespace Iwanna {
 		gameObjects.savePoints.clear();
 		gameObjects.bloods.clear();
 		gameObjects.warps.clear();
+		gameObjects.items.clear();
 
 		// 一部変数の初期化
 		isGenerateBloods = false;
@@ -259,6 +261,7 @@ namespace Iwanna {
 		auto& savePoints = gameObjects.savePoints;
 		auto& bloods = gameObjects.bloods;
 		auto& warps = gameObjects.warps;
+		auto& items = gameObjects.items;
 
 		//死亡判定
 		if (player->getIsDead()) {
@@ -270,6 +273,7 @@ namespace Iwanna {
 
 		//タイトルカード処理
 		titleCard.update();
+		achive.update();
 
 		// 揺れ更新
 		cameraShake.update();
@@ -331,6 +335,8 @@ namespace Iwanna {
 				if (b->isTriggerTrap) {
 					const bool shouldBreakByBossDefeat = (stageName == U"trapBoss")
 						? isTrapBossSecondPhaseDefeated
+						: (stageName == U"boss")
+						? Global::isBossDefeated && Global::getItem2
 						: Global::isBossDefeated;
 					b->trapUpdate(shouldBreakByBossDefeat ? 0 : -1);
 				}
@@ -393,6 +399,10 @@ namespace Iwanna {
 			for (auto& w : warps) {
 				stockNearGameObjects.add(w.get());
 			}
+			for (auto& i : items) {
+				i->update();
+				stockNearGameObjects.add(i.get());
+			}
 
 			//playerの近くのオブジェクトのみを取得して当たり判定確認
 			auto near = stockNearGameObjects.query(player->getBroadRect());
@@ -420,6 +430,7 @@ namespace Iwanna {
 				if (obj == player.get()) continue;
 				player->onCollision(*obj);
 			}
+			updateItem2Pickup();
 
 			player->updateLate();
 
@@ -518,6 +529,11 @@ namespace Iwanna {
 			//セーブ削除
 			savePoints.remove_if([](auto&& save) {
 				return save->isDelete;
+			});
+
+			//アイテム削除
+			items.remove_if([](auto&& item) {
+				return item->isDelete;
 			});
 
 			//弾丸削除
@@ -785,6 +801,23 @@ namespace Iwanna {
 		}
 	}
 
+	void BossStageManager::updateItem2Pickup() {
+		if (Global::getItem2) {
+			return;
+		}
+
+		for (auto& item : gameObjects.items) {
+			if (item->getItemType() == ItemType::Warp && item->isPlayerTouching) {
+				Global::getItem2 = true;
+				achive.startShowAchieve(AchieveType::ItemGet_Warp);
+				MainGameSerializer serializer;
+				serializer.SaveCharactersMoraleValue();
+				saveGame();
+				break;
+			}
+		}
+	}
+
 	void BossStageManager::debug() {
 		auto& player = gameObjects.player;
 
@@ -812,6 +845,7 @@ namespace Iwanna {
 			+ gameObjects.blocks.size()
 			+ gameObjects.savePoints.size()
 			+ gameObjects.warps.size()
+			+ gameObjects.items.size()
 			+ gameObjects.cherries.size()
 			+ gameObjects.bossCherries.size()
 			+ gameObjects.bloods.size()
@@ -823,6 +857,7 @@ namespace Iwanna {
 		for (const auto& b : gameObjects.blocks) drawList << b.get();
 		for (const auto& s : gameObjects.savePoints) drawList << s.get();
 		for (const auto& w : gameObjects.warps) drawList << w.get();
+		for (const auto& i : gameObjects.items) drawList << i.get();
 		for (const auto& c : gameObjects.cherries) drawList << c.get();
 		for (const auto& c : gameObjects.bossCherries) drawList << c.get();
 		for (const auto& b : gameObjects.bloods) drawList << b.get();
@@ -888,6 +923,7 @@ namespace Iwanna {
 		}
 
 		drawTrapBossSecondPhaseHp();
+		achive.draw();
 	}
 
 	void BossStageManager::drawTrapBossSecondPhaseIntro() const {
@@ -1030,7 +1066,15 @@ namespace Iwanna {
 		gameObjects.bossCherries.remove_if([](const std::shared_ptr<Cherry>& cherry) {
 			return dynamic_cast<BossSubCherry*>(cherry.get()) != nullptr;
 		});
+		if (stageName == U"boss" && !Global::getItem2 && gameObjects.items.isEmpty()) {
+			spawnItem2();
+		}
 		shouldCleanupBossCherryDefeatObjects = false;
+	}
+
+	void BossStageManager::spawnItem2() {
+		const Vec2 itemPixelPos{ 384, 544 };
+		gameObjects.items << std::make_shared<Item>(itemPixelPos / oneTileSize, ItemType::Warp);
 	}
 
 	void BossStageManager::setStep(int32 newStep) {

@@ -115,6 +115,9 @@ namespace Iwanna {
 		if (Global::getItem1) {
 			TextureAsset(U"item1").draw(24, Global::windowHeight - 56);
 		}
+		if (Global::getItem2) {
+			TextureAsset(U"item2").draw(64, Global::windowHeight - 56);
+		}
 	}
 
 	void InGame::drawGenerateLoading() const {
