@@ -13,7 +13,8 @@ namespace Iwanna {
 		Fake,
 		ShootThrough,
 		Break,
-		Water
+		Water,
+		VisualOnly
 	};
 
 	class Block : public GameObject {
@@ -118,5 +119,11 @@ namespace Iwanna {
 	class WaterBlock : public Block {
 	public:
 		WaterBlock(String name, Vec2 startPos);
+	};
+
+	class VisualOnlyBlock : public Block {
+	public:
+		VisualOnlyBlock(String name, Vec2 startPos);
+		void breakAsDebris() override;
 	};
 }

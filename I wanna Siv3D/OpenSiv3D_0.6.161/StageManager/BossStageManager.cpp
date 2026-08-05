@@ -123,6 +123,7 @@ namespace Iwanna {
 				// value に応じて配置
 				switch (value) {
 				case 1: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_" + blockQuarity + U"1", pos); break;
+				case 2: gameObjects.blocks << std::make_shared<VisualOnlyBlock>(U"sprBlock_extra4", pos); break;
 				case 6: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_" + blockQuarity + U"2", pos); break;
 				case 7: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_" + blockQuarity + U"3", pos); break;
 				case 21: gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 0); break;
@@ -236,11 +237,11 @@ namespace Iwanna {
 	}
 
 	Vec2 BossStageManager::parsePos(const JSON& json) {
-		return Vec2{ json[0].get<int32>() / oneTileSize, json[1].get<int32>() / oneTileSize };
+		return Vec2{ json[0].get<double>() / oneTileSize, json[1].get<double>() / oneTileSize };
 	}
 
 	Vec2 BossStageManager::parseIntactPos(const JSON& json) {
-		return Vec2{ json[0].get<int32>(), json[1].get<int32>()};
+		return Vec2{ json[0].get<double>(), json[1].get<double>() };
 	}
 
 	void BossStageManager::update() {

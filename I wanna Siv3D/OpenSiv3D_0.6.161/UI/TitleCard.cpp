@@ -109,6 +109,10 @@ namespace Iwanna {
 			titleCardText = U"RYUTA STAGE";
 			titleCardTexture = U"sprTitleCard_ryuta";
 		}
+		if (roomName == U"ExRenoArea") {
+			titleCardText = U"RENO STAGE";
+			titleCardTexture = U"sprTitleCard_reno";
+		}
 		moveStep = 0;
 	}
 

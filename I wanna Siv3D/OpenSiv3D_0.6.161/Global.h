@@ -101,7 +101,8 @@ namespace Global {
 		return roomName == U"ExMiluArea"
 			|| roomName == U"ExMochiArea"
 			|| roomName == U"ExGotArea"
-			|| roomName == U"ExRyutaArea";
+			|| roomName == U"ExRyutaArea"
+			|| roomName == U"ExRenoArea";
 	}
 
 	inline String chooseGenerateStage() {

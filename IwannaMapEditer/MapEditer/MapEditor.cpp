@@ -28,7 +28,7 @@ MapEditor::MapEditor()
 	autoTiles =
 	{
 		AutoTile{ Image{ objectPath + U"sprBlock.png" }, 1 },
-		AutoTile{ Image{ objectPath + U"sprFloor.png" }, 2 },
+		AutoTile{ Image{ objectPath + U"sprBlock_extra4.png" }, 2 },
 		AutoTile{ Image{ objectPath + U"sprFloor2.png" }, 3 },
 		AutoTile{ Image{ objectPath + U"sprFloor3.png" }, 4 },
 		AutoTile{ Image{ objectPath + U"sprFloor4.png" }, 5 },

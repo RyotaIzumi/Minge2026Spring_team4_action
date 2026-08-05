@@ -52,7 +52,8 @@ namespace Iwanna {
 		// 本体（白）
 		FontAsset(U"TitleCard")(signText).drawAt(textBasePos.x, textBasePos.y, ColorF(Palette::Whitesmoke, signAlpha));
 
-		TextureAsset(U"sprSign").draw(pos);
+		const String textureName = (Global::mainTextureNumber == 0) ? U"sprSign_low" : U"sprSign_normal";
+		TextureAsset(textureName).draw(pos);
 	}
 
 	void Sign::onCollision(GameObject& other) {

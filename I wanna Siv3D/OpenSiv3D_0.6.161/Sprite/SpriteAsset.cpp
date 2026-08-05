@@ -58,6 +58,7 @@ namespace Iwanna {
 		registerTexture(U"sprBlock_extra1", BlockPath + U"sprBlock_extra1.png");
 		registerTexture(U"sprBlock_extra2", BlockPath + U"sprBlock_extra2.png");
 		registerTexture(U"sprBlock_extra3", BlockPath + U"sprBlock_extra3.png");
+		registerTexture(U"sprBlock_extra4", BlockPath + U"sprBlock_extra4.png");
 
 		//mikuテクスチャ登録
 		static const FilePath MikuPath = U"Texture/Miku/";
@@ -101,6 +102,8 @@ namespace Iwanna {
 		registerTexture(U"sprSave_low", OtherPath + U"sprSave_low.png");
 		registerTexture(U"sprSave_normal", OtherPath + U"sprSave_normal.png");
 		registerTexture(U"sprWarp", OtherPath + U"sprWarp.png");
+		registerTexture(U"sprWarp_low", OtherPath + U"sprWarp_low.png");
+		registerTexture(U"sprWarp_normal", OtherPath + U"sprWarp_normal.png");
 		registerTexture(U"sprSecretWarp", OtherPath + U"sprSecretWarp.png");
 		registerTexture(U"sprFakeSave", OtherPath + U"sprFakeSave.png");
 		registerTexture(U"warningTrap", OtherPath + U"warningTrap.png");
@@ -115,10 +118,13 @@ namespace Iwanna {
 		registerTexture(U"sprGAMEOVER_normal", OtherPath + U"sprGAMEOVER_normal.png");
 		registerTexture(U"hideLine", OtherPath + U"hideLine.png");
 		registerTexture(U"sprSign", OtherPath + U"sprSign.png");
+		registerTexture(U"sprSign_low", OtherPath + U"sprSign_low.png");
+		registerTexture(U"sprSign_normal", OtherPath + U"sprSign_normal.png");
 		registerTexture(U"heart", OtherPath + U"heart.png");
 		registerTexture(U"achieveFrame", OtherPath + U"achieveFrame.png");
 		registerTexture(U"tayama", OtherPath + U"tayama.png");
 		registerTexture(U"sprExtraLogo", OtherPath + U"sprExtraLogo.png");
+		registerTexture(U"Ryuta_hide", OtherPath + U"ryuta_hide.png");
 		registerTexture(U"sprNameBar_low", OtherPath + U"sprNameBar_low.png");
 		registerTexture(U"sprNameBar_normal", OtherPath + U"sprNameBar_normal.png");
 		registerTexture(U"sprNameBar_trap", OtherPath + U"sprNameBar_trap.png");
@@ -130,6 +136,7 @@ namespace Iwanna {
 		registerTexture(U"sprTitleCard_mochi", OtherPath + U"sprTitleCard_mochi.png");
 		registerTexture(U"sprTitleCard_got", OtherPath + U"sprTitleCard_got.png");
 		registerTexture(U"sprTitleCard_ryuta", OtherPath + U"sprTitleCard_ryuta.png");
+		registerTexture(U"sprTitleCard_reno", OtherPath + U"sprTitleCard_reno.png");
 	}
 
 	void registerTexturesSync() {

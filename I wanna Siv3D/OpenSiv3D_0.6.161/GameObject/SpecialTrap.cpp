@@ -612,4 +612,47 @@ namespace Iwanna {
 		TextureAsset(textureName).scaled(textureScale).drawAt(pos);
 		//hitBox->draw(Palette::Pink);
 	}
+
+	// ----- ExRyutaArea 隠し画像フェード -----
+	RyutaHideTrap::RyutaHideTrap(Vec2 startPos, int32 id) : SpecialTrap(startPos, id) {
+		textureName = U"Ryuta_hide";
+		textureScale = 1.0;
+		textureAlpha = 1.0;
+		hitBox = std::make_shared<RectHitBox>(pos, SizeF{ 1,1 });
+		hitBox->setPos(pos);
+		canPlayerKill = false;
+		isActivated = false;
+		trapStep = 0;
+	}
+
+	void RyutaHideTrap::trapUpdate() {
+		switch (trapStep) {
+		case 0:
+			if (trapID == nowTrapID) {
+				isActivated = true;
+				if (!hasPlayedFadeSound) {
+					Sound::playOneShot(Sound::BLOCKCHANGE);
+					hasPlayedFadeSound = true;
+				}
+				trapStep++;
+			}
+			break;
+		case 1:
+			textureAlpha = Max(0.0, textureAlpha - fadeSpeed);
+			if (textureAlpha <= 0.0) {
+				isDelete = true;
+				trapStep++;
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	void RyutaHideTrap::draw() const {
+		if (textureAlpha > 0.0) {
+			TextureAsset(textureName).scaled(textureScale).draw(pos, ColorF{ 1.0, textureAlpha });
+		}
+		//hitBox->draw(Palette::Pink);
+	}
 }

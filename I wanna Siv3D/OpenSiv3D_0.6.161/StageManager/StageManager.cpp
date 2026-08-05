@@ -20,6 +20,7 @@ namespace Iwanna {
 			if (stageName == U"ExMochiArea") return ColorF{ Palette::Orange };
 			if (stageName == U"ExGotArea") return ColorF{ Palette::Gray };
 			if (stageName == U"ExRyutaArea") return ColorF{ 0.32, 0.62, 1.0 };
+			if (stageName == U"ExRenoArea") return ColorF{ Palette::Yellow };
 			return ColorF{ Palette::White };
 		}
 
@@ -144,11 +145,11 @@ namespace Iwanna {
 	}
 
 	Vec2 StageManager::parsePos(const JSON& json) {
-		return Vec2{ json[0].get<int32>() / oneTileSize, json[1].get<int32>() / oneTileSize };
+		return Vec2{ json[0].get<double>() / oneTileSize, json[1].get<double>() / oneTileSize };
 	}
 
 	Vec2 StageManager::parseIntactPos(const JSON& json) {
-		return Vec2{ json[0].get<int32>(), json[1].get<int32>()};
+		return Vec2{ json[0].get<double>(), json[1].get<double>() };
 	}
 
 	void StageManager::update() {

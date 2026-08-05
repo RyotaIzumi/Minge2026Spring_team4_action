@@ -307,4 +307,15 @@ namespace Iwanna {
 		canPlayerKill = false;
 		hasCollide = false;
 	}
+
+	// ----- 見た目のみのブロック ----- //
+	VisualOnlyBlock::VisualOnlyBlock(String name, Vec2 startPos) : Block(name, startPos) {
+		blockType = BlockType::VisualOnly;
+
+		canPlayerKill = false;
+		hasCollide = false;
+	}
+
+	void VisualOnlyBlock::breakAsDebris() {
+	}
 }
