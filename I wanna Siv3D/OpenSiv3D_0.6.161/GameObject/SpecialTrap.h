@@ -146,4 +146,14 @@ namespace Iwanna {
 		void trapUpdate() override;
 		void draw() const override;
 	};
+
+	class RyutaHideTrap : public SpecialTrap {
+	private:
+		bool hasPlayedFadeSound = false;
+		double fadeSpeed = 0.025;
+	public:
+		RyutaHideTrap(Vec2 startPos, int32 id);
+		void trapUpdate() override;
+		void draw() const override;
+	};
 }

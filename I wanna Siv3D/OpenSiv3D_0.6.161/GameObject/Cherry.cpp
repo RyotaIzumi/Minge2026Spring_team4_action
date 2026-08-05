@@ -316,7 +316,7 @@ namespace Iwanna {
 		case CherryColorType::Green:  startTime = 0.1; break;
 		case CherryColorType::Orange: startTime = 5.0; break;
 		case CherryColorType::Sky:    startTime = 2.2; break;
-		case CherryColorType::Gray:   startTime = 3.0; break;
+		case CherryColorType::Gray:   startTime = 4.0; break;
 		}
 
 		// 攻撃間隔設定

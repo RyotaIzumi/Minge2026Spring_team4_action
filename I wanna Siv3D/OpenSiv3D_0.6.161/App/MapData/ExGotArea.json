@@ -256,15 +256,6 @@
       {
         "gimmikName": "昇降針",
         "gimmikPos": [
-          256.0,
-          224.0
-        ],
-        "value1": 0,
-        "value2": 1.0
-      },
-      {
-        "gimmikName": "昇降針",
-        "gimmikPos": [
           320.0,
           288.0
         ],
@@ -512,6 +503,16 @@
           32.0
         ],
         "value1": 0,
+        "value2": 0.0,
+        "value3": 0.0
+      },
+      {
+        "gimmikName": "罠針_上",
+        "gimmikPos": [
+          256.0,
+          224.0
+        ],
+        "value1": 1000,
         "value2": 0.0,
         "value3": 0.0
       }

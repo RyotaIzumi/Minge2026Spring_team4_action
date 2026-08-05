@@ -99,6 +99,7 @@ namespace Iwanna {
 					// value に応じて配置
 					switch (value) {
 					case 1: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_" + quarity + U"1", pos); break;
+					case 2: gameObjects.blocks << std::make_shared<VisualOnlyBlock>(U"sprBlock_extra4", pos); break;
 					case 6: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_" + quarity + U"2", pos); break;
 					case 7: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_" + quarity + U"3", pos); break;
 					case 21: gameObjects.spikes << std::make_shared<Spike>(spikeTextureType, pos, 0); break;
@@ -403,6 +404,7 @@ namespace Iwanna {
 		if (fileName == U"ExRyutaArea") {
 			const double grayBigCherryScale = 7.0;
 			gameObjects.cherries << std::make_shared<GimmikBigCherry>(Vec2{400,304}, grayBigCherryScale, CherryColorType::Gray, *this);
+			gameObjects.specialTraps << std::make_shared<RyutaHideTrap>(Vec2{ 192,32 }, 1);
 		}
 
 		if (isExtraStage) {

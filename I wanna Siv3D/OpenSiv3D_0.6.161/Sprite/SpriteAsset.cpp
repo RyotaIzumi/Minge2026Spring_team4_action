@@ -58,6 +58,7 @@ namespace Iwanna {
 		registerTexture(U"sprBlock_extra1", BlockPath + U"sprBlock_extra1.png");
 		registerTexture(U"sprBlock_extra2", BlockPath + U"sprBlock_extra2.png");
 		registerTexture(U"sprBlock_extra3", BlockPath + U"sprBlock_extra3.png");
+		registerTexture(U"sprBlock_extra4", BlockPath + U"sprBlock_extra4.png");
 
 		//mikuテクスチャ登録
 		static const FilePath MikuPath = U"Texture/Miku/";
@@ -123,6 +124,7 @@ namespace Iwanna {
 		registerTexture(U"achieveFrame", OtherPath + U"achieveFrame.png");
 		registerTexture(U"tayama", OtherPath + U"tayama.png");
 		registerTexture(U"sprExtraLogo", OtherPath + U"sprExtraLogo.png");
+		registerTexture(U"Ryuta_hide", OtherPath + U"ryuta_hide.png");
 		registerTexture(U"sprNameBar_low", OtherPath + U"sprNameBar_low.png");
 		registerTexture(U"sprNameBar_normal", OtherPath + U"sprNameBar_normal.png");
 		registerTexture(U"sprNameBar_trap", OtherPath + U"sprNameBar_trap.png");
