@@ -44,7 +44,7 @@ void MainGameSerializer::defineGlobalStatuses() {
 
 	// 開始room
 	if (moraleValue1 >= 101 && moraleValue2 >= 101 && moraleValue3 >= 101 && moraleValue4 >= 101) {
-		Global::startRoomName = U"ExMochiArea";
+		Global::startRoomName = U"ExMiluArea";
 	}
 	else if (moraleValue2 >= 90 && moraleValue3 >= 90 && moraleValue4 >= 90) {
 		Global::startRoomName = U"tutorialTrap";
@@ -59,7 +59,7 @@ void MainGameSerializer::defineGlobalStatuses() {
 	}
 	else if (moraleValue2 > 90 && moraleValue2 <= 100)Global::startRoomName = U"trapBoss";
 	else if(moraleValue1 <= 30) Global::startRoomName = U"normal1";
-	else Global::startRoomName = U"tutorial";
+	else Global::startRoomName = U"secret1";
 
 	// ゲームタイトル
 	if (moraleValue2 > 90 && moraleValue2 <= 100) Window::SetTitle(U"TestPlayGame (Debug Build)");

@@ -10,7 +10,7 @@ namespace Iwanna {
 	class Achieve {
 	private:
 		String titleName;
-		Size cardSize{ 224,64 };
+		Size cardSize{ 288,64 };
 		Vec2 startPos, nowPos, cameraPos;
 		double moveRangeY;
 		Timer moveTimer{ 1.2s,StartImmediately::No };

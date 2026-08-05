@@ -23,7 +23,7 @@ namespace Iwanna {
 	}
 
 	void Item::draw() const {
-		TextureAsset(U"heart").draw(pos,ColorF(1.0,alpha));
+		TextureAsset(U"item1").draw(pos,ColorF(1.0,alpha));
 	}
 
 	void Item::onCollision(GameObject& other) {
