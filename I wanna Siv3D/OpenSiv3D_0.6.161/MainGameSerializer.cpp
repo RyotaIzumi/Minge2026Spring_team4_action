@@ -185,7 +185,7 @@ void MainGameSerializer::SaveEndingClearRecord() {
 	if (json.contains(U"eachEndingClearTime")
 		&& json[U"eachEndingClearTime"].contains(endingId)) {
 		const int32 savedClearTime = json[U"eachEndingClearTime"][endingId].get<int32>();
-		shouldUpdateRecord = (savedClearTime < 0 || clearTime < savedClearTime);
+		shouldUpdateRecord = (savedClearTime <= 0 || clearTime < savedClearTime);
 	}
 
 	if (shouldUpdateRecord) {
