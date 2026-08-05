@@ -236,11 +236,11 @@ namespace Iwanna {
 	}
 
 	Vec2 BossStageManager::parsePos(const JSON& json) {
-		return Vec2{ json[0].get<int32>() / oneTileSize, json[1].get<int32>() / oneTileSize };
+		return Vec2{ json[0].get<double>() / oneTileSize, json[1].get<double>() / oneTileSize };
 	}
 
 	Vec2 BossStageManager::parseIntactPos(const JSON& json) {
-		return Vec2{ json[0].get<int32>(), json[1].get<int32>()};
+		return Vec2{ json[0].get<double>(), json[1].get<double>() };
 	}
 
 	void BossStageManager::update() {
