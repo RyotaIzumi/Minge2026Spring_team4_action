@@ -27,6 +27,7 @@ namespace Iwanna {
 
 		bool playGameoverBgmOne = true;
 		double bossLowBgmVolume = 0.7;
+		double currentBgmBaseVolume = 1.0;
 
 	public:
 		MainGame();
@@ -40,6 +41,7 @@ namespace Iwanna {
 
 		void playBgm(String, double volume = 1.0);
 		void playGameoverBgm();
+		void applySoundVolume();
 		void stopBgm();
 
 		void pauseBgm();

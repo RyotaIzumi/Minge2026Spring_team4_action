@@ -29,6 +29,19 @@ void MainGameSerializer::LoadCharactersMoraleValue() {
 		: false;
 }
 
+void MainGameSerializer::LoadGameSettings() {
+	const JSON json = JSON::Load(U"GameSettings.json");
+
+	if (!json) {
+		Global::soundVolume = 1.0;
+		return;
+	}
+
+	Global::soundVolume = json.contains(U"SoundVolume")
+		? Clamp(json[U"SoundVolume"].get<double>(), 0.0, 1.0)
+		: 1.0;
+}
+
 void MainGameSerializer::LoadEndingValue() {
 	const JSON json = JSON::Load(U"EndingValue.json");
 
@@ -90,6 +103,14 @@ void MainGameSerializer::SaveCharactersMoraleValue() {
 	json[U"GetItem2"] = Global::getItem2;
 
 	json.save(U"CharactersMoraleValue.json");
+}
+
+void MainGameSerializer::SaveGameSettings() {
+	JSON json;
+
+	json[U"SoundVolume"] = Clamp(Global::soundVolume, 0.0, 1.0);
+
+	json.save(U"GameSettings.json");
 }
 
 // エンディング種類値を保存する処理をここに実装

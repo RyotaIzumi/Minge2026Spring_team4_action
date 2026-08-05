@@ -96,7 +96,7 @@ namespace Iwanna {
 				return;
 			}
 
-			AudioAsset(name).playOneShot();
+			AudioAsset(name).playOneShot(Global::soundVolume);
 		}
 
 		void playOneShot(const String& name, double volume) {
@@ -104,7 +104,7 @@ namespace Iwanna {
 				return;
 			}
 
-			AudioAsset(name).playOneShot(volume);
+			AudioAsset(name).playOneShot(volume * Global::soundVolume);
 		}
 	}
 }

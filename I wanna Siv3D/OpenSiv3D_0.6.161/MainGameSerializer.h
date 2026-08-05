@@ -13,8 +13,10 @@ public:
     ~MainGameSerializer();
 
 	void LoadCharactersMoraleValue();
+	void LoadGameSettings();
 	void LoadEndingValue();
 	void defineGlobalStatuses();
 	void SaveCharactersMoraleValue();
+	void SaveGameSettings();
     void SaveEndingValue();
 };

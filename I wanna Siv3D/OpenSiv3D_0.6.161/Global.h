@@ -68,6 +68,7 @@ namespace Global {
 
 	// --- BGM関連 --- ///
 	inline bool doNotStopBgm = false;
+	inline double soundVolume = 1.0;
 
 	// --- 入手アイテム関連 --- //
 	inline bool prepareGetItem1 = false;

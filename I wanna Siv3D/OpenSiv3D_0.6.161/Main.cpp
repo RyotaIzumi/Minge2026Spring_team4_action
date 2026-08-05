@@ -37,6 +37,7 @@ void Main()
 	app.init(Iwanna::SceneType::LOADING, 0s);
 
 	mainGameSerializer.LoadCharactersMoraleValue();
+	mainGameSerializer.LoadGameSettings();
 	mainGameSerializer.LoadEndingValue();
 	mainGameSerializer.defineGlobalStatuses();
 	Global::elapsedPlayTime = 0.0;
@@ -48,5 +49,6 @@ void Main()
 		}
 	}
 	mainGameSerializer.SaveCharactersMoraleValue();
+	mainGameSerializer.SaveGameSettings();
 	mainGameSerializer.SaveEndingValue();
 }

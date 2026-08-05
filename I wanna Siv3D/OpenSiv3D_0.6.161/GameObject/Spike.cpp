@@ -59,7 +59,7 @@ namespace Iwanna {
 			return;
 		}
 
-		AudioAsset(Sound::BLOCKBREAK).play();
+		Sound::playOneShot(Sound::BLOCKBREAK);
 		isDebris = true;
 		canPlayerKill = false;
 		hitBox->setPos(Vec2{ -100000, -100000 });

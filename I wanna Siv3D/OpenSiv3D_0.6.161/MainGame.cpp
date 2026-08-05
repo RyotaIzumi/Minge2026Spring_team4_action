@@ -242,7 +242,8 @@ namespace Iwanna {
 		
 		audio = AudioAsset{bgm};
 		nowSoundName = bgm;
-		audio.setVolume(volume);
+		currentBgmBaseVolume = volume;
+		audio.setVolume(currentBgmBaseVolume * Global::soundVolume);
 		/*
 		SecondsF startTime = 0.0s;
 		int32 startStep = 0;
@@ -265,7 +266,13 @@ namespace Iwanna {
 	void MainGame::playGameoverBgm() {
 		pauseBgm();
 		gameoverAudio = AudioAsset{ U"gameover_normal" };
+		gameoverAudio.setVolume(Global::soundVolume);
 		if(!gameoverAudio.isPlaying()) gameoverAudio.play();
+	}
+
+	void MainGame::applySoundVolume() {
+		audio.setVolume(currentBgmBaseVolume * Global::soundVolume);
+		gameoverAudio.setVolume(Global::soundVolume);
 	}
 
 	void MainGame::stopBgm() {

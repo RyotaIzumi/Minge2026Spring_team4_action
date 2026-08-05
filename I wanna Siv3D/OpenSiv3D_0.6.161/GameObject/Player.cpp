@@ -292,7 +292,7 @@ namespace Iwanna {
 					auto* fakeBlock = dynamic_cast<FakeBlock*>(&other);
 					if (!fakeBlock->getIsHidden()) {
 						fakeBlock->setIsHidden(true);
-						AudioAsset(Sound::BLOCKCHANGE).play();
+						Sound::playOneShot(Sound::BLOCKCHANGE);
 					}
 				}
 				else if (block->blockType == BlockType::Water) {//水ブロック
