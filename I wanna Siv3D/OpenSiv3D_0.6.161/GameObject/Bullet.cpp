@@ -35,7 +35,7 @@ namespace Iwanna {
 	}
 
 	void Bullet::draw() const {
-		TextureAsset(Global::getItem1 ? U"sprBullet2" : U"sprBullet").drawAt(pos.x, pos.y);
+		TextureAsset(Global::canUseItem1Effect() ? U"sprBullet2" : U"sprBullet").drawAt(pos.x, pos.y);
 		//hitBox->draw(Palette::Blue);//判定の可視化
 	}
 
@@ -54,7 +54,7 @@ namespace Iwanna {
 		}
 
 		// item1取得後は針を破壊できる
-		if (!isDelete && Global::getItem1 && other.type == ObjectType::Spike) {
+		if (!isDelete && Global::canUseItem1Effect() && other.type == ObjectType::Spike) {
 			auto* spike = dynamic_cast<Spike*>(&other);
 			if (!spike->getIsDebris() && hitsSpike(*spike)) {
 				spike->breakAsDebris();
@@ -66,7 +66,7 @@ namespace Iwanna {
 		if (this->intersects(other) && other.type == ObjectType::Cherry) {
 			auto* cherry = dynamic_cast<Cherry*>(&other);
 			if (cherry->getHasHp()) {
-				if(!cherry->getIsMuteki()) cherry->hited(Global::getItem1 ? 3 : 1);
+				if(!cherry->getIsMuteki()) cherry->hited(Global::canUseItem1Effect() ? 3 : 1);
 				isDelete = true;
 			}
 		}

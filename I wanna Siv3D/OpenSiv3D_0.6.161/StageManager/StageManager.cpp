@@ -477,7 +477,7 @@ namespace Iwanna {
 	}
 
 	void StageManager::updateBulletSpikeHits() {
-		if (!Global::getItem1) {
+		if (!Global::canUseItem1Effect()) {
 			return;
 		}
 

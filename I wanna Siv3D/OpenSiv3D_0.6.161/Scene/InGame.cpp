@@ -16,6 +16,13 @@ namespace Iwanna {
 		String getEndingLetter() {
 			return String{ static_cast<char32>(U'A' + Clamp(Global::endingValue, 0, 9)) };
 		}
+
+		void drawItemIconWithBlockedMark(const String& textureName, const Vec2& pos) {
+			TextureAsset(textureName).draw(pos);
+			if (Global::isItemEffectBlockedRoute()) {
+				TextureAsset(U"batu").resized(32, 32).draw(pos);
+			}
+		}
 	}
 
 	InGame::InGame(const InitData& data) : IScene(data) {
@@ -121,10 +128,10 @@ namespace Iwanna {
 		Global::soundVolume = Clamp(Global::soundVolume, 0.0, 1.0);
 
 		if (Global::getItem1) {
-			TextureAsset(U"item1").draw(24, Global::windowHeight - 56);
+			drawItemIconWithBlockedMark(U"item1", Vec2{ 24, Global::windowHeight - 56 });
 		}
 		if (Global::getItem2) {
-			TextureAsset(U"item2").draw(64, Global::windowHeight - 56);
+			drawItemIconWithBlockedMark(U"item2", Vec2{ 64, Global::windowHeight - 56 });
 		}
 	}
 

@@ -109,6 +109,18 @@ namespace Global {
 			|| roomName == U"ExRenoArea";
 	}
 
+	inline bool isItemEffectBlockedRoute() {
+		return startRoomName == U"tutorialTrap" || isExtraStage(startRoomName);
+	}
+
+	inline bool canUseItem1Effect() {
+		return getItem1 && !isItemEffectBlockedRoute();
+	}
+
+	inline bool canUseItem2Effect() {
+		return getItem2 && !isItemEffectBlockedRoute();
+	}
+
 	inline String chooseGenerateStage() {
 		if (remainingGenerateStageNames.isEmpty()) {
 			remainingGenerateStageNames = generateStageNames;

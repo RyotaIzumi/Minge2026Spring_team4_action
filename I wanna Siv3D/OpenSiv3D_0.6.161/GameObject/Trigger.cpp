@@ -67,7 +67,7 @@ namespace Iwanna {
 	}
 
 	void SecretTrigger::triggerActivate() {
-		if (Global::nowRoomName == U"normal4" && Global::getItem1) {
+		if (Global::nowRoomName == U"normal4" && Global::canUseItem1Effect()) {
 			return;
 		}
 

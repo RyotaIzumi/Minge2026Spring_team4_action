@@ -341,7 +341,7 @@ namespace Iwanna {
 					const bool shouldBreakByBossDefeat = (stageName == U"trapBoss")
 						? isTrapBossSecondPhaseDefeated
 						: (stageName == U"boss")
-						? Global::isBossDefeated && Global::getItem2
+						? Global::isBossDefeated && Global::canUseItem2Effect()
 						: Global::isBossDefeated;
 					b->trapUpdate(shouldBreakByBossDefeat ? 0 : -1);
 				}
@@ -777,14 +777,14 @@ namespace Iwanna {
 			if (const auto bulletCircle = bullet->hitBox->getCircle()) {
 				if (bulletCircle->intersects(leftEye) || bulletCircle->intersects(rightEye)) {
 					bullet->isDelete = true;
-					hitTrapBossSecondPhase(Global::getItem1 ? 3 : 1);
+					hitTrapBossSecondPhase(Global::canUseItem1Effect() ? 3 : 1);
 				}
 			}
 		}
 	}
 
 	void BossStageManager::updateBulletSpikeHits() {
-		if (!Global::getItem1) {
+		if (!Global::canUseItem1Effect()) {
 			return;
 		}
 

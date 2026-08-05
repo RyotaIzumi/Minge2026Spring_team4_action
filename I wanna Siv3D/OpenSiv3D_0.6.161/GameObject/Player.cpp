@@ -76,11 +76,11 @@ namespace Iwanna {
 		if (isDead) return;
 
 		if (!Global::isPlayerFrozen) {
-			if (Global::getItem2 && Global::inputWarpMode.down()) {
+			if (Global::canUseItem2Effect() && Global::inputWarpMode.down()) {
 				isWarpMode = !isWarpMode;
 				Sound::playOneShot(Sound::CHANGE);
 			}
-			if (!Global::getItem2) {
+			if (!Global::canUseItem2Effect()) {
 				isWarpMode = false;
 			}
 			if (Global::inputLeft.pressed()) playerMoveLeft();
@@ -145,7 +145,7 @@ namespace Iwanna {
 		TextureRegion texture = spriteSystem.getTextureRegion(direction);
 		if(!isDead)texture.scaled(1.0).drawAt(pos.x,pos.y - 3, ColorF(1.0, isMuteki ? 0.5 : 1.0));
 		else texture.scaled(1.0).drawAt(pos.x, pos.y - 3, ColorF(0.8,0,0,0.8));
-		if (!isDead && Global::getItem2 && isWarpMode) {
+		if (!isDead && Global::canUseItem2Effect() && isWarpMode) {
 			TextureAsset(U"item2").draw(getItem2WarpIconPos(), ColorF{ 1.0, canUseItem2Warp() ? 0.65 : 0.25 });
 		}
 		//hitBox->draw(ColorF(Palette::Red,0.6));
@@ -186,7 +186,7 @@ namespace Iwanna {
 	}
 
 	void Player::playerShoot() {
-		if (Global::getItem2 && isWarpMode) {
+		if (Global::canUseItem2Effect() && isWarpMode) {
 			if (canUseItem2Warp()) {
 				useItem2Warp();
 			}
@@ -197,7 +197,7 @@ namespace Iwanna {
 	}
 
 	bool Player::canUseItem2Warp() const {
-		return Global::getItem2 && isWarpMode && (isOnGround || !usedWarpInAir);
+		return Global::canUseItem2Effect() && isWarpMode && (isOnGround || !usedWarpInAir);
 	}
 
 	Vec2 Player::getItem2WarpIconPos() const {
