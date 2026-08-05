@@ -575,7 +575,7 @@ namespace Iwanna {
 		isOutOfScreen = false;
 		isDeleteOutOfScreen = false;
 		hasHp = true;
-		maxHp = 25;
+		maxHp = 16;
 		hp = maxHp;
 		hpBarDelay.reset(hp, maxHp);
 		speed = moveSpeed;

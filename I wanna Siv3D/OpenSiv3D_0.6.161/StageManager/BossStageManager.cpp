@@ -212,9 +212,11 @@ namespace Iwanna {
 		}
 
 		if (stageName == U"boss") {
+			gameObjects.player->setHp(3);
 			gameObjects.savePoints << std::make_shared<BossSavePoint>(Vec2{400,500},1);
 		}
 		if (stageName == U"bossLow") {
+			gameObjects.player->setHp(1);
 			gameObjects.savePoints << std::make_shared<BossSavePoint>(Vec2{ 400,500 }, 4);
 		}
 		if (stageName == U"ExBoss") {
@@ -232,6 +234,7 @@ namespace Iwanna {
 			}
 		}
 		if (stageName == U"trapBoss") {
+			gameObjects.player->setHp(3);
 			gameObjects.savePoints << std::make_shared<BossSavePoint>(Vec2{ 400,500 }, 3);
 		}
 	}
@@ -851,7 +854,7 @@ namespace Iwanna {
 			Rect(0, 544, 800, 64).draw(ColorF(Palette::Black));
 		}
 
-		if (Global::getItem1 || stageName == U"ExBoss") {
+		if (stageName == U"boss" || stageName == U"trapBoss" || stageName == U"ExBoss") {
 			int32 nowPlayerHp = gameObjects.player->getHp();
 			for (int i = 0; i < nowPlayerHp; i++) {
 				TextureAsset(U"heart").draw(playerHpBasePos.x + i * hpInterbalX, playerHpBasePos.y);

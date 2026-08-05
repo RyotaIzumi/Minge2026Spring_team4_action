@@ -113,7 +113,7 @@ namespace Iwanna {
 		FontAsset(U"BossHp")(timeText).drawAt(400, 438, ColorF{ 1.0, 1.0, 1.0 });
 
 		if (Global::getItem1) {
-			TextureAsset(U"heart").draw(24, Global::windowHeight - 56);
+			TextureAsset(U"item1").draw(24, Global::windowHeight - 56);
 		}
 	}
 
