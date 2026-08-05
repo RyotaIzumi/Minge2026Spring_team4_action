@@ -130,6 +130,7 @@ namespace Iwanna {
 		registerTexture(U"sprTitleCard_mochi", OtherPath + U"sprTitleCard_mochi.png");
 		registerTexture(U"sprTitleCard_got", OtherPath + U"sprTitleCard_got.png");
 		registerTexture(U"sprTitleCard_ryuta", OtherPath + U"sprTitleCard_ryuta.png");
+		registerTexture(U"sprTitleCard_reno", OtherPath + U"sprTitleCard_reno.png");
 	}
 
 	void registerTexturesSync() {

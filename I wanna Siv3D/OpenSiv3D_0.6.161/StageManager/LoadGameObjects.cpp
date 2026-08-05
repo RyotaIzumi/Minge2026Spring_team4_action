@@ -7,6 +7,7 @@ namespace Iwanna {
 			if (fileName == U"ExMochiArea") return CherryColorType::Orange;
 			if (fileName == U"ExGotArea") return CherryColorType::Gray;
 			if (fileName == U"ExRyutaArea") return CherryColorType::Sky;
+			if (fileName == U"ExRenoArea") return CherryColorType::Yellow;
 			return CherryColorType::None;
 		}
 
@@ -15,6 +16,7 @@ namespace Iwanna {
 			if (fileName == U"ExMochiArea") return ColorF{ Palette::Orange };
 			if (fileName == U"ExGotArea") return ColorF{ Palette::Gray };
 			if (fileName == U"ExRyutaArea") return ColorF{ 0.32, 0.62, 1.0 };
+			if (fileName == U"ExRenoArea") return ColorF{ Palette::Yellow };
 			return ColorF{ Palette::White };
 		}
 

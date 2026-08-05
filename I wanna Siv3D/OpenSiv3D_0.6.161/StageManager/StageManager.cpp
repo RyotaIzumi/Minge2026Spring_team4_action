@@ -20,6 +20,7 @@ namespace Iwanna {
 			if (stageName == U"ExMochiArea") return ColorF{ Palette::Orange };
 			if (stageName == U"ExGotArea") return ColorF{ Palette::Gray };
 			if (stageName == U"ExRyutaArea") return ColorF{ 0.32, 0.62, 1.0 };
+			if (stageName == U"ExRenoArea") return ColorF{ Palette::Yellow };
 			return ColorF{ Palette::White };
 		}
 
