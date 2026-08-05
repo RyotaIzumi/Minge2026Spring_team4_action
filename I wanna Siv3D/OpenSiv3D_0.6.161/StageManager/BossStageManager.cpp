@@ -302,6 +302,11 @@ namespace Iwanna {
 				player->setIsGenerateBullet(false);
 			}
 
+			if (player->getIsGenerateWarpEffect()) {
+				createPlayerWarpEffectCherries(player->getWarpEffectPos());
+				player->setIsGenerateWarpEffect(false);
+			}
+
 			// 血しぶきの生成
 			if (player->getIsDead() && !isGenerateBloods) {
 				double circleNum = 2;
@@ -1427,6 +1432,19 @@ namespace Iwanna {
 		}
 
 		pendingCherries << cherry;
+	}
+
+	void BossStageManager::createPlayerWarpEffectCherries(Vec2 centerPos) {
+		const int32 cherryNum = 18;
+		const double cherrySpeed = 4.0;
+		const double deltaDirection = 360.0 / cherryNum;
+
+		for (int32 i = 0; i < cherryNum; ++i) {
+			gameObjects.cherries << std::make_shared<WarpEffectAppleCherry>(
+				centerPos,
+				i * deltaDirection,
+				cherrySpeed);
+		}
 	}
 
 	//外周のブロック配置

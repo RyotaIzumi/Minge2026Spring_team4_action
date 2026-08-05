@@ -19,6 +19,7 @@ namespace Global {
 	inline Input inputRight = KeyRight;
 	inline Input inputJump = KeyShift;
 	inline Input inputShoot = KeyZ;
+	inline Input inputWarpMode = KeyX;
 	inline Input inputStart = KeyShift;
 	inline Input inputRestart = KeyR;
 	inline Input inputEscape = KeyQ;

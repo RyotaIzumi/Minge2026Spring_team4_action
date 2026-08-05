@@ -43,6 +43,7 @@ namespace Iwanna {
 			registerAudio(TITLECARD, TITLECARD_PATH);
 			registerAudio(ITEM_GET, ITEM_GET_PATH);
 			registerAudio(ACHIEVE, ACHIEVE_PATH);
+			registerAudio(WARP, WARP_PATH);
 
 			//EXボスSE
 			registerAudio(EXPRO, EXPRO_PATH);

@@ -17,6 +17,10 @@ namespace Iwanna {
 		bool roomOutTrue = false;//kid君をroom外にいけるようにする
 		bool isDead = false; //死亡状態かどうか
 		bool isGenerateBullet = false; //弾生成フラグ
+		bool isWarpMode = false;
+		bool usedWarpInAir = false;
+		bool isGenerateWarpEffect = false;
+		Vec2 warpEffectPos{ 0, 0 };
 		bool isOutOfScreen = false;//画面外判定用フラグ
 
 		//hp関連
@@ -52,6 +56,9 @@ namespace Iwanna {
 		void playerJump();
 		void playerVJump();
 		void playerShoot();
+		bool canUseItem2Warp() const;
+		Vec2 getItem2WarpIconPos() const;
+		void useItem2Warp();
 		void playerHited();
 		void playerDead();
 
@@ -63,6 +70,9 @@ namespace Iwanna {
 
 		void setIsGenerateBullet(bool value);
 		bool getIsGenerateBullet() const;
+		void setIsGenerateWarpEffect(bool value);
+		bool getIsGenerateWarpEffect() const;
+		Vec2 getWarpEffectPos() const;
 		Global::Direction getDirection() const;
 		void setIsMuteki(bool value);
 		bool getIsMuteki() const;

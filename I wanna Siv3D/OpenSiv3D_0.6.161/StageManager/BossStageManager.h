@@ -289,6 +289,7 @@ namespace Iwanna {
 		String getStageName() const;
 
 		void createCherry(std::shared_ptr<Cherry> cherry);
+		void createPlayerWarpEffectCherries(Vec2 centerPos);
 
 		void createPeripheryBlocks();
 		void createFloorBlocks(Vec2 basePos);

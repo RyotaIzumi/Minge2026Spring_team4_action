@@ -134,6 +134,17 @@ namespace Iwanna {
 		void barrageUpdate() override;
 	};
 
+	class WarpEffectAppleCherry : public Cherry {
+	private:
+		bool isFading = false;
+		double deceleration = 0.12;
+		double fadeSpeed = 0.04;
+	public:
+		WarpEffectAppleCherry(Vec2 startPos, double dir, double spd, double scale = 0.45);
+
+		void barrageUpdate() override;
+	};
+
 	class BarrageGimmikBlueCherry : public BarrageCherry {
 	public:
 		BarrageGimmikBlueCherry(Vec2 startPos, double scale, CherryColorType colorType);

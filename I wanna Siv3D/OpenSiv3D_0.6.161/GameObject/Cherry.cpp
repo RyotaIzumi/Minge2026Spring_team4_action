@@ -397,6 +397,47 @@ namespace Iwanna {
 	void BarrageCherry::barrageUpdate() {
 	}
 
+	// ----- ワープ演出用の当たり判定なしりんご ----- //
+	WarpEffectAppleCherry::WarpEffectAppleCherry(Vec2 startPos, double dir, double spd, double scale)
+		: Cherry(startPos, scale) {
+
+		pos = startPos;
+		scaleMag = scale;
+		hitBox = std::make_shared<CircleHitBox>(pos, 0.0);
+		cherryType = CherryType::Barrage;
+		cherryColorType = CherryColorType::None;
+
+		canPlayerKill = false;
+		isDelete = false;
+		isOutOfScreen = false;
+		isDeleteOutOfScreen = false;
+		hasHp = false;
+
+		alpha = 0.45;
+		speed = spd;
+		direction = dir;
+		gravity = 0.0;
+		hasAnimation = true;
+		cherryTextureName = U"sprCherryLowWhite";
+	}
+
+	void WarpEffectAppleCherry::barrageUpdate() {
+		if (!isFading) {
+			speed = Max(0.0, speed - deceleration);
+			if (speed <= 0.0) {
+				hspeed = 0.0;
+				vspeed = 0.0;
+				isFading = true;
+			}
+			return;
+		}
+
+		alpha = Max(0.0, alpha - fadeSpeed);
+		if (alpha <= 0.0) {
+			isDelete = true;
+		}
+	}
+
 	// ----- 弾幕用青りんご ----- //
 	BarrageGimmikBlueCherry::BarrageGimmikBlueCherry(Vec2 startPos, double scale, CherryColorType colorType) : BarrageCherry(startPos, scale, colorType) {
 

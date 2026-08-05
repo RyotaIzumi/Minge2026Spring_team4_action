@@ -54,6 +54,8 @@ namespace Iwanna {
 		static const String ITEM_GET_PATH = SE_PATH + ITEM_GET + U".wav";
 		static const String ACHIEVE = U"sndAchieve";
 		static const String ACHIEVE_PATH = SE_PATH + ACHIEVE + U".wav";
+		static const String WARP = U"sndWarp";
+		static const String WARP_PATH = SE_PATH + WARP + U".mp3";
 
 		//EXボスSE
 		static const String EXPRO= U"sndExpro";
