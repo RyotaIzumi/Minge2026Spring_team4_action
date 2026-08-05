@@ -198,10 +198,10 @@ namespace Iwanna {
 	}
 
 	//ダメージを受けた際の処理
-	void Cherry::hited() {
+	void Cherry::hited(int32 damage) {
 		if (hp > 0) {
 			Sound::playOneShot(Sound::BOSSHIT);
-			hp--;
+			hp -= Max(1, damage);
 		}
 
 		if (hp <= 0) {

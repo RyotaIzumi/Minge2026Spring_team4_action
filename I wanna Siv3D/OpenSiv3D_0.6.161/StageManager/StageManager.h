@@ -104,6 +104,7 @@ namespace Iwanna {
 		Vec2 parseIntactPos(const JSON& json);
 
 		void update();
+		void updateBulletSpikeHits();
 		void debug();
 		void draw()
 			;

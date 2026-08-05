@@ -423,6 +423,9 @@ namespace Iwanna {
 
 			player->updateLate();
 
+			//item1取得後の弾丸と針の衝突
+			updateBulletSpikeHits();
+
 			//各弾丸とブロック,セーブポイントとの衝突
 			for (auto& b : bullets) {
 				auto nearObjs = stockBulletsNearGameObjects.query(b->getBroadRect());
@@ -499,7 +502,7 @@ namespace Iwanna {
 
 			//画面外の針を削除
 			spikes.remove_if([](auto&& spike) {
-				return spike->isOutOfScreen;
+				return spike->isOutOfScreen || spike->isDelete;
 			});
 
 			//画面外の血を削除
@@ -753,7 +756,30 @@ namespace Iwanna {
 			if (const auto bulletCircle = bullet->hitBox->getCircle()) {
 				if (bulletCircle->intersects(leftEye) || bulletCircle->intersects(rightEye)) {
 					bullet->isDelete = true;
-					hitTrapBossSecondPhase();
+					hitTrapBossSecondPhase(Global::getItem1 ? 3 : 1);
+				}
+			}
+		}
+	}
+
+	void BossStageManager::updateBulletSpikeHits() {
+		if (!Global::getItem1) {
+			return;
+		}
+
+		for (auto& bullet : gameObjects.bullets) {
+			if (bullet->isDelete || bullet->isOutOfScreen) {
+				continue;
+			}
+
+			for (auto& spike : gameObjects.spikes) {
+				if (spike->isDelete || spike->isOutOfScreen || spike->getIsDebris()) {
+					continue;
+				}
+
+				bullet->onCollision(*spike);
+				if (bullet->isDelete) {
+					break;
 				}
 			}
 		}
@@ -958,13 +984,13 @@ namespace Iwanna {
 		FontAsset(U"BossHp")(bossName).draw(textPos, ColorF{ 1.0, 1.0, 1.0 });
 	}
 
-	void BossStageManager::hitTrapBossSecondPhase() {
+	void BossStageManager::hitTrapBossSecondPhase(int32 damage) {
 		if (isTrapBossSecondPhaseDefeated || isTrapBossSecondPhaseDefeatedFall || trapBossSecondPhaseHp <= 0) {
 			return;
 		}
 
 		Sound::playOneShot(Sound::BOSSHIT);
-		--trapBossSecondPhaseHp;
+		trapBossSecondPhaseHp -= Max(1, damage);
 		isTrapBossSecondPhaseEyeHitFlash = true;
 		trapBossSecondPhaseEyeHitFlashStopwatch.restart();
 

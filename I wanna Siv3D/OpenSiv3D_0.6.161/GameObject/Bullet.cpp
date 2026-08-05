@@ -3,12 +3,14 @@
 #include "../GameObject/SavePoint.h"
 #include "../GameObject/Block.h"
 #include "../GameObject/Cherry.h"
+#include "../GameObject/Spike.h"
 
 namespace Iwanna {
 	Bullet::Bullet(Vec2& genePos, double hs, Player* owner) : ownerPlayer(owner) {
 
 		//GameObject.hの値初期化
 		pos = genePos;
+		prevPos = pos;
 		hitBox = std::make_shared<CircleHitBox>(pos, hitBoxSize);
 		type = ObjectType::Bullet;
 		canPlayerKill = false;
@@ -24,6 +26,7 @@ namespace Iwanna {
 	void Bullet::update() {
 		checkOutOfScreen();
 		// 位置更新
+		prevPos = pos;
 		pos.x += hspeed;
 		pos.y += vspeed;
 		
@@ -32,7 +35,7 @@ namespace Iwanna {
 	}
 
 	void Bullet::draw() const {
-		TextureAsset(U"sprBullet").drawAt(pos.x, pos.y);
+		TextureAsset(Global::getItem1 ? U"sprBullet2" : U"sprBullet").drawAt(pos.x, pos.y);
 		//hitBox->draw(Palette::Blue);//判定の可視化
 	}
 
@@ -50,11 +53,20 @@ namespace Iwanna {
 			isDelete = true;
 		}
 
+		// item1取得後は針を破壊できる
+		if (!isDelete && Global::getItem1 && other.type == ObjectType::Spike) {
+			auto* spike = dynamic_cast<Spike*>(&other);
+			if (!spike->getIsDebris() && hitsSpike(*spike)) {
+				spike->breakAsDebris();
+				isDelete = true;
+			}
+		}
+
 		// hpをもつりんご衝突
 		if (this->intersects(other) && other.type == ObjectType::Cherry) {
 			auto* cherry = dynamic_cast<Cherry*>(&other);
 			if (cherry->getHasHp()) {
-				if(!cherry->getIsMuteki()) cherry->hited();
+				if(!cherry->getIsMuteki()) cherry->hited(Global::getItem1 ? 3 : 1);
 				isDelete = true;
 			}
 		}
@@ -110,5 +122,20 @@ namespace Iwanna {
 		else {
 			isOutOfScreen = false;
 		}
+	}
+
+	bool Bullet::hitsSpike(const Spike& spike) const {
+		if (this->intersects(spike)) {
+			return true;
+		}
+
+		const RectF sweptRect{
+			Min(prevPos.x, pos.x) - hitBoxSize,
+			Min(prevPos.y, pos.y) - hitBoxSize,
+			Abs(pos.x - prevPos.x) + hitBoxSize * 2.0,
+			Abs(pos.y - prevPos.y) + hitBoxSize * 2.0
+		};
+
+		return sweptRect.intersects(spike.getBroadRect());
 	}
 }

@@ -11,6 +11,12 @@ namespace Iwanna {
 		String typeName;
 		int32 side = 32;
 		int32 spriteDirection;//針の向き
+		bool isDebris = false;
+		double debrisAlpha = 1.0;
+		double debrisGravity = 0.45;
+		double debrisRotateSpeed = 0.0;
+		void updateDebris();
+		void drawDebris() const;
 	public:
 		Spike(String typeName, Vec2 startPos, int32 dir);
 
@@ -21,6 +27,8 @@ namespace Iwanna {
 		void draw() const override;
 		void onCollision(GameObject& other) override;
 		void checkOutOfScreen();
+		void breakAsDebris();
+		bool getIsDebris() const;
 	};
 
 	class SpikeTrap : public Spike {

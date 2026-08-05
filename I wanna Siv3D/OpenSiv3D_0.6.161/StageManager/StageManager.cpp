@@ -398,6 +398,9 @@ namespace Iwanna {
 
 			player->updateLate();
 
+			//item1取得後の弾丸と針の衝突
+			updateBulletSpikeHits();
+
 			//各弾丸とブロック,セーブポイントとの衝突
 			for (auto& b : bullets) {
 				auto nearObjs = stockBulletsNearGameObjects.query(b->getBroadRect());
@@ -435,7 +438,7 @@ namespace Iwanna {
 
 			//画面外の針を削除
 			spikes.remove_if([](auto&& spike) {
-				return spike->isOutOfScreen;
+				return spike->isOutOfScreen || spike->isDelete;
 			});
 
 			//画面外の血を削除
@@ -465,6 +468,29 @@ namespace Iwanna {
 			bullets.remove_if([](auto&& bullet) {
 				return bullet->isOutOfScreen || bullet->isDelete;
 			});
+		}
+	}
+
+	void StageManager::updateBulletSpikeHits() {
+		if (!Global::getItem1) {
+			return;
+		}
+
+		for (auto& bullet : gameObjects.bullets) {
+			if (bullet->isDelete || bullet->isOutOfScreen) {
+				continue;
+			}
+
+			for (auto& spike : gameObjects.spikes) {
+				if (spike->isDelete || spike->isOutOfScreen || spike->getIsDebris()) {
+					continue;
+				}
+
+				bullet->onCollision(*spike);
+				if (bullet->isDelete) {
+					break;
+				}
+			}
 		}
 	}
 

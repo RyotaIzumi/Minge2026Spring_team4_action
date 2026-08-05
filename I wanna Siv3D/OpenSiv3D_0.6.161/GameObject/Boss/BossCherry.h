@@ -71,7 +71,7 @@ namespace Iwanna {
 		int32 getDefeatedBossNum() const;
 		bool reachedAttackTime(double time);
 
-		void hited() override;
+		void hited(int32 damage = 1) override;
 	};
 
 	class TayamaBoss : public Cherry {
@@ -139,7 +139,7 @@ namespace Iwanna {
 		void setLineAttackWarningSettings(double warnScale, double scaleUpTime, double scaleDownTime, double generateWaitTime);
 		void barrageUpdate() override;
 		void draw() const override;
-		void hited() override;
+		void hited(int32 damage = 1) override;
 	};
 
 	class LowBossCherry : public Cherry {
@@ -189,7 +189,7 @@ namespace Iwanna {
 		void setTargetAttackSettings(double interval, int32 lineNum, bool isAddLine, double baseSpeed, double intervalSpeed);
 		void barrageUpdate() override;
 		void draw() const override;
-		void hited() override;
+		void hited(int32 damage = 1) override;
 	};
 
 	class BossSubCherry : public Cherry {

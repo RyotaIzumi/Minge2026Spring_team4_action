@@ -7,11 +7,14 @@
 #include "Player.h"
 
 namespace Iwanna {
+	class Spike;
+
 	class Bullet : public GameObject {
 	private:
 		//当たり判定サイズ(半径)
 		int32 hitBoxSize = 2;
 		Player* ownerPlayer = nullptr;
+		Vec2 prevPos;
 
 		//弾の速度とマップ内最大生成数はStageManagerにて設定
 
@@ -25,5 +28,6 @@ namespace Iwanna {
 
 		void onCollision(GameObject& other) override;
 		void checkOutOfScreen();
+		bool hitsSpike(const Spike& spike) const;
 	};
 }

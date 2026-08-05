@@ -99,7 +99,7 @@ namespace Iwanna {
 		void checkOutOfScreen();
 
 		bool getHasHp() const;
-		virtual void hited();
+		virtual void hited(int32 damage = 1);
 		bool getIsMuteki() const;
 
 		CherryType getCherryType() const;

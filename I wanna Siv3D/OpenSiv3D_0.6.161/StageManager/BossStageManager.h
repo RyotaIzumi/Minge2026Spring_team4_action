@@ -230,6 +230,7 @@ namespace Iwanna {
 		void updateTrapBossSecondPhaseTargetAttack();
 		void updateExBossThirdPhaseTayamaSummon();
 		void updateExBossSummonNameBar();
+		void updateBulletSpikeHits();
 		void updateTrapBossSecondPhaseBulletHits(Array<std::shared_ptr<Bullet>>& bullets);
 		void breakTrapBossSecondPhaseOverlappingBlocks();
 		void createTrapBossSecondPhaseEyeAttackCherry(Vec2 startPos, double direction);
@@ -240,7 +241,7 @@ namespace Iwanna {
 		void drawExBossThirdPhaseTayama() const;
 		void drawExBossSummonNameBar() const;
 		void drawTrapBossSecondPhaseHp() const;
-		void hitTrapBossSecondPhase();
+		void hitTrapBossSecondPhase(int32 damage = 1);
 		void defeatTrapBossSecondPhase();
 		void clearTrapBossSecondPhaseCherries();
 		void requestBossCherryDefeatCleanup();
