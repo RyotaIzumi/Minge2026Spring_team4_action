@@ -44,7 +44,7 @@ void MainGameSerializer::defineGlobalStatuses() {
 
 	// 開始room
 	if (moraleValue1 >= 101 && moraleValue2 >= 101 && moraleValue3 >= 101 && moraleValue4 >= 101) {
-		Global::startRoomName = U"ExGotArea";
+		Global::startRoomName = U"ExRenoArea";
 	}
 	else if (moraleValue2 >= 90 && moraleValue3 >= 90 && moraleValue4 >= 90) {
 		Global::startRoomName = U"tutorialTrap";
@@ -68,7 +68,7 @@ void MainGameSerializer::defineGlobalStatuses() {
 	//Texture
 	if (moraleValue1 >= 101 && moraleValue2 >= 101 && moraleValue3 >= 101 && moraleValue4 >= 101) Global::mainTextureNumber = 2;
 	else if (moraleValue3 < 30) Global::mainTextureNumber = 0;
-	else if (moraleValue3 <= 100) Global::mainTextureNumber = 1;
+	else Global::mainTextureNumber = 1;
 
 	//BGM
 	if (moraleValue4 < 30) Global::mainBgmNumber = 0;

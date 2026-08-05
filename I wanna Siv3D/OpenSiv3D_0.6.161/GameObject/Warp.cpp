@@ -16,7 +16,11 @@ namespace Iwanna {
 	void Warp::update() {
 	}
 	void Warp::draw() const {
-		TextureAsset(U"sprWarp").draw(pos);
+		const String textureName = (Global::mainTextureNumber == 0) ? U"sprWarp_low"
+			: U"sprWarp_normal";
+		TextureAsset(textureName)
+			.rotated(Scene::Time() * 2.0)
+			.drawAt(pos + size / 2.0);
 		//hitBox->draw(ColorF(Palette::White,0.7));
 	}
 	void Warp::onCollision(GameObject& other) {

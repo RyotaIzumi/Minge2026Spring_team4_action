@@ -101,6 +101,8 @@ namespace Iwanna {
 		registerTexture(U"sprSave_low", OtherPath + U"sprSave_low.png");
 		registerTexture(U"sprSave_normal", OtherPath + U"sprSave_normal.png");
 		registerTexture(U"sprWarp", OtherPath + U"sprWarp.png");
+		registerTexture(U"sprWarp_low", OtherPath + U"sprWarp_low.png");
+		registerTexture(U"sprWarp_normal", OtherPath + U"sprWarp_normal.png");
 		registerTexture(U"sprSecretWarp", OtherPath + U"sprSecretWarp.png");
 		registerTexture(U"sprFakeSave", OtherPath + U"sprFakeSave.png");
 		registerTexture(U"warningTrap", OtherPath + U"warningTrap.png");
@@ -115,6 +117,8 @@ namespace Iwanna {
 		registerTexture(U"sprGAMEOVER_normal", OtherPath + U"sprGAMEOVER_normal.png");
 		registerTexture(U"hideLine", OtherPath + U"hideLine.png");
 		registerTexture(U"sprSign", OtherPath + U"sprSign.png");
+		registerTexture(U"sprSign_low", OtherPath + U"sprSign_low.png");
+		registerTexture(U"sprSign_normal", OtherPath + U"sprSign_normal.png");
 		registerTexture(U"heart", OtherPath + U"heart.png");
 		registerTexture(U"achieveFrame", OtherPath + U"achieveFrame.png");
 		registerTexture(U"tayama", OtherPath + U"tayama.png");
