@@ -52,18 +52,18 @@ void MainGameSerializer::defineGlobalStatuses() {
 	else if (moraleValue1 < 30 && moraleValue2 < 30) {
 		Global::startRoomName = U"tutorialLow";
 	}
-	else if (moraleValue1 >= 90) {
+	else if (moraleValue1 >= 90 && moraleValue1 <= 100) {
 		Global::remainingGenerateStageNames.clear();
 		Global::startRoomName = U"tutorialLow";
 		Global::endingValue = 3;
 	}
-	else if (moraleValue2 > 90)Global::startRoomName = U"trapBoss";
+	else if (moraleValue2 > 90 && moraleValue2 <= 100)Global::startRoomName = U"trapBoss";
 	else if(moraleValue1 <= 30) Global::startRoomName = U"normal1";
 	else Global::startRoomName = U"tutorial";
 
 	// ゲームタイトル
-	if (moraleValue2 > 90) Window::SetTitle(U"TestPlayGame (Debug Build)");
-	else Window::SetTitle(U"TestPlayGame");
+	if (moraleValue2 > 90 && moraleValue2 <= 100) Window::SetTitle(U"TestPlayGame (Debug Build)");
+	else Window::SetTitle(U"I gonna be the treasure hunter");
 
 	//Texture
 	if (moraleValue1 >= 101 && moraleValue2 >= 101 && moraleValue3 >= 101 && moraleValue4 >= 101) Global::mainTextureNumber = 2;
