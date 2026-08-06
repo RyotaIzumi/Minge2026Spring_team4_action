@@ -1,5 +1,7 @@
 ﻿#include "Scene.h"
 
+#include "../Audio/AudioAsset.h"
+
 namespace Iwanna {
 	namespace {
 		void drawItemIconWithBlockedMark(const String& textureName, const Vec2& pos) {
@@ -18,6 +20,13 @@ namespace Iwanna {
 		auto& data = getData().game;
 
 		if (Global::inputStart.down()) {
+			if (Global::isNoMoraleEndingRoute()) {
+				Sound::playOneShot(Sound::ERROR);
+				System::MessageBoxOK(U"エラーコード : 0xNOMORALE\nやる気が見つかりません。");
+				System::Exit();
+				return;
+			}
+
 			data.startNewGame();
 			changeScene(SceneType::IN_GAME, 0.0s);
 		}

@@ -109,6 +109,13 @@ namespace Global {
 			|| roomName == U"ExRenoArea";
 	}
 
+	inline bool isNoMoraleEndingRoute() {
+		return moraleValue1 < 30
+			&& moraleValue2 < 30
+			&& moraleValue3 < 30
+			&& moraleValue4 < 30;
+	}
+
 	inline bool isItemEffectBlockedRoute() {
 		return startRoomName == U"tutorialTrap" || isExtraStage(startRoomName);
 	}
