@@ -130,6 +130,8 @@ namespace Iwanna {
 		const double inter = 20;
 		const int32 num = 50;
 		const Vec2 targetPos = gameObjects.player->pos;
+		const double playerApproachMargin = (stageName == U"ExBoss") ? exBossOrangeLinePlayerApproachMargin : inter;
+		const double verticalPlayerApproachMargin = (stageName == U"ExBoss") ? exBossOrangeLinePlayerApproachMargin : (inter + 10);
 
 		//左側
 		for (int i = 0; i < num; i++) {
@@ -137,7 +139,7 @@ namespace Iwanna {
 			cherry->pos.x = -inter;
 			cherry->pos.y = -inter + inter * i;
 			cherry->setStartPos(cherry->pos);
-			cherry->setTargetPos(Vec2{ targetPos.x - inter, cherry->pos.y });
+			cherry->setTargetPos(Vec2{ targetPos.x - playerApproachMargin, cherry->pos.y });
 			createCherry(cherry);
 		}
 		
@@ -147,7 +149,7 @@ namespace Iwanna {
 			cherry->pos.x = Global::stageWidth + inter;
 			cherry->pos.y = -inter + inter * i;
 			cherry->setStartPos(cherry->pos);
-			cherry->setTargetPos(Vec2{ targetPos.x + inter, cherry->pos.y });
+			cherry->setTargetPos(Vec2{ targetPos.x + playerApproachMargin, cherry->pos.y });
 
 			createCherry(cherry);
 		}
@@ -159,7 +161,7 @@ namespace Iwanna {
 				cherry->pos.x = -inter + inter * i;
 				cherry->pos.y = -inter;
 				cherry->setStartPos(cherry->pos);
-				cherry->setTargetPos(Vec2{ cherry->pos.x, targetPos.y - (inter + 10) });
+				cherry->setTargetPos(Vec2{ cherry->pos.x, targetPos.y - verticalPlayerApproachMargin });
 				createCherry(cherry);
 			}
 
@@ -169,7 +171,7 @@ namespace Iwanna {
 				cherry->pos.x = -inter + inter * i;
 				cherry->pos.y = Global::stageHeight + inter;
 				cherry->setStartPos(cherry->pos);
-				cherry->setTargetPos(Vec2{ cherry->pos.x, targetPos.y + (inter + 10) });
+				cherry->setTargetPos(Vec2{ cherry->pos.x, targetPos.y + verticalPlayerApproachMargin });
 				createCherry(cherry);
 			}
 		}
@@ -216,8 +218,11 @@ namespace Iwanna {
 		 * @param cherry 生成するcherryオブジェクト
 		 */
 	void BossStageManager::createGrayLatticeCherry(double interval, const std::function<std::shared_ptr<BossGrayLatticeCherry>()>& factory) {
+		createGrayLatticeCherry(interval, Vec2{ 400, 150 }, factory);
+	}
+
+	void BossStageManager::createGrayLatticeCherry(double interval, Vec2 centerPos, const std::function<std::shared_ptr<BossGrayLatticeCherry>()>& factory) {
 		Vec2 startBasePos{-100,-400};
-		Vec2 centerPos{400,150};
 		double cherryInterval = 24;
 		int32 lineNumX = 15;
 		int32 lineNumY = 15;

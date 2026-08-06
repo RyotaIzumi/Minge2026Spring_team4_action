@@ -147,17 +147,26 @@ namespace Iwanna {
 		bool isExBossThirdPhaseDarkening = false;
 		bool isExBossThirdPhaseRestoring = false;
 		bool isExBossSaveActivated = false;
+		bool isExBossDefeatEffectStarted = false;
+		Stopwatch exBossDefeatEffectStopwatch{ StartImmediately::No };
+		double exBossDefeatWhiteFlashAlpha = 0.0;
+		double exBossDefeatWhiteFlashStartAlpha = 0.65;
+		double exBossDefeatWhiteFlashFadeSpeed = 0.06;
+		double exBossDefeatFinalWhiteFadeAlpha = 0.0;
+		double exBossDefeatFinalWhiteFadeStartTime = 5.0;
+		double exBossDefeatFinalWhiteFadeDuration = 5.0;
 		double exBossThirdPhaseDarkAlphaTarget = 0.9;
 		double exBossThirdPhaseDarkAlphaSpeed = 0.01;
 		double exBossThirdPhaseRestoreSpeed = 0.01;
 		bool isExBossCameraLocked = false;
 		Vec2 exBossLockedCameraCenter{ 800, 304 };
+		double exBossOrangeLinePlayerApproachMargin = 50.0;
 
 		// 召喚LowBoss
 		bool hasExBossThirdPhaseLowBoss = false;
 		double exBossLowBossScale = 5.0;
 		double exBossLowBossAppearDuration = 1.4;
-		double exBossLowBossTargetY = 304.0;
+		double exBossLowBossTargetY = 254.0;
 		double exBossLowBossLifeTime = 15.0;
 		double exBossLowBossSpreadInterval = 0.6;
 		int32 exBossLowBossSpreadCherryNum = 16;
@@ -281,6 +290,9 @@ namespace Iwanna {
 		void reserveExBossSummonNameBar(String textureName, Vec2 centerPos, double delay);
 		void startExBossSummonNameBar(String textureName, Vec2 centerPos);
 		void finishExBossThirdPhaseLowBoss();
+		void startExBossForthFormLongAttackSetup();
+		void startExBossDefeatEffect();
+		bool getIsExBossDefeatEffectStarted() const;
 		Vec2 getExBossLockedCameraCenter() const;
 		Vec2 getTrapBossSecondPhaseLeftEyePos() const;
 		Vec2 getTrapBossSecondPhaseRightEyePos() const;
@@ -318,6 +330,7 @@ namespace Iwanna {
 		void createOrangeStopCherry(bool isAddUpDown, const std::function<std::shared_ptr<BossOrangeStopCherry>()>& factory);
 		void createSkyTargetCherry(int32 lineNum, bool isAddLine, const std::function<std::shared_ptr<BossSkyTargetCherry>()>& factory, double baseSpd = 5.0, double interSpd = 2.0);
 		void createGrayLatticeCherry(double interval,const std::function<std::shared_ptr<BossGrayLatticeCherry>()>& factory);
+		void createGrayLatticeCherry(double interval, Vec2 centerPos, const std::function<std::shared_ptr<BossGrayLatticeCherry>()>& factory);
 
 		// ----- ExBoss用 ----- //
 		//void createSordCherry(Vec2 startPos, const std::function<std::shared_ptr<BossSordCherry>()>& factory);
