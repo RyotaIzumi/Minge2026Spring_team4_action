@@ -129,7 +129,7 @@ void MainGameSerializer::defineGlobalStatuses() {
 		Global::startRoomName = U"tutorialLow";
 	}
 	else if(moraleValue1 <= 30) Global::startRoomName = U"normal1";
-	else Global::startRoomName = U"tutorial";
+	else Global::startRoomName = U"secret1";
 
 	// 機能や演出
 

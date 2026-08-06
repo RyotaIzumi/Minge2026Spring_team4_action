@@ -198,8 +198,19 @@ namespace Iwanna {
 		StageManager* stageManager = nullptr;
 
 		Stopwatch attackIntervalStopwatch{StartImmediately::Yes};
+		Stopwatch attackWarningStopwatch;
 		double startTime = 2.2;
 		double attackInterval = 0;
+		double baseScaleMag = 1.0;
+		double attackWarningScale = 1.18;
+		double attackWarningScaleUpTime = 0.12;
+		double attackWarningScaleDownTime = 0.22;
+		double attackWarningGenerateWaitTime = 0.6;
+		bool isAttackWarning = false;
+
+		void applyScaleMag(double scale);
+		void requestAttack();
+		void updateAttackWarning();
 	public:
 		GimmikBigCherry(Vec2 startPos, double scale, CherryColorType cType, StageManager& manager);
 
