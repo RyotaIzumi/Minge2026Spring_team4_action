@@ -866,13 +866,16 @@ namespace Iwanna {
 
 		if (Global::inputDebugMuteki.down()) {
 			player->setIsMuteki(!player->getIsMuteki());
+			Global::recordHaibokusyaModeUseIfNeeded();
 		}
 
+		/*
 		ClearPrint();
 		Print << U" Stage Step : " << step;
 		Print << U" Player Pos : " << player->pos;
 		Print << U" Player Muteki : " << player->getIsMuteki();
 		Print << U" Cherries Num : " << gameObjects.cherries.size();
+		*/
 	}
 
 	void BossStageManager::draw() {

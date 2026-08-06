@@ -111,6 +111,7 @@ namespace Iwanna {
 
 		if (Global::inputDebugMuteki.down()) {
 			player->setIsMuteki(!player->getIsMuteki());
+			Global::recordHaibokusyaModeUseIfNeeded();
 		}
 
 		ClearPrint();

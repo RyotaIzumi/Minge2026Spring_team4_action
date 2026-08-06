@@ -93,6 +93,7 @@ namespace Global {
 	inline bool isLow1RestartDeathCheckActive = false;
 	inline double low1RestartDeathCheckElapsed = 0.0;
 	inline double low1RestartDeathCheckDuration = 0.05;
+	inline bool hasUsedHaibokusyaMode = false;
 
 	// --- generateステージ関連 --- //
 	inline Array<String> generateStageNames = { U"generate1", U"generate2", U"generate3", U"generate4", U"generate5" };
@@ -206,6 +207,22 @@ namespace Global {
 
 	inline bool shouldShowMorale2Spike() {
 		return moraleValue2 >= 70 && moraleValue2 < 90;
+	}
+
+	inline bool isTutorialMap(const String& roomName) {
+		return roomName == U"tutorial"
+			|| roomName == U"tutorialLow"
+			|| roomName == U"tutorialTrap";
+	}
+
+	inline void recordHaibokusyaModeUseIfNeeded() {
+		if (isNoMoraleEndingRoute()
+			|| isEndingKRoute()
+			|| isTutorialMap(nowRoomName)) {
+			return;
+		}
+
+		hasUsedHaibokusyaMode = true;
 	}
 
 	inline String chooseGenerateStage() {

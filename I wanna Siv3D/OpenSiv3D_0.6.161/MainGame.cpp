@@ -15,6 +15,7 @@ namespace Iwanna {
 		Global::nowRoomName = Global::startRoomName;
 		Global::isChangeRoom = false;
 		Global::endingDGenerateClearCount = 0;
+		Global::hasUsedHaibokusyaMode = false;
 
 		startGame();
 	}
@@ -53,6 +54,7 @@ namespace Iwanna {
 		Global::isRestartRoomReload = false;
 		Global::isLow1RestartDeathCheckActive = false;
 		Global::low1RestartDeathCheckElapsed = 0.0;
+		Global::hasUsedHaibokusyaMode = false;
 
 		Global::remainingGenerateStageNames.clear();
 		Global::isGenerateStageFakeLoading = false;
@@ -237,7 +239,7 @@ namespace Iwanna {
 			stageManager.debug();
 			break;
 		case StageType::Boss:
-			//bossStageManager.debug();
+			bossStageManager.debug();
 			break;
 		}
 

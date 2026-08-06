@@ -518,6 +518,7 @@ namespace Iwanna {
 
 		if (Global::inputDebugMuteki.down()) {
 			player->setIsMuteki(!player->getIsMuteki());
+			Global::recordHaibokusyaModeUseIfNeeded();
 		}
 
 		//Print << U" Stage Step : " << step;
@@ -616,13 +617,14 @@ namespace Iwanna {
 			const Array<String> tutorialTexts{
 				U"←→キー : 移動",
 				U"shift : ジャンプ、二段ジャンプ",
-				U"Zキー : ショット"
+				U"Zキー : ショット",
+				U"ctrl : 無敵"
 			};
 
 			for (int32 i = 0; i < tutorialTexts.size(); ++i) {
 				const Vec2 textPos = basePos + Vec2{ 0, i * 26.0 };
 				FontAsset(U"Button")(tutorialTexts[i]).draw(textPos + Vec2{ 1, 1 }, ColorF{ 0.5, 0.7 });
-				FontAsset(U"Button")(tutorialTexts[i]).draw(textPos, ColorF{ 1.0, 1.0, 1.0 });
+				FontAsset(U"Button")(tutorialTexts[i]).draw(textPos, ColorF{ 0.0, 0.0, 0.0 });
 			}
 		}
 	}
