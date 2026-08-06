@@ -17,7 +17,7 @@ namespace {
 		}
 
 		return basePath
-			+ U"/AppData/LocalLow/PandD_org/【PandD Game Dev Club】Our Chaotic Developers Refuse to Stick to the Plan/GameSave.json";
+			+ U"/AppData/LocalLow/PandD_org/[PandD Game Dev Club]Our Chaotic Developers Refuse to Stick to the Plan/GameSave.json";
 	}
 
 	String GetCurrentEndingId() {
