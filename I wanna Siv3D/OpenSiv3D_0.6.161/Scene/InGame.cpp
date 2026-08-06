@@ -23,6 +23,10 @@ namespace Iwanna {
 				TextureAsset(U"batu").resized(32, 32).draw(pos);
 			}
 		}
+
+		bool isExtraMenuContext() {
+			return Global::isExtraStage(Global::nowRoomName) || Global::nowRoomName == U"ExBoss";
+		}
 	}
 
 	InGame::InGame(const InitData& data) : IScene(data) {
@@ -53,7 +57,7 @@ namespace Iwanna {
 			else if (KeyQ.down()) {
 				System::Exit();
 			}
-			else if (KeyW.down()) {
+			else if (!isExtraMenuContext() && KeyW.down()) {
 				data.resetGameToStartMenu();
 				isPauseMenuOpen = false;
 				isGenerateLoadingOpen = false;
@@ -105,12 +109,16 @@ namespace Iwanna {
 		Rect{ 0, 0, Global::windowWidth, Global::windowHeight }.draw(ColorF{ 0.0, 0.0, 0.0, 0.65 });
 
 		FontAsset(U"Button")(U"Escでゲームに戻る").draw(24, 24, ColorF{ 1.0, 1.0, 1.0 });
-		if (Global::canUseItem2Effect()) {
+		if (Global::canUseExBossItem2Effect()) {
+			FontAsset(U"Button")(U"Xキーでワープ").draw(24, 50, ColorF{ 1.0, 1.0, 1.0 });
+		}
+		else if (Global::canUseItem2Effect()) {
 			FontAsset(U"Button")(U"Xでアクション切り替え").draw(24, 50, ColorF{ 1.0, 1.0, 1.0 });
 		}
 
 		const String quitText = U"ゲームをやめる : Qキー";
-		const String restartText = U"ゲームを最初からやり直す : Wキー";
+		const bool isExtraMenu = isExtraMenuContext();
+		const String restartText = isExtraMenu ? U"(進捗は保存されます)" : U"ゲームを最初からやり直す : Wキー";
 		const String cautionText = U"(テストプレイの進捗は失われます！)";
 		const String endingText = U"到達するエンディング : " + getEndingLetter();
 		const String deathText = U"Death " + Format(Global::deathCount);
@@ -118,7 +126,9 @@ namespace Iwanna {
 
 		FontAsset(U"BossHp")(quitText).drawAt(400, 172, ColorF{ 1.0, 1.0, 1.0 });
 		FontAsset(U"BossHp")(restartText).drawAt(400, 220, ColorF{ 1.0, 1.0, 1.0 });
-		FontAsset(U"Button")(cautionText).drawAt(400, 268, ColorF{ 1.0, 0.15, 0.15 });
+		if (!isExtraMenu) {
+			FontAsset(U"Button")(cautionText).drawAt(400, 268, ColorF{ 1.0, 0.15, 0.15 });
+		}
 		FontAsset(U"BossHp")(endingText).drawAt(400, 318, ColorF{ 1.0, 1.0, 1.0 });
 		FontAsset(U"BossHp")(deathText).drawAt(400, 394, ColorF{ 1.0, 1.0, 1.0 });
 		FontAsset(U"BossHp")(timeText).drawAt(400, 438, ColorF{ 1.0, 1.0, 1.0 });

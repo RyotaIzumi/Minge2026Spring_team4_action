@@ -12,6 +12,7 @@
 #include "../GameObject/Blood.h"
 #include "../GameObject/Warp.h"
 #include "../GameObject/Item.h"
+#include "../GameObject/Sign.h"
 #include "../UI/TitleCard.h"
 #include "../UI/Achieve.h"
 #include "../UI/BossHpBar.h"
@@ -32,6 +33,7 @@ namespace Iwanna {
 		Array<std::shared_ptr<Blood>> bloods;
 		Array<std::shared_ptr<Warp>> warps;
 		Array<std::shared_ptr<Item>> items;
+		Array<std::shared_ptr<Sign>> signs;
 	};
 
 	class BossStageManager {

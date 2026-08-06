@@ -73,6 +73,7 @@ namespace Iwanna {
 					case 1: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_secret1", pos); break;
 					case 6: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_secret2", pos); break;
 					case 7: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_secret3", pos); break;
+					case 20: gameObjects.blocks << std::make_shared<HaibokusyaBlock>(pos); break;
 					case 21: gameObjects.spikes << std::make_shared<Spike>(U"secret", pos, 0); break;
 					case 22: gameObjects.spikes << std::make_shared<Spike>(U"secret", pos, 1); break;
 					case 23: gameObjects.spikes << std::make_shared<Spike>(U"secret", pos, 2); break;
@@ -102,6 +103,7 @@ namespace Iwanna {
 					case 2: gameObjects.blocks << std::make_shared<VisualOnlyBlock>(U"sprBlock_extra4", pos); break;
 					case 6: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_" + quarity + U"2", pos); break;
 					case 7: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_" + quarity + U"3", pos); break;
+					case 20: gameObjects.blocks << std::make_shared<HaibokusyaBlock>(pos); break;
 					case 16: if (Global::shouldShowMorale2Spike()) gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 0); break;
 					case 17: if (Global::shouldShowMorale2Spike()) gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 1); break;
 					case 18: if (Global::shouldShowMorale2Spike()) gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 2); break;
@@ -396,6 +398,10 @@ namespace Iwanna {
 				gameObjects.signs << std::make_shared<Sign>(Vec2{ 56,17 }, SignType::Tutorial_Muteki);
 			}
 			gameObjects.signs << std::make_shared<Sign>(Vec2{ 62,17 }, SignType::Tutorial_Item);
+		}
+
+		if (fileName == U"ExMiluArea") {
+			gameObjects.signs << std::make_shared<Sign>(Vec2{ 2,2 }, SignType::Extra_PracticeMuteki);
 		}
 
 		if (fileName == U"secret1" && !Global::getItem1) {

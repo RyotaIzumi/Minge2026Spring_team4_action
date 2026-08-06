@@ -327,4 +327,23 @@ namespace Iwanna {
 	void VisualOnlyBlock::breakAsDebris(bool playSound) {
 		(void)playSound;
 	}
+
+	// ----- 無敵使用時に出現するブロック ----- //
+	HaibokusyaBlock::HaibokusyaBlock(Vec2 startPos) : Block(U"sprBlock_haibokusya", startPos) {
+		blockType = BlockType::Haibokusya;
+		canPlayerKill = false;
+		hasCollide = false;
+	}
+
+	void HaibokusyaBlock::draw() const {
+		if (!Global::isHaibokusyaBlockActive) {
+			return;
+		}
+
+		Block::draw();
+	}
+
+	bool HaibokusyaBlock::getHasCollide() const {
+		return Global::isHaibokusyaBlockActive;
+	}
 }

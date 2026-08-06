@@ -151,6 +151,7 @@ namespace Iwanna {
 			if (Global::isEndingKRoute()) {
 				Global::endingValue = 10;
 				MainGameSerializer serializer;
+				serializer.ClearExtraProgress();
 				serializer.SaveEndingClearRecord();
 				serializer.SaveEndingValue();
 			}

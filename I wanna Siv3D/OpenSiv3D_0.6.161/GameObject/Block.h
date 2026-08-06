@@ -14,7 +14,8 @@ namespace Iwanna {
 		ShootThrough,
 		Break,
 		Water,
-		VisualOnly
+		VisualOnly,
+		Haibokusya
 	};
 
 	class Block : public GameObject {
@@ -42,7 +43,7 @@ namespace Iwanna {
 		void onCollision(GameObject& other) override;
 
 		void setHasCollide(bool b);
-		bool getHasCollide() const;
+		virtual bool getHasCollide() const;
 		void setBlockColor(ColorF color);
 		virtual void breakAsDebris(bool playSound = true);
 		bool getIsDebris() const;
@@ -127,5 +128,12 @@ namespace Iwanna {
 	public:
 		VisualOnlyBlock(String name, Vec2 startPos);
 		void breakAsDebris(bool playSound = true) override;
+	};
+
+	class HaibokusyaBlock : public Block {
+	public:
+		HaibokusyaBlock(Vec2 startPos);
+		void draw() const override;
+		bool getHasCollide() const override;
 	};
 }

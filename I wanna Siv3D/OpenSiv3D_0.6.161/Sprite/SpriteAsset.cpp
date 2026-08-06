@@ -60,6 +60,7 @@ namespace Iwanna {
 		registerTexture(U"sprBlock_extra2", BlockPath + U"sprBlock_extra2.png");
 		registerTexture(U"sprBlock_extra3", BlockPath + U"sprBlock_extra3.png");
 		registerTexture(U"sprBlock_extra4", BlockPath + U"sprBlock_extra4.png");
+		registerTexture(U"sprBlock_haibokusya", BlockPath + U"sprBlock_haibokusya.jpg");
 
 		//mikuテクスチャ登録
 		static const FilePath MikuPath = U"Texture/Miku/";
