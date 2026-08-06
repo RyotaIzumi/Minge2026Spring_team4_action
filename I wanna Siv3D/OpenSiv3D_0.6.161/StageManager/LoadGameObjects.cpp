@@ -102,6 +102,10 @@ namespace Iwanna {
 					case 2: gameObjects.blocks << std::make_shared<VisualOnlyBlock>(U"sprBlock_extra4", pos); break;
 					case 6: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_" + quarity + U"2", pos); break;
 					case 7: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_" + quarity + U"3", pos); break;
+					case 16: if (Global::shouldShowMorale2Spike()) gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 0); break;
+					case 17: if (Global::shouldShowMorale2Spike()) gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 1); break;
+					case 18: if (Global::shouldShowMorale2Spike()) gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 2); break;
+					case 19: if (Global::shouldShowMorale2Spike()) gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 3); break;
 					case 21: gameObjects.spikes << std::make_shared<Spike>(spikeTextureType, pos, 0); break;
 					case 22: gameObjects.spikes << std::make_shared<Spike>(spikeTextureType, pos, 1); break;
 					case 23: gameObjects.spikes << std::make_shared<Spike>(spikeTextureType, pos, 2); break;

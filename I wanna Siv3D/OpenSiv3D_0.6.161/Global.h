@@ -204,6 +204,10 @@ namespace Global {
 		return moraleValue1 >= 50;
 	}
 
+	inline bool shouldShowMorale2Spike() {
+		return moraleValue2 >= 70 && moraleValue2 < 90;
+	}
+
 	inline String chooseGenerateStage() {
 		if (remainingGenerateStageNames.isEmpty()) {
 			remainingGenerateStageNames = generateStageNames;
