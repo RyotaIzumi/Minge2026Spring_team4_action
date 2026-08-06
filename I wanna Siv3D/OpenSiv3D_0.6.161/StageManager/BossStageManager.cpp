@@ -811,7 +811,7 @@ namespace Iwanna {
 			if (const auto bulletCircle = bullet->hitBox->getCircle()) {
 				if (bulletCircle->intersects(leftEye) || bulletCircle->intersects(rightEye)) {
 					bullet->isDelete = true;
-					hitTrapBossSecondPhase(Global::canUseItem1Effect() ? 3 : 1);
+					hitTrapBossSecondPhase(Global::canUseItem1Effect() ? 2 : 1);
 				}
 			}
 		}

@@ -16,29 +16,36 @@ namespace Iwanna {
 			return text;
 		}
 
+		String makeReachableEndingTextWithF(Array<String> endings) {
+			if (Global::canReachEndingFRoute() && !endings.includes(U"F")) {
+				endings << U"F";
+			}
+			return makeReachableEndingText(endings);
+		}
+
 		String getReachableEndingText() {
 			if (Global::isNoMoraleEndingRoute()) {
 				return makeReachableEndingText({ U"J" });
 			}
 			if (Global::isEndingKRoute()) {
-				return makeReachableEndingText({ U"K", U"E" });
+				return makeReachableEndingTextWithF({ U"K", U"E" });
 			}
 			if (Global::isEndingGRoute()) {
-				return makeReachableEndingText({ U"G", U"E", U"I" });
+				return makeReachableEndingTextWithF({ U"G", U"E", U"I" });
 			}
 			if (Global::isEndingDRoute()) {
-				return makeReachableEndingText({ U"D" });
+				return makeReachableEndingTextWithF({ U"D" });
 			}
 			if (Global::isEndingBRoute()) {
-				return makeReachableEndingText({ U"B", U"E", U"F", U"I" });
+				return makeReachableEndingTextWithF({ U"B", U"E", U"F", U"I" });
 			}
 			if (Global::isEndingCRoute()) {
-				return makeReachableEndingText({ U"C", U"E", U"I" });
+				return makeReachableEndingTextWithF({ U"C", U"E", U"I" });
 			}
 			if (Global::isEndingHRoute()) {
-				return makeReachableEndingText({ U"H", U"E", U"I" });
+				return makeReachableEndingTextWithF({ U"H", U"E", U"I" });
 			}
-			return makeReachableEndingText({ U"A", U"E", U"I" });
+			return makeReachableEndingTextWithF({ U"A", U"E", U"I" });
 		}
 
 		void drawItemIconWithBlockedMark(const String& textureName, const Vec2& pos) {

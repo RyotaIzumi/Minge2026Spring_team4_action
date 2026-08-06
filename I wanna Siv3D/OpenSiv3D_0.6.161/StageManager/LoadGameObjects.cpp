@@ -77,7 +77,7 @@ namespace Iwanna {
 					case 22: gameObjects.spikes << std::make_shared<Spike>(U"secret", pos, 1); break;
 					case 23: gameObjects.spikes << std::make_shared<Spike>(U"secret", pos, 2); break;
 					case 24: gameObjects.spikes << std::make_shared<Spike>(U"secret", pos, 3); break;
-					case 25: gameObjects.savePoints << std::make_shared<SecretSavePoint>(pos,U"normal5"); break;
+					case 25: gameObjects.savePoints << std::make_shared<SecretSavePoint>(pos,U"normal7"); break;
 					case 26: gameObjects.blocks << std::make_shared<HideBlock>(U"sprBlock_" + quarity + U"1", pos); break;
 					case 27: gameObjects.blocks << std::make_shared<ShootTroughBlock>(U"sprBlockShootTrough", pos); break;
 					case 28: gameObjects.blocks << std::make_shared<FakeBlock>(U"sprBlock_" + quarity + U"2", pos); break;

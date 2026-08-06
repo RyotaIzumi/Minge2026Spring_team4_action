@@ -66,7 +66,7 @@ namespace Iwanna {
 		if (this->intersects(other) && other.type == ObjectType::Cherry) {
 			auto* cherry = dynamic_cast<Cherry*>(&other);
 			if (cherry->getHasHp()) {
-				if(!cherry->getIsMuteki()) cherry->hited(Global::canUseItem1Effect() ? 3 : 1);
+				if(!cherry->getIsMuteki()) cherry->hited(Global::canUseItem1Effect() ? 2 : 1);
 				isDelete = true;
 			}
 		}

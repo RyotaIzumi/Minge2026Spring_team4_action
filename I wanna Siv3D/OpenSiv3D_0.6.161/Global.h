@@ -164,6 +164,10 @@ namespace Global {
 			&& (30 <= moraleValue4);
 	}
 
+	inline bool canReachEndingFRoute() {
+		return isEndingBRoute() || getItem1;
+	}
+
 	inline int32 getInitialEndingValue() {
 		if (isNoMoraleEndingRoute()) {
 			return 9;
