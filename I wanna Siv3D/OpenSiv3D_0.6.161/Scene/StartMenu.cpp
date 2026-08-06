@@ -4,6 +4,43 @@
 
 namespace Iwanna {
 	namespace {
+		String makeReachableEndingText(const Array<String>& endings) {
+			String text = U"到達可能Ending (";
+			for (size_t i = 0; i < endings.size(); ++i) {
+				if (i != 0) {
+					text += U",";
+				}
+				text += endings[i];
+			}
+			text += U")";
+			return text;
+		}
+
+		String getReachableEndingText() {
+			if (Global::isNoMoraleEndingRoute()) {
+				return makeReachableEndingText({ U"J" });
+			}
+			if (Global::isEndingKRoute()) {
+				return makeReachableEndingText({ U"K", U"E" });
+			}
+			if (Global::isEndingGRoute()) {
+				return makeReachableEndingText({ U"G", U"E", U"I" });
+			}
+			if (Global::isEndingDRoute()) {
+				return makeReachableEndingText({ U"D" });
+			}
+			if (Global::isEndingBRoute()) {
+				return makeReachableEndingText({ U"B", U"E", U"F", U"I" });
+			}
+			if (Global::isEndingCRoute()) {
+				return makeReachableEndingText({ U"C", U"E", U"I" });
+			}
+			if (Global::isEndingHRoute()) {
+				return makeReachableEndingText({ U"H", U"E", U"I" });
+			}
+			return makeReachableEndingText({ U"A", U"E", U"I" });
+		}
+
 		void drawItemIconWithBlockedMark(const String& textureName, const Vec2& pos) {
 			TextureAsset(textureName).draw(pos);
 			if (Global::isItemEffectBlockedRoute()) {
@@ -44,5 +81,8 @@ namespace Iwanna {
 			drawItemIconWithBlockedMark(U"item2", Vec2{ 64, Global::windowHeight - 56 });
 		}
 		FontAsset(U"Big")(U"Press shift to start").drawAt(400,304);
+		const String reachableEndingText = getReachableEndingText();
+		FontAsset(U"Button")(reachableEndingText).drawAt(402, 562, ColorF{ 0.0, 0.0, 0.0, 0.75 });
+		FontAsset(U"Button")(reachableEndingText).drawAt(400, 560, ColorF{ 1.0, 1.0, 1.0 });
 	}
 }
