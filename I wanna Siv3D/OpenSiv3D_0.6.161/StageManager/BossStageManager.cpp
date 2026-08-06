@@ -3,6 +3,15 @@
 #include "../MainGameSerializer.h"
 
 namespace Iwanna {
+	namespace {
+		String formatCooldownSeconds(double seconds) {
+			const double displaySeconds = Ceil(Max(0.0, seconds) * 10.0) / 10.0;
+			const int32 whole = static_cast<int32>(displaySeconds);
+			const int32 decimal = static_cast<int32>(Round((displaySeconds - whole) * 10.0));
+			return Format(whole) + U"." + Format(decimal);
+		}
+	}
+
 	BossStageManager::BossStageManager() {
 		stockNearGameObjects.cellSize = 96;
 		stockBulletsNearGameObjects.cellSize = 320;
@@ -54,6 +63,7 @@ namespace Iwanna {
 		exBossEntryDarkAlpha = 0.0;
 		isExBossThirdPhaseDarkening = false;
 		isExBossThirdPhaseRestoring = false;
+		isExBossSaveActivated = false;
 		isExBossCameraLocked = false;
 		hasExBossThirdPhaseLowBoss = false;
 		hasExBossThirdPhaseBossCherry = false;
@@ -83,6 +93,9 @@ namespace Iwanna {
 		for (auto& savePoint : gameObjects.savePoints) {
 			auto* savePointPtr = savePoint.get();
 			savePoint->onSavedCallback = [this, savePointPtr]() {
+				if (stageName == U"ExBoss") {
+					isExBossSaveActivated = true;
+				}
 				generateBoss(savePointPtr->getAppendBossId());
 				saveGame();
 			};
@@ -197,8 +210,17 @@ namespace Iwanna {
 						if (gimmik.contains(U"value4")) gimmikValue4 = gimmik[U"value4"].get<double>();
 					}
 
-					if (gimmikName == U"罠ブロック") gameObjects.blocks << std::make_shared<BreakBlock>(U"sprBlock_" + blockQuarity + U"3", gimmikParsePos, static_cast<int32>(gimmikValue1));
-					if (gimmikName == U"時間罠ブロック") gameObjects.blocks << std::make_shared<TimedBreakBlock>(U"sprBlock_" + blockQuarity + U"3", gimmikParsePos, static_cast<int32>(gimmikValue1), gimmikValue2);
+					const String breakBlockTextureName = (fileName == U"ExBoss") ? U"sprBlock_normal1" : U"sprBlock_" + blockQuarity + U"3";
+					if (gimmikName == U"罠ブロック") {
+						auto block = std::make_shared<BreakBlock>(breakBlockTextureName, gimmikParsePos, static_cast<int32>(gimmikValue1));
+						block->setPlayBreakSound(fileName != U"ExBoss");
+						gameObjects.blocks << block;
+					}
+					if (gimmikName == U"時間罠ブロック") {
+						auto block = std::make_shared<TimedBreakBlock>(breakBlockTextureName, gimmikParsePos, static_cast<int32>(gimmikValue1), gimmikValue2);
+						block->setPlayBreakSound(fileName != U"ExBoss");
+						gameObjects.blocks << block;
+					}
 					if (gimmikName == U"ワープ") gameObjects.warps << std::make_shared<Warp>(gimmikIntactPos, gimmikString);
 					if (gimmikName == U"ループ移動針") gameObjects.spikes << std::make_shared<SpikeLoopMove>(quarity, gimmikIntactPos, static_cast<int32>(gimmikValue1), Vec2{ gimmikValue2, gimmikValue3 }, gimmikValue4);
 				}
@@ -232,6 +254,7 @@ namespace Iwanna {
 			if (Global::isExistSaveData && !Global::isChangeRoom && Global::savedRoomName == U"ExBoss") {
 				gameObjects.savePoints.clear();
 				Global::doNotStopBgm = true;
+				isExBossSaveActivated = true;
 				generateBoss(2);
 			}
 		}
@@ -341,7 +364,9 @@ namespace Iwanna {
 				stockNearGameObjects.add(b.get());
 				stockBulletsNearGameObjects.add(b.get());
 				if (b->isTriggerTrap) {
-					const bool shouldBreakByBossDefeat = (stageName == U"trapBoss")
+					const bool shouldBreakByBossDefeat = (stageName == U"ExBoss")
+						? isExBossSaveActivated
+						: (stageName == U"trapBoss")
 						? isTrapBossSecondPhaseDefeated
 						: (stageName == U"boss")
 						? Global::isBossDefeated && Global::canUseItem2Effect()
@@ -933,6 +958,21 @@ namespace Iwanna {
 			int32 nowPlayerHp = gameObjects.player->getHp();
 			for (int i = 0; i < nowPlayerHp; i++) {
 				TextureAsset(U"heart").draw(playerHpBasePos.x + i * hpInterbalX, playerHpBasePos.y);
+			}
+		}
+
+		if (stageName == U"ExBoss" && Global::canUseExBossItem2Effect()) {
+			const Vec2 warpIconPos{ playerHpBasePos.x + hpInterbalX * 3 + 20, playerHpBasePos.y };
+			const double cooldownRemaining = gameObjects.player->getExBossWarpCooldownRemaining();
+			const bool canWarp = gameObjects.player->canUseExBossItem2Warp();
+			const ColorF iconColor{ 1.0, canWarp ? 1.0 : 0.35 };
+
+			FontAsset(U"Button")(U"Xキー").drawAt(warpIconPos + Vec2{ 16, -12 }, ColorF{ 1.0, 1.0, 1.0 });
+			TextureAsset(U"item2").draw(warpIconPos, iconColor);
+			if (cooldownRemaining > 0.0) {
+				const String cooldownText = formatCooldownSeconds(cooldownRemaining);
+				FontAsset(U"Button")(cooldownText).drawAt(warpIconPos + Vec2{ 17, 17 }, ColorF{ 0.0, 0.0, 0.0, 0.8 });
+				FontAsset(U"Button")(cooldownText).drawAt(warpIconPos + Vec2{ 16, 16 }, ColorF{ 1.0, 1.0, 1.0 });
 			}
 		}
 

@@ -27,6 +27,7 @@ namespace Iwanna {
 		usedWarpInAir = false;
 		isGenerateWarpEffect = false;
 		warpEffectPos = Vec2{ 0, 0 };
+		exBossWarpCooldownRemaining = 0.0;
 		isOutOfScreen = false;//画面外判定用フラグ
 
 		//GameObject.hの値初期化
@@ -78,8 +79,18 @@ namespace Iwanna {
 
 		if (isDead) return;
 
+		if (exBossWarpCooldownRemaining > 0.0) {
+			exBossWarpCooldownRemaining = Max(0.0, exBossWarpCooldownRemaining - Scene::DeltaTime());
+		}
+
 		if (!Global::isPlayerFrozen) {
-			if (Global::canUseItem2Effect() && Global::inputWarpMode.down()) {
+			if (Global::canUseExBossItem2Effect()) {
+				isWarpMode = false;
+				if (Global::inputWarpMode.down() && canUseExBossItem2Warp()) {
+					useItem2Warp();
+				}
+			}
+			else if (Global::canUseItem2Effect() && Global::inputWarpMode.down()) {
 				isWarpMode = !isWarpMode;
 				Sound::playOneShot(Sound::CHANGE);
 			}
@@ -149,8 +160,9 @@ namespace Iwanna {
 		TextureRegion texture = spriteSystem.getTextureRegion(direction);
 		if(!isDead)texture.scaled(1.0).drawAt(pos.x,pos.y - 3, ColorF(1.0, isMuteki ? 0.5 : 1.0));
 		else texture.scaled(1.0).drawAt(pos.x, pos.y - 3, ColorF(0.8,0,0,0.8));
-		if (!isDead && Global::canUseItem2Effect() && isWarpMode) {
-			TextureAsset(U"item2").draw(getItem2WarpIconPos(), ColorF{ 1.0, canUseItem2Warp() ? 0.65 : 0.25 });
+		if (!isDead && ((Global::canUseItem2Effect() && isWarpMode) || Global::canUseExBossItem2Effect())) {
+			const bool canWarp = Global::canUseExBossItem2Effect() ? canUseExBossItem2Warp() : canUseItem2Warp();
+			TextureAsset(U"item2").draw(getItem2WarpIconPos(), ColorF{ 1.0, canWarp ? 0.65 : 0.25 });
 		}
 		//hitBox->draw(ColorF(Palette::Red,0.6));
 	}
@@ -207,11 +219,12 @@ namespace Iwanna {
 	Vec2 Player::getItem2WarpIconPos() const {
 		const double tileSize = 32.0;
 		const double dirSign = (direction == Global::Direction::RIGHT) ? 1.0 : -1.0;
+		const double warpTileDistance = Global::canUseExBossItem2Effect() ? 3.0 : 2.0;
 		const Vec2 baseTilePos{
 			Math::Floor(pos.x / tileSize) * tileSize,
 			Math::Floor(pos.y / tileSize) * tileSize
 		};
-		return baseTilePos + Vec2{ dirSign * tileSize * 2.0, 0 };
+		return baseTilePos + Vec2{ dirSign * tileSize * warpTileDistance, 0 };
 	}
 
 	void Player::useItem2Warp() {
@@ -225,6 +238,9 @@ namespace Iwanna {
 		}
 		warpEffectPos = warpCenterPos;
 		isGenerateWarpEffect = true;
+		if (Global::canUseExBossItem2Effect()) {
+			exBossWarpCooldownRemaining = exBossWarpCooldown;
+		}
 		Sound::playOneShot(Sound::WARP);
 		hitBox->setPos(pos);
 	}
@@ -479,6 +495,16 @@ namespace Iwanna {
 		if (!Global::canUseItem2Effect()) {
 			Global::savedIsWarpMode = false;
 		}
+	}
+
+	bool Player::canUseExBossItem2Warp() const {
+		return Global::canUseExBossItem2Effect()
+			&& exBossWarpCooldownRemaining <= 0.0
+			&& (isOnGround || !usedWarpInAir);
+	}
+
+	double Player::getExBossWarpCooldownRemaining() const {
+		return exBossWarpCooldownRemaining;
 	}
 
 	// 向きを取得

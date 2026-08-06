@@ -186,6 +186,10 @@ namespace Global {
 		return getItem2 && !isItemEffectBlockedRoute();
 	}
 
+	inline bool canUseExBossItem2Effect() {
+		return getItem2 && nowRoomName == U"ExBoss";
+	}
+
 	inline bool canShowDeathBloodEffect() {
 		return moraleValue1 >= 40;
 	}

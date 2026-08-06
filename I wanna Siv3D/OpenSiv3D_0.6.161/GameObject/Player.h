@@ -21,6 +21,8 @@ namespace Iwanna {
 		bool usedWarpInAir = false;
 		bool isGenerateWarpEffect = false;
 		Vec2 warpEffectPos{ 0, 0 };
+		double exBossWarpCooldownRemaining = 0.0;
+		double exBossWarpCooldown = 2.0;
 		bool isOutOfScreen = false;//画面外判定用フラグ
 
 		//hp関連
@@ -75,6 +77,8 @@ namespace Iwanna {
 		Vec2 getWarpEffectPos() const;
 		bool getIsWarpMode() const;
 		void setIsWarpMode(bool value);
+		bool canUseExBossItem2Warp() const;
+		double getExBossWarpCooldownRemaining() const;
 		Global::Direction getDirection() const;
 		void setIsMuteki(bool value);
 		bool getIsMuteki() const;

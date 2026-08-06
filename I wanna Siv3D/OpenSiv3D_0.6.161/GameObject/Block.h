@@ -90,6 +90,7 @@ namespace Iwanna {
 	private:
 		bool isBreak;
 		int32 triggerID = 0;
+		bool playBreakSound = true;
 
 		double blockAlpha = 1.0;
 		double blockDir = 0;
@@ -102,6 +103,7 @@ namespace Iwanna {
 		void onCollision(GameObject& other) override;
 		bool getIsBreak() const;
 		void setIsBreak(bool hidden);
+		void setPlayBreakSound(bool enabled);
 		int32 getID();
 	};
 

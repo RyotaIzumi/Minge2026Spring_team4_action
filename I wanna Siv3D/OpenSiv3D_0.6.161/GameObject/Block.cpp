@@ -243,7 +243,9 @@ namespace Iwanna {
 		}
 
 		if (triggerID == id && !isBreak) {
-			Sound::playOneShot(Sound::BLOCKBREAK);
+			if (playBreakSound) {
+				Sound::playOneShot(Sound::BLOCKBREAK);
+			}
 			isBreak = true;
 		}
 
@@ -280,6 +282,10 @@ namespace Iwanna {
 
 	void BreakBlock::setIsBreak(bool hidden) {
 		isBreak = hidden;
+	}
+
+	void BreakBlock::setPlayBreakSound(bool enabled) {
+		playBreakSound = enabled;
 	}
 
 	int32 BreakBlock::getID() {

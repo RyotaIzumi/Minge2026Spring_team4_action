@@ -144,6 +144,7 @@ namespace Iwanna {
 		double exBossEntryDarkAlphaFadeSpeed = 0.03;
 		bool isExBossThirdPhaseDarkening = false;
 		bool isExBossThirdPhaseRestoring = false;
+		bool isExBossSaveActivated = false;
 		double exBossThirdPhaseDarkAlphaTarget = 0.9;
 		double exBossThirdPhaseDarkAlphaSpeed = 0.01;
 		double exBossThirdPhaseRestoreSpeed = 0.01;
