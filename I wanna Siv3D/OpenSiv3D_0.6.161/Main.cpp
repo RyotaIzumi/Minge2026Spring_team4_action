@@ -44,6 +44,7 @@ void Main()
 	Global::deathCount = 0;
 	Global::hasUsedHaibokusyaMode = false;
 	Global::isHaibokusyaBlockActive = false;
+	Global::isExtraProgressCompleted = false;
 
 	while (System60::Update()) {
 		if (not app.update()) {
@@ -52,6 +53,7 @@ void Main()
 	}
 	mainGameSerializer.SaveCharactersMoraleValue();
 	mainGameSerializer.SaveGameSettings();
+	mainGameSerializer.SaveExtraProgress();
 	mainGameSerializer.SaveEndingClearRecord();
 	mainGameSerializer.SaveEndingValue();
 }

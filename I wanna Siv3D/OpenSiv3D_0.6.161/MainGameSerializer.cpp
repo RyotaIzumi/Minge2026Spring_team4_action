@@ -77,6 +77,10 @@ namespace {
 			}
 		}
 	}
+
+	bool IsExtraProgressRoom(const String& roomName) {
+		return Global::isExtraStage(roomName) || roomName == U"ExBoss";
+	}
 }
 
 MainGameSerializer::MainGameSerializer() {
@@ -247,6 +251,94 @@ void MainGameSerializer::SaveEndingClearRecord() {
 		json[U"eachHaibokusyaFlag"][endingId] = Global::hasUsedHaibokusyaMode;
 	}
 
+	json.save(savePath);
+}
+
+bool MainGameSerializer::LoadExtraProgressIfAvailable() {
+	if (!Global::isEndingKRoute()) {
+		return false;
+	}
+
+	const JSON json = JSON::Load(GetGameSaveFilePath());
+	if (!json || !json.contains(U"extraProgress")) {
+		return false;
+	}
+
+	const auto& extraProgress = json[U"extraProgress"];
+	if (!ReadBool(extraProgress, U"isActive")) {
+		return false;
+	}
+
+	if (!extraProgress.contains(U"roomName")
+		|| !extraProgress.contains(U"playerX")
+		|| !extraProgress.contains(U"playerY")) {
+		return false;
+	}
+
+	const String roomName = extraProgress[U"roomName"].getString();
+	if (!IsExtraProgressRoom(roomName)) {
+		return false;
+	}
+
+	Global::savedRoomName = roomName;
+	Global::nowRoomName = roomName;
+	Global::savedStartPlayerPos = Vec2{
+		extraProgress[U"playerX"].get<double>(),
+		extraProgress[U"playerY"].get<double>()
+	};
+	Global::savedIsWarpMode = false;
+	Global::elapsedPlayTime = extraProgress.contains(U"elapsedPlayTime")
+		? Max(0.0, extraProgress[U"elapsedPlayTime"].get<double>())
+		: 0.0;
+	Global::deathCount = extraProgress.contains(U"deathCount")
+		? Max(0, extraProgress[U"deathCount"].get<int32>())
+		: 0;
+	Global::isExistSaveData = true;
+	Global::isChangeRoom = false;
+	Global::isExtraProgressCompleted = false;
+
+	return true;
+}
+
+void MainGameSerializer::SaveExtraProgress() {
+	if (!Global::isEndingKRoute()
+		|| Global::isExtraProgressCompleted
+		|| !Global::isExistSaveData
+		|| !IsExtraProgressRoom(Global::savedRoomName)) {
+		return;
+	}
+
+	const FilePath savePath = GetGameSaveFilePath();
+	FileSystem::CreateDirectories(FileSystem::ParentPath(savePath));
+
+	JSON json = JSON::Load(savePath);
+	if (!json) {
+		json = JSON{};
+	}
+
+	json[U"extraProgress"] = JSON{};
+	json[U"extraProgress"][U"isActive"] = true;
+	json[U"extraProgress"][U"roomName"] = Global::savedRoomName;
+	json[U"extraProgress"][U"playerX"] = Global::savedStartPlayerPos.x;
+	json[U"extraProgress"][U"playerY"] = Global::savedStartPlayerPos.y;
+	json[U"extraProgress"][U"elapsedPlayTime"] = Max(0.0, Global::elapsedPlayTime);
+	json[U"extraProgress"][U"deathCount"] = Max(0, Global::deathCount);
+
+	json.save(savePath);
+}
+
+void MainGameSerializer::ClearExtraProgress() {
+	Global::isExtraProgressCompleted = true;
+
+	const FilePath savePath = GetGameSaveFilePath();
+	FileSystem::CreateDirectories(FileSystem::ParentPath(savePath));
+
+	JSON json = JSON::Load(savePath);
+	if (!json) {
+		json = JSON{};
+	}
+
+	json[U"extraProgress"][U"isActive"] = false;
 	json.save(savePath);
 }
 

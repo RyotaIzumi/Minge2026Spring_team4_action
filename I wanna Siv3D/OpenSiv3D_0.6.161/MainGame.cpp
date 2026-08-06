@@ -1,5 +1,7 @@
 ﻿#include "MainGame.h"
 
+#include "MainGameSerializer.h"
+
 namespace Iwanna {
 	MainGame::MainGame() {
 	}
@@ -17,6 +19,14 @@ namespace Iwanna {
 		Global::endingDGenerateClearCount = 0;
 		Global::hasUsedHaibokusyaMode = false;
 		Global::isHaibokusyaBlockActive = false;
+		Global::isExtraProgressCompleted = false;
+		Global::elapsedPlayTime = 0.0;
+		Global::deathCount = 0;
+
+		if (Global::isEndingKRoute()) {
+			MainGameSerializer serializer;
+			serializer.LoadExtraProgressIfAvailable();
+		}
 
 		startGame();
 	}
@@ -57,6 +67,7 @@ namespace Iwanna {
 		Global::low1RestartDeathCheckElapsed = 0.0;
 		Global::hasUsedHaibokusyaMode = false;
 		Global::isHaibokusyaBlockActive = false;
+		Global::isExtraProgressCompleted = false;
 
 		Global::remainingGenerateStageNames.clear();
 		Global::isGenerateStageFakeLoading = false;

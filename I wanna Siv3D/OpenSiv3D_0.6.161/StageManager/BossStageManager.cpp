@@ -262,6 +262,9 @@ namespace Iwanna {
 				isExBossSaveActivated = true;
 				generateBoss(2);
 			}
+			if (Global::isEndingKRoute()) {
+				saveGame();
+			}
 		}
 		if (stageName == U"trapBoss") {
 			gameObjects.player->setHp(3);
@@ -1147,6 +1150,8 @@ namespace Iwanna {
 		Global::savedRoomName = stageName;
 		Global::savedIsWarpMode = Global::canUseItem2Effect() && gameObjects.player->getIsWarpMode();
 		Global::isExistSaveData = true;
+		MainGameSerializer serializer;
+		serializer.SaveExtraProgress();
 	}
 
 	// カメラの位置をプレイヤーのいるエリアの中心に設定

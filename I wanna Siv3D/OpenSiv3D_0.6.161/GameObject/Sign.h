@@ -18,6 +18,7 @@ namespace Iwanna {
 		Tutorial_Water,
 		Tutorial_Item,
 		Tutorial_Muteki,
+		Extra_PracticeMuteki,
 	};
 
 	class Sign : public GameObject {

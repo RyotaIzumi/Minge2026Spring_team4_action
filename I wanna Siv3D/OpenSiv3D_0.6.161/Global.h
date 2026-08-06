@@ -95,6 +95,7 @@ namespace Global {
 	inline double low1RestartDeathCheckDuration = 0.05;
 	inline bool hasUsedHaibokusyaMode = false;
 	inline bool isHaibokusyaBlockActive = false;
+	inline bool isExtraProgressCompleted = false;
 
 	// --- generateステージ関連 --- //
 	inline Array<String> generateStageNames = { U"generate1", U"generate2", U"generate3", U"generate4", U"generate5" };
@@ -217,6 +218,8 @@ namespace Global {
 	}
 
 	inline void recordHaibokusyaModeUseIfNeeded() {
+		isHaibokusyaBlockActive = true;
+
 		if (isNoMoraleEndingRoute()
 			|| isEndingKRoute()
 			|| isTutorialMap(nowRoomName)) {
@@ -224,7 +227,6 @@ namespace Global {
 		}
 
 		hasUsedHaibokusyaMode = true;
-		isHaibokusyaBlockActive = true;
 	}
 
 	inline String chooseGenerateStage() {

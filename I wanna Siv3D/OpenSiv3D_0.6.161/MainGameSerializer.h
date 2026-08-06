@@ -19,5 +19,8 @@ public:
 	void SaveCharactersMoraleValue();
 	void SaveGameSettings();
 	void SaveEndingClearRecord();
+	bool LoadExtraProgressIfAvailable();
+	void SaveExtraProgress();
+	void ClearExtraProgress();
     void SaveEndingValue();
 };
