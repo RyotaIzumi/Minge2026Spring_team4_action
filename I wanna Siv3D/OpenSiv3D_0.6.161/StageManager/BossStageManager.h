@@ -147,6 +147,14 @@ namespace Iwanna {
 		bool isExBossThirdPhaseDarkening = false;
 		bool isExBossThirdPhaseRestoring = false;
 		bool isExBossSaveActivated = false;
+		bool isExBossDefeatEffectStarted = false;
+		Stopwatch exBossDefeatEffectStopwatch{ StartImmediately::No };
+		double exBossDefeatWhiteFlashAlpha = 0.0;
+		double exBossDefeatWhiteFlashStartAlpha = 0.65;
+		double exBossDefeatWhiteFlashFadeSpeed = 0.06;
+		double exBossDefeatFinalWhiteFadeAlpha = 0.0;
+		double exBossDefeatFinalWhiteFadeStartTime = 5.0;
+		double exBossDefeatFinalWhiteFadeDuration = 5.0;
 		double exBossThirdPhaseDarkAlphaTarget = 0.9;
 		double exBossThirdPhaseDarkAlphaSpeed = 0.01;
 		double exBossThirdPhaseRestoreSpeed = 0.01;
@@ -283,6 +291,8 @@ namespace Iwanna {
 		void startExBossSummonNameBar(String textureName, Vec2 centerPos);
 		void finishExBossThirdPhaseLowBoss();
 		void startExBossForthFormLongAttackSetup();
+		void startExBossDefeatEffect();
+		bool getIsExBossDefeatEffectStarted() const;
 		Vec2 getExBossLockedCameraCenter() const;
 		Vec2 getTrapBossSecondPhaseLeftEyePos() const;
 		Vec2 getTrapBossSecondPhaseRightEyePos() const;

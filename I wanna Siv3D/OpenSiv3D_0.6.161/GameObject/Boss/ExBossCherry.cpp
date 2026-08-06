@@ -43,6 +43,24 @@ namespace Iwanna {
 
 	void ExBossCherry::barrageUpdate() {
 
+		if (isDefeatEffectStarted) {
+			if (!isDefeatFallStarted && defeatEffectStopwatch.sF() >= defeatFallStartDelay) {
+				isDefeatFallStarted = true;
+				defeatFallSpeed = 0.0;
+			}
+			if (isDefeatFallStarted) {
+				defeatFallSpeed += defeatFallAcceleration;
+				pos.y += defeatFallSpeed;
+				textureAngle += 0.4;
+			}
+			if (!isDefeatSwordDriftStarted && defeatEffectStopwatch.sF() >= 3.0) {
+				isDefeatSwordDriftStarted = true;
+				sordCherriesManager->startDefeatDrift();
+			}
+
+			return;
+		}
+
 		//ボス戦開始時の処理
 		switch (startStep) {
 		case 0:
@@ -92,10 +110,12 @@ namespace Iwanna {
 		if (hpBarAlpha < 1)hpBarAlpha += 0.05;
 		hpBarDelay.update(hp, maxHp);
 
-		updateBossForm();
-		
-		//攻撃処理
-		attack();
+		if (!isDefeatEffectStarted) {
+			updateBossForm();
+
+			//攻撃処理
+			attack();
+		}
 
 		//剣の状態を更新
 		sordCherriesManager->setExBossPos(pos);
@@ -141,12 +161,22 @@ namespace Iwanna {
 
 	//ダメージを受けた際の処理
 	void ExBossCherry::hited(int32 damage) {
+		if (isDefeatEffectStarted || hp <= 0) {
+			return;
+		}
+
 		if (hp > 0) {
 			Sound::playOneShot(Sound::BOSSHIT);
 			hp -= Max(1, damage);
 		}
 
 		if (hp <= 0) {
+			hp = 0;
+			isDefeatEffectStarted = true;
+			hasHp = false;
+			canPlayerKill = false;
+			defeatEffectStopwatch.restart();
+			sordCherriesManager->stopFollowBoss();
 			Sound::playOneShot(Sound::DEATH);
 			if (Global::isEndingKRoute()) {
 				Global::endingValue = 10;
@@ -155,8 +185,8 @@ namespace Iwanna {
 				serializer.SaveEndingClearRecord();
 				serializer.SaveEndingValue();
 			}
-			Global::isBossDefeated = true;
-			throw Error{ U"おめでとう！君はボスを撃破した！" };
+			bossStageManager->startExBossDefeatEffect();
+			return;
 		}
 
 		isMuteki = true;
@@ -168,9 +198,9 @@ namespace Iwanna {
 	void ExBossCherry::updateBossForm() {
 		prevBossForm = bossForm;
 
-		if (hp > 59)bossForm = BossForm::First;
-		else if (hp > 58)bossForm = BossForm::Second;
-		else if (hp > 57)bossForm = BossForm::Third;
+		if (hp > 50)bossForm = BossForm::First;
+		else if (hp > 38)bossForm = BossForm::Second;
+		else if (hp > 20)bossForm = BossForm::Third;
 		else bossForm = BossForm::Forth;
 
 		if (!debugDisableThirdFormSummonAttack
@@ -212,6 +242,30 @@ namespace Iwanna {
 	}
 
 	void SordCherry::barrageUpdate() {
+		if (isDefeatDrifting) {
+			defeatDriftElapsed += Scene::DeltaTime();
+			if (defeatDriftElapsed < defeatDriftDelay) {
+				return;
+			}
+
+			isFollowBoss = false;
+			canPlayerKill = false;
+			pos += defeatDriftVelocity;
+			defeatDriftVelocity += defeatDriftAcceleration;
+			alpha = Max(0.0, alpha - defeatDriftFadeSpeed);
+			sparkAlpha = Max(0.0, sparkAlpha - defeatDriftFadeSpeed);
+			if (alpha <= 0.0) {
+				isDelete = true;
+			}
+			setTypeColor();
+			return;
+		}
+		if (isDefeatStopped) {
+			canPlayerKill = false;
+			setTypeColor();
+			return;
+		}
+
 		switch (startStep) {
 		case 0:
 			setSordRotateStatus(sordBaseCenterPos);
@@ -292,6 +346,23 @@ namespace Iwanna {
 		canSpark = true;
 		sparkStep = 0;
 		sparkStopwatch.restart();
+	}
+
+	void SordCherry::stopFollowForDefeat() {
+		isDefeatStopped = true;
+		isFollowBoss = false;
+		canPlayerKill = false;
+	}
+
+	void SordCherry::startDefeatDrift(double delay, Vec2 velocity, double fadeSpeed) {
+		isDefeatStopped = false;
+		isDefeatDrifting = true;
+		defeatDriftDelay = Max(0.0, delay);
+		defeatDriftElapsed = 0.0;
+		defeatDriftVelocity = velocity;
+		defeatDriftFadeSpeed = fadeSpeed;
+		isFollowBoss = false;
+		canPlayerKill = false;
 	}
 
 	// --- 剣の判定用りんご --- //
@@ -418,6 +489,14 @@ namespace Iwanna {
 		isFollowBoss = true;
 	}
 
+	void SordCherriesManager::stopFollowBoss() {
+		isFollowBoss = false;
+		setSordCanPlayerKill(false);
+		for (const auto& cherry : sordCherries) {
+			cherry->stopFollowForDefeat();
+		}
+	}
+
 	void SordCherriesManager::draw() const {
 		for (const auto& cherry : sordCherries) {
 			cherry->draw();
@@ -437,6 +516,22 @@ namespace Iwanna {
 
 			cherry->initSparking(sparkInterval * sparkBladeCount);
 			if (cherry->bladeId % 2 == 0)sparkBladeCount++;
+		}
+	}
+
+	void SordCherriesManager::startDefeatDrift() {
+		if (isDefeatDriftStarted) {
+			return;
+		}
+
+		isDefeatDriftStarted = true;
+		isFollowBoss = false;
+		setSordCanPlayerKill(false);
+
+		for (size_t i = 0; i < sordCherries.size(); ++i) {
+			const double delay = i * 0.06;
+			const Vec2 velocity{ Random(0.7, 1.6), Random(-1.45, -0.55) };
+			sordCherries[i]->startDefeatDrift(delay, velocity, 0.012);
 		}
 	}
 

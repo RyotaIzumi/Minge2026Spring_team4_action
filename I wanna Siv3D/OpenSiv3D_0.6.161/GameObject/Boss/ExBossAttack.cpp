@@ -4,6 +4,9 @@
 
 namespace Iwanna {
 	void ExBossCherry::attack() {
+		const bool canGenerateThirdFormColorBarrage = bossForm >= BossForm::Third
+			&& (debugDisableThirdFormSummonAttack || isThirdFormSummonAttackFinished);
+
 		switch (nowAttackType) {
 		case ExBossAttackType::Wait:// --- 待機状態 --- //
 			if (isThirdFormRetreatPending) {
@@ -115,6 +118,7 @@ namespace Iwanna {
 				if (getIsMoveFinished() && getIsRotateFinished()) {
 					baseCenterPos = pos;
 					isThirdFormReturning = false;
+					isThirdFormSummonAttackFinished = true;
 					startWait();
 				}
 				break;
@@ -192,7 +196,7 @@ namespace Iwanna {
 					bossStageManager->createSordExproCherry(attackStartPos, false, [this]() { return std::make_shared<ExproCherry>(pos, 1.0);});
 
 					//弾幕作成
-					if (bossForm >= BossForm::Third && !isForthFormLongAttackActive) {
+					if (canGenerateThirdFormColorBarrage && !isForthFormLongAttackActive) {
 						for(int i=0;i < 2;i++) barrageAttack(CherryColorType::Sky);
 					}
 
@@ -359,7 +363,7 @@ namespace Iwanna {
 				if (getIsRotateFinished() && getIsMoveFinished()) {
 
 					//弾幕作成
-					if (bossForm >= BossForm::Third && !isForthFormLongAttackActive) {
+					if (canGenerateThirdFormColorBarrage && !isForthFormLongAttackActive) {
 						barrageAttack(CherryColorType::Orange);
 					}
 
@@ -433,7 +437,7 @@ namespace Iwanna {
 					Sound::playOneShot(Sound::BLOCKBREAK);
 
 					//弾幕作成
-					if (bossForm >= BossForm::Third) {
+					if (canGenerateThirdFormColorBarrage) {
 						barrageAttack(CherryColorType::Blue);
 					}
 
@@ -582,7 +586,7 @@ namespace Iwanna {
 					pos.y = targetY;
 					textureAngle += 180;
 
-					if (bossForm >= BossForm::Third) {
+					if (canGenerateThirdFormColorBarrage) {
 						continueGenerateColor = randomChoiceBarrageAttacks.choice();
 						generateBarrageCherryTimer.restart();
 					}
@@ -598,7 +602,7 @@ namespace Iwanna {
 				break;
 			case 3://画面下部を移動
 
-				if (bossForm >= BossForm::Third && generateBarrageCherryTimer.reachedZero() && 0 < pos.x && pos.x < Global::stageWidth) {
+				if (canGenerateThirdFormColorBarrage && generateBarrageCherryTimer.reachedZero() && 0 < pos.x && pos.x < Global::stageWidth) {
 					slideBarrageAttack(continueGenerateColor);
 					generateBarrageCherryTimer.restart();
 				}
@@ -670,7 +674,7 @@ namespace Iwanna {
 				if (getIsRotateFinished()) {
 
 					//弾幕作成
-					if (bossForm >= BossForm::Third) {
+					if (canGenerateThirdFormColorBarrage) {
 						barrageAttack(CherryColorType::Green);
 					}
 

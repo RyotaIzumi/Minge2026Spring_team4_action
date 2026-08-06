@@ -27,6 +27,13 @@ namespace Iwanna {
 		double sparkAlpha = 0.0;
 		Timer sparkTimer{ 0.14s,StartImmediately::No };
 		int32 sparkStep = 0;
+		bool isDefeatStopped = false;
+		bool isDefeatDrifting = false;
+		double defeatDriftDelay = 0.0;
+		double defeatDriftElapsed = 0.0;
+		double defeatDriftFadeSpeed = 0.015;
+		Vec2 defeatDriftVelocity{ 0, 0 };
+		Vec2 defeatDriftAcceleration{ 0.015, -0.006 };
 	public:
 		SordCherry(Vec2 startPos, double scale, CherryColorType colorType);
 
@@ -42,6 +49,8 @@ namespace Iwanna {
 		void setIsFollowBoss(bool);
 
 		void initSparking(double time);
+		void stopFollowForDefeat();
+		void startDefeatDrift(double delay, Vec2 velocity, double fadeSpeed);
 	};
 
 	class SordHitBoxCherry : public SordCherry {
@@ -75,6 +84,7 @@ namespace Iwanna {
 		Vec2 sordEdgePos;
 
 		Timer generateEffectTimer{ 0.001s,StartImmediately::No };
+		bool isDefeatDriftStarted = false;
 
 	public:
 		SordCherriesManager(Vec2 startPos, double scale, BossStageManager& manager);
@@ -92,7 +102,9 @@ namespace Iwanna {
 		//状態設定関数
 		void createSordCherries(); //剣型の生成
 		void startFollowBoss(); //bossの移動についていくようにする関数
+		void stopFollowBoss();
 		void sparkSordBlade(); // 剣を光らせる
+		void startDefeatDrift();
 	};
 
 	enum class ExBossAttackType {
@@ -154,10 +166,18 @@ namespace Iwanna {
 		bool isForthFormLongAttackActive = false;
 		bool isForthFormLongAttackSetupFinished = false;
 		int32 forthFormLongAttackChainStep = 0;
+		bool isDefeatEffectStarted = false;
+		bool isDefeatFallStarted = false;
+		bool isDefeatSwordDriftStarted = false;
+		Stopwatch defeatEffectStopwatch{ StartImmediately::No };
+		double defeatFallStartDelay = 1.0;
+		double defeatFallSpeed = 0.0;
+		double defeatFallAcceleration = 0.18;
 		bool isThirdFormRetreatPending = false;
 		bool isThirdFormRetreatFinished = false;
 		bool isThirdFormSummonSelected = false;
-		bool debugDisableThirdFormSummonAttack = true;
+		bool isThirdFormSummonAttackFinished = false;
+		bool debugDisableThirdFormSummonAttack = false;
 		int32 thirdFormSummonType = -1;
 		bool isThirdFormReturning = false;
 		Stopwatch thirdFormRetreatStopwatch{ StartImmediately::No };

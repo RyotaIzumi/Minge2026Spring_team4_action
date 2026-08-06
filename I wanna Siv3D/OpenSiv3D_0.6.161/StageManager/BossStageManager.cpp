@@ -65,6 +65,10 @@ namespace Iwanna {
 		isExBossThirdPhaseDarkening = false;
 		isExBossThirdPhaseRestoring = false;
 		isExBossSaveActivated = false;
+		isExBossDefeatEffectStarted = false;
+		exBossDefeatEffectStopwatch.reset();
+		exBossDefeatWhiteFlashAlpha = 0.0;
+		exBossDefeatFinalWhiteFadeAlpha = 0.0;
 		isExBossCameraLocked = false;
 		hasExBossThirdPhaseLowBoss = false;
 		hasExBossThirdPhaseBossCherry = false;
@@ -548,6 +552,21 @@ namespace Iwanna {
 				exBossEntryDarkAlpha = Max(0.0, exBossEntryDarkAlpha - exBossEntryDarkAlphaFadeSpeed);
 			}
 
+			if (stageName == U"ExBoss" && exBossDefeatWhiteFlashAlpha > 0.0) {
+				exBossDefeatWhiteFlashAlpha = Max(0.0, exBossDefeatWhiteFlashAlpha - exBossDefeatWhiteFlashFadeSpeed);
+			}
+
+			if (stageName == U"ExBoss" && isExBossDefeatEffectStarted) {
+				const double elapsed = exBossDefeatEffectStopwatch.sF();
+				if (elapsed >= exBossDefeatFinalWhiteFadeStartTime) {
+					const double fadeElapsed = elapsed - exBossDefeatFinalWhiteFadeStartTime;
+					exBossDefeatFinalWhiteFadeAlpha = Min(1.0, fadeElapsed / exBossDefeatFinalWhiteFadeDuration);
+					if (exBossDefeatFinalWhiteFadeAlpha >= 1.0) {
+						System::Exit();
+					}
+				}
+			}
+
 			// ----- 以下削除処理 -----
 
 			//画面外のりんごを削除
@@ -966,7 +985,7 @@ namespace Iwanna {
 
 		titleCard.draw();
 
-		if (stageName == U"ExBoss") {
+		if (stageName == U"ExBoss" && !isExBossDefeatEffectStarted) {
 			for (const auto& cherry : gameObjects.bossCherries) {
 				if (const auto* exBoss = dynamic_cast<const ExBossCherry*>(cherry.get())) {
 					exBoss->drawHpBarScreen();
@@ -1000,6 +1019,12 @@ namespace Iwanna {
 		}
 
 		drawTrapBossSecondPhaseHp();
+		if (stageName == U"ExBoss" && exBossDefeatWhiteFlashAlpha > 0.0) {
+			Rect{ 0, 0, Global::windowWidth, Global::windowHeight }.draw(ColorF{ 1.0, 1.0, 1.0, exBossDefeatWhiteFlashAlpha });
+		}
+		if (stageName == U"ExBoss" && exBossDefeatFinalWhiteFadeAlpha > 0.0) {
+			Rect{ 0, 0, Global::windowWidth, Global::windowHeight }.draw(ColorF{ 1.0, 1.0, 1.0, exBossDefeatFinalWhiteFadeAlpha });
+		}
 		achive.draw();
 	}
 
@@ -1274,6 +1299,30 @@ namespace Iwanna {
 		}
 
 		return Global::isBossDefeated;
+	}
+
+	void BossStageManager::startExBossDefeatEffect() {
+		if (stageName != U"ExBoss" || isExBossDefeatEffectStarted) {
+			return;
+		}
+
+		isExBossDefeatEffectStarted = true;
+		exBossDefeatEffectStopwatch.restart();
+		exBossDefeatWhiteFlashAlpha = exBossDefeatWhiteFlashStartAlpha;
+		exBossDefeatFinalWhiteFadeAlpha = 0.0;
+		Global::doNotStopBgm = false;
+		Global::isBossDefeated = true;
+		gameObjects.cherries.clear();
+		pendingCherries.clear();
+		pendingBossCherries.clear();
+		gameObjects.bossCherries.remove_if([](const std::shared_ptr<Cherry>& cherry) {
+			return !dynamic_cast<ExBossCherry*>(cherry.get())
+				&& !dynamic_cast<SordCherriesManager*>(cherry.get());
+		});
+	}
+
+	bool BossStageManager::getIsExBossDefeatEffectStarted() const {
+		return isExBossDefeatEffectStarted;
 	}
 
 	bool BossStageManager::isTrapBossSecondPhaseBgm() const {
