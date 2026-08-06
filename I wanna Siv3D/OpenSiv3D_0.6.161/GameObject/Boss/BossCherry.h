@@ -380,6 +380,7 @@ namespace Iwanna {
 		void setCenterPos(Vec2 cPos);
 		void setDistanceAndAngle(double c, double r);
 		void setAttackPattern(int32 pattern);
+		void setAttackTime(double seconds);
 	};
 
 	class BossSubThrowCherry : public BossBarrageCherry {

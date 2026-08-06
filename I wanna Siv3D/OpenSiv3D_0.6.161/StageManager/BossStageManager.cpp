@@ -1487,6 +1487,17 @@ namespace Iwanna {
 		isExBossDarkEffectActive = true;
 	}
 
+	void BossStageManager::startExBossForthFormLongAttackSetup() {
+		if (stageName != U"ExBoss") {
+			return;
+		}
+
+		exBossLockedCameraCenter = executeCameraPos();
+		isExBossCameraLocked = true;
+		Global::isCameraFollowMode = false;
+		startExBossThirdPhaseDarkening();
+	}
+
 	Vec2 BossStageManager::getExBossLockedCameraCenter() const {
 		return exBossLockedCameraCenter;
 	}

@@ -152,6 +152,7 @@ namespace Iwanna {
 		double exBossThirdPhaseRestoreSpeed = 0.01;
 		bool isExBossCameraLocked = false;
 		Vec2 exBossLockedCameraCenter{ 800, 304 };
+		double exBossOrangeLinePlayerApproachMargin = 50.0;
 
 		// 召喚LowBoss
 		bool hasExBossThirdPhaseLowBoss = false;
@@ -281,6 +282,7 @@ namespace Iwanna {
 		void reserveExBossSummonNameBar(String textureName, Vec2 centerPos, double delay);
 		void startExBossSummonNameBar(String textureName, Vec2 centerPos);
 		void finishExBossThirdPhaseLowBoss();
+		void startExBossForthFormLongAttackSetup();
 		Vec2 getExBossLockedCameraCenter() const;
 		Vec2 getTrapBossSecondPhaseLeftEyePos() const;
 		Vec2 getTrapBossSecondPhaseRightEyePos() const;
@@ -318,6 +320,7 @@ namespace Iwanna {
 		void createOrangeStopCherry(bool isAddUpDown, const std::function<std::shared_ptr<BossOrangeStopCherry>()>& factory);
 		void createSkyTargetCherry(int32 lineNum, bool isAddLine, const std::function<std::shared_ptr<BossSkyTargetCherry>()>& factory, double baseSpd = 5.0, double interSpd = 2.0);
 		void createGrayLatticeCherry(double interval,const std::function<std::shared_ptr<BossGrayLatticeCherry>()>& factory);
+		void createGrayLatticeCherry(double interval, Vec2 centerPos, const std::function<std::shared_ptr<BossGrayLatticeCherry>()>& factory);
 
 		// ----- ExBoss用 ----- //
 		//void createSordCherry(Vec2 startPos, const std::function<std::shared_ptr<BossSordCherry>()>& factory);

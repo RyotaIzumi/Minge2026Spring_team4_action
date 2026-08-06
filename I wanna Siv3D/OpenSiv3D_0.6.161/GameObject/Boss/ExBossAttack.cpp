@@ -14,6 +14,14 @@ namespace Iwanna {
 				break;
 			}
 
+			if (isForthFormLongAttackPending && !isForthFormLongAttackSetupFinished) {
+				isForthFormLongAttackPending = false;
+				nowAttackType = ExBossAttackType::ForthFormLongAttackSetup;
+				attackStep = 0;
+				waitStopwatch.reset();
+				break;
+			}
+
 			if (waitStopwatch.isRunning()) {
 				if (waitStopwatch.s() >= waitTime) {
 					waitStopwatch.reset();
@@ -114,7 +122,39 @@ namespace Iwanna {
 
 			break;
 
+		case ExBossAttackType::ForthFormLongAttackSetup:
+			switch (attackStep) {
+			case 0:
+			{
+				sordCherriesManager->setSordCanPlayerKill(false);
+				bossStageManager->startExBossForthFormLongAttackSetup();
+				const Vec2 cameraCenter = bossStageManager->getExBossLockedCameraCenter();
 				const double targetY = cameraCenter.y - Global::windowHeight / 2.0 + forthFormLongAttackTargetOffsetFromTop;
+				movePosition(Vec2{ cameraCenter.x, targetY }, forthFormLongAttackMoveDuration, false);
+				rotateDirection(getBaseAngleDiff(), forthFormLongAttackMoveDuration, false);
+				attackStep++;
+				break;
+			}
+			case 1:
+				if (getIsMoveFinished() && getIsRotateFinished()) {
+					baseCenterPos = pos;
+					isForthFormLongAttackSetupFinished = true;
+					isForthFormLongAttackActive = true;
+					forthFormLongAttackChainStep = 0;
+					const Vec2 grayLatticeCenter = pos;
+					bossStageManager->createGrayLatticeCherry(100, grayLatticeCenter, [this, grayLatticeCenter]() {
+						auto cherry = std::make_shared<BossGrayLatticeCherry>(grayLatticeCenter, 1.0, BossCherryType::Gray);
+						cherry->setAttackTime(forthFormLongAttackGrayAttackTime);
+						return cherry;
+					});
+					Sound::playOneShot(Sound::SPIKETRAP);
+					nowAttackType = ExBossAttackType::Fall;
+					attackStep = 0;
+				}
+				break;
+			}
+			break;
+
 		case ExBossAttackType::SparkExpro: // --- ✨爆発攻撃 --- //
 			switch (attackStep) {
 			case 0://上向きへ回転
@@ -152,7 +192,7 @@ namespace Iwanna {
 					bossStageManager->createSordExproCherry(attackStartPos, false, [this]() { return std::make_shared<ExproCherry>(pos, 1.0);});
 
 					//弾幕作成
-					if (bossForm >= BossForm::Third) {
+					if (bossForm >= BossForm::Third && !isForthFormLongAttackActive) {
 						for(int i=0;i < 2;i++) barrageAttack(CherryColorType::Sky);
 					}
 
@@ -169,6 +209,10 @@ namespace Iwanna {
 				break;
 			case 5:
 				if (getIsMoveFinished()) {
+					if (isForthFormLongAttackActive && forthFormLongAttackChainStep >= 5) {
+						isForthFormLongAttackActive = false;
+						bossStageManager->finishExBossThirdPhaseLowBoss();
+					}
 					startWait();
 				}
 				break;
@@ -265,6 +309,13 @@ namespace Iwanna {
 			case 3://戻る
 				if (getIsRotateFinished()) {
 
+					if (isForthFormLongAttackActive && forthFormLongAttackChainStep == 3) {
+						forthFormLongAttackChainStep = 4;
+						nowAttackType = ExBossAttackType::SwingThree;
+						attackStep = 0;
+						break;
+					}
+
 					// 第二形態以降は爆破に派生
 					if (bossForm >= BossForm::Second && getRandomChance(0.4)) {
 						nowAttackType = ExBossAttackType::SparkExpro;
@@ -308,7 +359,7 @@ namespace Iwanna {
 				if (getIsRotateFinished() && getIsMoveFinished()) {
 
 					//弾幕作成
-					if (bossForm >= BossForm::Third) {
+					if (bossForm >= BossForm::Third && !isForthFormLongAttackActive) {
 						barrageAttack(CherryColorType::Orange);
 					}
 
@@ -334,6 +385,13 @@ namespace Iwanna {
 				break;
 			case 3://戻る
 				if (getIsRotateFinished()) {
+
+					if (isForthFormLongAttackActive && forthFormLongAttackChainStep == 4) {
+						forthFormLongAttackChainStep = 5;
+						nowAttackType = ExBossAttackType::SparkExpro;
+						attackStep = 0;
+						break;
+					}
 
 					// 第二形態以降は爆破に派生
 					if (bossForm >= BossForm::Second && getRandomChance(0.5)) {
@@ -388,6 +446,13 @@ namespace Iwanna {
 			case 3://戻る
 				if (getIsRotateFinished()) sordCherriesManager->setSordCanPlayerKill(false);
 				if (getIsMoveFinished()) {
+
+					if (isForthFormLongAttackActive && forthFormLongAttackChainStep == 0) {
+						forthFormLongAttackChainStep = 1;
+						nowAttackType = ExBossAttackType::FallSwing;
+						attackStep = 0;
+						break;
+					}
 
 					// 第二形態以降は振り上げに派生
 					if (bossForm >= BossForm::Second && getRandomChance(0.7) && playerDistance > 160) {
@@ -447,6 +512,13 @@ namespace Iwanna {
 				break;
 			case 3://戻る
 				if (getIsRotateFinished()) {
+
+					if (isForthFormLongAttackActive && forthFormLongAttackChainStep == 1) {
+						forthFormLongAttackChainStep = 2;
+						nowAttackType = ExBossAttackType::Warp;
+						attackStep = 0;
+						break;
+					}
 
 					// 第二形態以降は爆破に派生
 					if (bossForm >= BossForm::Second && getRandomChance(0.4)) {
@@ -647,6 +719,13 @@ namespace Iwanna {
 				break;
 			case 7://戻る
 				if (getIsRotateFinished()) {
+					if (isForthFormLongAttackActive && forthFormLongAttackChainStep == 2) {
+						forthFormLongAttackChainStep = 3;
+						nowAttackType = ExBossAttackType::SwingTwo;
+						attackStep = 0;
+						break;
+					}
+
 					// 第二形態以降は振り上げに派生
 					if (bossForm >= BossForm::Second && getRandomChance(0.5) && playerDistance > 100) {
 						nowAttackType = ExBossAttackType::SwingTwo;

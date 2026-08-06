@@ -160,6 +160,7 @@ namespace Iwanna {
 		}
 
 		isMuteki = true;
+		mutekiInterval = Timer{ SecondsF{ Max(0.01, exBossHitInvincibleTime) }, StartImmediately::No };
 		mutekiInterval.restart();
 	}
 
@@ -172,16 +173,17 @@ namespace Iwanna {
 		else if (hp > 57)bossForm = BossForm::Third;
 		else bossForm = BossForm::Forth;
 
-		if (prevBossForm < BossForm::Third && bossForm >= BossForm::Third && !isThirdFormRetreatFinished) {
+		if (!debugDisableThirdFormSummonAttack
+			&& prevBossForm < BossForm::Third
+			&& bossForm >= BossForm::Third
+			&& !isThirdFormRetreatFinished) {
 			isThirdFormRetreatPending = true;
 		}
 
 		if (prevBossForm < BossForm::Forth && bossForm >= BossForm::Forth && !isForthFormGrayAttackUsed) {
 			isForthFormGrayAttackUsed = true;
-			Sound::playOneShot(Sound::SPIKETRAP);
-			bossStageManager->createGrayLatticeCherry(100, [this]() {
-				return std::make_shared<BossGrayLatticeCherry>(pos, 1.0, BossCherryType::Gray);
-			});
+			isForthFormLongAttackPending = true;
+
 		}
 	}
 
