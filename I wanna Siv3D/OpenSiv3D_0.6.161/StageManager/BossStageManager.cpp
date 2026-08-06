@@ -32,6 +32,7 @@ namespace Iwanna {
 		gameObjects.bloods.clear();
 		gameObjects.warps.clear();
 		gameObjects.items.clear();
+		gameObjects.signs.clear();
 
 		// 一部変数の初期化
 		isGenerateBloods = false;
@@ -251,6 +252,7 @@ namespace Iwanna {
 		if (stageName == U"ExBoss") {
 			gameObjects.player->setHp(3);
 			gameObjects.savePoints << std::make_shared<BossSavePoint>(Vec2{ 800,450 }, 2);
+			gameObjects.signs << std::make_shared<Sign>(Vec2{ 11,15 }, SignType::Extra_Warp);
 			gameObjects.bossCherries << std::make_shared<SordCherriesManager>(Vec2{ 800,430 }, 2.0, *this);
 			Global::isCameraFollowMode = true;
 			Global::isBossExBarrageAttack = true;
@@ -293,6 +295,7 @@ namespace Iwanna {
 		auto& bloods = gameObjects.bloods;
 		auto& warps = gameObjects.warps;
 		auto& items = gameObjects.items;
+		auto& signs = gameObjects.signs;
 
 		//死亡判定
 		if (player->getIsDead()) {
@@ -391,6 +394,10 @@ namespace Iwanna {
 
 			for (auto& b : bullets) {
 				b->update();
+			}
+			for (auto& sign : signs) {
+				sign->update();
+				stockNearGameObjects.add(sign.get());
 			}
 			//通常の弾幕用りんご
 			for (auto& c : cherries) {
@@ -868,6 +875,13 @@ namespace Iwanna {
 	void BossStageManager::debug() {
 		auto& player = gameObjects.player;
 
+		if (stageName == U"ExBoss") {
+			if (player->getIsMuteki()) {
+				player->setIsMuteki(false);
+			}
+			return;
+		}
+
 		if (Global::inputDebugMuteki.down()) {
 			player->setIsMuteki(!player->getIsMuteki());
 			Global::recordHaibokusyaModeUseIfNeeded();
@@ -900,6 +914,7 @@ namespace Iwanna {
 			+ gameObjects.bossCherries.size()
 			+ gameObjects.bloods.size()
 			+ gameObjects.bullets.size()
+			+ gameObjects.signs.size()
 			+ 1);
 
 		// 所有権のコピーを避け、描画中だけ有効なポインタを格納する
@@ -908,6 +923,7 @@ namespace Iwanna {
 		for (const auto& s : gameObjects.savePoints) drawList << s.get();
 		for (const auto& w : gameObjects.warps) drawList << w.get();
 		for (const auto& i : gameObjects.items) drawList << i.get();
+		for (const auto& s : gameObjects.signs) drawList << s.get();
 		for (const auto& c : gameObjects.cherries) drawList << c.get();
 		for (const auto& c : gameObjects.bossCherries) drawList << c.get();
 		for (const auto& b : gameObjects.bloods) drawList << b.get();
@@ -978,7 +994,6 @@ namespace Iwanna {
 			const bool canWarp = gameObjects.player->canUseExBossItem2Warp();
 			const ColorF iconColor{ 1.0, canWarp ? 1.0 : 0.35 };
 
-			FontAsset(U"Button")(U"Xキー").drawAt(warpIconPos + Vec2{ 16, -12 }, ColorF{ 1.0, 1.0, 1.0 });
 			TextureAsset(U"item2").draw(warpIconPos, iconColor);
 			if (cooldownRemaining > 0.0) {
 				const String cooldownText = formatCooldownSeconds(cooldownRemaining);
@@ -1204,6 +1219,7 @@ namespace Iwanna {
 			titleCard.startShowTitleCard(U"boss");
 			break;
 		case 2://Exボス召喚
+			gameObjects.signs.clear();
 			gameObjects.bossCherries << std::make_shared<ExBossCherry>(Vec2{ 800,-300 }, 5.0, *this);
 			bossBgmStart = true;
 			Global::doNotStopBgm = true;

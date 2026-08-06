@@ -104,8 +104,8 @@ void MainGameSerializer::LoadCharactersMoraleValue() {
 	Global::moraleValue2 = moraleValue2;
 	Global::moraleValue3 = moraleValue3;
 	Global::moraleValue4 = moraleValue4;
-	Global::getItem1 = ReadBool(json, U"GetItem1") || LoadPersistentItemFlag(U"GetItem1");
-	Global::getItem2 = ReadBool(json, U"GetItem2") || LoadPersistentItemFlag(U"GetItem2");
+	Global::getItem1 = ReadBool(json, U"GetItem1");
+	Global::getItem2 = ReadBool(json, U"GetItem2");
 }
 
 void MainGameSerializer::LoadGameSettings() {

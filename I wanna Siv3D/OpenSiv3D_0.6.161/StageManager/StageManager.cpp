@@ -108,9 +108,6 @@ namespace Iwanna {
 		if (Global::isExtraStage(stageName)) {
 			titleCard.setEntryByPlayerPosition(gameObjects.player->pos, executeCameraPos());
 			titleCard.startShowTitleCard(stageName);
-			if (Global::isEndingKRoute()) {
-				saveGame();
-			}
 		}
 
 		if (stageName == U"clear") {
