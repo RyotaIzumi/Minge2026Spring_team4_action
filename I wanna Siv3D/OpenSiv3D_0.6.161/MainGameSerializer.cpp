@@ -38,6 +38,19 @@ namespace {
 
 		return values;
 	}
+
+	bool ReadBool(const JSON& json, const String& key, bool defaultValue = false) {
+		return json.contains(key) ? json[key].get<bool>() : defaultValue;
+	}
+
+	bool LoadPersistentItemFlag(const String& key) {
+		const JSON json = JSON::Load(GetGameSaveFilePath());
+		if (!json) {
+			return false;
+		}
+
+		return ReadBool(json, key);
+	}
 }
 
 MainGameSerializer::MainGameSerializer() {
@@ -61,12 +74,8 @@ void MainGameSerializer::LoadCharactersMoraleValue() {
 	Global::moraleValue2 = moraleValue2;
 	Global::moraleValue3 = moraleValue3;
 	Global::moraleValue4 = moraleValue4;
-	Global::getItem1 = json.contains(U"GetItem1")
-		? json[U"GetItem1"].get<bool>()
-		: false;
-	Global::getItem2 = json.contains(U"GetItem2")
-		? json[U"GetItem2"].get<bool>()
-		: false;
+	Global::getItem1 = ReadBool(json, U"GetItem1") || LoadPersistentItemFlag(U"GetItem1");
+	Global::getItem2 = ReadBool(json, U"GetItem2") || LoadPersistentItemFlag(U"GetItem2");
 }
 
 void MainGameSerializer::LoadGameSettings() {
@@ -150,6 +159,18 @@ void MainGameSerializer::SaveCharactersMoraleValue() {
 	json[U"GetItem2"] = Global::getItem2;
 
 	json.save(U"CharactersMoraleValue.json");
+
+	const FilePath savePath = GetGameSaveFilePath();
+	FileSystem::CreateDirectories(FileSystem::ParentPath(savePath));
+
+	JSON persistentJson = JSON::Load(savePath);
+	if (!persistentJson) {
+		persistentJson = JSON{};
+	}
+
+	persistentJson[U"GetItem1"] = Global::getItem1 || ReadBool(persistentJson, U"GetItem1");
+	persistentJson[U"GetItem2"] = Global::getItem2 || ReadBool(persistentJson, U"GetItem2");
+	persistentJson.save(savePath);
 }
 
 void MainGameSerializer::SaveGameSettings() {

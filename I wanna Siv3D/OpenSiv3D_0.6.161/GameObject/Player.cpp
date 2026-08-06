@@ -519,8 +519,8 @@ namespace Iwanna {
 
 	//画面外判定
 	void Player::checkOutOfScreen() {
-		const int32 excessX = 0;//画面端からの余白
-		const int32 excessY = 0;//画面端からの余白
+		const int32 excessX = 8;//画面端からの余白
+		const int32 excessY = 8;//画面端からの余白
 		if ((pos.x < -1 * excessX || pos.x > Global::stageWidth + excessX ||
 			pos.y < -1 * excessY || pos.y > Global::stageHeight + excessY)) {
 			isOutOfScreen = true;
