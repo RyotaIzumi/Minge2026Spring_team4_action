@@ -114,6 +114,7 @@ namespace Iwanna {
 
 			break;
 
+				const double targetY = cameraCenter.y - Global::windowHeight / 2.0 + forthFormLongAttackTargetOffsetFromTop;
 		case ExBossAttackType::SparkExpro: // --- ✨爆発攻撃 --- //
 			switch (attackStep) {
 			case 0://上向きへ回転
