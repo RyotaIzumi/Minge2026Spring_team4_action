@@ -73,6 +73,8 @@ namespace Iwanna {
 		void setIsGenerateWarpEffect(bool value);
 		bool getIsGenerateWarpEffect() const;
 		Vec2 getWarpEffectPos() const;
+		bool getIsWarpMode() const;
+		void setIsWarpMode(bool value);
 		Global::Direction getDirection() const;
 		void setIsMuteki(bool value);
 		bool getIsMuteki() const;

@@ -20,7 +20,10 @@ namespace Iwanna {
 		roomOutTrue = false;//kid君をroom外にいけるようにする
 		isDead = false;//死亡状態かどうか
 		isGenerateBullet = false;//弾生成フラグ
-		isWarpMode = false;
+		isWarpMode = Global::canUseItem2Effect() && Global::savedIsWarpMode;
+		if (!Global::canUseItem2Effect()) {
+			Global::savedIsWarpMode = false;
+		}
 		usedWarpInAir = false;
 		isGenerateWarpEffect = false;
 		warpEffectPos = Vec2{ 0, 0 };
@@ -82,6 +85,7 @@ namespace Iwanna {
 			}
 			if (!Global::canUseItem2Effect()) {
 				isWarpMode = false;
+				Global::savedIsWarpMode = false;
 			}
 			if (Global::inputLeft.pressed()) playerMoveLeft();
 			if (Global::inputRight.pressed()) playerMoveRight();
@@ -464,6 +468,17 @@ namespace Iwanna {
 
 	Vec2 Player::getWarpEffectPos() const {
 		return warpEffectPos;
+	}
+
+	bool Player::getIsWarpMode() const {
+		return isWarpMode;
+	}
+
+	void Player::setIsWarpMode(bool value) {
+		isWarpMode = Global::canUseItem2Effect() && value;
+		if (!Global::canUseItem2Effect()) {
+			Global::savedIsWarpMode = false;
+		}
 	}
 
 	// 向きを取得

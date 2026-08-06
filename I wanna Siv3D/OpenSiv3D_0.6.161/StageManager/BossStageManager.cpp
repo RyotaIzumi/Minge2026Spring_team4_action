@@ -1088,6 +1088,7 @@ namespace Iwanna {
 		//プレイヤーの位置を保存
 		Global::savedStartPlayerPos = gameObjects.player->pos;
 		Global::savedRoomName = stageName;
+		Global::savedIsWarpMode = Global::canUseItem2Effect() && gameObjects.player->getIsWarpMode();
 		Global::isExistSaveData = true;
 	}
 

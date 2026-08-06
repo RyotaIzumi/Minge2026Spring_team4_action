@@ -10,6 +10,7 @@ namespace Iwanna {
 		Global::isExistSaveData = false;
 		Global::savedStartPlayerPos = Vec2{ -100, -100 };
 		Global::savedRoomName = Global::startRoomName;
+		Global::savedIsWarpMode = false;
 		Global::prevRoomName = U"";
 		Global::nowRoomName = Global::startRoomName;
 		Global::isChangeRoom = false;
@@ -26,6 +27,7 @@ namespace Iwanna {
 		Global::isExistSaveData = false;
 		Global::savedStartPlayerPos = Vec2{ -100, -100 };
 		Global::savedRoomName = Global::startRoomName;
+		Global::savedIsWarpMode = false;
 		Global::prevRoomName = U"";
 		Global::nowRoomName = Global::startRoomName;
 		Global::isChangeRoom = false;
@@ -68,6 +70,7 @@ namespace Iwanna {
 		if (!Global::isExistSaveData && !Global::isChangeRoom) {
 			Global::savedRoomName = Global::startRoomName;
 			Global::nowRoomName = Global::startRoomName;
+			Global::savedIsWarpMode = false;
 		}
 
 		if(!Global::isChangeRoom) Global::nowRoomName = Global::savedRoomName;

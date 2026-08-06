@@ -36,6 +36,8 @@ namespace Global {
 	inline Vec2 savedStartPlayerPos = Vec2(-100, -100);
 	// セーブされた部屋名
 	inline String savedRoomName = U"";
+	// セーブされた武器モード。false: 銃, true: ワープ
+	inline bool savedIsWarpMode = false;
 
 	// --- room関連 ---
 	inline int32 stageWidth = 800;

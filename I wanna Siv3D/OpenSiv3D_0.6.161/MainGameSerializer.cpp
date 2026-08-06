@@ -122,6 +122,8 @@ void MainGameSerializer::defineGlobalStatuses() {
 	else if(moraleValue1 <= 30) Global::startRoomName = U"normal1";
 	else Global::startRoomName = U"tutorial";
 
+	// 機能や演出
+
 	// ゲームタイトル
 	if (moraleValue2 > 90 && moraleValue2 <= 100) Window::SetTitle(U"TestPlayGame (Debug Build)");
 	else Window::SetTitle(U"I gonna be the treasure hunter");
