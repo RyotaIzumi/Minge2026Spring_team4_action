@@ -225,7 +225,7 @@ namespace Iwanna {
 			}
 
 			// 血しぶきの生成
-			if (player->getIsDead() && !isGenerateBloods) {
+			if (player->getIsDead() && !isGenerateBloods && Global::canShowDeathBloodEffect()) {
 				double circleNum = 2;
 				double deltaD = 360 / bloodNum;
 				for (int32 count = 0; count < circleNum; count++) {
@@ -233,6 +233,9 @@ namespace Iwanna {
 						bloods << std::make_shared<Blood>(player->pos, i * deltaD);
 					}
 				}
+				isGenerateBloods = true;
+			}
+			else if (player->getIsDead() && !Global::canShowDeathBloodEffect()) {
 				isGenerateBloods = true;
 			}
 

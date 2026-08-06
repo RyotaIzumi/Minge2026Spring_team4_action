@@ -186,6 +186,14 @@ namespace Global {
 		return getItem2 && !isItemEffectBlockedRoute();
 	}
 
+	inline bool canShowDeathBloodEffect() {
+		return moraleValue1 >= 40;
+	}
+
+	inline bool canUseMenuSettings() {
+		return moraleValue1 >= 50;
+	}
+
 	inline String chooseGenerateStage() {
 		if (remainingGenerateStageNames.isEmpty()) {
 			remainingGenerateStageNames = generateStageNames;
