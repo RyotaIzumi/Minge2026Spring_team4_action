@@ -44,7 +44,7 @@ namespace Iwanna {
 		void setHasCollide(bool b);
 		bool getHasCollide() const;
 		void setBlockColor(ColorF color);
-		virtual void breakAsDebris();
+		virtual void breakAsDebris(bool playSound = true);
 		bool getIsDebris() const;
 	};
 
@@ -124,6 +124,6 @@ namespace Iwanna {
 	class VisualOnlyBlock : public Block {
 	public:
 		VisualOnlyBlock(String name, Vec2 startPos);
-		void breakAsDebris() override;
+		void breakAsDebris(bool playSound = true) override;
 	};
 }

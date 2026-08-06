@@ -729,13 +729,19 @@ namespace Iwanna {
 			SizeF{ breakWidth, static_cast<double>(Global::stageHeight) }
 		};
 
+		bool hasBrokenBlock = false;
 		for (auto& block : gameObjects.blocks) {
 			if (block->getIsDebris()
 				|| !block->getBroadRect().intersects(breakArea)) {
 				continue;
 			}
 
-			block->breakAsDebris();
+			block->breakAsDebris(false);
+			hasBrokenBlock = true;
+		}
+
+		if (hasBrokenBlock) {
+			Sound::playOneShot(Sound::BLOCKBREAK);
 		}
 	}
 
