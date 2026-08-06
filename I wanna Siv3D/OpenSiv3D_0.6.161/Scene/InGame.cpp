@@ -14,7 +14,7 @@ namespace Iwanna {
 		}
 
 		String getEndingLetter() {
-			return String{ static_cast<char32>(U'A' + Clamp(Global::endingValue, 0, 9)) };
+			return String{ static_cast<char32>(U'A' + Clamp(Global::endingValue, 0, 10)) };
 		}
 
 		void drawItemIconWithBlockedMark(const String& textureName, const Vec2& pos) {

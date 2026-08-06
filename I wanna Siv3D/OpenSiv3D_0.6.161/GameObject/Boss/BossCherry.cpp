@@ -754,8 +754,8 @@ namespace Iwanna {
 			defeatedFallSpeed = 0.0;
 			isMuteki = false;
 			Global::isBossDefeated = true;
-			if (Global::moraleValue1 < 30 && Global::moraleValue2 < 30) {
-				Global::endingValue = 1;
+			if (Global::isEndingBRoute()) {
+				Global::endingValue = (Global::deathCount == 0) ? 8 : 1;
 			}
 			return;
 		}

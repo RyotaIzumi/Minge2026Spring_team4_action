@@ -54,11 +54,7 @@ namespace Iwanna {
 		Global::remainingGenerateStageNames.clear();
 		Global::isGenerateStageFakeLoading = false;
 
-		Global::endingValue = 4;
-		if (!(Global::moraleValue2 >= 90 && Global::moraleValue3 >= 90 && Global::moraleValue4 >= 90)
-			&& Global::moraleValue1 >= 90) {
-			Global::endingValue = 3;
-		}
+		Global::endingValue = Global::getInitialEndingValue();
 
 		if (Global::moraleValue2 > 90) Window::SetTitle(U"TestPlayGame (Debug Build)");
 		else Window::SetTitle(U"TestPlayGame");

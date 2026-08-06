@@ -21,7 +21,7 @@ namespace {
 	}
 
 	String GetCurrentEndingId() {
-		const int32 endingIndex = Clamp(Global::endingValue, 0, 9);
+		const int32 endingIndex = Clamp(Global::endingValue, 0, 10);
 		return U"Ending_" + String{ static_cast<char32>(U'A' + endingIndex) };
 	}
 
@@ -95,31 +95,29 @@ void MainGameSerializer::LoadEndingValue() {
 	}
 
 	Global::endingValue = json.contains(U"EndingValue")
-		? Clamp(json[U"EndingValue"].get<int32>(), 0, 9)
+		? Clamp(json[U"EndingValue"].get<int32>(), 0, 10)
 		: 0;
 }
 
 void MainGameSerializer::defineGlobalStatuses() {
-	Global::endingValue = 4;
+	Global::endingValue = Global::getInitialEndingValue();
 
 	// 開始room
 	if (Global::isNoMoraleEndingRoute()) {
 		Global::startRoomName = U"tutorialLow";
-		Global::endingValue = 9;
 	}
-	else if (moraleValue1 >= 101 && moraleValue2 >= 101 && moraleValue3 >= 101 && moraleValue4 >= 101) {
+	else if (Global::isEndingKRoute()) {
 		Global::startRoomName = U"ExMiluArea";
 	}
-	else if (moraleValue2 >= 90 && moraleValue3 >= 90 && moraleValue4 >= 90) {
+	else if (Global::isEndingGRoute()) {
 		Global::startRoomName = U"tutorialTrap";
 	}
-	else if (moraleValue1 < 30 && moraleValue2 < 30) {
+	else if (Global::isEndingBRoute()) {
 		Global::startRoomName = U"tutorialLow";
 	}
-	else if (moraleValue1 >= 90 && moraleValue1 <= 100) {
+	else if (Global::isEndingDRoute()) {
 		Global::remainingGenerateStageNames.clear();
 		Global::startRoomName = U"tutorialLow";
-		Global::endingValue = 3;
 	}
 	else if(moraleValue1 <= 30) Global::startRoomName = U"normal1";
 	else Global::startRoomName = U"tutorial";
@@ -188,7 +186,7 @@ void MainGameSerializer::SaveEndingClearRecord() {
 	if (json.contains(U"eachEndingClearTime")
 		&& json[U"eachEndingClearTime"].contains(endingId)) {
 		const int32 savedClearTime = json[U"eachEndingClearTime"][endingId].get<int32>();
-		shouldUpdateRecord = (savedClearTime < 0 || clearTime < savedClearTime);
+		shouldUpdateRecord = (savedClearTime <= 0 || clearTime < savedClearTime);
 	}
 
 	if (shouldUpdateRecord) {
