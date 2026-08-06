@@ -14,6 +14,7 @@ namespace Iwanna {
 		Global::prevRoomName = U"";
 		Global::nowRoomName = Global::startRoomName;
 		Global::isChangeRoom = false;
+		Global::endingDGenerateClearCount = 0;
 
 		startGame();
 	}
@@ -55,6 +56,7 @@ namespace Iwanna {
 
 		Global::remainingGenerateStageNames.clear();
 		Global::isGenerateStageFakeLoading = false;
+		Global::endingDGenerateClearCount = 0;
 
 		Global::endingValue = Global::getInitialEndingValue();
 

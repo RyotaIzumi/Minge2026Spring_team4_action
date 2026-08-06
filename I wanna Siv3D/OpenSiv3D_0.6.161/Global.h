@@ -98,6 +98,8 @@ namespace Global {
 	inline Array<String> generateStageNames = { U"generate1", U"generate2", U"generate3", U"generate4", U"generate5" };
 	inline Array<String> remainingGenerateStageNames;
 	inline bool isGenerateStageFakeLoading = false;
+	inline int32 endingDGenerateClearCount = 0;
+	inline int32 endingDGenerateClearLimit = 5;
 
 	inline bool isGenerateStage(const String& roomName) {
 		return generateStageNames.includes(roomName);

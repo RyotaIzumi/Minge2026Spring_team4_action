@@ -413,6 +413,16 @@ namespace Iwanna {
 			if (this->intersects(other)) {
 				auto* warp = dynamic_cast<Warp*>(&other);
 				if (warp->getCanWarp()) {
+					if (Global::isEndingDRoute() && Global::isGenerateStage(Global::nowRoomName)) {
+						++Global::endingDGenerateClearCount;
+						if (Global::endingDGenerateClearCount >= Global::endingDGenerateClearLimit) {
+							Sound::playOneShot(Sound::ERROR);
+							System::MessageBoxOK(U"エラーコード : 0xFOREVER\nステージ生成に失敗しました。");
+							System::Exit();
+							return;
+						}
+					}
+
 					Global::prevRoomName = Global::nowRoomName;
 					Global::nowRoomName = (Global::nowRoomName == U"tutorialLow" && Global::moraleValue1 >= 90)
 						? Global::chooseGenerateStage()
