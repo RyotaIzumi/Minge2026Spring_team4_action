@@ -2,6 +2,8 @@
 #include "../../Audio/AudioAsset.h"
 #include "../../StageManager/BossStageManager.h"
 
+#include "../../MainGameSerializer.h"
+
 namespace Iwanna {
 	ExBossCherry::ExBossCherry(Vec2 startPos, double scale, BossStageManager& manager) : bossStageManager(&manager), Cherry(startPos, scale) {
 
@@ -146,8 +148,14 @@ namespace Iwanna {
 
 		if (hp <= 0) {
 			Sound::playOneShot(Sound::DEATH);
-			throw Error{ U"おめでとう！君はボスを撃破した！" };
+			if (Global::isEndingKRoute()) {
+				Global::endingValue = 10;
+				MainGameSerializer serializer;
+				serializer.SaveEndingClearRecord();
+				serializer.SaveEndingValue();
+			}
 			Global::isBossDefeated = true;
+			throw Error{ U"おめでとう！君はボスを撃破した！" };
 		}
 
 		isMuteki = true;

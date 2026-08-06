@@ -44,7 +44,7 @@ namespace Iwanna {
 		void setHasCollide(bool b);
 		bool getHasCollide() const;
 		void setBlockColor(ColorF color);
-		virtual void breakAsDebris();
+		virtual void breakAsDebris(bool playSound = true);
 		bool getIsDebris() const;
 	};
 
@@ -90,6 +90,7 @@ namespace Iwanna {
 	private:
 		bool isBreak;
 		int32 triggerID = 0;
+		bool playBreakSound = true;
 
 		double blockAlpha = 1.0;
 		double blockDir = 0;
@@ -102,6 +103,7 @@ namespace Iwanna {
 		void onCollision(GameObject& other) override;
 		bool getIsBreak() const;
 		void setIsBreak(bool hidden);
+		void setPlayBreakSound(bool enabled);
 		int32 getID();
 	};
 
@@ -124,6 +126,6 @@ namespace Iwanna {
 	class VisualOnlyBlock : public Block {
 	public:
 		VisualOnlyBlock(String name, Vec2 startPos);
-		void breakAsDebris() override;
+		void breakAsDebris(bool playSound = true) override;
 	};
 }

@@ -112,20 +112,31 @@ namespace Iwanna {
 
 		if (stageName == U"clear") {
 			saveGame();
-			if (Global::moraleValue1 < 30 && Global::moraleValue2 < 30
-				&& Global::moraleValue3 < 30 && Global::moraleValue4 < 30) {
-				Global::endingValue = 2;
+			if (Global::isNoMoraleEndingRoute()) {
+				Global::endingValue = 9;
+			}
+			else if (Global::isEndingKRoute()) {
+				Global::endingValue = 10;
+			}
+			else if (Global::isEndingDRoute()) {
+				Global::endingValue = 3;
 			}
 			else if (Global::deathCount == 0) {
 				Global::endingValue = 8;
 			}
-			else if ((30 <= Global::moraleValue1 && Global::moraleValue1 <= 89)
-				&& (30 <= Global::moraleValue2 && Global::moraleValue2 <= 89)
-				&& (30 <= Global::moraleValue3 && Global::moraleValue3 <= 100)
-				&& (30 <= Global::moraleValue4 && Global::moraleValue4 <= 100)) {
+			else if (Global::isEndingGRoute()) {
+				Global::endingValue = 6;
+			}
+			else if (Global::isEndingHRoute()) {
 				Global::endingValue = 7;
 			}
-			else if (Global::endingValue == 4) {
+			else if (Global::isEndingBRoute()) {
+				Global::endingValue = 1;
+			}
+			else if (Global::isEndingCRoute()) {
+				Global::endingValue = 2;
+			}
+			else {
 				Global::endingValue = 0;
 			}
 		}
@@ -214,7 +225,7 @@ namespace Iwanna {
 			}
 
 			// 血しぶきの生成
-			if (player->getIsDead() && !isGenerateBloods) {
+			if (player->getIsDead() && !isGenerateBloods && Global::canShowDeathBloodEffect()) {
 				double circleNum = 2;
 				double deltaD = 360 / bloodNum;
 				for (int32 count = 0; count < circleNum; count++) {
@@ -222,6 +233,9 @@ namespace Iwanna {
 						bloods << std::make_shared<Blood>(player->pos, i * deltaD);
 					}
 				}
+				isGenerateBloods = true;
+			}
+			else if (player->getIsDead() && !Global::canShowDeathBloodEffect()) {
 				isGenerateBloods = true;
 			}
 
@@ -477,7 +491,7 @@ namespace Iwanna {
 	}
 
 	void StageManager::updateBulletSpikeHits() {
-		if (!Global::getItem1) {
+		if (!Global::canUseItem1Effect()) {
 			return;
 		}
 
@@ -620,6 +634,7 @@ namespace Iwanna {
 		//プレイヤーの位置を保存
 		Global::savedStartPlayerPos = gameObjects.player->pos;
 		Global::savedRoomName = stageName;
+		Global::savedIsWarpMode = Global::canUseItem2Effect() && gameObjects.player->getIsWarpMode();
 		Global::isExistSaveData = true;
 	}
 

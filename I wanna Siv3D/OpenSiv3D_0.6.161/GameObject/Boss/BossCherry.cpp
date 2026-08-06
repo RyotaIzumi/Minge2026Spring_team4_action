@@ -528,7 +528,7 @@ namespace Iwanna {
 		const Vec2 barPos{ Global::stageWidth / 2.0, 0.0 };
 		drawBossHpBar(barPos, width, height, hp, maxHp, hpBarAlpha, hpBarDelay);
 
-		const String bossName = U"Boss : Tayama";
+		const String bossName = U"Boss : ????";
 		const Vec2 textPos{ 6, 18 };
 		for (const Vec2 offset : { Vec2{-1, 0}, Vec2{1, 0}, Vec2{0, -1}, Vec2{0, 1} }) {
 			FontAsset(U"BossHp")(bossName).draw(textPos + offset, ColorF{ 0.0, 0.0, 0.0, hpBarAlpha });
@@ -754,8 +754,8 @@ namespace Iwanna {
 			defeatedFallSpeed = 0.0;
 			isMuteki = false;
 			Global::isBossDefeated = true;
-			if (Global::moraleValue1 < 30 && Global::moraleValue2 < 30) {
-				Global::endingValue = 1;
+			if (Global::isEndingBRoute()) {
+				Global::endingValue = (Global::deathCount == 0) ? 8 : 1;
 			}
 			return;
 		}

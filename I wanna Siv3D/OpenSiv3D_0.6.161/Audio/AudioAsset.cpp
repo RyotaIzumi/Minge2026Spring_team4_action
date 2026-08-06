@@ -92,7 +92,7 @@ namespace Iwanna {
 		}
 
 		void playOneShot(const String& name) {
-			if (Global::moraleValue4 < 30) {
+			if (Global::moraleValue4 < 30 && name != ERROR) {
 				return;
 			}
 
@@ -100,7 +100,7 @@ namespace Iwanna {
 		}
 
 		void playOneShot(const String& name, double volume) {
-			if (Global::moraleValue4 < 30) {
+			if (Global::moraleValue4 < 30 && name != ERROR) {
 				return;
 			}
 

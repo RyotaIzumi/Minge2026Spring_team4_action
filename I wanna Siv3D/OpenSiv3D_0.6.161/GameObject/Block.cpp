@@ -45,12 +45,14 @@ namespace Iwanna {
 		blockColor = color;
 	}
 
-	void Block::breakAsDebris() {
+	void Block::breakAsDebris(bool playSound) {
 		if (isDebris) {
 			return;
 		}
 
-		Sound::playOneShot(Sound::BLOCKBREAK);
+		if (playSound) {
+			Sound::playOneShot(Sound::BLOCKBREAK);
+		}
 		isDebris = true;
 		hasCollide = false;
 		isTriggerTrap = false;
@@ -241,7 +243,9 @@ namespace Iwanna {
 		}
 
 		if (triggerID == id && !isBreak) {
-			Sound::playOneShot(Sound::BLOCKBREAK);
+			if (playBreakSound) {
+				Sound::playOneShot(Sound::BLOCKBREAK);
+			}
 			isBreak = true;
 		}
 
@@ -280,6 +284,10 @@ namespace Iwanna {
 		isBreak = hidden;
 	}
 
+	void BreakBlock::setPlayBreakSound(bool enabled) {
+		playBreakSound = enabled;
+	}
+
 	int32 BreakBlock::getID() {
 		return triggerID;
 	}
@@ -316,6 +324,7 @@ namespace Iwanna {
 		hasCollide = false;
 	}
 
-	void VisualOnlyBlock::breakAsDebris() {
+	void VisualOnlyBlock::breakAsDebris(bool playSound) {
+		(void)playSound;
 	}
 }

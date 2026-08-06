@@ -20,10 +20,14 @@ namespace Iwanna {
 		roomOutTrue = false;//kid君をroom外にいけるようにする
 		isDead = false;//死亡状態かどうか
 		isGenerateBullet = false;//弾生成フラグ
-		isWarpMode = false;
+		isWarpMode = Global::canUseItem2Effect() && Global::savedIsWarpMode;
+		if (!Global::canUseItem2Effect()) {
+			Global::savedIsWarpMode = false;
+		}
 		usedWarpInAir = false;
 		isGenerateWarpEffect = false;
 		warpEffectPos = Vec2{ 0, 0 };
+		exBossWarpCooldownRemaining = 0.0;
 		isOutOfScreen = false;//画面外判定用フラグ
 
 		//GameObject.hの値初期化
@@ -75,13 +79,24 @@ namespace Iwanna {
 
 		if (isDead) return;
 
+		if (exBossWarpCooldownRemaining > 0.0) {
+			exBossWarpCooldownRemaining = Max(0.0, exBossWarpCooldownRemaining - Scene::DeltaTime());
+		}
+
 		if (!Global::isPlayerFrozen) {
-			if (Global::getItem2 && Global::inputWarpMode.down()) {
+			if (Global::canUseExBossItem2Effect()) {
+				isWarpMode = false;
+				if (Global::inputWarpMode.down() && canUseExBossItem2Warp()) {
+					useItem2Warp();
+				}
+			}
+			else if (Global::canUseItem2Effect() && Global::inputWarpMode.down()) {
 				isWarpMode = !isWarpMode;
 				Sound::playOneShot(Sound::CHANGE);
 			}
-			if (!Global::getItem2) {
+			if (!Global::canUseItem2Effect()) {
 				isWarpMode = false;
+				Global::savedIsWarpMode = false;
 			}
 			if (Global::inputLeft.pressed()) playerMoveLeft();
 			if (Global::inputRight.pressed()) playerMoveRight();
@@ -145,8 +160,9 @@ namespace Iwanna {
 		TextureRegion texture = spriteSystem.getTextureRegion(direction);
 		if(!isDead)texture.scaled(1.0).drawAt(pos.x,pos.y - 3, ColorF(1.0, isMuteki ? 0.5 : 1.0));
 		else texture.scaled(1.0).drawAt(pos.x, pos.y - 3, ColorF(0.8,0,0,0.8));
-		if (!isDead && Global::getItem2 && isWarpMode) {
-			TextureAsset(U"item2").draw(getItem2WarpIconPos(), ColorF{ 1.0, canUseItem2Warp() ? 0.65 : 0.25 });
+		if (!isDead && ((Global::canUseItem2Effect() && isWarpMode) || Global::canUseExBossItem2Effect())) {
+			const bool canWarp = Global::canUseExBossItem2Effect() ? canUseExBossItem2Warp() : canUseItem2Warp();
+			TextureAsset(U"item2").draw(getItem2WarpIconPos(), ColorF{ 1.0, canWarp ? 0.65 : 0.25 });
 		}
 		//hitBox->draw(ColorF(Palette::Red,0.6));
 	}
@@ -186,7 +202,7 @@ namespace Iwanna {
 	}
 
 	void Player::playerShoot() {
-		if (Global::getItem2 && isWarpMode) {
+		if (Global::canUseItem2Effect() && isWarpMode) {
 			if (canUseItem2Warp()) {
 				useItem2Warp();
 			}
@@ -197,17 +213,18 @@ namespace Iwanna {
 	}
 
 	bool Player::canUseItem2Warp() const {
-		return Global::getItem2 && isWarpMode && (isOnGround || !usedWarpInAir);
+		return Global::canUseItem2Effect() && isWarpMode && (isOnGround || !usedWarpInAir);
 	}
 
 	Vec2 Player::getItem2WarpIconPos() const {
 		const double tileSize = 32.0;
 		const double dirSign = (direction == Global::Direction::RIGHT) ? 1.0 : -1.0;
+		const double warpTileDistance = Global::canUseExBossItem2Effect() ? 3.0 : 2.0;
 		const Vec2 baseTilePos{
 			Math::Floor(pos.x / tileSize) * tileSize,
 			Math::Floor(pos.y / tileSize) * tileSize
 		};
-		return baseTilePos + Vec2{ dirSign * tileSize * 2.0, 0 };
+		return baseTilePos + Vec2{ dirSign * tileSize * warpTileDistance, 0 };
 	}
 
 	void Player::useItem2Warp() {
@@ -221,6 +238,9 @@ namespace Iwanna {
 		}
 		warpEffectPos = warpCenterPos;
 		isGenerateWarpEffect = true;
+		if (Global::canUseExBossItem2Effect()) {
+			exBossWarpCooldownRemaining = exBossWarpCooldown;
+		}
 		Sound::playOneShot(Sound::WARP);
 		hitBox->setPos(pos);
 	}
@@ -466,6 +486,27 @@ namespace Iwanna {
 		return warpEffectPos;
 	}
 
+	bool Player::getIsWarpMode() const {
+		return isWarpMode;
+	}
+
+	void Player::setIsWarpMode(bool value) {
+		isWarpMode = Global::canUseItem2Effect() && value;
+		if (!Global::canUseItem2Effect()) {
+			Global::savedIsWarpMode = false;
+		}
+	}
+
+	bool Player::canUseExBossItem2Warp() const {
+		return Global::canUseExBossItem2Effect()
+			&& exBossWarpCooldownRemaining <= 0.0
+			&& (isOnGround || !usedWarpInAir);
+	}
+
+	double Player::getExBossWarpCooldownRemaining() const {
+		return exBossWarpCooldownRemaining;
+	}
+
 	// 向きを取得
 	Global::Direction Player::getDirection() const {
 		return direction;
@@ -504,8 +545,8 @@ namespace Iwanna {
 
 	//画面外判定
 	void Player::checkOutOfScreen() {
-		const int32 excessX = 0;//画面端からの余白
-		const int32 excessY = 0;//画面端からの余白
+		const int32 excessX = 8;//画面端からの余白
+		const int32 excessY = 8;//画面端からの余白
 		if ((pos.x < -1 * excessX || pos.x > Global::stageWidth + excessX ||
 			pos.y < -1 * excessY || pos.y > Global::stageHeight + excessY)) {
 			isOutOfScreen = true;

@@ -124,6 +124,7 @@ namespace Iwanna {
 		registerTexture(U"heart", OtherPath + U"heart.png");
 		registerTexture(U"item1", OtherPath + U"item1.png");
 		registerTexture(U"item2", OtherPath + U"item2.png");
+		registerTexture(U"batu", OtherPath + U"batu.png");
 		registerTexture(U"achieveFrame", OtherPath + U"achieveFrame.png");
 		registerTexture(U"tayama", OtherPath + U"tayama.png");
 		registerTexture(U"sprExtraLogo", OtherPath + U"sprExtraLogo.png");

@@ -35,7 +35,7 @@ namespace Iwanna {
 		static const String CHERRYFALL = U"sndCherry";
 		static const String CHERRYFALL_PATH = SE_PATH + CHERRYFALL + U".mp3";
 		static const String GUYGUN = U"sndGuygun";
-		static const String GUYGUN_PATH = SE_PATH + GUYGUN + U".wav";
+		static const String GUYGUN_PATH = SE_PATH + GUYGUN + U".mp3";
 		static const String BLOCKCHANGE = U"sndBlockChange";
 		static const String BLOCKCHANGE_PATH = SE_PATH + BLOCKCHANGE + U".mp3";
 		static const String BLOCKBREAK = U"sndBreak";
@@ -45,7 +45,7 @@ namespace Iwanna {
 		static const String BOSSHIT = U"sndBossHit";
 		static const String BOSSHIT_PATH = SE_PATH + BOSSHIT + U".mp3";
 		static const String ERROR = U"sndWindowsError";
-		static const String ERROR_PATH = SE_PATH + ERROR + U".wav";
+		static const String ERROR_PATH = SE_PATH + ERROR + U".mp3";
 		static const String DISCORD = U"sndDiscord";
 		static const String DISCORD_PATH = SE_PATH + DISCORD + U".mp3";
 		static const String TITLECARD = U"sndTitleCard";

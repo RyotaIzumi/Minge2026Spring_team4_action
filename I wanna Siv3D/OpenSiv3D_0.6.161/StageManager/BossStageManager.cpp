@@ -3,6 +3,15 @@
 #include "../MainGameSerializer.h"
 
 namespace Iwanna {
+	namespace {
+		String formatCooldownSeconds(double seconds) {
+			const double displaySeconds = Ceil(Max(0.0, seconds) * 10.0) / 10.0;
+			const int32 whole = static_cast<int32>(displaySeconds);
+			const int32 decimal = static_cast<int32>(Round((displaySeconds - whole) * 10.0));
+			return Format(whole) + U"." + Format(decimal);
+		}
+	}
+
 	BossStageManager::BossStageManager() {
 		stockNearGameObjects.cellSize = 96;
 		stockBulletsNearGameObjects.cellSize = 320;
@@ -54,6 +63,7 @@ namespace Iwanna {
 		exBossEntryDarkAlpha = 0.0;
 		isExBossThirdPhaseDarkening = false;
 		isExBossThirdPhaseRestoring = false;
+		isExBossSaveActivated = false;
 		isExBossCameraLocked = false;
 		hasExBossThirdPhaseLowBoss = false;
 		hasExBossThirdPhaseBossCherry = false;
@@ -83,6 +93,9 @@ namespace Iwanna {
 		for (auto& savePoint : gameObjects.savePoints) {
 			auto* savePointPtr = savePoint.get();
 			savePoint->onSavedCallback = [this, savePointPtr]() {
+				if (stageName == U"ExBoss") {
+					isExBossSaveActivated = true;
+				}
 				generateBoss(savePointPtr->getAppendBossId());
 				saveGame();
 			};
@@ -197,8 +210,17 @@ namespace Iwanna {
 						if (gimmik.contains(U"value4")) gimmikValue4 = gimmik[U"value4"].get<double>();
 					}
 
-					if (gimmikName == U"罠ブロック") gameObjects.blocks << std::make_shared<BreakBlock>(U"sprBlock_" + blockQuarity + U"3", gimmikParsePos, static_cast<int32>(gimmikValue1));
-					if (gimmikName == U"時間罠ブロック") gameObjects.blocks << std::make_shared<TimedBreakBlock>(U"sprBlock_" + blockQuarity + U"3", gimmikParsePos, static_cast<int32>(gimmikValue1), gimmikValue2);
+					const String breakBlockTextureName = (fileName == U"ExBoss") ? U"sprBlock_normal1" : U"sprBlock_" + blockQuarity + U"3";
+					if (gimmikName == U"罠ブロック") {
+						auto block = std::make_shared<BreakBlock>(breakBlockTextureName, gimmikParsePos, static_cast<int32>(gimmikValue1));
+						block->setPlayBreakSound(fileName != U"ExBoss");
+						gameObjects.blocks << block;
+					}
+					if (gimmikName == U"時間罠ブロック") {
+						auto block = std::make_shared<TimedBreakBlock>(breakBlockTextureName, gimmikParsePos, static_cast<int32>(gimmikValue1), gimmikValue2);
+						block->setPlayBreakSound(fileName != U"ExBoss");
+						gameObjects.blocks << block;
+					}
 					if (gimmikName == U"ワープ") gameObjects.warps << std::make_shared<Warp>(gimmikIntactPos, gimmikString);
 					if (gimmikName == U"ループ移動針") gameObjects.spikes << std::make_shared<SpikeLoopMove>(quarity, gimmikIntactPos, static_cast<int32>(gimmikValue1), Vec2{ gimmikValue2, gimmikValue3 }, gimmikValue4);
 				}
@@ -232,6 +254,7 @@ namespace Iwanna {
 			if (Global::isExistSaveData && !Global::isChangeRoom && Global::savedRoomName == U"ExBoss") {
 				gameObjects.savePoints.clear();
 				Global::doNotStopBgm = true;
+				isExBossSaveActivated = true;
 				generateBoss(2);
 			}
 		}
@@ -308,7 +331,7 @@ namespace Iwanna {
 			}
 
 			// 血しぶきの生成
-			if (player->getIsDead() && !isGenerateBloods) {
+			if (player->getIsDead() && !isGenerateBloods && Global::canShowDeathBloodEffect()) {
 				double circleNum = 2;
 				double deltaD = 360 / bloodNum;
 				for (int32 count = 0; count < circleNum; count++) {
@@ -316,6 +339,9 @@ namespace Iwanna {
 						bloods << std::make_shared<Blood>(player->pos, i * deltaD);
 					}
 				}
+				isGenerateBloods = true;
+			}
+			else if (player->getIsDead() && !Global::canShowDeathBloodEffect()) {
 				isGenerateBloods = true;
 			}
 
@@ -338,10 +364,12 @@ namespace Iwanna {
 				stockNearGameObjects.add(b.get());
 				stockBulletsNearGameObjects.add(b.get());
 				if (b->isTriggerTrap) {
-					const bool shouldBreakByBossDefeat = (stageName == U"trapBoss")
+					const bool shouldBreakByBossDefeat = (stageName == U"ExBoss")
+						? isExBossSaveActivated
+						: (stageName == U"trapBoss")
 						? isTrapBossSecondPhaseDefeated
 						: (stageName == U"boss")
-						? Global::isBossDefeated && Global::getItem2
+						? Global::isBossDefeated && Global::canUseItem2Effect()
 						: Global::isBossDefeated;
 					b->trapUpdate(shouldBreakByBossDefeat ? 0 : -1);
 				}
@@ -726,13 +754,19 @@ namespace Iwanna {
 			SizeF{ breakWidth, static_cast<double>(Global::stageHeight) }
 		};
 
+		bool hasBrokenBlock = false;
 		for (auto& block : gameObjects.blocks) {
 			if (block->getIsDebris()
 				|| !block->getBroadRect().intersects(breakArea)) {
 				continue;
 			}
 
-			block->breakAsDebris();
+			block->breakAsDebris(false);
+			hasBrokenBlock = true;
+		}
+
+		if (hasBrokenBlock) {
+			Sound::playOneShot(Sound::BLOCKBREAK);
 		}
 	}
 
@@ -777,14 +811,14 @@ namespace Iwanna {
 			if (const auto bulletCircle = bullet->hitBox->getCircle()) {
 				if (bulletCircle->intersects(leftEye) || bulletCircle->intersects(rightEye)) {
 					bullet->isDelete = true;
-					hitTrapBossSecondPhase(Global::getItem1 ? 3 : 1);
+					hitTrapBossSecondPhase(Global::canUseItem1Effect() ? 3 : 1);
 				}
 			}
 		}
 	}
 
 	void BossStageManager::updateBulletSpikeHits() {
-		if (!Global::getItem1) {
+		if (!Global::canUseItem1Effect()) {
 			return;
 		}
 
@@ -927,6 +961,21 @@ namespace Iwanna {
 			}
 		}
 
+		if (stageName == U"ExBoss" && Global::canUseExBossItem2Effect()) {
+			const Vec2 warpIconPos{ playerHpBasePos.x + hpInterbalX * 3 + 20, playerHpBasePos.y };
+			const double cooldownRemaining = gameObjects.player->getExBossWarpCooldownRemaining();
+			const bool canWarp = gameObjects.player->canUseExBossItem2Warp();
+			const ColorF iconColor{ 1.0, canWarp ? 1.0 : 0.35 };
+
+			FontAsset(U"Button")(U"Xキー").drawAt(warpIconPos + Vec2{ 16, -12 }, ColorF{ 1.0, 1.0, 1.0 });
+			TextureAsset(U"item2").draw(warpIconPos, iconColor);
+			if (cooldownRemaining > 0.0) {
+				const String cooldownText = formatCooldownSeconds(cooldownRemaining);
+				FontAsset(U"Button")(cooldownText).drawAt(warpIconPos + Vec2{ 17, 17 }, ColorF{ 0.0, 0.0, 0.0, 0.8 });
+				FontAsset(U"Button")(cooldownText).drawAt(warpIconPos + Vec2{ 16, 16 }, ColorF{ 1.0, 1.0, 1.0 });
+			}
+		}
+
 		drawTrapBossSecondPhaseHp();
 		achive.draw();
 	}
@@ -1049,9 +1098,6 @@ namespace Iwanna {
 		isTrapBossSecondPhaseDefeated = true;
 		clearTrapBossSecondPhaseCherries();
 		Sound::playOneShot(Sound::VC_BAKANA);
-		if (Global::moraleValue2 >= 90 && Global::moraleValue3 >= 90 && Global::moraleValue4 >= 90) {
-			Global::endingValue = 6;
-		}
 		isTrapBossSecondPhaseDefeatedFall = true;
 		trapBossSecondPhaseDefeatedFallSpeed = 0.0;
 	}
@@ -1091,6 +1137,7 @@ namespace Iwanna {
 		//プレイヤーの位置を保存
 		Global::savedStartPlayerPos = gameObjects.player->pos;
 		Global::savedRoomName = stageName;
+		Global::savedIsWarpMode = Global::canUseItem2Effect() && gameObjects.player->getIsWarpMode();
 		Global::isExistSaveData = true;
 	}
 

@@ -36,6 +36,8 @@ namespace Global {
 	inline Vec2 savedStartPlayerPos = Vec2(-100, -100);
 	// セーブされた部屋名
 	inline String savedRoomName = U"";
+	// セーブされた武器モード。false: 銃, true: ワープ
+	inline bool savedIsWarpMode = false;
 
 	// --- room関連 ---
 	inline int32 stageWidth = 800;
@@ -90,7 +92,7 @@ namespace Global {
 	inline bool isRestartRoomReload = false;
 	inline bool isLow1RestartDeathCheckActive = false;
 	inline double low1RestartDeathCheckElapsed = 0.0;
-	inline double low1RestartDeathCheckDuration = 0.02;
+	inline double low1RestartDeathCheckDuration = 0.05;
 
 	// --- generateステージ関連 --- //
 	inline Array<String> generateStageNames = { U"generate1", U"generate2", U"generate3", U"generate4", U"generate5" };
@@ -107,6 +109,93 @@ namespace Global {
 			|| roomName == U"ExGotArea"
 			|| roomName == U"ExRyutaArea"
 			|| roomName == U"ExRenoArea";
+	}
+
+	inline bool isNoMoraleEndingRoute() {
+		return moraleValue1 < 30
+			&& moraleValue2 < 30
+			&& moraleValue3 < 30
+			&& moraleValue4 < 30;
+	}
+
+	inline bool isEndingKRoute() {
+		return moraleValue1 >= 101
+			&& moraleValue2 >= 101
+			&& moraleValue3 >= 101
+			&& moraleValue4 >= 101;
+	}
+
+	inline bool isEndingGRoute() {
+		return !isEndingKRoute()
+			&& moraleValue2 >= 90
+			&& moraleValue3 >= 90
+			&& moraleValue4 >= 90;
+	}
+
+	inline bool isEndingDRoute() {
+		return !isEndingKRoute()
+			&& !isNoMoraleEndingRoute()
+			&& !isEndingGRoute()
+			&& moraleValue1 >= 90;
+	}
+
+	inline bool isEndingBRoute() {
+		return !isNoMoraleEndingRoute()
+			&& moraleValue1 < 30
+			&& moraleValue2 < 30;
+	}
+
+	inline bool isEndingCRoute() {
+		return !isNoMoraleEndingRoute()
+			&& !isEndingDRoute()
+			&& !isEndingBRoute()
+			&& moraleValue3 < 30
+			&& moraleValue4 < 30;
+	}
+
+	inline bool isEndingHRoute() {
+		return !isEndingGRoute()
+			&& !isEndingDRoute()
+			&& !isEndingBRoute()
+			&& !isEndingCRoute()
+			&& (30 <= moraleValue1 && moraleValue1 < 90)
+			&& (30 <= moraleValue2 && moraleValue2 < 90)
+			&& (30 <= moraleValue3)
+			&& (30 <= moraleValue4);
+	}
+
+	inline int32 getInitialEndingValue() {
+		if (isNoMoraleEndingRoute()) {
+			return 9;
+		}
+		if (isEndingDRoute()) {
+			return 3;
+		}
+		return 4;
+	}
+
+	inline bool isItemEffectBlockedRoute() {
+		return startRoomName == U"tutorialTrap" || isExtraStage(startRoomName);
+	}
+
+	inline bool canUseItem1Effect() {
+		return getItem1 && !isItemEffectBlockedRoute();
+	}
+
+	inline bool canUseItem2Effect() {
+		return getItem2 && !isItemEffectBlockedRoute();
+	}
+
+	inline bool canUseExBossItem2Effect() {
+		return getItem2 && nowRoomName == U"ExBoss";
+	}
+
+	inline bool canShowDeathBloodEffect() {
+		return moraleValue1 >= 40;
+	}
+
+	inline bool canUseMenuSettings() {
+		return moraleValue1 >= 50;
 	}
 
 	inline String chooseGenerateStage() {
