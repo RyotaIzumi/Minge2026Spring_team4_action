@@ -20,6 +20,25 @@ int32 GetAutoTileIndexById(const Array<AutoTile> tiles, int32 id) {
 	return 0;
 }
 
+namespace {
+	Image MakePurpleSpikeImage(const FilePath& path) {
+		Image image{ path };
+
+		for (auto& pixel : image) {
+			if (pixel.a == 0) {
+				continue;
+			}
+
+			const double brightness = (pixel.r + pixel.g + pixel.b) / (255.0 * 3.0);
+			pixel.r = static_cast<uint8>(Clamp(90.0 + 145.0 * brightness, 0.0, 255.0));
+			pixel.g = static_cast<uint8>(Clamp(20.0 + 70.0 * brightness, 0.0, 255.0));
+			pixel.b = static_cast<uint8>(Clamp(150.0 + 105.0 * brightness, 0.0, 255.0));
+		}
+
+		return image;
+	}
+}
+
 MapEditor::MapEditor()
 {
 	const FilePath objectPath = U"texture/object/";
@@ -34,6 +53,10 @@ MapEditor::MapEditor()
 		AutoTile{ Image{ objectPath + U"sprFloor4.png" }, 5 },
 		AutoTile{ Image{ objectPath + U"sprFloor5.png" }, 6 },
 		AutoTile{ Image{ objectPath + U"sprFloor6.png" }, 7 },
+		AutoTile{ MakePurpleSpikeImage(objectPath + U"sprSpikeUp.png"), 16 },
+		AutoTile{ MakePurpleSpikeImage(objectPath + U"sprSpikeLeft.png"), 17 },
+		AutoTile{ MakePurpleSpikeImage(objectPath + U"sprSpikeDown.png"), 18 },
+		AutoTile{ MakePurpleSpikeImage(objectPath + U"sprSpikeRight.png"), 19 },
 		AutoTile{ Image{ objectPath + U"sprSpikeUp.png" }, 21 },
 		AutoTile{ Image{ objectPath + U"sprSpikeLeft.png" }, 22 },
 		AutoTile{ Image{ objectPath + U"sprSpikeDown.png" }, 23 },

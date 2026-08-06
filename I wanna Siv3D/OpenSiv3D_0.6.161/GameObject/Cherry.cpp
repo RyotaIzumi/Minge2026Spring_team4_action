@@ -281,8 +281,8 @@ namespace Iwanna {
 
 		//GameObject.hの値初期化
 		pos = startPos;
-		scaleMag = scale;
-		hitBox = std::make_shared<CircleHitBox>(pos, hitBoxSize * scaleMag);
+		baseScaleMag = scale;
+		applyScaleMag(baseScaleMag);
 		type = ObjectType::Cherry;
 		cherryType = CherryType::Gimmik;
 		cherryColorType = cType;
@@ -332,15 +332,62 @@ namespace Iwanna {
 	}
 
 	void GimmikBigCherry::barrageUpdate() {
+		updateAttackWarning();
+		if (isAttackWarning) {
+			return;
+		}
+
 		if (attackIntervalStopwatch.sF() > startTime) {
-			generateAttack();
+			requestAttack();
 			startTime = 10000000;
 			attackIntervalStopwatch.restart();
 		}
 
 		if (attackIntervalStopwatch.sF() > attackInterval) {
-			generateAttack();
+			requestAttack();
 			attackIntervalStopwatch.restart();
+		}
+	}
+
+	void GimmikBigCherry::applyScaleMag(double scale) {
+		scaleMag = Max(0.0, scale);
+		hitBox = std::make_shared<CircleHitBox>(pos, hitBoxSize * scaleMag);
+	}
+
+	void GimmikBigCherry::requestAttack() {
+		if (cherryColorType != CherryColorType::Orange) {
+			generateAttack();
+			return;
+		}
+
+		isAttackWarning = true;
+		attackWarningStopwatch.restart();
+		Sound::playOneShot(Sound::BLOCKCHANGE);
+	}
+
+	void GimmikBigCherry::updateAttackWarning() {
+		if (!isAttackWarning) {
+			return;
+		}
+
+		const double warnedScale = baseScaleMag * attackWarningScale;
+		const double elapsed = attackWarningStopwatch.sF();
+
+		if (elapsed < attackWarningScaleUpTime) {
+			applyScaleMag(Math::Lerp(baseScaleMag, warnedScale, elapsed / attackWarningScaleUpTime));
+			return;
+		}
+
+		const double scaleDownElapsed = elapsed - attackWarningScaleUpTime;
+		if (scaleDownElapsed < attackWarningScaleDownTime) {
+			applyScaleMag(Math::Lerp(warnedScale, baseScaleMag, scaleDownElapsed / attackWarningScaleDownTime));
+			return;
+		}
+
+		applyScaleMag(baseScaleMag);
+		if (scaleDownElapsed >= attackWarningScaleDownTime + attackWarningGenerateWaitTime) {
+			isAttackWarning = false;
+			generateAttack();
 		}
 	}
 
@@ -348,7 +395,7 @@ namespace Iwanna {
 	void GimmikBigCherry::generateAttack() {
 			switch (cherryColorType) {
 			case CherryColorType::Red:
-				stageManager->createCherrySpread(12, 3.5, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0,cherryColorType); });
+				stageManager->createCherrySpread(10  , 3.5, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0,cherryColorType); });
 				break;
 			case CherryColorType::Blue:
 				stageManager->createBlueLineCherry([this]() { return std::make_shared<BarrageGimmikBlueCherry>(pos, 1.0, cherryColorType); });
@@ -364,7 +411,7 @@ namespace Iwanna {
 				Sound::playOneShot(Sound::SPIKETRAP);
 				break;
 			case CherryColorType::Sky:
-				stageManager->createSkyTargetCherry(7, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0, cherryColorType); });
+				stageManager->createSkyTargetCherry(5, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0, cherryColorType); });
 				break;
 			case CherryColorType::Gray:
 				stageManager->createGrayLatticeCherry(100, [this]() { return std::make_shared<BossGrayLatticeCherry>(pos, 1.0, BossCherryType::Gray); });

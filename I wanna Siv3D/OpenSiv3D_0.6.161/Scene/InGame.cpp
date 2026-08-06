@@ -105,6 +105,9 @@ namespace Iwanna {
 		Rect{ 0, 0, Global::windowWidth, Global::windowHeight }.draw(ColorF{ 0.0, 0.0, 0.0, 0.65 });
 
 		FontAsset(U"Button")(U"Escでゲームに戻る").draw(24, 24, ColorF{ 1.0, 1.0, 1.0 });
+		if (Global::canUseItem2Effect()) {
+			FontAsset(U"Button")(U"Xでアクション切り替え").draw(24, 50, ColorF{ 1.0, 1.0, 1.0 });
+		}
 
 		const String quitText = U"ゲームをやめる : Qキー";
 		const String restartText = U"ゲームを最初からやり直す : Wキー";
@@ -121,7 +124,7 @@ namespace Iwanna {
 		FontAsset(U"BossHp")(timeText).drawAt(400, 438, ColorF{ 1.0, 1.0, 1.0 });
 		if (Global::canUseMenuSettings()) {
 			const bool previousFullscreen = Global::isFullscreen;
-			SimpleGUI::CheckBox(Global::isFullscreen, U"フルスクリーン", Vec2{ 475, 524 }, 260);
+			SimpleGUI::CheckBox(Global::isFullscreen, U"フルスクリーン", Vec2{ 420, 524 }, 260);
 			if (Global::isFullscreen != previousFullscreen) {
 				Global::applyWindowMode();
 			}

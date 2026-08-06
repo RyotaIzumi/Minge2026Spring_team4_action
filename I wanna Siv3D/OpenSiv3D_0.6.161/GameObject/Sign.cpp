@@ -23,6 +23,7 @@ namespace Iwanna {
 		case SignType::Tutorial_Spike: signText = U"針やりんごにはあたっちゃダメ！"; break;
 		case SignType::Tutorial_Water: signText = U"水に触れるとジャンプが復活するぞ！"; break;
 		case SignType::Tutorial_Item: signText = U"道中では、秘密の入口が現れることがある。\n苦難の道ではあるが、乗り越えると強力なアイテムを入手できるぞ！"; break;
+		case SignType::Tutorial_Muteki: signText = U"ctrlで無敵になれるぞ\nただし、これを使えば敗北者だ..."; break;
 		}
 
 		depth = 20;

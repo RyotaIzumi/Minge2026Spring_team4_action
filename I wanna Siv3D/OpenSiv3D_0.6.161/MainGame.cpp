@@ -14,6 +14,8 @@ namespace Iwanna {
 		Global::prevRoomName = U"";
 		Global::nowRoomName = Global::startRoomName;
 		Global::isChangeRoom = false;
+		Global::endingDGenerateClearCount = 0;
+		Global::hasUsedHaibokusyaMode = false;
 
 		startGame();
 	}
@@ -52,9 +54,11 @@ namespace Iwanna {
 		Global::isRestartRoomReload = false;
 		Global::isLow1RestartDeathCheckActive = false;
 		Global::low1RestartDeathCheckElapsed = 0.0;
+		Global::hasUsedHaibokusyaMode = false;
 
 		Global::remainingGenerateStageNames.clear();
 		Global::isGenerateStageFakeLoading = false;
+		Global::endingDGenerateClearCount = 0;
 
 		Global::endingValue = Global::getInitialEndingValue();
 
@@ -122,7 +126,8 @@ namespace Iwanna {
 		case StageType::Boss:bossStageManager.setUpObjects(chapter); break;
 		}
 
-		Global::isLow1RestartDeathCheckActive = (Global::isRestartRoomReload && Global::nowRoomName == U"low1");
+		Global::isLow1RestartDeathCheckActive = Global::isRestartRoomReload
+			&& (Global::nowRoomName == U"low1" || Global::getItem1);
 		Global::low1RestartDeathCheckElapsed = 0.0;
 		Global::isRestartRoomReload = false;
 
@@ -156,6 +161,7 @@ namespace Iwanna {
 			//playerが死亡していたらBGM一時停止
 			if (stageManager.getPlayer()->getIsDead()) {
 				if (Global::isLow1RestartDeathCheckActive
+					&& Global::canReachEndingFRoute()
 					&& Global::low1RestartDeathCheckElapsed <= Global::low1RestartDeathCheckDuration) {
 					Global::endingValue = 5;
 					Global::isLow1RestartDeathCheckActive = false;
@@ -182,11 +188,23 @@ namespace Iwanna {
 			bossStageManager.update();
 			//playerが死亡していたらBGM一時停止
 			if (bossStageManager.getPlayer()->getIsDead()) {
+				if (Global::isLow1RestartDeathCheckActive
+					&& Global::canReachEndingFRoute()
+					&& Global::low1RestartDeathCheckElapsed <= Global::low1RestartDeathCheckDuration) {
+					Global::endingValue = 5;
+					Global::isLow1RestartDeathCheckActive = false;
+				}
 				if (playGameoverBgmOne && !Global::doNotStopBgm) {
 					playGameoverBgm();
 					playGameoverBgmOne = false;
 				}
 				return;
+			}
+			if (Global::isLow1RestartDeathCheckActive) {
+				Global::low1RestartDeathCheckElapsed += Scene::DeltaTime();
+				if (Global::low1RestartDeathCheckElapsed > Global::low1RestartDeathCheckDuration) {
+					Global::isLow1RestartDeathCheckActive = false;
+				}
 			}
 			Global::elapsedPlayTime += Scene::DeltaTime();
 			//bossが出現したらBGM再生
@@ -221,7 +239,7 @@ namespace Iwanna {
 			stageManager.debug();
 			break;
 		case StageType::Boss:
-			//bossStageManager.debug();
+			bossStageManager.debug();
 			break;
 		}
 

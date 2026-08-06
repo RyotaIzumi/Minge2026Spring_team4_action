@@ -77,7 +77,7 @@ namespace Iwanna {
 					case 22: gameObjects.spikes << std::make_shared<Spike>(U"secret", pos, 1); break;
 					case 23: gameObjects.spikes << std::make_shared<Spike>(U"secret", pos, 2); break;
 					case 24: gameObjects.spikes << std::make_shared<Spike>(U"secret", pos, 3); break;
-					case 25: gameObjects.savePoints << std::make_shared<SecretSavePoint>(pos,U"normal5"); break;
+					case 25: gameObjects.savePoints << std::make_shared<SecretSavePoint>(pos,U"normal7"); break;
 					case 26: gameObjects.blocks << std::make_shared<HideBlock>(U"sprBlock_" + quarity + U"1", pos); break;
 					case 27: gameObjects.blocks << std::make_shared<ShootTroughBlock>(U"sprBlockShootTrough", pos); break;
 					case 28: gameObjects.blocks << std::make_shared<FakeBlock>(U"sprBlock_" + quarity + U"2", pos); break;
@@ -102,6 +102,10 @@ namespace Iwanna {
 					case 2: gameObjects.blocks << std::make_shared<VisualOnlyBlock>(U"sprBlock_extra4", pos); break;
 					case 6: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_" + quarity + U"2", pos); break;
 					case 7: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_" + quarity + U"3", pos); break;
+					case 16: if (Global::shouldShowMorale2Spike()) gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 0); break;
+					case 17: if (Global::shouldShowMorale2Spike()) gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 1); break;
+					case 18: if (Global::shouldShowMorale2Spike()) gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 2); break;
+					case 19: if (Global::shouldShowMorale2Spike()) gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 3); break;
 					case 21: gameObjects.spikes << std::make_shared<Spike>(spikeTextureType, pos, 0); break;
 					case 22: gameObjects.spikes << std::make_shared<Spike>(spikeTextureType, pos, 1); break;
 					case 23: gameObjects.spikes << std::make_shared<Spike>(spikeTextureType, pos, 2); break;
@@ -388,6 +392,9 @@ namespace Iwanna {
 			gameObjects.signs << std::make_shared<Sign>(Vec2{ 30,16 }, SignType::Tutorial_Save);
 			gameObjects.signs << std::make_shared<Sign>(Vec2{ 37,17 }, SignType::Tutorial_Spike);
 			gameObjects.signs << std::make_shared<Sign>(Vec2{ 61,7 }, SignType::Tutorial_Water);
+			if (fileName == U"tutorial") {
+				gameObjects.signs << std::make_shared<Sign>(Vec2{ 56,17 }, SignType::Tutorial_Muteki);
+			}
 			gameObjects.signs << std::make_shared<Sign>(Vec2{ 62,17 }, SignType::Tutorial_Item);
 		}
 

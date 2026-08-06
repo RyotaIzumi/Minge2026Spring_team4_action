@@ -23,7 +23,7 @@ void Main()
 	FontAsset::Register(U"BossHp", FontMethod::MSDF, 30, Typeface::Medium);
 	FontAsset::Register(U"Button", FontMethod::MSDF, 20, Typeface::Medium);
 	FontAsset::Register(U"TitleTrap", FontMethod::MSDF, 10, Typeface::Medium);
-	FontAsset::Register(U"PlayerMessage", FontMethod::MSDF, 12, Typeface::Medium);
+	FontAsset::Register(U"PlayerMessage", FontMethod::MSDF, 20, Typeface::Medium);
 	FontAsset::Register(U"TitleCard", FontMethod::MSDF, 20, Typeface::Medium);
 	FontAsset::Register(U"Achieve", FontMethod::MSDF, 16, Typeface::Medium);
 
@@ -42,6 +42,7 @@ void Main()
 	mainGameSerializer.defineGlobalStatuses();
 	Global::elapsedPlayTime = 0.0;
 	Global::deathCount = 0;
+	Global::hasUsedHaibokusyaMode = false;
 
 	while (System60::Update()) {
 		if (not app.update()) {

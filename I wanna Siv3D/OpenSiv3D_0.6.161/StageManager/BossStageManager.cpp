@@ -141,6 +141,10 @@ namespace Iwanna {
 				case 2: gameObjects.blocks << std::make_shared<VisualOnlyBlock>(U"sprBlock_extra4", pos); break;
 				case 6: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_" + blockQuarity + U"2", pos); break;
 				case 7: gameObjects.blocks << std::make_shared<Block>(U"sprBlock_" + blockQuarity + U"3", pos); break;
+				case 16: if (Global::shouldShowMorale2Spike()) gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 0); break;
+				case 17: if (Global::shouldShowMorale2Spike()) gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 1); break;
+				case 18: if (Global::shouldShowMorale2Spike()) gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 2); break;
+				case 19: if (Global::shouldShowMorale2Spike()) gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 3); break;
 				case 21: gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 0); break;
 				case 22: gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 1); break;
 				case 23: gameObjects.spikes << std::make_shared<Spike>(quarity, pos, 2); break;
@@ -811,7 +815,7 @@ namespace Iwanna {
 			if (const auto bulletCircle = bullet->hitBox->getCircle()) {
 				if (bulletCircle->intersects(leftEye) || bulletCircle->intersects(rightEye)) {
 					bullet->isDelete = true;
-					hitTrapBossSecondPhase(Global::canUseItem1Effect() ? 3 : 1);
+					hitTrapBossSecondPhase(Global::canUseItem1Effect() ? 2 : 1);
 				}
 			}
 		}
@@ -862,13 +866,16 @@ namespace Iwanna {
 
 		if (Global::inputDebugMuteki.down()) {
 			player->setIsMuteki(!player->getIsMuteki());
+			Global::recordHaibokusyaModeUseIfNeeded();
 		}
 
+		/*
 		ClearPrint();
 		Print << U" Stage Step : " << step;
 		Print << U" Player Pos : " << player->pos;
 		Print << U" Player Muteki : " << player->getIsMuteki();
 		Print << U" Cherries Num : " << gameObjects.cherries.size();
+		*/
 	}
 
 	void BossStageManager::draw() {

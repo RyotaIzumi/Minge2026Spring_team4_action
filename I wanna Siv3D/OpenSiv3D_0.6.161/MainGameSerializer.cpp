@@ -25,6 +25,16 @@ namespace {
 		return U"Ending_" + String{ static_cast<char32>(U'A' + endingIndex) };
 	}
 
+	Array<String> GetAllEndingIds() {
+		Array<String> endingIds;
+
+		for (int32 i = 0; i <= 10; ++i) {
+			endingIds << U"Ending_" + String{ static_cast<char32>(U'A' + i) };
+		}
+
+		return endingIds;
+	}
+
 	Array<String> ReadStringArray(const JSON& json, const String& key) {
 		Array<String> values;
 
@@ -50,6 +60,22 @@ namespace {
 		}
 
 		return ReadBool(json, key);
+	}
+
+	void EnsureEndingRecordDefaults(JSON& json) {
+		for (const auto& endingId : GetAllEndingIds()) {
+			if (!json[U"eachEndingClearTime"].contains(endingId)) {
+				json[U"eachEndingClearTime"][endingId] = 0;
+			}
+
+			if (!json[U"eachEndingDeathCount"].contains(endingId)) {
+				json[U"eachEndingDeathCount"][endingId] = 0;
+			}
+
+			if (!json[U"eachHaibokusyaFlag"].contains(endingId)) {
+				json[U"eachHaibokusyaFlag"][endingId] = false;
+			}
+		}
 	}
 }
 
@@ -201,6 +227,9 @@ void MainGameSerializer::SaveEndingClearRecord() {
 	json[U"currentBlockId"] = U"";
 	json[U"reachedBlockIds"] = ReadStringArray(json, U"reachedBlockIds");
 	json[U"reachedEndingIds"] = reachedEndingIds;
+	json[U"endingClearCount"] = static_cast<int32>(reachedEndingIds.size());
+
+	EnsureEndingRecordDefaults(json);
 
 	const int32 clearTime = Max(0, static_cast<int32>(Floor(Global::elapsedPlayTime)));
 	const int32 deathCount = Max(0, Global::deathCount);
@@ -215,6 +244,7 @@ void MainGameSerializer::SaveEndingClearRecord() {
 	if (shouldUpdateRecord) {
 		json[U"eachEndingClearTime"][endingId] = clearTime;
 		json[U"eachEndingDeathCount"][endingId] = deathCount;
+		json[U"eachHaibokusyaFlag"][endingId] = Global::hasUsedHaibokusyaMode;
 	}
 
 	json.save(savePath);
