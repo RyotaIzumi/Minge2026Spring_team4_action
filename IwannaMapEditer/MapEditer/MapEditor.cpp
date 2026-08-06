@@ -57,6 +57,7 @@ MapEditor::MapEditor()
 		AutoTile{ MakePurpleSpikeImage(objectPath + U"sprSpikeLeft.png"), 17 },
 		AutoTile{ MakePurpleSpikeImage(objectPath + U"sprSpikeDown.png"), 18 },
 		AutoTile{ MakePurpleSpikeImage(objectPath + U"sprSpikeRight.png"), 19 },
+		AutoTile{ Image{ objectPath + U"sprBlock_haibokusya.jpg" }, 20 },
 		AutoTile{ Image{ objectPath + U"sprSpikeUp.png" }, 21 },
 		AutoTile{ Image{ objectPath + U"sprSpikeLeft.png" }, 22 },
 		AutoTile{ Image{ objectPath + U"sprSpikeDown.png" }, 23 },

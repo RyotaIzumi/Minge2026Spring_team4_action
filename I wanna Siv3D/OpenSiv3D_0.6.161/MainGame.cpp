@@ -16,6 +16,7 @@ namespace Iwanna {
 		Global::isChangeRoom = false;
 		Global::endingDGenerateClearCount = 0;
 		Global::hasUsedHaibokusyaMode = false;
+		Global::isHaibokusyaBlockActive = false;
 
 		startGame();
 	}
@@ -55,6 +56,7 @@ namespace Iwanna {
 		Global::isLow1RestartDeathCheckActive = false;
 		Global::low1RestartDeathCheckElapsed = 0.0;
 		Global::hasUsedHaibokusyaMode = false;
+		Global::isHaibokusyaBlockActive = false;
 
 		Global::remainingGenerateStageNames.clear();
 		Global::isGenerateStageFakeLoading = false;
@@ -69,6 +71,11 @@ namespace Iwanna {
 	void MainGame::startGame() {
 		int32 chapter = 1;
 		const bool startedByRoomChange = Global::isChangeRoom;
+		const bool startedByRestart = Global::isRestartRoomReload;
+
+		if (startedByRestart) {
+			Global::isHaibokusyaBlockActive = false;
+		}
 
 		//ステージ名称系の初期化
 		if (!Global::isExistSaveData && !Global::isChangeRoom) {

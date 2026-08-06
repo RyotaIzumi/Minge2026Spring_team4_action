@@ -43,6 +43,7 @@ void Main()
 	Global::elapsedPlayTime = 0.0;
 	Global::deathCount = 0;
 	Global::hasUsedHaibokusyaMode = false;
+	Global::isHaibokusyaBlockActive = false;
 
 	while (System60::Update()) {
 		if (not app.update()) {
