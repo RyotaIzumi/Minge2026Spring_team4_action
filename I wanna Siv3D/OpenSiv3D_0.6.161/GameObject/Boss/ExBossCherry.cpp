@@ -167,9 +167,9 @@ namespace Iwanna {
 	void ExBossCherry::updateBossForm() {
 		prevBossForm = bossForm;
 
-		if (hp > 50)bossForm = BossForm::First;
-		else if (hp > 35)bossForm = BossForm::Second;
-		else if (hp > 15)bossForm = BossForm::Third;
+		if (hp > 59)bossForm = BossForm::First;
+		else if (hp > 58)bossForm = BossForm::Second;
+		else if (hp > 57)bossForm = BossForm::Third;
 		else bossForm = BossForm::Forth;
 
 		if (prevBossForm < BossForm::Third && bossForm >= BossForm::Third && !isThirdFormRetreatFinished) {

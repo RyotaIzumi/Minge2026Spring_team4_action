@@ -157,7 +157,7 @@ namespace Iwanna {
 		bool hasExBossThirdPhaseLowBoss = false;
 		double exBossLowBossScale = 5.0;
 		double exBossLowBossAppearDuration = 1.4;
-		double exBossLowBossTargetY = 304.0;
+		double exBossLowBossTargetY = 254.0;
 		double exBossLowBossLifeTime = 15.0;
 		double exBossLowBossSpreadInterval = 0.6;
 		int32 exBossLowBossSpreadCherryNum = 16;

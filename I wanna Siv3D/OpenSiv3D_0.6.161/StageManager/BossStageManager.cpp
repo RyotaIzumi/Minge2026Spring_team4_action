@@ -876,9 +876,6 @@ namespace Iwanna {
 		auto& player = gameObjects.player;
 
 		if (stageName == U"ExBoss") {
-			if (player->getIsMuteki()) {
-				player->setIsMuteki(false);
-			}
 			return;
 		}
 

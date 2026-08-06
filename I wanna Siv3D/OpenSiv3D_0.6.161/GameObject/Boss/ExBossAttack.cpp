@@ -98,14 +98,13 @@ namespace Iwanna {
 			{
 				const Vec2 cameraCenter = bossStageManager->getExBossLockedCameraCenter();
 				pos = Vec2{ cameraCenter.x, cameraCenter.y - Global::windowHeight / 2.0 - 120.0 };
-				movePosition(Vec2{ cameraCenter.x, 304.0 }, 1.4, false);
+				movePosition(Vec2{ cameraCenter.x, baseY }, 1.4, false);
 				rotateDirection(getBaseAngleDiff(), 1.0, false);
 				attackStep++;
 				break;
 			}
 			case 1:
 				if (getIsMoveFinished() && getIsRotateFinished()) {
-					baseY = 304.0;
 					baseCenterPos = pos;
 					isThirdFormReturning = false;
 					startWait();
