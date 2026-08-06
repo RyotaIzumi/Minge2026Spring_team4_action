@@ -348,7 +348,7 @@ namespace Iwanna {
 	void GimmikBigCherry::generateAttack() {
 			switch (cherryColorType) {
 			case CherryColorType::Red:
-				stageManager->createCherrySpread(12, 3.5, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0,cherryColorType); });
+				stageManager->createCherrySpread(10  , 3.5, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0,cherryColorType); });
 				break;
 			case CherryColorType::Blue:
 				stageManager->createBlueLineCherry([this]() { return std::make_shared<BarrageGimmikBlueCherry>(pos, 1.0, cherryColorType); });
@@ -364,7 +364,7 @@ namespace Iwanna {
 				Sound::playOneShot(Sound::SPIKETRAP);
 				break;
 			case CherryColorType::Sky:
-				stageManager->createSkyTargetCherry(7, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0, cherryColorType); });
+				stageManager->createSkyTargetCherry(5, [this]() { return std::make_shared<BarrageCherry>(pos, 1.0, cherryColorType); });
 				break;
 			case CherryColorType::Gray:
 				stageManager->createGrayLatticeCherry(100, [this]() { return std::make_shared<BossGrayLatticeCherry>(pos, 1.0, BossCherryType::Gray); });
