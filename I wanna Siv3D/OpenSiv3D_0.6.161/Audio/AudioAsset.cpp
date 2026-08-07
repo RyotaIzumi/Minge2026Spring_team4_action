@@ -73,7 +73,7 @@ namespace Iwanna {
 		 * @param loop ループ設定
 		 */
 		void registerAudio(const String& name, const String& path, const Loop loop) {
-			registry << SoundRegistry{ name, path, loop };
+			registry << SoundRegistry{ name, Resource(path), loop };
 		}
 
 		

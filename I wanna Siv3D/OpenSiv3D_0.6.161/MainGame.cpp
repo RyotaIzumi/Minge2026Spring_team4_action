@@ -75,8 +75,8 @@ namespace Iwanna {
 
 		Global::endingValue = Global::getInitialEndingValue();
 
-		if (Global::moraleValue2 > 90) Window::SetTitle(U"TestPlayGame (Debug Build)");
-		else Window::SetTitle(U"TestPlayGame");
+		if (Global::moraleValue2 > 90 && Global::moraleValue2 <= 100) Window::SetTitle(U"TestPlayGame (Debug Build)");
+		else Window::SetTitle(U"I gonna be the treasure hunter");
 	}
 
 	void MainGame::startGame() {

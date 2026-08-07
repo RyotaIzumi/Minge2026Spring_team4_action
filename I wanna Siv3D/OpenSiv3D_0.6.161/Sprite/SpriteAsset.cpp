@@ -4,7 +4,7 @@ namespace Iwanna {
 	Array<std::pair<String, String>> registry;
 
 	void registerTexture(const String& name, const String& path) {
-		registry << std::pair<String, String>(name, path);
+		registry << std::pair<String, String>(name, Resource(path));
 	}
 
 	void registerTextures() {

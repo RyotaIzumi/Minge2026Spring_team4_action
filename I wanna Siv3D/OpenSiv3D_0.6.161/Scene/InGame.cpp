@@ -79,9 +79,6 @@ namespace Iwanna {
 			}
 			data.startGame();
 
-			if (Global::moraleValue2 > 90) Window::SetTitle(U"TestPlayGame (Debug Build)");
-			else Window::SetTitle(U"TestPlayGame");
-
 			changeScene(SceneType::IN_GAME, 0.0s);
 		}
 
