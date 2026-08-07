@@ -23,7 +23,7 @@ namespace Iwanna {
 		isDeleteOutOfScreen = false;
 
 		hasHp = true;
-		maxHp = 6;
+		maxHp = 60;
 		hp = maxHp;
 		hpBarDelay.reset(hp, maxHp);
 		bossForm = BossForm::First;

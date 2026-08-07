@@ -146,7 +146,7 @@ void MainGameSerializer::defineGlobalStatuses() {
 		Global::startRoomName = U"tutorialLow";
 	}
 	else if (Global::isEndingKRoute()) {
-		Global::startRoomName = U"ExBoss";
+		Global::startRoomName = U"ExMiluArea";
 	}
 	else if (Global::isEndingGRoute()) {
 		Global::startRoomName = U"tutorialTrap";
