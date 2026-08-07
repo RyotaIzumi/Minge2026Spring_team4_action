@@ -922,18 +922,6 @@
     <Media Include="App\example\shot.mp3">
       <Filter>Resource Files\example</Filter>
     </Media>
-    <Media Include="App\Sound\Se\sndDeath.wav">
-      <Filter>Resource Files</Filter>
-    </Media>
-    <Media Include="App\Sound\Se\sndDJump.wav">
-      <Filter>Resource Files</Filter>
-    </Media>
-    <Media Include="App\Sound\Se\sndJump.wav">
-      <Filter>Resource Files</Filter>
-    </Media>
-    <Media Include="App\Sound\Se\sndShoot.wav">
-      <Filter>Resource Files</Filter>
-    </Media>
     <Media Include="App\Sound\Bgm\sndHibana.mp3" />
   </ItemGroup>
   <ItemGroup>

@@ -366,10 +366,6 @@
     <Media Include="App\example\test.mp3" />
     <Media Include="App\example\video\river.mp4" />
     <Media Include="App\Sound\Bgm\sndHibana.mp3" />
-    <Media Include="App\Sound\Se\sndDeath.wav" />
-    <Media Include="App\Sound\Se\sndDJump.wav" />
-    <Media Include="App\Sound\Se\sndJump.wav" />
-    <Media Include="App\Sound\Se\sndShoot.wav" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="App\example\font\DotGothic16\DotGothic16-Regular.ttf" />
