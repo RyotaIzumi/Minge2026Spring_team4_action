@@ -33,7 +33,7 @@ namespace Iwanna {
 		const StringView textureName = (Global::mainTextureNumber == 0) ? U"sprSave_low" : U"sprSave_normal";
 		const auto saveTexture = TextureAsset(textureName)(isSaving ? side : 0, 0, side, side);
 
-		if (isSaving) {
+		if (isSaving && Global::mainTextureNumber == 1) {
 			static const PixelShader glowShader = PixelShader::HLSL(U"Shader/SavePointGlow.hlsl");
 			if (glowShader) {
 				const ScopedCustomShader2D shader{ glowShader };
@@ -62,6 +62,7 @@ namespace Iwanna {
 		if (!isSaving) {
 			isSaving = true;
 			saveIntervalTimer.restart();
+			Sound::playOneShot(Sound::SAVE);
 
 			if (onSavedCallback) {
 				onSavedCallback();
