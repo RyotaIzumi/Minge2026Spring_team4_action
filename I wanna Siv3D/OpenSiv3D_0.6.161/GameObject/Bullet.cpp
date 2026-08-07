@@ -68,7 +68,7 @@ namespace Iwanna {
 			auto* cherry = dynamic_cast<Cherry*>(&other);
 			if (cherry->getHasHp()) {
 				const int32 damage = dynamic_cast<ExBossCherry*>(cherry) ? 1 : (Global::canUseItem1Effect() ? 2 : 1);
-				if(!cherry->getIsMuteki()) cherry->hited(10);
+				if(!cherry->getIsMuteki()) cherry->hited(damage);
 				isDelete = true;
 			}
 		}
