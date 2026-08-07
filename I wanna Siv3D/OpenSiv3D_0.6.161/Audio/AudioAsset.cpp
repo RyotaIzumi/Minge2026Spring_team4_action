@@ -45,6 +45,7 @@ namespace Iwanna {
 			registerAudio(ACHIEVE, ACHIEVE_PATH);
 			registerAudio(WARP, WARP_PATH);
 			registerAudio(CHANGE, CHANGE_PATH);
+			registerAudio(SAVE, SAVE_PATH);
 
 			//EXボスSE
 			registerAudio(EXPRO, EXPRO_PATH);
