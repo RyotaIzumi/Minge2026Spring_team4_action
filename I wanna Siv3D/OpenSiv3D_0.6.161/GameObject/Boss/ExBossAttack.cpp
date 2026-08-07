@@ -4,11 +4,22 @@
 
 namespace Iwanna {
 	void ExBossCherry::attack() {
+		const bool canGenerateThirdFormColorBarrage = bossForm >= BossForm::Third
+			&& (debugDisableThirdFormSummonAttack || isThirdFormSummonAttackFinished);
+
 		switch (nowAttackType) {
 		case ExBossAttackType::Wait:// --- 待機状態 --- //
 			if (isThirdFormRetreatPending) {
 				isThirdFormRetreatPending = false;
 				nowAttackType = ExBossAttackType::ThirdFormRetreat;
+				attackStep = 0;
+				waitStopwatch.reset();
+				break;
+			}
+
+			if (isForthFormLongAttackPending && !isForthFormLongAttackSetupFinished) {
+				isForthFormLongAttackPending = false;
+				nowAttackType = ExBossAttackType::ForthFormLongAttackSetup;
 				attackStep = 0;
 				waitStopwatch.reset();
 				break;
@@ -98,21 +109,54 @@ namespace Iwanna {
 			{
 				const Vec2 cameraCenter = bossStageManager->getExBossLockedCameraCenter();
 				pos = Vec2{ cameraCenter.x, cameraCenter.y - Global::windowHeight / 2.0 - 120.0 };
-				movePosition(Vec2{ cameraCenter.x, 304.0 }, 1.4, false);
+				movePosition(Vec2{ cameraCenter.x, baseY }, 1.4, false);
 				rotateDirection(getBaseAngleDiff(), 1.0, false);
 				attackStep++;
 				break;
 			}
 			case 1:
 				if (getIsMoveFinished() && getIsRotateFinished()) {
-					baseY = 304.0;
 					baseCenterPos = pos;
 					isThirdFormReturning = false;
+					isThirdFormSummonAttackFinished = true;
 					startWait();
 				}
 				break;
 			}
 
+			break;
+
+		case ExBossAttackType::ForthFormLongAttackSetup:
+			switch (attackStep) {
+			case 0:
+			{
+				sordCherriesManager->setSordCanPlayerKill(false);
+				bossStageManager->startExBossForthFormLongAttackSetup();
+				const Vec2 cameraCenter = bossStageManager->getExBossLockedCameraCenter();
+				const double targetY = cameraCenter.y - Global::windowHeight / 2.0 + forthFormLongAttackTargetOffsetFromTop;
+				movePosition(Vec2{ cameraCenter.x, targetY }, forthFormLongAttackMoveDuration, false);
+				rotateDirection(getBaseAngleDiff(), forthFormLongAttackMoveDuration, false);
+				attackStep++;
+				break;
+			}
+			case 1:
+				if (getIsMoveFinished() && getIsRotateFinished()) {
+					baseCenterPos = pos;
+					isForthFormLongAttackSetupFinished = true;
+					isForthFormLongAttackActive = true;
+					forthFormLongAttackChainStep = 0;
+					const Vec2 grayLatticeCenter = pos;
+					bossStageManager->createGrayLatticeCherry(100, grayLatticeCenter, [this, grayLatticeCenter]() {
+						auto cherry = std::make_shared<BossGrayLatticeCherry>(grayLatticeCenter, 1.0, BossCherryType::Gray);
+						cherry->setAttackTime(forthFormLongAttackGrayAttackTime);
+						return cherry;
+					});
+					Sound::playOneShot(Sound::SPIKETRAP);
+					nowAttackType = ExBossAttackType::Fall;
+					attackStep = 0;
+				}
+				break;
+			}
 			break;
 
 		case ExBossAttackType::SparkExpro: // --- ✨爆発攻撃 --- //
@@ -152,7 +196,7 @@ namespace Iwanna {
 					bossStageManager->createSordExproCherry(attackStartPos, false, [this]() { return std::make_shared<ExproCherry>(pos, 1.0);});
 
 					//弾幕作成
-					if (bossForm >= BossForm::Third) {
+					if (canGenerateThirdFormColorBarrage && !isForthFormLongAttackActive) {
 						for(int i=0;i < 2;i++) barrageAttack(CherryColorType::Sky);
 					}
 
@@ -169,6 +213,10 @@ namespace Iwanna {
 				break;
 			case 5:
 				if (getIsMoveFinished()) {
+					if (isForthFormLongAttackActive && forthFormLongAttackChainStep >= 5) {
+						isForthFormLongAttackActive = false;
+						bossStageManager->finishExBossThirdPhaseLowBoss();
+					}
 					startWait();
 				}
 				break;
@@ -265,6 +313,13 @@ namespace Iwanna {
 			case 3://戻る
 				if (getIsRotateFinished()) {
 
+					if (isForthFormLongAttackActive && forthFormLongAttackChainStep == 3) {
+						forthFormLongAttackChainStep = 4;
+						nowAttackType = ExBossAttackType::SwingThree;
+						attackStep = 0;
+						break;
+					}
+
 					// 第二形態以降は爆破に派生
 					if (bossForm >= BossForm::Second && getRandomChance(0.4)) {
 						nowAttackType = ExBossAttackType::SparkExpro;
@@ -308,7 +363,7 @@ namespace Iwanna {
 				if (getIsRotateFinished() && getIsMoveFinished()) {
 
 					//弾幕作成
-					if (bossForm >= BossForm::Third) {
+					if (canGenerateThirdFormColorBarrage && !isForthFormLongAttackActive) {
 						barrageAttack(CherryColorType::Orange);
 					}
 
@@ -334,6 +389,13 @@ namespace Iwanna {
 				break;
 			case 3://戻る
 				if (getIsRotateFinished()) {
+
+					if (isForthFormLongAttackActive && forthFormLongAttackChainStep == 4) {
+						forthFormLongAttackChainStep = 5;
+						nowAttackType = ExBossAttackType::SparkExpro;
+						attackStep = 0;
+						break;
+					}
 
 					// 第二形態以降は爆破に派生
 					if (bossForm >= BossForm::Second && getRandomChance(0.5)) {
@@ -375,7 +437,7 @@ namespace Iwanna {
 					Sound::playOneShot(Sound::BLOCKBREAK);
 
 					//弾幕作成
-					if (bossForm >= BossForm::Third) {
+					if (canGenerateThirdFormColorBarrage) {
 						barrageAttack(CherryColorType::Blue);
 					}
 
@@ -388,6 +450,13 @@ namespace Iwanna {
 			case 3://戻る
 				if (getIsRotateFinished()) sordCherriesManager->setSordCanPlayerKill(false);
 				if (getIsMoveFinished()) {
+
+					if (isForthFormLongAttackActive && forthFormLongAttackChainStep == 0) {
+						forthFormLongAttackChainStep = 1;
+						nowAttackType = ExBossAttackType::FallSwing;
+						attackStep = 0;
+						break;
+					}
 
 					// 第二形態以降は振り上げに派生
 					if (bossForm >= BossForm::Second && getRandomChance(0.7) && playerDistance > 160) {
@@ -447,6 +516,13 @@ namespace Iwanna {
 				break;
 			case 3://戻る
 				if (getIsRotateFinished()) {
+
+					if (isForthFormLongAttackActive && forthFormLongAttackChainStep == 1) {
+						forthFormLongAttackChainStep = 2;
+						nowAttackType = ExBossAttackType::Warp;
+						attackStep = 0;
+						break;
+					}
 
 					// 第二形態以降は爆破に派生
 					if (bossForm >= BossForm::Second && getRandomChance(0.4)) {
@@ -510,7 +586,7 @@ namespace Iwanna {
 					pos.y = targetY;
 					textureAngle += 180;
 
-					if (bossForm >= BossForm::Third) {
+					if (canGenerateThirdFormColorBarrage) {
 						continueGenerateColor = randomChoiceBarrageAttacks.choice();
 						generateBarrageCherryTimer.restart();
 					}
@@ -526,7 +602,7 @@ namespace Iwanna {
 				break;
 			case 3://画面下部を移動
 
-				if (bossForm >= BossForm::Third && generateBarrageCherryTimer.reachedZero() && 0 < pos.x && pos.x < Global::stageWidth) {
+				if (canGenerateThirdFormColorBarrage && generateBarrageCherryTimer.reachedZero() && 0 < pos.x && pos.x < Global::stageWidth) {
 					slideBarrageAttack(continueGenerateColor);
 					generateBarrageCherryTimer.restart();
 				}
@@ -598,7 +674,7 @@ namespace Iwanna {
 				if (getIsRotateFinished()) {
 
 					//弾幕作成
-					if (bossForm >= BossForm::Third) {
+					if (canGenerateThirdFormColorBarrage) {
 						barrageAttack(CherryColorType::Green);
 					}
 
@@ -647,6 +723,13 @@ namespace Iwanna {
 				break;
 			case 7://戻る
 				if (getIsRotateFinished()) {
+					if (isForthFormLongAttackActive && forthFormLongAttackChainStep == 2) {
+						forthFormLongAttackChainStep = 3;
+						nowAttackType = ExBossAttackType::SwingTwo;
+						attackStep = 0;
+						break;
+					}
+
 					// 第二形態以降は振り上げに派生
 					if (bossForm >= BossForm::Second && getRandomChance(0.5) && playerDistance > 100) {
 						nowAttackType = ExBossAttackType::SwingTwo;

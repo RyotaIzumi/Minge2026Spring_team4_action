@@ -473,4 +473,8 @@ namespace Iwanna{
 	void BossGrayLatticeCherry::setAttackPattern(int32 pattern) {
 		attackPattern = pattern;
 	}
+
+	void BossGrayLatticeCherry::setAttackTime(double seconds) {
+		attackTimer = Timer{ SecondsF{ Max(0.1, seconds) }, StartImmediately::No };
+	}
 }

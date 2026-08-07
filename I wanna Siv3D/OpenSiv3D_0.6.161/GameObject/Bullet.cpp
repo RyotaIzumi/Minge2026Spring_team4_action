@@ -4,6 +4,7 @@
 #include "../GameObject/Block.h"
 #include "../GameObject/Cherry.h"
 #include "../GameObject/Spike.h"
+#include "../GameObject/Boss/ExBossCherry.h"
 
 namespace Iwanna {
 	Bullet::Bullet(Vec2& genePos, double hs, Player* owner) : ownerPlayer(owner) {
@@ -66,7 +67,8 @@ namespace Iwanna {
 		if (this->intersects(other) && other.type == ObjectType::Cherry) {
 			auto* cherry = dynamic_cast<Cherry*>(&other);
 			if (cherry->getHasHp()) {
-				if(!cherry->getIsMuteki()) cherry->hited(Global::canUseItem1Effect() ? 2 : 1);
+				const int32 damage = dynamic_cast<ExBossCherry*>(cherry) ? 1 : (Global::canUseItem1Effect() ? 2 : 1);
+				if(!cherry->getIsMuteki()) cherry->hited(damage);
 				isDelete = true;
 			}
 		}

@@ -1157,7 +1157,7 @@ namespace Iwanna {
 				switch (cherrySubType) {
 				case BossCherryType::Red:
 					bossStageManager->createCherrySpread(25, 6, [this]() { return std::make_shared<BossBarrageCherry>(pos, 1.0, cherrySubType); });
-					Sound::playOneShot(Sound::BLOCKBREAK);
+					Sound::playOneShot(Sound::GUYGUN);
 					break;
 				case BossCherryType::Blue:
 					bossStageManager->createBlueLineCherry(20, 80, [this]() { return std::make_shared<BossFallBlueCherry>(pos, 1.0, cherrySubType); });
@@ -1165,11 +1165,11 @@ namespace Iwanna {
 					break;
 				case BossCherryType::Yellow:
 					bossStageManager->createYellowStarCherry(5, 2, pos, 7, [this]() { return std::make_shared<BossYellowStarCherry>(pos, 1.0, cherrySubType); });
-					Sound::playOneShot(Sound::BLOCKBREAK);
+					Sound::playOneShot(Sound::GUYGUN);
 					break;
 				case BossCherryType::Green:
 					bossStageManager->createGreenWaveCherry(pos, 0.05, 10, [this]() { return std::make_shared<BossGreenWaveCherry>(pos, 1.0, cherrySubType); });
-					Sound::playOneShot(Sound::BLOCKBREAK);
+					Sound::playOneShot(Sound::GUYGUN);
 					break;
 				case BossCherryType::Orange:
 					bossStageManager->createOrangeStopCherry(false, [this]() { return std::make_shared<BossOrangeStopCherry>(pos, 1.0, cherrySubType); });
@@ -1177,7 +1177,7 @@ namespace Iwanna {
 					break;
 				case BossCherryType::Sky:
 					bossStageManager->createSkyTargetCherry(7, false, [this]() { return std::make_shared<BossSkyTargetCherry>(pos, 1.0, cherrySubType); });
-					Sound::playOneShot(Sound::BLOCKBREAK);
+					Sound::playOneShot(Sound::GUYGUN);
 					break;
 				}
 			}
@@ -1186,7 +1186,7 @@ namespace Iwanna {
 				case BossCherryType::Red:
 					bossStageManager->createCherrySpread(20, 6, [this]() { return std::make_shared<BossBarrageCherry>(pos, 1.0, cherrySubType); });
 					bossStageManager->createCherrySpread(25, 4, [this]() { return std::make_shared<BossBarrageCherry>(pos, 1.0, cherrySubType); });
-					Sound::playOneShot(Sound::BLOCKBREAK);
+					Sound::playOneShot(Sound::GUYGUN);
 					break;
 				case BossCherryType::Blue:
 					bossStageManager->createBlueLineCherry(40, 50, [this]() { return std::make_shared<BossFallBlueCherry>(pos, 1.0, cherrySubType); });
@@ -1194,11 +1194,11 @@ namespace Iwanna {
 					break;
 				case BossCherryType::Yellow:
 					bossStageManager->createYellowStarCherry(5, 2, pos, 10, [this]() { return std::make_shared<BossYellowStarCherry>(pos, 1.0, cherrySubType); });
-					Sound::playOneShot(Sound::BLOCKBREAK);
+					Sound::playOneShot(Sound::GUYGUN);
 					break;
 				case BossCherryType::Green:
 					bossStageManager->createGreenWaveCherry(pos, 0.05, 13, [this]() { return std::make_shared<BossGreenWaveCherry>(pos, 1.0, cherrySubType); });
-					Sound::playOneShot(Sound::BLOCKBREAK);
+					Sound::playOneShot(Sound::GUYGUN);
 					break;
 				case BossCherryType::Orange:
 					bossStageManager->createOrangeStopCherry(true, [this]() { return std::make_shared<BossOrangeStopCherry>(pos, 1.0, cherrySubType); });
@@ -1206,7 +1206,7 @@ namespace Iwanna {
 					break;
 				case BossCherryType::Sky:
 					bossStageManager->createSkyTargetCherry(5, true, [this]() { return std::make_shared<BossSkyTargetCherry>(pos, 1.0, cherrySubType); });
-					Sound::playOneShot(Sound::BLOCKBREAK);
+					Sound::playOneShot(Sound::GUYGUN);
 					break;
 				}
 			}
@@ -1216,7 +1216,7 @@ namespace Iwanna {
 			switch (cherrySubType) {
 			case BossCherryType::Red:
 				bossStageManager->createCherrySpread(20, 6, [this]() { return std::make_shared<BossBarrageCherry>(pos, 1.0, cherrySubType); });
-				Sound::playOneShot(Sound::BLOCKBREAK);
+				Sound::playOneShot(Sound::GUYGUN);
 				break;
 			case BossCherryType::Blue:
 				bossStageManager->createBlueLineCherry(20, 80, [this]() { return std::make_shared<BossFallBlueCherry>(pos, 1.0, cherrySubType); });
@@ -1224,11 +1224,11 @@ namespace Iwanna {
 				break;
 			case BossCherryType::Yellow:
 				bossStageManager->createYellowStarCherry(5, 2, pos, 6, [this]() { return std::make_shared<BossYellowStarCherry>(pos, 1.0, cherrySubType); });
-				Sound::playOneShot(Sound::BLOCKBREAK);
+				Sound::playOneShot(Sound::GUYGUN);
 				break;
 			case BossCherryType::Green:
 				bossStageManager->createGreenWaveCherry(pos, 0.05, 11, [this]() { return std::make_shared<BossGreenWaveCherry>(pos, 1.0, cherrySubType); });
-				Sound::playOneShot(Sound::BLOCKBREAK);
+				Sound::playOneShot(Sound::GUYGUN);
 				break;
 			case BossCherryType::Orange:
 				bossStageManager->createOrangeStopCherry(false, [this]() { return std::make_shared<BossOrangeStopCherry>(pos, 1.0, cherrySubType); });
@@ -1236,7 +1236,7 @@ namespace Iwanna {
 				break;
 			case BossCherryType::Sky:
 				bossStageManager->createSkyTargetCherry(6, false, [this]() { return std::make_shared<BossSkyTargetCherry>(pos, 1.0, cherrySubType); });
-				Sound::playOneShot(Sound::BLOCKBREAK);
+				Sound::playOneShot(Sound::GUYGUN);
 				break;
 			}
 		}
