@@ -2,6 +2,15 @@
 #include "../Audio/AudioAsset.h"
 
 namespace Iwanna {
+	namespace {
+		struct SavePointGlowParameters {
+			float time;
+			float intensity;
+			float glowOnly;
+			float padding;
+		};
+	}
+
 	SavePoint::SavePoint(Vec2 startPos) {
 		//GameObject.hの値初期化
 		pos = { startPos.x * side, startPos.y * side };
@@ -22,13 +31,38 @@ namespace Iwanna {
 	void SavePoint::draw() const {
 		//hitBox->draw(Palette::Gray);
 		const StringView textureName = (Global::mainTextureNumber == 0) ? U"sprSave_low" : U"sprSave_normal";
-		TextureAsset(textureName)(isSaving ? side : 0, 0, side, side).draw(pos);
+		const auto saveTexture = TextureAsset(textureName)(isSaving ? side : 0, 0, side, side);
+
+		if (isSaving && Global::mainTextureNumber == 1) {
+			static const PixelShader glowShader = PixelShader::HLSL(U"Shader/SavePointGlow.hlsl");
+			if (glowShader) {
+				const ScopedCustomShader2D shader{ glowShader };
+
+				// 発光だけを大きく描画する。最大半径は約32px。
+				const ConstantBuffer<SavePointGlowParameters> glowParameters{
+					SavePointGlowParameters{ static_cast<float>(Scene::Time()), 1.35f, 1.0f, 0.0f }
+				};
+				Graphics2D::SetConstantBuffer(ShaderStage::Pixel, 1, glowParameters);
+				saveTexture.scaled(2.0).drawAt(pos + Vec2{ 16, 7 });
+
+				// 本体は通常サイズで描画する。
+				const ConstantBuffer<SavePointGlowParameters> spriteParameters{
+					SavePointGlowParameters{ static_cast<float>(Scene::Time()), 1.35f, 0.0f, 0.0f }
+				};
+				Graphics2D::SetConstantBuffer(ShaderStage::Pixel, 1, spriteParameters);
+				saveTexture.draw(pos);
+				return;
+			}
+		}
+
+		saveTexture.draw(pos);
 	}
 	// セーブされたときの処理
 	void SavePoint::saved() {
 		if (!isSaving) {
 			isSaving = true;
 			saveIntervalTimer.restart();
+			Sound::playOneShot(Sound::SAVE);
 
 			if (onSavedCallback) {
 				onSavedCallback();

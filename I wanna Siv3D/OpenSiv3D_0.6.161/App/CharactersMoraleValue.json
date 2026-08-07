@@ -1,8 +1,8 @@
 ﻿{
   "GetItem1": true,
   "GetItem2": true,
-  "MoraleValue1": 101,
-  "MoraleValue2": 101,
-  "MoraleValue3": 101,
-  "MoraleValue4": 101
+  "MoraleValue1": 40,
+  "MoraleValue2": 40,
+  "MoraleValue3": 30,
+  "MoraleValue4": 30
 }
