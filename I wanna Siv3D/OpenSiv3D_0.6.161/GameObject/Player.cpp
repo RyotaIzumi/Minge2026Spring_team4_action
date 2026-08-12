@@ -39,10 +39,19 @@ namespace Iwanna {
 		//アニメーションデータの登録
 		//(アクション名,フレーム数,各フレーム再生時間,ループするかどうか(省略可), 左右差分があるか(省略可))
 		spriteSystem = SpriteSystem(32, 32);
-		spriteSystem.addSprite(SpriteAction::PLAYER_WAIT, SpriteData(U"sprIdle_normal", 4, 0.15,true,false));
-		spriteSystem.addSprite(SpriteAction::PLAYER_RUN, SpriteData(U"sprRunning_normal", 6, 0.1,true,false));
-		spriteSystem.addSprite(SpriteAction::PLAYER_JUMP, SpriteData(U"sprJump_normal", 1, 0.1,true,false));
-		spriteSystem.addSprite(SpriteAction::PLAYER_FALL, SpriteData(U"sprFall_normal", 1, 0.1,true,false));
+		if (Global::moraleValue3 < 30) {
+			const SpriteData lowMoraleSprite(U"sprPlayer_low", 1, 0.1, true, false);
+			spriteSystem.addSprite(SpriteAction::PLAYER_WAIT, lowMoraleSprite);
+			spriteSystem.addSprite(SpriteAction::PLAYER_RUN, lowMoraleSprite);
+			spriteSystem.addSprite(SpriteAction::PLAYER_JUMP, lowMoraleSprite);
+			spriteSystem.addSprite(SpriteAction::PLAYER_FALL, lowMoraleSprite);
+		}
+		else {
+			spriteSystem.addSprite(SpriteAction::PLAYER_WAIT, SpriteData(U"sprIdle_normal", 4, 0.15, true, false));
+			spriteSystem.addSprite(SpriteAction::PLAYER_RUN, SpriteData(U"sprRunning_normal", 6, 0.1, true, false));
+			spriteSystem.addSprite(SpriteAction::PLAYER_JUMP, SpriteData(U"sprJump_normal", 1, 0.1, true, false));
+			spriteSystem.addSprite(SpriteAction::PLAYER_FALL, SpriteData(U"sprFall_normal", 1, 0.1, true, false));
+		}
 		
 		//アニメーションデータの登録
 		//(アクション名,フレーム数,各フレーム再生時間,ループするかどうか(省略可), 左右差分があるか(省略可))
