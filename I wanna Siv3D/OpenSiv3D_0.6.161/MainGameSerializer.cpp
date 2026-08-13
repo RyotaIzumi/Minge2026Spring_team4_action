@@ -287,6 +287,7 @@ bool MainGameSerializer::LoadExtraProgressIfAvailable() {
 		extraProgress[U"playerY"].get<double>()
 	};
 	Global::savedIsWarpMode = false;
+	Global::savedIsMutekiMode = false;
 	Global::elapsedPlayTime = extraProgress.contains(U"elapsedPlayTime")
 		? Max(0.0, extraProgress[U"elapsedPlayTime"].get<double>())
 		: 0.0;

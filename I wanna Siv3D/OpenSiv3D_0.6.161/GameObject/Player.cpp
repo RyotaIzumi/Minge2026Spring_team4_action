@@ -16,7 +16,10 @@ namespace Iwanna {
 		gravity = 0.4; //重力の値
 		maxVspeed = 9; //縦方向速度(主に落下速度)の最大値
 		image_speed = 0.2; //アニメーション再生速度
-		isMuteki = false; //無敵状態かどうか
+		isMuteki = Global::canUseHaibokusyaMode() && Global::savedIsMutekiMode;
+		if (!Global::canUseHaibokusyaMode()) {
+			Global::savedIsMutekiMode = false;
+		}
 		isHitInvincible = false;
 		roomOutTrue = false;//kid君をroom外にいけるようにする
 		isDead = false;//死亡状態かどうか
@@ -425,6 +428,7 @@ namespace Iwanna {
 				if (warp->getCanWarp()) {
 					// ルーム切り替え後に再生成される Player へ、現在のアクションモードを引き継ぐ
 					Global::savedIsWarpMode = Global::canUseItem2Effect() && isWarpMode;
+					Global::savedIsMutekiMode = Global::canUseHaibokusyaMode() && isMuteki;
 
 					if (Global::isEndingDRoute() && Global::isGenerateStage(Global::nowRoomName)) {
 						++Global::endingDGenerateClearCount;
@@ -457,6 +461,7 @@ namespace Iwanna {
 				if (!Global::prepareGetItem1 && secretSave->isPlayerTouching && Global::inputEscape.down()) {
 					// 隠し部屋から戻る場合も、入室前と同じアクションモードを維持する
 					Global::savedIsWarpMode = Global::canUseItem2Effect() && isWarpMode;
+					Global::savedIsMutekiMode = Global::canUseHaibokusyaMode() && isMuteki;
 					Global::prevRoomName = Global::nowRoomName;
 					Global::nowRoomName = secretSave->getEscapeRoomName();
 					Global::isChangeRoom = true;

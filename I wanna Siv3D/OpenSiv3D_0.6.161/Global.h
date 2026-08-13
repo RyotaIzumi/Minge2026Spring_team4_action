@@ -38,6 +38,8 @@ namespace Global {
 	inline String savedRoomName = U"";
 	// セーブされた武器モード。false: 銃, true: ワープ
 	inline bool savedIsWarpMode = false;
+	// マップ切り替え時に引き継ぐCtrl無敵モード
+	inline bool savedIsMutekiMode = false;
 
 	// --- room関連 ---
 	inline int32 stageWidth = 800;
