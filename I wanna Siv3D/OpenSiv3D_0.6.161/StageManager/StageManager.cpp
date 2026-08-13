@@ -516,7 +516,7 @@ namespace Iwanna {
 	void StageManager::debug() {
 		auto& player = gameObjects.player;
 
-		if (Global::inputDebugMuteki.down()) {
+		if (Global::canUseHaibokusyaMode() && Global::inputDebugMuteki.down()) {
 			player->setIsMuteki(!player->getIsMuteki());
 			Global::recordHaibokusyaModeUseIfNeeded();
 		}
@@ -614,12 +614,14 @@ namespace Iwanna {
 
 		if (stageName == U"tutorialLow") {
 			const Vec2 basePos{ 50, 50 };
-			const Array<String> tutorialTexts{
+			Array<String> tutorialTexts{
 				U"←→キー : 移動",
 				U"shift : ジャンプ、二段ジャンプ",
-				U"Zキー : ショット",
-				U"ctrl : 無敵"
+				U"Zキー : ショット"
 			};
+			if (Global::canUseHaibokusyaMode()) {
+				tutorialTexts << U"ctrl : 無敵";
+			}
 
 			for (int32 i = 0; i < tutorialTexts.size(); ++i) {
 				const Vec2 textPos = basePos + Vec2{ 0, i * 26.0 };

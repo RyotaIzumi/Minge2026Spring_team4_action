@@ -394,7 +394,7 @@ namespace Iwanna {
 			gameObjects.signs << std::make_shared<Sign>(Vec2{ 30,16 }, SignType::Tutorial_Save);
 			gameObjects.signs << std::make_shared<Sign>(Vec2{ 37,17 }, SignType::Tutorial_Spike);
 			gameObjects.signs << std::make_shared<Sign>(Vec2{ 61,7 }, SignType::Tutorial_Water);
-			if (fileName == U"tutorial") {
+			if (fileName == U"tutorial" && Global::canUseHaibokusyaMode()) {
 				gameObjects.signs << std::make_shared<Sign>(Vec2{ 56,17 }, SignType::Tutorial_Muteki);
 			}
 			gameObjects.signs << std::make_shared<Sign>(Vec2{ 62,17 }, SignType::Tutorial_Item);

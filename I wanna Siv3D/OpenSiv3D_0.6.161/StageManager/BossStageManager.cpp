@@ -898,7 +898,7 @@ namespace Iwanna {
 			return;
 		}
 
-		if (Global::inputDebugMuteki.down()) {
+		if (Global::canUseHaibokusyaMode() && Global::inputDebugMuteki.down()) {
 			player->setIsMuteki(!player->getIsMuteki());
 			Global::recordHaibokusyaModeUseIfNeeded();
 		}
