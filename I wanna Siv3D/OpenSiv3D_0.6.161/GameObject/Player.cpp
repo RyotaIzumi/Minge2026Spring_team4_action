@@ -17,6 +17,7 @@ namespace Iwanna {
 		maxVspeed = 9; //縦方向速度(主に落下速度)の最大値
 		image_speed = 0.2; //アニメーション再生速度
 		isMuteki = false; //無敵状態かどうか
+		isHitInvincible = false;
 		roomOutTrue = false;//kid君をroom外にいけるようにする
 		isDead = false;//死亡状態かどうか
 		isGenerateBullet = false;//弾生成フラグ
@@ -83,7 +84,7 @@ namespace Iwanna {
 
 		//hp関連の処理
 		if (mutekiInterval.reachedZero()) {
-			isMuteki = false;
+			isHitInvincible = false;
 		}
 
 		if (isDead) return;
@@ -167,7 +168,7 @@ namespace Iwanna {
 	void Player::draw() const {
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
 		TextureRegion texture = spriteSystem.getTextureRegion(direction);
-		if(!isDead)texture.scaled(1.0).drawAt(pos.x,pos.y - 3, ColorF(1.0, isMuteki ? 0.5 : 1.0));
+		if(!isDead)texture.scaled(1.0).drawAt(pos.x,pos.y - 3, ColorF(1.0, getIsMuteki() ? 0.5 : 1.0));
 		else texture.scaled(1.0).drawAt(pos.x, pos.y - 3, ColorF(0.8,0,0,0.8));
 		if (!isDead && ((Global::canUseItem2Effect() && isWarpMode) || Global::canUseExBossItem2Effect())) {
 			const bool canWarp = Global::canUseExBossItem2Effect() ? canUseExBossItem2Warp() : canUseItem2Warp();
@@ -266,7 +267,7 @@ namespace Iwanna {
 			playerDead();
 		}
 
-		isMuteki = true;
+		isHitInvincible = true;
 		mutekiInterval.restart();
 	}
 
@@ -387,7 +388,7 @@ namespace Iwanna {
 
 		// PlayerKill属性を持つオブジェクトとの衝突
 		if (other.canPlayerKill) {
-			if (this->intersects(other) && !isDead && !isMuteki) {
+			if (this->intersects(other) && !isDead && !getIsMuteki()) {
 				if (Global::nowRoomName == U"boss"
 					|| Global::nowRoomName == U"trapBoss"
 					|| Global::nowRoomName == U"ExBoss") playerHited();
@@ -541,9 +542,13 @@ namespace Iwanna {
 		isMuteki = value;
 	}
 
+	void Player::toggleIsMuteki() {
+		isMuteki = !isMuteki;
+	}
+
 	// 無敵状態かどうかを取得
 	bool Player::getIsMuteki() const {
-		return isMuteki;
+		return isMuteki || isHitInvincible;
 	}
 
 	//hpを取得

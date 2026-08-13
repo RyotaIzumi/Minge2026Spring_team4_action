@@ -517,7 +517,7 @@ namespace Iwanna {
 		auto& player = gameObjects.player;
 
 		if (Global::canUseHaibokusyaMode() && Global::inputDebugMuteki.down()) {
-			player->setIsMuteki(!player->getIsMuteki());
+			player->toggleIsMuteki();
 			Global::recordHaibokusyaModeUseIfNeeded();
 		}
 
