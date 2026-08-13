@@ -601,7 +601,7 @@ namespace Iwanna {
 
 		if (stageName == U"clear") {
 			FontAsset(U"Button")(U"Escでメニュー").draw(36, 36, ColorF{ 0.0, 0.0, 0.0 });
-			FontAsset(U"Button")(U"ゲームを閉じてもどろう").draw(36, 72, ColorF{ 0.0, 0.0, 0.0 });
+			FontAsset(U"Button")(U"ゲームを閉じてもどろう").draw(36, 64, ColorF{ 0.0, 0.0, 0.0 });
 
 			const Vec2 basePos{ 400, 388 };
 			const String timeText = U"Time  " + formatPlayTime(Global::elapsedPlayTime);
