@@ -422,6 +422,9 @@ namespace Iwanna {
 			if (this->intersects(other)) {
 				auto* warp = dynamic_cast<Warp*>(&other);
 				if (warp->getCanWarp()) {
+					// ルーム切り替え後に再生成される Player へ、現在のアクションモードを引き継ぐ
+					Global::savedIsWarpMode = Global::canUseItem2Effect() && isWarpMode;
+
 					if (Global::isEndingDRoute() && Global::isGenerateStage(Global::nowRoomName)) {
 						++Global::endingDGenerateClearCount;
 						if (Global::endingDGenerateClearCount >= Global::endingDGenerateClearLimit) {
@@ -451,6 +454,8 @@ namespace Iwanna {
 				secretSave->isPlayerTouching = this->intersects(*secretSave);
 				// セーブポイントに触れている状態で、特定のキーを押すと脱出
 				if (!Global::prepareGetItem1 && secretSave->isPlayerTouching && Global::inputEscape.down()) {
+					// 隠し部屋から戻る場合も、入室前と同じアクションモードを維持する
+					Global::savedIsWarpMode = Global::canUseItem2Effect() && isWarpMode;
 					Global::prevRoomName = Global::nowRoomName;
 					Global::nowRoomName = secretSave->getEscapeRoomName();
 					Global::isChangeRoom = true;
