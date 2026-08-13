@@ -189,7 +189,8 @@ namespace Global {
 
 	inline bool isItemEffectBlockedRoute() {
 		return startRoomName == U"tutorialTrap"
-			|| isExtraStage(startRoomName);
+			|| isExtraStage(startRoomName)
+			|| shouldShowMorale2Spike();
 	}
 
 	inline bool canUseItem1Effect() {
