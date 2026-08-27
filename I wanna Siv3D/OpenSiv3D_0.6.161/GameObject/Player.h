@@ -28,7 +28,8 @@ namespace Iwanna {
 		//hp関連
 		int32 maxHp;
 		int32 hp;
-		bool isMuteki = false;
+		bool isMuteki = false; // Ctrlで切り替える無敵状態
+		bool isHitInvincible = false; // 被弾後の一時無敵状態
 		Timer mutekiInterval{ 2.0s };
 
 		int32 nowTrapID = 0;
@@ -81,6 +82,7 @@ namespace Iwanna {
 		double getExBossWarpCooldownRemaining() const;
 		Global::Direction getDirection() const;
 		void setIsMuteki(bool value);
+		void toggleIsMuteki();
 		bool getIsMuteki() const;
 		int32 getHp() const;
 		void setHp(int32 value);

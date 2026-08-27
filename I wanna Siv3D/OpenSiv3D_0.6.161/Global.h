@@ -38,6 +38,8 @@ namespace Global {
 	inline String savedRoomName = U"";
 	// セーブされた武器モード。false: 銃, true: ワープ
 	inline bool savedIsWarpMode = false;
+	// マップ切り替え時に引き継ぐCtrl無敵モード
+	inline bool savedIsMutekiMode = false;
 
 	// --- room関連 ---
 	inline int32 stageWidth = 800;
@@ -183,16 +185,24 @@ namespace Global {
 		return 4;
 	}
 
+	inline bool shouldShowMorale2Spike() {
+		return moraleValue2 >= 70 && moraleValue2 < 90;
+	}
+
 	inline bool isItemEffectBlockedRoute() {
-		return startRoomName == U"tutorialTrap" || isExtraStage(startRoomName);
+		return startRoomName == U"tutorialTrap"
+			|| isExtraStage(startRoomName)
+			|| shouldShowMorale2Spike();
 	}
 
 	inline bool canUseItem1Effect() {
-		return getItem1 && !isItemEffectBlockedRoute();
+		return getItem1
+			&& !isItemEffectBlockedRoute();
 	}
 
 	inline bool canUseItem2Effect() {
-		return getItem2 && !isItemEffectBlockedRoute();
+		return getItem2
+			&& !isItemEffectBlockedRoute();
 	}
 
 	inline bool canUseExBossItem2Effect() {
@@ -207,8 +217,8 @@ namespace Global {
 		return moraleValue1 >= 50;
 	}
 
-	inline bool shouldShowMorale2Spike() {
-		return moraleValue2 >= 70 && moraleValue2 < 90;
+	inline bool canUseHaibokusyaMode() {
+		return !shouldShowMorale2Spike() && !isEndingGRoute();
 	}
 
 	inline bool isTutorialMap(const String& roomName) {

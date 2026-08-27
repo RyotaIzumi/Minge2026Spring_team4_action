@@ -15,6 +15,7 @@ namespace Iwanna {
 		registerTexture(U"sprPlayerFall", PlayerPath + U"sprPlayerFall.png");
 		registerTexture(U"sprPlayerJump", PlayerPath + U"sprPlayerJump.png");
 		registerTexture(U"sprPlayerRunning", PlayerPath + U"sprPlayerRunning.png");
+		registerTexture(U"sprPlayer_low", PlayerPath + U"sprPlayer_low.png");
 		registerTexture(U"sprBullet", PlayerPath + U"bullet.png");
 		registerTexture(U"sprBullet2", PlayerPath + U"bullet2.png");
 

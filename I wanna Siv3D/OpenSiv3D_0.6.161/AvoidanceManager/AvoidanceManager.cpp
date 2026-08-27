@@ -109,8 +109,8 @@ namespace Iwanna {
 	void AvoidanceManager::debug() {
 		auto& player = gameObjects.player;
 
-		if (Global::inputDebugMuteki.down()) {
-			player->setIsMuteki(!player->getIsMuteki());
+		if (Global::canUseHaibokusyaMode() && Global::inputDebugMuteki.down()) {
+			player->toggleIsMuteki();
 			Global::recordHaibokusyaModeUseIfNeeded();
 		}
 

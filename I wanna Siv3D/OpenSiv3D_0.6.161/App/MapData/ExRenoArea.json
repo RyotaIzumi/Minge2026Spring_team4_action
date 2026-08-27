@@ -8,7 +8,7 @@
           96.0
         ],
         "value1": 0,
-        "value2": 1.0
+        "value2": 1.5
       },
       {
         "gimmikName": "昇降針",
@@ -17,7 +17,7 @@
           96.0
         ],
         "value1": 0,
-        "value2": 1.0
+        "value2": 1.5
       },
       {
         "gimmikName": "ループ移動針",
@@ -773,6 +773,36 @@
           512.0
         ],
         "value1": "ExRyutaArea"
+      },
+      {
+        "gimmikName": "罠針_上",
+        "gimmikPos": [
+          288.0,
+          484.0
+        ],
+        "value1": 0,
+        "value2": 0.0,
+        "value3": 0.0
+      },
+      {
+        "gimmikName": "罠針_下",
+        "gimmikPos": [
+          160.0,
+          476.0
+        ],
+        "value1": 0,
+        "value2": 0.0,
+        "value3": 0.0
+      },
+      {
+        "gimmikName": "罠針_下",
+        "gimmikPos": [
+          576.0,
+          412.0
+        ],
+        "value1": 0,
+        "value2": 0.0,
+        "value3": 0.0
       }
     ],
     "background": "",

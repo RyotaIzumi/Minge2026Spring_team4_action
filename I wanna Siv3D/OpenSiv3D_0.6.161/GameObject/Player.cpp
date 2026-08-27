@@ -16,7 +16,11 @@ namespace Iwanna {
 		gravity = 0.4; //重力の値
 		maxVspeed = 9; //縦方向速度(主に落下速度)の最大値
 		image_speed = 0.2; //アニメーション再生速度
-		isMuteki = false; //無敵状態かどうか
+		isMuteki = Global::canUseHaibokusyaMode() && Global::savedIsMutekiMode;
+		if (!Global::canUseHaibokusyaMode()) {
+			Global::savedIsMutekiMode = false;
+		}
+		isHitInvincible = false;
 		roomOutTrue = false;//kid君をroom外にいけるようにする
 		isDead = false;//死亡状態かどうか
 		isGenerateBullet = false;//弾生成フラグ
@@ -39,10 +43,19 @@ namespace Iwanna {
 		//アニメーションデータの登録
 		//(アクション名,フレーム数,各フレーム再生時間,ループするかどうか(省略可), 左右差分があるか(省略可))
 		spriteSystem = SpriteSystem(32, 32);
-		spriteSystem.addSprite(SpriteAction::PLAYER_WAIT, SpriteData(U"sprIdle_normal", 4, 0.15,true,false));
-		spriteSystem.addSprite(SpriteAction::PLAYER_RUN, SpriteData(U"sprRunning_normal", 6, 0.1,true,false));
-		spriteSystem.addSprite(SpriteAction::PLAYER_JUMP, SpriteData(U"sprJump_normal", 1, 0.1,true,false));
-		spriteSystem.addSprite(SpriteAction::PLAYER_FALL, SpriteData(U"sprFall_normal", 1, 0.1,true,false));
+		if (Global::moraleValue3 < 30) {
+			const SpriteData lowMoraleSprite(U"sprPlayer_low", 1, 0.1, true, false);
+			spriteSystem.addSprite(SpriteAction::PLAYER_WAIT, lowMoraleSprite);
+			spriteSystem.addSprite(SpriteAction::PLAYER_RUN, lowMoraleSprite);
+			spriteSystem.addSprite(SpriteAction::PLAYER_JUMP, lowMoraleSprite);
+			spriteSystem.addSprite(SpriteAction::PLAYER_FALL, lowMoraleSprite);
+		}
+		else {
+			spriteSystem.addSprite(SpriteAction::PLAYER_WAIT, SpriteData(U"sprIdle_normal", 4, 0.15, true, false));
+			spriteSystem.addSprite(SpriteAction::PLAYER_RUN, SpriteData(U"sprRunning_normal", 6, 0.1, true, false));
+			spriteSystem.addSprite(SpriteAction::PLAYER_JUMP, SpriteData(U"sprJump_normal", 1, 0.1, true, false));
+			spriteSystem.addSprite(SpriteAction::PLAYER_FALL, SpriteData(U"sprFall_normal", 1, 0.1, true, false));
+		}
 		
 		//アニメーションデータの登録
 		//(アクション名,フレーム数,各フレーム再生時間,ループするかどうか(省略可), 左右差分があるか(省略可))
@@ -74,7 +87,7 @@ namespace Iwanna {
 
 		//hp関連の処理
 		if (mutekiInterval.reachedZero()) {
-			isMuteki = false;
+			isHitInvincible = false;
 		}
 
 		if (isDead) return;
@@ -158,7 +171,7 @@ namespace Iwanna {
 	void Player::draw() const {
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
 		TextureRegion texture = spriteSystem.getTextureRegion(direction);
-		if(!isDead)texture.scaled(1.0).drawAt(pos.x,pos.y - 3, ColorF(1.0, isMuteki ? 0.5 : 1.0));
+		if(!isDead)texture.scaled(1.0).drawAt(pos.x,pos.y - 3, ColorF(1.0, getIsMuteki() ? 0.5 : 1.0));
 		else texture.scaled(1.0).drawAt(pos.x, pos.y - 3, ColorF(0.8,0,0,0.8));
 		if (!isDead && ((Global::canUseItem2Effect() && isWarpMode) || Global::canUseExBossItem2Effect())) {
 			const bool canWarp = Global::canUseExBossItem2Effect() ? canUseExBossItem2Warp() : canUseItem2Warp();
@@ -257,7 +270,7 @@ namespace Iwanna {
 			playerDead();
 		}
 
-		isMuteki = true;
+		isHitInvincible = true;
 		mutekiInterval.restart();
 	}
 
@@ -378,7 +391,7 @@ namespace Iwanna {
 
 		// PlayerKill属性を持つオブジェクトとの衝突
 		if (other.canPlayerKill) {
-			if (this->intersects(other) && !isDead && !isMuteki) {
+			if (this->intersects(other) && !isDead && !getIsMuteki()) {
 				if (Global::nowRoomName == U"boss"
 					|| Global::nowRoomName == U"trapBoss"
 					|| Global::nowRoomName == U"ExBoss") playerHited();
@@ -413,6 +426,10 @@ namespace Iwanna {
 			if (this->intersects(other)) {
 				auto* warp = dynamic_cast<Warp*>(&other);
 				if (warp->getCanWarp()) {
+					// ルーム切り替え後に再生成される Player へ、現在のアクションモードを引き継ぐ
+					Global::savedIsWarpMode = Global::canUseItem2Effect() && isWarpMode;
+					Global::savedIsMutekiMode = Global::canUseHaibokusyaMode() && isMuteki;
+
 					if (Global::isEndingDRoute() && Global::isGenerateStage(Global::nowRoomName)) {
 						++Global::endingDGenerateClearCount;
 						if (Global::endingDGenerateClearCount >= Global::endingDGenerateClearLimit) {
@@ -442,6 +459,9 @@ namespace Iwanna {
 				secretSave->isPlayerTouching = this->intersects(*secretSave);
 				// セーブポイントに触れている状態で、特定のキーを押すと脱出
 				if (!Global::prepareGetItem1 && secretSave->isPlayerTouching && Global::inputEscape.down()) {
+					// 隠し部屋から戻る場合も、入室前と同じアクションモードを維持する
+					Global::savedIsWarpMode = Global::canUseItem2Effect() && isWarpMode;
+					Global::savedIsMutekiMode = Global::canUseHaibokusyaMode() && isMuteki;
 					Global::prevRoomName = Global::nowRoomName;
 					Global::nowRoomName = secretSave->getEscapeRoomName();
 					Global::isChangeRoom = true;
@@ -527,9 +547,13 @@ namespace Iwanna {
 		isMuteki = value;
 	}
 
+	void Player::toggleIsMuteki() {
+		isMuteki = !isMuteki;
+	}
+
 	// 無敵状態かどうかを取得
 	bool Player::getIsMuteki() const {
-		return isMuteki;
+		return isMuteki || isHitInvincible;
 	}
 
 	//hpを取得
