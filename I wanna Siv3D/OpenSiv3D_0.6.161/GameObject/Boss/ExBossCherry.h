@@ -183,10 +183,10 @@ namespace Iwanna {
 		Stopwatch thirdFormRetreatStopwatch{ StartImmediately::No };
 		double thirdFormRetreatWaitTime = 1.4;
 		double thirdFormDarkeningWaitTime = 20.0;
-		double exBossHitInvincibleTime = 0.05;
+		double exBossHitInvincibleTime = 0.15;
 		double forthFormLongAttackTargetOffsetFromTop = 180.0;
 		double forthFormLongAttackMoveDuration = 1.4;
-		double forthFormLongAttackGrayAttackTime = 9.9;
+		double forthFormLongAttackGrayAttackTime = 10.2;
 
 		Array<ExBossAttackType> canAttackTypes{ ExBossAttackType::SwingOne, ExBossAttackType::Fall, ExBossAttackType::Slide, ExBossAttackType::SparkExpro, ExBossAttackType::Warp };
 		Array<CherryColorType> randomChoiceBarrageAttacks{ CherryColorType::Red,CherryColorType::Yellow };
@@ -226,6 +226,7 @@ namespace Iwanna {
 	class ExproCherry : public Cherry {
 	private:
 		Timer attackTimer{ 0.5s,StartImmediately::No };
+		Timer hitTimer{ 0.3s,StartImmediately::No };
 		double startSpeed = 0.0;
 		int32 step = 0;
 	public:
