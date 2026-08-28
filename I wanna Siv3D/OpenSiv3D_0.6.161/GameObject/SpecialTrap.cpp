@@ -386,7 +386,9 @@ namespace Iwanna {
 			pos.y = -10000;
 		}
 
-		holeText = isShowHideLine ? U"忘れてて草" : U"wwwwwwwww";
+		holeText = isShowHideLine
+			? Global::localized(U"忘れてて草", U"You forgot this lol")
+			: U"wwwwwwwww";
 
 		hitBox->setPos(pos);
 	}

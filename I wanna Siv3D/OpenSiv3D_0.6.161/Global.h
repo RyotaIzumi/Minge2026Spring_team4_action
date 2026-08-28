@@ -74,6 +74,7 @@ namespace Global {
 	inline bool doNotStopBgm = false;
 	inline double soundVolume = 1.0;
 	inline bool isFullscreen = false;
+	inline int32 localize = 0; // 0: Japanese, 1: English
 
 	// --- 入手アイテム関連 --- //
 	inline bool prepareGetItem1 = false;
@@ -215,6 +216,14 @@ namespace Global {
 
 	inline bool canUseMenuSettings() {
 		return moraleValue1 >= 50;
+	}
+
+	inline bool isEnglish() {
+		return localize == 1;
+	}
+
+	inline String localized(StringView japanese, StringView english) {
+		return isEnglish() ? String{ english } : String{ japanese };
 	}
 
 	inline bool canUseHaibokusyaMode() {

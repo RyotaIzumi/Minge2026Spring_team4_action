@@ -434,7 +434,9 @@ namespace Iwanna {
 						++Global::endingDGenerateClearCount;
 						if (Global::endingDGenerateClearCount >= Global::endingDGenerateClearLimit) {
 							Sound::playOneShot(Sound::ERROR);
-							System::MessageBoxOK(U"エラーコード : 0xFOREVER\nステージ生成に失敗しました。");
+							System::MessageBoxOK(Global::localized(
+								U"エラーコード : 0xFOREVER\nステージ生成に失敗しました。",
+								U"Error code : 0xFOREVER\nFailed to generate stage."));
 							System::Exit();
 							return;
 						}

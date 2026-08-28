@@ -57,11 +57,15 @@ namespace Iwanna {
 		
 		switch (type) {
 		case AchieveType::ItemGet_Heart:
-			achieveText = U"針を銃で壊せるように！\nまた、銃の攻撃力も上昇！";
+			achieveText = Global::localized(
+				U"針を銃で壊せるように！\nまた、銃の攻撃力も上昇！",
+				U"You can now shoot spikes!\nYour shots are stronger, too!");
 			achieveIconTexture = U"item1";
 			break;
 		case AchieveType::ItemGet_Warp:
-			achieveText = U"ワープできるようになった！\nXキーで切り替え可能！";
+			achieveText = Global::localized(
+				U"ワープできるようになった！\nXキーで切り替え可能！",
+				U"You can now warp!\nPress X to switch actions!");
 			achieveIconTexture = U"item2";
 			break;
 		}

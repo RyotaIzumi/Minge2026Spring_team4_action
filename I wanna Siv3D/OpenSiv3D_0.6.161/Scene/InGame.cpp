@@ -105,19 +105,21 @@ namespace Iwanna {
 	void InGame::drawPauseMenu() const {
 		Rect{ 0, 0, Global::windowWidth, Global::windowHeight }.draw(ColorF{ 0.0, 0.0, 0.0, 0.65 });
 
-		FontAsset(U"Button")(U"Escでゲームに戻る").draw(24, 24, ColorF{ 1.0, 1.0, 1.0 });
+		FontAsset(U"Button")(Global::localized(U"Escでゲームに戻る", U"Esc : Return to game")).draw(24, 24, ColorF{ 1.0, 1.0, 1.0 });
 		if (Global::canUseExBossItem2Effect()) {
-			FontAsset(U"Button")(U"Xキーでワープ").draw(24, 50, ColorF{ 1.0, 1.0, 1.0 });
+			FontAsset(U"Button")(Global::localized(U"Xキーでワープ", U"X : Warp")).draw(24, 50, ColorF{ 1.0, 1.0, 1.0 });
 		}
 		else if (Global::canUseItem2Effect()) {
-			FontAsset(U"Button")(U"Xでアクション切り替え").draw(24, 50, ColorF{ 1.0, 1.0, 1.0 });
+			FontAsset(U"Button")(Global::localized(U"Xでアクション切り替え", U"X : Switch action")).draw(24, 50, ColorF{ 1.0, 1.0, 1.0 });
 		}
 
-		const String quitText = U"ゲームをやめる : Qキー";
 		const bool isExtraMenu = isExtraMenuContext();
-		const String restartText = isExtraMenu ? U"(進捗は保存されます)" : U"ゲームを最初からやり直す : Wキー";
-		const String cautionText = U"(テストプレイの進捗は失われます！)";
-		const String endingText = U"到達するエンディング : " + getEndingLetter();
+		const String quitText = Global::localized(U"ゲームをやめる : Qキー", U"Quit game : Q");
+		const String restartText = isExtraMenu
+			? Global::localized(U"(進捗は保存されます)", U"(Progress will be saved)")
+			: Global::localized(U"ゲームを最初からやり直す : Wキー", U"Restart from beginning : W");
+		const String cautionText = Global::localized(U"(テストプレイの進捗は失われます！)", U"(Test-play progress will be lost!)");
+		const String endingText = Global::localized(U"到達するエンディング : ", U"Ending : ") + getEndingLetter();
 		const String deathText = U"Death " + Format(Global::deathCount);
 		const String timeText = U"Play Time " + formatPlayTime(Global::elapsedPlayTime);
 
@@ -131,11 +133,11 @@ namespace Iwanna {
 		FontAsset(U"BossHp")(timeText).drawAt(400, 438, ColorF{ 1.0, 1.0, 1.0 });
 		if (Global::canUseMenuSettings()) {
 			const bool previousFullscreen = Global::isFullscreen;
-			SimpleGUI::CheckBox(Global::isFullscreen, U"フルスクリーン", Vec2{ 420, 524 }, 260);
+			SimpleGUI::CheckBox(Global::isFullscreen, Global::localized(U"フルスクリーン", U"Fullscreen"), Vec2{ 420, 524 }, 260);
 			if (Global::isFullscreen != previousFullscreen) {
 				Global::applyWindowMode();
 			}
-			SimpleGUI::Slider(U"サウンド", Global::soundVolume, 0.0, 1.0, Vec2{ 420, 560 }, 110, 260);
+			SimpleGUI::Slider(Global::localized(U"サウンド", U"Sound"), Global::soundVolume, 0.0, 1.0, Vec2{ 420, 560 }, 110, 260);
 			Global::soundVolume = Clamp(Global::soundVolume, 0.0, 1.0);
 		}
 
@@ -153,7 +155,7 @@ namespace Iwanna {
 		Rect{ 0, 0, w, h }.draw(ColorF{ 0.0, 0.0, 0.0, 0.72 });
 
 		const Vec2 loadingTextPos{ w - 210.0, h - 50.0 };
-		FontAsset(U"BossHp")(U"ステージ生成中").drawAt(loadingTextPos, Palette::White);
+		FontAsset(U"BossHp")(Global::localized(U"ステージ生成中", U"Generating stage")).drawAt(loadingTextPos, Palette::White);
 
 		const Vec2 spinnerCenter{ w - 60.0, h - 48.0 };
 		const double rotation = Scene::Time() * 180.0;
