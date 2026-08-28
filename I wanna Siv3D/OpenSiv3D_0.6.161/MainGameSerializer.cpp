@@ -63,20 +63,20 @@ namespace {
 	}
 
 	int32 ReadLocalizeValue(const JSON& json, int32 defaultValue = 0) {
-		if (!json.contains(U"Localize")) {
+		if (!json.contains(U"languageType")) {
 			return defaultValue;
 		}
 
 		try {
-			return Clamp(json[U"Localize"].get<int32>(), 0, 1);
+			return Clamp(json[U"languageType"].get<int32>(), 0, 1);
 		}
 		catch (...) {
 			try {
-				const String value = json[U"Localize"].getString().lowercased();
-				if (value == U"en" || value == U"english") {
+				const String value = json[U"languageType"].getString().lowercased();
+				if (value == U"en") {
 					return 1;
 				}
-				if (value == U"ja" || value == U"jp" || value == U"japanese") {
+				if (value == U"ja") {
 					return 0;
 				}
 			}
@@ -99,7 +99,7 @@ namespace {
 	}
 
 	void SavePersistentCommonValues(JSON& json) {
-		json[U"Localize"] = Clamp(Global::localize, 0, 1);
+		json[U"languageType"] = Clamp(Global::localize, 0, 1);
 	}
 
 	void EnsureEndingRecordDefaults(JSON& json) {
