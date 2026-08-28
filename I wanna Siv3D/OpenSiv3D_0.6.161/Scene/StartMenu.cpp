@@ -5,7 +5,7 @@
 namespace Iwanna {
 	namespace {
 		String makeReachableEndingText(const Array<String>& endings) {
-			String text = U"到達可能Ending (";
+			String text = Global::localized(U"到達可能Ending (", U"Reachable Endings (");
 			for (size_t i = 0; i < endings.size(); ++i) {
 				if (i != 0) {
 					text += U",";
@@ -66,7 +66,9 @@ namespace Iwanna {
 		if (Global::inputStart.down()) {
 			if (Global::isNoMoraleEndingRoute()) {
 				Sound::playOneShot(Sound::ERROR);
-				System::MessageBoxOK(U"エラーコード : 0xNOMORALE\nやる気が見つかりません。");
+				System::MessageBoxOK(Global::localized(
+					U"エラーコード : 0xNOMORALE\nやる気が見つかりません。",
+					U"Error code : 0xNOMORALE\nNo motivation found."));
 				System::Exit();
 				return;
 			}
@@ -77,9 +79,9 @@ namespace Iwanna {
 	}
 
 	void StartMenu::draw() const {
-		FontAsset(U"Button")(U"Escでメニュー").draw(24, 24, ColorF{ 1.0, 1.0, 1.0 });
+		FontAsset(U"Button")(Global::localized(U"Escでメニュー", U"Esc : Menu")).draw(24, 24, ColorF{ 1.0, 1.0, 1.0 });
 		if (Global::canUseItem2Effect()) {
-			FontAsset(U"Button")(U"Xでアクション切り替え").draw(24, 50, ColorF{ 1.0, 1.0, 1.0 });
+			FontAsset(U"Button")(Global::localized(U"Xでアクション切り替え", U"X : Switch action")).draw(24, 50, ColorF{ 1.0, 1.0, 1.0 });
 		}
 		if (Global::getItem1) {
 			drawItemIconWithBlockedMark(U"item1", Vec2{ 24, Global::windowHeight - 56 });

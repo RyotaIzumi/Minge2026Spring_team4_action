@@ -14,18 +14,18 @@ namespace Iwanna {
 		drawOffset = Vec2{ 16, -30 };
 
 		switch (signType) {
-		case SignType::Tutorial_Move: signText = U"矢印キー : 移動"; break;
-		case SignType::Tutorial_Jump: signText = U"Shiftキー : ジャンプ"; break;
-		case SignType::Tutorial_DoubleJump: signText = U"ジャンプは最大2回可能"; break;
-		case SignType::Tutorial_AdjustJump: signText = U"Shiftキーを押す長さで、\nジャンプ力の調整可"; break;
-		case SignType::Tutorial_Shoot: signText = U"Zキー : ショット"; break;
-		case SignType::Tutorial_Save: signText = U"ショットをセーブに当てると、\nリトライ位置を更新できます"; break;
-		case SignType::Tutorial_Spike: signText = U"針やりんごにはあたっちゃダメ！"; break;
-		case SignType::Tutorial_Water: signText = U"水に触れるとジャンプが復活するぞ！"; break;
-		case SignType::Tutorial_Item: signText = U"道中では、秘密の入口が現れることがある。\n苦難の道ではあるが、乗り越えると強力なアイテムを入手できるぞ！"; break;
-		case SignType::Tutorial_Muteki: signText = U"ctrlで無敵になれるぞ\nただし、これを使えば敗北者だ..."; break;
-		case SignType::Extra_PracticeMuteki: signText = U"\nctrlで無敵"; break;
-		case SignType::Extra_Warp: signText = U"Xキーでワープ可能\nここではクールタイムがあるぞ"; break;
+		case SignType::Tutorial_Move: signText = Global::localized(U"矢印キー : 移動", U"Arrow keys : Move"); break;
+		case SignType::Tutorial_Jump: signText = Global::localized(U"Shiftキー : ジャンプ", U"Shift : Jump"); break;
+		case SignType::Tutorial_DoubleJump: signText = Global::localized(U"ジャンプは最大2回可能", U"You can jump up to twice"); break;
+		case SignType::Tutorial_AdjustJump: signText = Global::localized(U"Shiftキーを押す長さで、\nジャンプ力の調整可", U"Hold Shift longer\nto jump higher"); break;
+		case SignType::Tutorial_Shoot: signText = Global::localized(U"Zキー : ショット", U"Z : Shoot"); break;
+		case SignType::Tutorial_Save: signText = Global::localized(U"ショットをセーブに当てると、\nリトライ位置を更新できます", U"Shoot a save point\nto update your retry position"); break;
+		case SignType::Tutorial_Spike: signText = Global::localized(U"針やりんごにはあたっちゃダメ！", U"Do not touch spikes or apples!"); break;
+		case SignType::Tutorial_Water: signText = Global::localized(U"水に触れるとジャンプが復活するぞ！", U"Touch water to restore your jump!"); break;
+		case SignType::Tutorial_Item: signText = Global::localized(U"道中では、秘密の入口が現れることがある。\n苦難の道ではあるが、乗り越えると強力なアイテムを入手できるぞ！", U"Secret entrances may appear on your journey.\nSurvive the challenge to gain a powerful item!"); break;
+		case SignType::Tutorial_Muteki: signText = Global::localized(U"ctrlで無敵になれるぞ\nただし、これを使えば敗北者だ...", U"Ctrl makes you invincible.\nUse it, and you are a loser..."); break;
+		case SignType::Extra_PracticeMuteki: signText = Global::localized(U"\nctrlで無敵", U"\nCtrl : Invincible"); break;
+		case SignType::Extra_Warp: signText = Global::localized(U"Xキーでワープ可能\nここではクールタイムがあるぞ", U"X lets you warp here.\nIt has a cooldown."); break;
 		}
 
 		depth = 20;

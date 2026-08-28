@@ -5,6 +5,7 @@
 #include "MainGameSerializer.h"
 #include "60FPSwithAutoFrameSkip.h"
 #include "Global.h"
+#include "Windows.h"
 
 using App = SceneManager<Iwanna::SceneType, Iwanna::CommonData>;
 
@@ -17,6 +18,17 @@ void Main()
 	MainGameSerializer mainGameSerializer;
 	mainGameSerializer.LoadGameSettings();
 	System60::SetDisplaySize(Size{800,608}, Global::isFullscreen);
+
+	//ウィンドウを最前面に表示する
+	HWND hwnd = static_cast<HWND>(Platform::Windows::Window::GetHWND());
+	if (hwnd) {
+		::ShowWindow(hwnd, SW_RESTORE);
+		::SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+
+		::SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+
+		::SetForegroundWindow(hwnd);
+	}
 
 	//フォントはここで宣言
 	FontAsset::Register(U"Big", 60, Typeface::Regular);

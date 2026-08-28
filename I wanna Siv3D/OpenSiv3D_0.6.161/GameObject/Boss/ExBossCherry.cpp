@@ -646,6 +646,7 @@ namespace Iwanna {
 		scaleMag = 1.0;
 
 		attackTimer.start();
+		hitTimer.start();
 
 		setTypeColor();
 	}
@@ -663,6 +664,13 @@ namespace Iwanna {
 		}
 		else {
 			isDelete = true;
+		}
+
+		if (hitTimer.isRunning()) {
+			canPlayerKill = true;
+		}
+		else {
+			canPlayerKill = false;
 		}
 
 		setTypeColor();

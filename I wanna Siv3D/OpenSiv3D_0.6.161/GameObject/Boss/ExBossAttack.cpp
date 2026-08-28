@@ -358,6 +358,7 @@ namespace Iwanna {
 			switch (attackStep) {
 			case 0:
 				attackStep++;
+				movePosition(pos, 0.3, false);
 				break;
 			case 1://振り上げ開始
 				if (getIsRotateFinished() && getIsMoveFinished()) {

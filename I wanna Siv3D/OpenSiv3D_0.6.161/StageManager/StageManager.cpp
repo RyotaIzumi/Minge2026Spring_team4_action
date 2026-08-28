@@ -600,8 +600,8 @@ namespace Iwanna {
 		}
 
 		if (stageName == U"clear") {
-			FontAsset(U"Button")(U"Escでメニュー").draw(36, 36, ColorF{ 0.0, 0.0, 0.0 });
-			FontAsset(U"Button")(U"ゲームを閉じてもどろう").draw(36, 64, ColorF{ 0.0, 0.0, 0.0 });
+			FontAsset(U"Button")(Global::localized(U"Escでメニュー", U"Esc : Menu")).draw(36, 36, ColorF{ 0.0, 0.0, 0.0 });
+			FontAsset(U"Button")(Global::localized(U"ゲームを閉じてもどろう", U"Quit the game to return")).draw(36, 64, ColorF{ 0.0, 0.0, 0.0 });
 
 			const Vec2 basePos{ 400, 388 };
 			const String timeText = U"Time  " + formatPlayTime(Global::elapsedPlayTime);
@@ -616,12 +616,12 @@ namespace Iwanna {
 		if (stageName == U"tutorialLow") {
 			const Vec2 basePos{ 50, 50 };
 			Array<String> tutorialTexts{
-				U"←→キー : 移動",
-				U"shift : ジャンプ、二段ジャンプ",
-				U"Zキー : ショット"
+				Global::localized(U"←→キー : 移動", U"Left / Right : Move"),
+				Global::localized(U"shift : ジャンプ、二段ジャンプ", U"Shift : Jump / Double jump"),
+				Global::localized(U"Zキー : ショット", U"Z : Shoot")
 			};
 			if (Global::canUseHaibokusyaMode()) {
-				tutorialTexts << U"ctrl : 無敵";
+				tutorialTexts << Global::localized(U"ctrl : 無敵", U"Ctrl : Invincible");
 			}
 
 			for (int32 i = 0; i < tutorialTexts.size(); ++i) {

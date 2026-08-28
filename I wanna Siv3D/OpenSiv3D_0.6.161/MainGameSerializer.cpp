@@ -62,6 +62,46 @@ namespace {
 		return ReadBool(json, key);
 	}
 
+	int32 ReadLocalizeValue(const JSON& json, int32 defaultValue = 0) {
+		if (!json.contains(U"languageType")) {
+			return defaultValue;
+		}
+
+		try {
+			return Clamp(json[U"languageType"].get<int32>(), 0, 1);
+		}
+		catch (...) {
+			try {
+				const String value = json[U"languageType"].getString().lowercased();
+				if (value == U"en") {
+					return 1;
+				}
+				if (value == U"ja") {
+					return 0;
+				}
+			}
+			catch (...) {
+			}
+		}
+
+		return defaultValue;
+	}
+
+	void LoadPersistentCommonValues() {
+		const JSON json = JSON::Load(GetGameSaveFilePath());
+		if (!json) {
+			return;
+		}
+
+		Global::getItem1 = Global::getItem1 || ReadBool(json, U"GetItem1");
+		Global::getItem2 = Global::getItem2 || ReadBool(json, U"GetItem2");
+		Global::localize = ReadLocalizeValue(json, Global::localize);
+	}
+
+	void SavePersistentCommonValues(JSON& json) {
+		json[U"languageType"] = Clamp(Global::localize, 0, 1);
+	}
+
 	void EnsureEndingRecordDefaults(JSON& json) {
 		for (const auto& endingId : GetAllEndingIds()) {
 			if (!json[U"eachEndingClearTime"].contains(endingId)) {
@@ -106,6 +146,7 @@ void MainGameSerializer::LoadCharactersMoraleValue() {
 	Global::moraleValue4 = moraleValue4;
 	Global::getItem1 = ReadBool(json, U"GetItem1");
 	Global::getItem2 = ReadBool(json, U"GetItem2");
+	LoadPersistentCommonValues();
 }
 
 void MainGameSerializer::LoadGameSettings() {
@@ -200,6 +241,7 @@ void MainGameSerializer::SaveCharactersMoraleValue() {
 
 	persistentJson[U"GetItem1"] = Global::getItem1 || ReadBool(persistentJson, U"GetItem1");
 	persistentJson[U"GetItem2"] = Global::getItem2 || ReadBool(persistentJson, U"GetItem2");
+	SavePersistentCommonValues(persistentJson);
 	persistentJson.save(savePath);
 }
 
@@ -232,6 +274,7 @@ void MainGameSerializer::SaveEndingClearRecord() {
 	json[U"reachedBlockIds"] = ReadStringArray(json, U"reachedBlockIds");
 	json[U"reachedEndingIds"] = reachedEndingIds;
 	json[U"endingClearCount"] = static_cast<int32>(reachedEndingIds.size());
+	SavePersistentCommonValues(json);
 
 	EnsureEndingRecordDefaults(json);
 
@@ -324,6 +367,7 @@ void MainGameSerializer::SaveExtraProgress() {
 	json[U"extraProgress"][U"playerY"] = Global::savedStartPlayerPos.y;
 	json[U"extraProgress"][U"elapsedPlayTime"] = Max(0.0, Global::elapsedPlayTime);
 	json[U"extraProgress"][U"deathCount"] = Max(0, Global::deathCount);
+	SavePersistentCommonValues(json);
 
 	json.save(savePath);
 }
@@ -340,6 +384,7 @@ void MainGameSerializer::ClearExtraProgress() {
 	}
 
 	json[U"extraProgress"][U"isActive"] = false;
+	SavePersistentCommonValues(json);
 	json.save(savePath);
 }
 

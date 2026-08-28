@@ -29,7 +29,7 @@ namespace Iwanna {
 		Rect{ 0, 0, w, h }.draw(Palette::Black);
 
 		const Vec2 loadingTextPos{ w - 170.0, h - 50.0 };
-		FontAsset(U"BossHp")(U"\u30ED\u30FC\u30C9\u4E2D").drawAt(loadingTextPos, Palette::White);
+		FontAsset(U"BossHp")(Global::localized(U"ロード中", U"Loading")).drawAt(loadingTextPos, Palette::White);
 
 		const Vec2 spinnerCenter{ w - 60.0, h - 48.0 };
 		const double rotation = Scene::Time() * 180.0;
