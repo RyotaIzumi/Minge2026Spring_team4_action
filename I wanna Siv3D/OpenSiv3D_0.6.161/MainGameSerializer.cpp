@@ -53,15 +53,6 @@ namespace {
 		return json.contains(key) ? json[key].get<bool>() : defaultValue;
 	}
 
-	bool LoadPersistentItemFlag(const String& key) {
-		const JSON json = JSON::Load(GetGameSaveFilePath());
-		if (!json) {
-			return false;
-		}
-
-		return ReadBool(json, key);
-	}
-
 	int32 ReadLocalizeValue(const JSON& json, int32 defaultValue = 0) {
 		if (!json.contains(U"languageType")) {
 			return defaultValue;
@@ -89,16 +80,18 @@ namespace {
 
 	void LoadPersistentCommonValues() {
 		const JSON json = JSON::Load(GetGameSaveFilePath());
+		Global::getItem1 = json && ReadBool(json, U"GetItem1");
+		Global::getItem2 = json && ReadBool(json, U"GetItem2");
 		if (!json) {
 			return;
 		}
 
-		Global::getItem1 = Global::getItem1 || ReadBool(json, U"GetItem1");
-		Global::getItem2 = Global::getItem2 || ReadBool(json, U"GetItem2");
 		Global::localize = ReadLocalizeValue(json, Global::localize);
 	}
 
 	void SavePersistentCommonValues(JSON& json) {
+		json[U"GetItem1"] = Global::getItem1 || ReadBool(json, U"GetItem1");
+		json[U"GetItem2"] = Global::getItem2 || ReadBool(json, U"GetItem2");
 		json[U"languageType"] = Clamp(Global::localize, 0, 1);
 	}
 
@@ -144,8 +137,9 @@ void MainGameSerializer::LoadCharactersMoraleValue() {
 	Global::moraleValue2 = moraleValue2;
 	Global::moraleValue3 = moraleValue3;
 	Global::moraleValue4 = moraleValue4;
-	Global::getItem1 = ReadBool(json, U"GetItem1");
-	Global::getItem2 = ReadBool(json, U"GetItem2");
+}
+
+void MainGameSerializer::LoadGameSave() {
 	LoadPersistentCommonValues();
 }
 
@@ -226,11 +220,11 @@ void MainGameSerializer::SaveCharactersMoraleValue() {
 	json[U"MoraleValue2"] = Global::moraleValue2;
 	json[U"MoraleValue3"] = Global::moraleValue3;
 	json[U"MoraleValue4"] = Global::moraleValue4;
-	json[U"GetItem1"] = Global::getItem1;
-	json[U"GetItem2"] = Global::getItem2;
 
 	json.save(U"CharactersMoraleValue.json");
+}
 
+void MainGameSerializer::SaveGameSave() {
 	const FilePath savePath = GetGameSaveFilePath();
 	FileSystem::CreateDirectories(FileSystem::ParentPath(savePath));
 
@@ -239,8 +233,6 @@ void MainGameSerializer::SaveCharactersMoraleValue() {
 		persistentJson = JSON{};
 	}
 
-	persistentJson[U"GetItem1"] = Global::getItem1 || ReadBool(persistentJson, U"GetItem1");
-	persistentJson[U"GetItem2"] = Global::getItem2 || ReadBool(persistentJson, U"GetItem2");
 	SavePersistentCommonValues(persistentJson);
 	persistentJson.save(savePath);
 }

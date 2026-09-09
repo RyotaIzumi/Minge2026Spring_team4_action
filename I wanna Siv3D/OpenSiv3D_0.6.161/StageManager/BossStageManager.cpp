@@ -884,7 +884,7 @@ namespace Iwanna {
 				Global::getItem2 = true;
 				achive.startShowAchieve(AchieveType::ItemGet_Warp);
 				MainGameSerializer serializer;
-				serializer.SaveCharactersMoraleValue();
+				serializer.SaveGameSave();
 				saveGame();
 				break;
 			}
