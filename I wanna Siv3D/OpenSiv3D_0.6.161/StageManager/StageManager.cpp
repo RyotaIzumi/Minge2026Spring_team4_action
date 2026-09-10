@@ -97,7 +97,7 @@ namespace Iwanna {
 				Global::prepareGetItem1 = false;
 				Global::getItem1 = true;
 				MainGameSerializer serializer;
-				serializer.SaveCharactersMoraleValue();
+				serializer.SaveGameSave();
 				saveGame();
 			}
 		}
